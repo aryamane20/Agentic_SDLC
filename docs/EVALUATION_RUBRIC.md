@@ -156,6 +156,24 @@ python eval/run_eval.py --dimension rubric
 
 ---
 
+### Future: Dimension 5 for Project 3 (LLM-as-Judge)
+
+> **Note:** Dimension 5 is currently **purely manual** — this is intentional for Project 1. However, for **Project 3** (multi-agent orchestration at scale), manual comparison becomes a bottleneck.
+
+**Recommended approach for Project 3:**
+- Implement **LLM-as-judge** — a second Claude call that scores agent output against a rubric
+- The judge agent compares: project plan structure, risk realism, staffing validity
+- Outputs a score + justification (same 1-5 scale as Dimension 3)
+
+**Why this matters in "Delegating" mode:**
+- Multi-agent systems produce more varied outputs
+- Human review becomes time-prohibitive at scale
+- LLM-as-judge provides consistent, fast feedback for iteration
+
+This pattern — using an LLM to evaluate another LLM's output — is the natural evolution from the semi-automated rubric in Dimension 3.
+
+---
+
 ## Evaluation Cadence
 
 | When | What to Run | Why |
