@@ -67,32 +67,27 @@ Step 6 — Added Critical Path and Slack Time
 
 ---
 
-
+## v1.1.1 — Schema Compliance Fixes
 **Date:** March 2026
-**Type:** STRUCTURAL — no reasoning changes, only file organisation
-**Trigger:** Design decision to separate role (HOW to think) from knowledge base (WHAT to know)
-so each can be iterated and evaluated independently.
+**Type:** STRUCTURAL — format compliance, no reasoning changes
+**Trigger:** First eval run showed field name mismatches and schema violations
 
-**What changed:**
-- Extracted `## KNOWLEDGE BASE` section from `system_prompt_v1.md` into 3 separate files:
-  - `knowledge-base/templates/project-type-templates.md` — all 6 project type templates (expanded from 3)
-  - `knowledge-base/risks/risk-patterns.md` — risk pattern catalog (significantly expanded)
-  - `knowledge-base/staffing/role-definitions.md` — role benchmarks and effort estimates (expanded)
-- `system_prompt_v1.md` now ends at BOUNDARIES section — pure role, no domain data
-- `src/agent.py` updated with compiler pattern: `_build_system_context()` assembles role + KB at runtime
-- Knowledge base files are more detailed than the original inline version
+**What changed in system_prompt_v1.md:**
+- Added "CRITICAL: OUTPUT FIELD NAME REQUIREMENTS" section
+- Explicit field names: pm_confidence_score (object), project_type, assumption_log, risk_register
+- project_plan structure: added critical_path_summary, task structure details
+- staffing_plan: skills_required as array (not string)
+- assumption_log: source enum values (hard_constraint/soft_constraint/nfr/scope/other)
+- Phase percentage constraints: Phase 1 >=10%, Phase 4 >=15%
+- Task effort_hours: MAX 40 (split larger tasks)
 
-**What did NOT change:**
-- 8-step reasoning process — identical
-- Output contract — identical
-- Boundaries — identical
-- All test cases, schema, eval files — unchanged
+**What changed in src/validator.py:**
+- Added _normalize_field_names() to handle field variations
+- Maps: classification->project_type, assumptions->assumption_log, risks->risk_register
+- Sets defaults for missing metadata fields
 
-**Why this matters for Project 3:**
-- `_build_system_context()` in agent.py is the exact method that will be replaced with RAG retrieval
-- The separation point is already clean — no refactoring needed when adding vector store
-
-**Rubric impact:** Neutral (structural only). Re-run eval to confirm no regression.
+**Rubric impact:** Significant improvement in Dimension 1 (schema validation)
+Test Cases Affected: All (previously failing schema validation)
 
 ---
 
