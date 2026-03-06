@@ -295,7 +295,7 @@ The agent handles all input formats without rejection:
 
 ## 7. Project Evolution Path
 
-### Project 1 (Current): Single Agent
+### Project 1: Single Agent
 ```
 Input → System Prompt → LLM → Parser → Validator → Output
 ```
