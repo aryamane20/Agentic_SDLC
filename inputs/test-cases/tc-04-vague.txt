@@ -1,0 +1,3 @@
+# TC-04: Vague Input - Just a Goal
+
+We need to improve how we track projects.

@@ -1,0 +1,26 @@
+# TC-05: Contradictory Input - Impossible Constraints
+
+**Primary Goal:** Build a mobile app for customers.
+
+**Deadline:** 2 weeks (must be done by March 15)
+
+**Budget:** $5,000 (very limited)
+
+**Requirements:**
+- Full-featured native iOS and Android apps
+- Real-time video streaming capability
+- Offline mode with sync
+- AI-powered recommendations
+- Social sharing features
+- In-app payments
+
+**Team:** 1 junior developer
+
+**Technology:** Must use legacy VB6 backend (cannot be changed)
+
+**Constraints:**
+- Must support 1 million concurrent users
+- Zero downtime allowed
+- Must be completed in 2 weeks
+
+The CEO wants this to be a flagship product that disrupts the market.

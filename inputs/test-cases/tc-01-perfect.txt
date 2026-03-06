@@ -1,0 +1,48 @@
+# TC-01: Perfect Input - Employee Onboarding Portal
+
+## Project Request
+
+We need to build a new employee onboarding portal for our company. This is an internal tool that doesn't exist yet.
+
+**Primary Goal:** Create a self-service employee onboarding portal that allows new hires to complete all required paperwork, set up their IT accounts, and get introduced to the team before day one.
+
+**Beneficiary:** New employees (100-200/year) and HR team (5 people)
+
+**Trigger:** Currently onboarding is fragmented - paperwork is PDF-based, IT account setup is manual, new hires feel unprepared on day one. CEO asked HR to fix this after hearing complaints at all-hands.
+
+**Success Definition:**
+- New hires can complete 80% of onboarding tasks before day one
+- HR time spent on onboarding admin reduced by 50%
+- IT account setup automated (no manual tickets)
+- New hire satisfaction survey score > 4/5
+
+**Deadline:** June 30, 2026 (4 months from now)
+
+**Budget:** $80,000 (allocated)
+
+**Team Size:** 4 people (1 PM, 2 Developers, 1 UX Designer)
+
+**Technology Stack:**
+- Frontend: React + TypeScript
+- Backend: Node.js + PostgreSQL
+- Integration: Workday API for employee data, Azure AD for SSO
+- Hosting: Azure App Service
+
+**Compliance Requirements:** SOC 2 compliance required (affects data handling, audit logs)
+
+**Key Stakeholders:**
+- VP of HR (sponsor)
+- IT Director (technical approval)
+- Security team (compliance sign-off)
+
+**Must-have Features:**
+- Document collection (I-9, W-4, direct deposit)
+- IT account provisioning (email, Slack, SaaS tools)
+- Team introduction page with photos and roles
+- Task checklist with due dates
+- Document e-signature
+
+**Nice-to-have:**
+- Chat with HR bot
+- Mobile app
+- Integration with learning management system

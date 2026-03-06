@@ -1,0 +1,48 @@
+# TC-08: Type D - System Integration
+
+## Project Request
+
+**Primary Goal:** Integrate Salesforce with NetSuite for unified customer view.
+
+**Beneficiary:** Sales team, Finance team
+
+**Trigger:** Sales and Finance use separate systems. Revenue recognition is manual. Customer service can't see sales history.
+
+**Success Definition:**
+- Customer data syncs bidirectionally between systems
+- Sales orders automatically create invoices in NetSuite
+- Customer support has full view of customer history
+- Reconciliation automated
+
+**Deadline:** 4 months
+
+**Budget:** $60,000
+
+**Team:** 2 integration specialists, 1 Salesforce admin, 1 NetSuite admin
+
+**Systems:**
+- Salesforce (CRM)
+- NetSuite (ERP)
+- Custom customer portal (existing)
+
+**Requirements:**
+- Bidirectional sync of customer records
+- Order creation in Salesforce → Invoice in NetSuite
+- Invoice payment status sync back to Salesforce
+- Contact and opportunity sync
+- Error handling and retry logic
+- Audit log of all sync activities
+- Field mapping configuration UI
+
+**Integration Points:**
+- Customer records (bidirectional)
+- Contact records (bidirectional)
+- Opportunities → Sales Orders (Salesforce → NetSuite)
+- Invoices → Payments (NetSuite → Salesforce)
+- Products catalog (NetSuite → Salesforce)
+
+**Constraints:**
+- Zero data loss tolerance
+- Sync latency < 15 minutes
+- Must handle 10,000+ records
+- Both systems have custom fields that must map

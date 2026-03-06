@@ -1,0 +1,27 @@
+# TC-03: Medium Input - API Gateway
+
+## Project Request
+
+Build an API gateway for our microservices.
+
+**Primary Goal:** Centralize API management with a unified gateway.
+
+**Beneficiary:** Internal development teams
+
+**Trigger:** Multiple services with inconsistent APIs, security concerns, no centralized rate limiting.
+
+**Success Definition:**
+- All external APIs go through gateway
+- Consistent authentication across services
+- Request logging for all API calls
+
+**Deadline:** 4 months
+
+**Requirements:**
+- Rate limiting
+- Authentication/Authorization
+- Request logging
+- API versioning support
+- Load balancing
+
+We have a team of 4 engineers.

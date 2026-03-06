@@ -1,0 +1,288 @@
+{
+  "report_metadata": {
+    "generated_at": "2026-03-02T12:00:00Z",
+    "input_quality": "HIGH",
+    "pm_confidence_score": 92,
+    "project_type": "TYPE_A",
+    "classification_confidence": "HIGH",
+    "sdlc_approach": "Hybrid",
+    "sdlc_rationale": "Deadline is fixed (June 30) but requirements details are evolving as HR refines scope, necessitating hybrid approach with sprint cycles within fixed phases."
+  },
+  "project_understanding": {
+    "primary_goal": "Create a self-service employee onboarding portal that allows new hires to complete paperwork, set up IT accounts, and meet the team before day one",
+    "beneficiary": "New employees (100-200/year) and HR team (5 people)",
+    "trigger": "Onboarding is fragmented - PDF paperwork, manual IT setup, new hires unprepared on day one. CEO asked HR to fix this.",
+    "success_definition": "New hires complete 80% of tasks before day one, HR admin time reduced 50%, IT setup automated, satisfaction > 4/5",
+    "supporting_quotes": [
+      "CEO asked HR to fix this after hearing complaints at all-hands",
+      "SOC 2 compliance required"
+    ]
+  },
+  "assumption_log": [
+    {
+      "id": "A1",
+      "what": "Workday API provides all required employee data fields (name, start date, department, manager)",
+      "why": "Project assumes Workday integration is straightforward based on standard API capabilities",
+      "pmi_basis": "PMBOK 5.4 - Work Breakdown Structure: External dependency should be validated early",
+      "risk_if_wrong": "HIGH",
+      "consequence": "If Workday API limitations exist, manual data entry required, negating automation benefits",
+      "source": "hard_constraint"
+    },
+    {
+      "id": "A2",
+      "what": "Azure AD supports all required authentication scenarios including SSO and role-based access",
+      "why": "Standard enterprise authentication expected to cover HR, IT, Security roles",
+      "pmi_basis": "PMBOK 8.2 - Quality Management: Authentication is a critical non-functional requirement",
+      "risk_if_wrong": "MEDIUM",
+      "consequence": "Custom authentication logic needed, extends timeline",
+      "source": "nfr"
+    },
+    {
+      "id": "A3",
+      "what": "Document e-signature solution (DocuSign or similar) can be integrated within budget",
+      "why": "E-signature is standard requirement, multiple vendors available",
+      "pmi_basis": "PMBOK 11.2 - Risk Identification: Third-party integration risk",
+      "risk_if_wrong": "LOW",
+      "consequence": "Use PDF-based acknowledgment instead, reduces legal enforceability",
+      "source": "scope"
+    }
+  ],
+  "project_plan": {
+    "total_duration_weeks": 16,
+    "buffer_applied_percent": 15,
+    "critical_path_summary": {
+      "sequence": ["T1", "T2", "T5", "T6", "T9", "T10", "T14", "T17", "T20", "T21"],
+      "total_duration_days": 75,
+      "zero_slack_tasks": ["T1", "T2", "T6", "T10", "T14", "T17", "T20"],
+      "highest_slack_tasks": ["T3", "T7", "T11"],
+      "staffing_implication": "Backend developer and frontend developer must be full-time throughout project; designer can be part-time after Phase 2"
+    },
+    "phases": [
+      {
+        "phase_number": 1,
+        "name": "Discovery & Design",
+        "duration_weeks": 2,
+        "percentage_of_total": 12,
+        "milestones": [
+          "Stakeholder sign-off on scope",
+          "UX research complete",
+          "Technical architecture approved"
+        ],
+        "tasks": [
+          {
+            "id": "T1",
+            "name": "Stakeholder kickoff meeting",
+            "phase": 1,
+            "effort_hours": 8,
+            "owner_role": "PM",
+            "dependencies": [],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Meeting held, notes documented, stakeholders confirmed"
+          },
+          {
+            "id": "T2",
+            "name": "Requirements gathering with HR, IT, Security",
+            "phase": 1,
+            "effort_hours": 16,
+            "owner_role": "PM",
+            "dependencies": ["T1"],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "All stakeholder requirements documented and prioritized"
+          },
+          {
+            "id": "T3",
+            "name": "UX research and persona definition",
+            "phase": 1,
+            "effort_hours": 24,
+            "owner_role": "UX Designer",
+            "dependencies": ["T2"],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 5,
+            "definition_of_done": "User personas, journey maps, wireframes complete"
+          }
+        ]
+      },
+      {
+        "phase_number": 2,
+        "name": "Core Development",
+        "duration_weeks": 6,
+        "percentage_of_total": 38,
+        "milestones": [
+          "MVP features complete",
+          "Workday integration working",
+          "Internal alpha release"
+        ],
+        "tasks": [
+          {
+            "id": "T5",
+            "name": "Backend API development - authentication",
+            "phase": 2,
+            "effort_hours": 40,
+            "owner_role": "Backend Developer",
+            "dependencies": ["T2"],
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Azure AD SSO working, role-based access implemented"
+          },
+          {
+            "id": "T6",
+            "name": "Backend API - employee data integration",
+            "phase": 2,
+            "effort_hours": 40,
+            "owner_role": "Backend Developer",
+            "dependencies": ["T5"],
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Workday API integrated, employee data syncs correctly"
+          }
+        ]
+      },
+      {
+        "phase_number": 3,
+        "name": "Integration & Edge Cases",
+        "duration_weeks": 3,
+        "percentage_of_total": 19,
+        "milestones": [
+          "All integrations working",
+          "Edge cases handled",
+          "Beta release"
+        ],
+        "tasks": []
+      },
+      {
+        "phase_number": 4,
+        "name": "QA & Testing",
+        "duration_weeks": 3,
+        "percentage_of_total": 19,
+        "milestones": [
+          "All tests passing",
+          "Security audit complete",
+          "SOC 2 documentation ready"
+        ],
+        "tasks": []
+      },
+      {
+        "phase_number": 5,
+        "name": "Deployment & Handoff",
+        "duration_weeks": 2,
+        "percentage_of_total": 12,
+        "milestones": [
+          "Production deployment",
+          "Training complete",
+          "Go-live"
+        ],
+        "tasks": []
+      }
+    ]
+  },
+  "risk_register": [
+    {
+      "id": "R1",
+      "category": "External",
+      "description": "Workday API changes or rate limits could impact data sync",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "score": "HIGH",
+      "trigger": "Workday API returns errors or unexpected data format",
+      "mitigation": "Implement robust error handling, fallback to manual sync if needed, establish communication channel with Workday admin",
+      "contingency": "Manual data import process for critical employee data"
+    },
+    {
+      "id": "R2",
+      "category": "Technical",
+      "description": "SOC 2 compliance requirements may add significant scope",
+      "probability": "HIGH",
+      "impact": "MEDIUM",
+      "score": "HIGH",
+      "trigger": "Security team requests additional controls or audit logging",
+      "mitigation": "Engage security team early in Phase 1, build in 2-week buffer for compliance work",
+      "contingency": "Launch with partial compliance, complete within 30 days post-launch"
+    },
+    {
+      "id": "R3",
+      "category": "Schedule",
+      "description": "E-signature integration complexity underestimated",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "score": "MEDIUM",
+      "trigger": "DocuSign/PandaDoc API integration takes longer than expected",
+      "mitigation": "Start integration in Phase 2, have PDF-only fallback ready",
+      "contingency": "Use PDF acknowledgment with manual signature tracking"
+    }
+  ],
+  "staffing_plan": [
+    {
+      "role": "PM",
+      "phase_involvement": [1, 2, 3, 4, 5],
+      "total_hours": 200,
+      "allocation_percent": 60,
+      "skills_required": ["Project management", "Stakeholder management", "Agile"],
+      "critical_path": true,
+      "notes": "Full-time PM required throughout"
+    },
+    {
+      "role": "Backend Developer",
+      "phase_involvement": [2, 3, 4, 5],
+      "total_hours": 480,
+      "allocation_percent": 80,
+      "skills_required": ["Node.js", "PostgreSQL", "API integration", "Azure"],
+      "critical_path": true,
+      "notes": "Critical path role - cannot be shared"
+    },
+    {
+      "role": "Frontend Developer",
+      "phase_involvement": [2, 3, 4, 5],
+      "total_hours": 400,
+      "allocation_percent": 80,
+      "skills_required": ["React", "TypeScript", "CSS"],
+      "critical_path": true,
+      "notes": "Critical path role - cannot be shared"
+    },
+    {
+      "role": "UX Designer",
+      "phase_involvement": [1, 2, 3],
+      "total_hours": 120,
+      "allocation_percent": 40,
+      "skills_required": ["Figma", "User research", "Prototyping"],
+      "critical_path": false,
+      "notes": "Can reduce to part-time after Phase 2"
+    }
+  ],
+  "open_questions": [
+    {
+      "priority": 1,
+      "question": "Who is the Product Owner responsible for backlog prioritization in Hybrid mode?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Unclear who makes scope decisions when timeline is constrained"
+    },
+    {
+      "priority": 2,
+      "question": "What is the exact data schema available from Workday API?",
+      "urgency": "Before planning",
+      "impact_if_unanswered": "Backend integration scope may be larger than estimated"
+    },
+    {
+      "priority": 3,
+      "question": "Which e-signature vendor is approved by legal team?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Integration scope unclear, may need to pivot to PDF approach"
+    }
+  ],
+  "pm_confidence_score": {
+    "score": 92,
+    "deductions": [
+      {
+        "amount": -8,
+        "reason": "External dependency (Workday) has HIGH risk if wrong"
+      }
+    ],
+    "interpretation": "High quality input with clear requirements. Main risks are external integrations. Project is achievable within timeline with appropriate risk mitigation."
+  }
+}

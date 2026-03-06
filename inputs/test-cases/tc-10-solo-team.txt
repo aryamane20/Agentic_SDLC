@@ -1,0 +1,52 @@
+# TC-10: Edge Case - Solo Team
+
+## Project Request
+
+**Primary Goal:** Build a comprehensive internal IT service desk system.
+
+**Beneficiary:** IT team (5 people), All employees (500)
+
+**Trigger:** IT is drowning in tickets. Manual processes. No visibility into IT workload or SLAs.
+
+**Success Definition:**
+- Self-service ticket creation
+- Automated ticket routing
+- SLA tracking and alerts
+- Knowledge base for common issues
+- Dashboard for IT manager
+- Mobile app for ticket updates
+
+**Deadline:** 6 months
+
+**Budget:** $100,000
+
+**Team:** 1 person (full-stack developer, will also do PM and design)
+
+**Requirements:**
+- Ticket creation and management
+- Knowledge base (articles, FAQs)
+- Asset management (track laptops, equipment)
+- Service catalog (request software, equipment)
+- SLA management with alerts
+- Reporting and dashboards
+- Integration with Slack for notifications
+- Email integration for ticket creation
+- Mobile app (iOS/Android)
+- User satisfaction rating
+
+**Technology:**
+- Frontend: React
+- Backend: Python/Django
+- Database: PostgreSQL
+- Mobile: React Native
+- Slack API
+- Email: SendGrid
+
+**Scope:**
+This is essentially replacing Zendesk with a custom solution - typically a 6-month team effort.
+
+**Constraints:**
+- Only one developer available - they will do development, PM, and design
+- Must support 500 concurrent users
+- Must have 99.9% uptime
+- Must integrate with 10+ internal systems

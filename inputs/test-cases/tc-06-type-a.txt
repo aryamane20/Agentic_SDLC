@@ -1,0 +1,32 @@
+# TC-06: Type A - New Internal Tool
+
+## Project Request
+
+**Primary Goal:** Build an internal employee directory with org chart visualization.
+
+**Beneficiary:** All 500 employees
+
+**Trigger:** HR can't answer "who reports to who" questions easily. People can't find experts in specific areas.
+
+**Success Definition:**
+- All employees searchable by name, role, team, skills
+- Org chart accurate within 1 business day of changes
+- Employee profiles 95% complete
+
+**Deadline:** 3 months
+
+**Budget:** $40,000
+
+**Team:** 2 developers, 1 designer
+
+**Requirements:**
+- Search by name, title, department, skills
+- Org chart visualization (interactive)
+- Employee profiles (photo, title, team, manager, skills, contact)
+- Integration with Workday for employee data
+- Mobile responsive
+- Quick links to Slack, calendar
+
+**Constraints:**
+- Must be SOC 2 compliant
+- Data must sync daily from Workday

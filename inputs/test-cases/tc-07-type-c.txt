@@ -1,0 +1,41 @@
+# TC-07: Type C - Data Pipeline
+
+## Project Request
+
+**Primary Goal:** Build a data pipeline to consolidate marketing analytics.
+
+**Beneficiary:** Marketing team (20 people)
+
+**Trigger:** Marketing data is scattered across 5 different tools. Reports take 2 days to compile manually.
+
+**Success Definition:**
+- All marketing data in one dashboard
+- Data refresh daily at 6 AM
+- 15 pre-built reports available
+- Marketing team can create custom reports without IT help
+
+**Deadline:** 2 months
+
+**Budget:** $30,000
+
+**Team:** 1 data engineer, 1 analyst
+
+**Data Sources:**
+- Google Analytics (web traffic)
+- HubSpot (CRM, leads)
+- Facebook Ads (spend, performance)
+- Mailchimp (email campaigns)
+- Stripe (revenue data)
+
+**Requirements:**
+- ETL pipeline to extract, transform, load data
+- Data warehouse (Snowflake)
+- BI dashboard (Looker)
+- Automated daily refresh
+- Data validation and error handling
+- Lineage tracking (know source of each data point)
+
+**Constraints:**
+- PII must be handled per GDPR
+- Historical data: 2 years minimum
+- Pipeline must recover from failures automatically

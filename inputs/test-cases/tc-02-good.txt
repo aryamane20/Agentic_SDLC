@@ -1,0 +1,37 @@
+# TC-02: Good Input - Customer Dashboard Enhancement
+
+## Project Request
+
+Enhance our existing customer analytics dashboard with new features.
+
+**Primary Goal:** Add real-time reporting and alerting capabilities to our existing customer analytics dashboard.
+
+**Beneficiary:** Customer success team (15 people), Sales team (25 people)
+
+**Trigger:** Customer success managers are spending 10 hours/week manually generating reports. Leadership wants automated dashboards.
+
+**Success Definition:**
+- CSMs can create custom reports in < 5 minutes
+- 90% of scheduled reports delivered on time
+- Alert response time < 1 hour
+
+**Deadline:** 3 months
+
+**Team:** 3 developers, 1 product manager
+
+**Technology Stack:**
+- Frontend: React
+- Backend: Python/Django
+- Database: PostgreSQL
+- Alerting: PagerDuty integration
+
+**Requirements:**
+- Custom date range filtering
+- Export to PDF/CSV
+- Email scheduling
+- Dashboard widgets for KPIs
+- Real-time data refresh (every 15 minutes)
+
+**Known Constraints:**
+- Must integrate with existing authentication (SSO)
+- Data retention policy: 2 years

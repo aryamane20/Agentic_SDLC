@@ -1,0 +1,47 @@
+# TC-09: Edge Case - Short Timeline
+
+## Project Request
+
+**Primary Goal:** Build a new customer-facing e-commerce website.
+
+**Beneficiary:** Customers (B2C), E-commerce team
+
+**Trigger:** Current website is 8 years old, not mobile-friendly, checkout conversion is low. CEO wants to launch before Q4 holiday season.
+
+**Success Definition:**
+- Launch within 2 weeks
+- Mobile-responsive design
+- Checkout conversion rate > 3%
+- Support 1000 concurrent users
+
+**Deadline:** 2 WEEKS (hard deadline)
+
+**Budget:** $25,000
+
+**Team:** 3 developers, 1 designer
+
+**Requirements:**
+- Product catalog (5000+ products)
+- Shopping cart
+- Checkout with payment processing (Stripe)
+- Order management
+- Customer accounts
+- Inventory sync with warehouse system
+- SEO optimization
+- Analytics tracking
+
+**Technology:**
+- Frontend: Next.js
+- Backend: Node.js
+- Database: PostgreSQL
+- Payment: Stripe API
+- CDN: Cloudflare
+
+**Constraints:**
+- Must launch in 2 weeks - NO FLEXIBILITY
+- Must process credit card payments (PCI compliance)
+- Must handle holiday traffic spike
+- Must be SEO-friendly for product pages
+- Integration with warehouse API for inventory
+
+This is the highest priority project in the company right now.
