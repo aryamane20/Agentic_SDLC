@@ -43,7 +43,7 @@ class PMAgent:
         self.client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
         self.model = "claude-sonnet-4-20250514"
         self.temperature = 0.3   # Low for consistency (PMBOK-grounded output)
-        self.max_tokens = 8000   # PM reports are detailed
+        self.max_tokens = 15000   # Increased for detailed PM reports with full JSON
         self.system_prompt = self._build_system_context()
 
     def _load_role(self) -> str:
@@ -174,6 +174,11 @@ Begin your analysis now."""
         """
         Extract the JSON object from the LLM's response.
         The LLM produces a human-readable report followed by a JSON block.
+        
+        Handles:
+        - JSON in code blocks
+        - JSON starting from first { to end of response
+        - Truncated JSON (tries to fix missing closing braces)
         """
         # Strategy 1: Find JSON in code block
         code_block_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", raw_output, re.DOTALL)
@@ -194,6 +199,15 @@ Begin your analysis now."""
                 if "project_understanding" in parsed or "report_metadata" in parsed:
                     return parsed
             except json.JSONDecodeError:
+                # Try to fix truncated JSON by adding missing braces
+                fixed = self._fix_truncated_json(candidate)
+                if fixed:
+                    try:
+                        parsed = json.loads(fixed)
+                        if "project_understanding" in parsed or "report_metadata" in parsed:
+                            return parsed
+                    except:
+                        pass
                 continue
 
         # Strategy 3: Try the entire output as JSON
@@ -215,3 +229,18 @@ Begin your analysis now."""
                 "parse_failed": True
             }
         }
+    
+    def _fix_truncated_json(self, json_str: str) -> str:
+        """
+        Attempt to fix truncated JSON by adding missing closing braces.
+        """
+        # Count open and closed braces
+        open_braces = json_str.count('{')
+        close_braces = json_str.count('}')
+        
+        if open_braces > close_braces:
+            # Add missing closing braces
+            missing = open_braces - close_braces
+            return json_str + ('}' * missing)
+        
+        return None
