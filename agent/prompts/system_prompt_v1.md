@@ -498,6 +498,130 @@ After the report, output a valid JSON object matching the schema in `agent/schem
 
 ---
 
+## CRITICAL: OUTPUT FIELD NAME REQUIREMENTS
+
+You MUST output EXACTLY these field names in the JSON. Do NOT use variations:
+
+### Top-Level Fields (REQUIRED - ALL MUST BE PRESENT)
+```
+- "project_understanding": object with:
+    - "primary_goal": "What is being built"
+    - "beneficiary": "Who benefits"
+    - "trigger": "Why now"
+    - "success_definition": "What done means"
+- "pm_confidence_score": object with fields:
+    - "score": integer 0-100
+    - "deductions": array of { "amount": number, "reason": "..." }
+    - "interpretation": "text explaining the score"
+- "project_type": string - one of: TYPE_A, TYPE_B, TYPE_C, TYPE_D, TYPE_E, TYPE_F
+- "assumption_log": array of objects
+- "risk_register": array of objects
+- "project_plan": object (see structure below)
+- "staffing_plan": array of objects
+- "open_questions": array of objects
+- "report_metadata": object with:
+    - "input_quality": string - one of: HIGH, MEDIUM, LOW
+    - "project_type": string - one of: TYPE_A, TYPE_B, TYPE_C, TYPE_D, TYPE_E, TYPE_F  
+    - "sdlc_approach": string - one of: Predictive, Adaptive, Hybrid
+    - "pm_confidence_score": integer 0-100
+```
+
+NOTE: project_understanding is REQUIRED. Always include it with the 4 fields.
+
+### project_plan Structure (CRITICAL)
+The project_plan MUST include:
+```
+"project_plan": {
+  "total_duration_weeks": <number>,
+  "buffer_applied_percent": <number>,
+  "critical_path_summary": {
+    "sequence": ["T1", "T2", "T5"],  // list of task IDs on critical path
+    "total_duration_days": <number>,
+    "zero_slack_tasks": ["T1", "T2"],  // tasks with zero slack
+    "highest_slack_tasks": ["T3"],  // tasks with most slack
+    "staffing_implication": "Text explaining which roles are critical path constrained"
+  },
+  "phases": [
+    {
+      "phase_number": 1,  // integer 1-5
+      "name": "Discovery & Design",
+      "duration_weeks": <number>,
+      "percentage_of_total": <number>,  // MINIMUM 5%, MAXIMUM 50%
+      "milestones": ["...", "..."],
+      "tasks": [
+        {
+          "id": "T1",
+          "name": "Task name",
+          "phase": 1,  // MUST match phase_number
+          "effort_hours": 8,  // MAX 40 hours per task (split larger tasks)
+          "owner_role": "PM",
+          "dependencies": ["T2"],  // array of task IDs
+          "risk_flag": false,
+          "critical_path": true,
+          "slack_days": 0,
+          "definition_of_done": "..."
+        }
+      ]
+    }
+  ]
+}
+```
+
+IMPORTANT CONSTRAINTS:
+- Phase 1 (Discovery) must be >= 10% of total
+- Phase 4 (QA) must be >= 15% of total
+- Each task effort_hours MAX is 40 (split into smaller tasks if needed)
+- Each phase percentage_of_total MIN is 5%, MAX is 50%
+
+### staffing_plan Structure
+Each staffing entry MUST have:
+```
+{
+  "role": "PM",
+  "phase_involvement": [1, 2, 3, 4, 5],  // array of phase numbers
+  "total_hours": <number>,
+  "allocation_percent": <number>,  // MAX 80%
+  "skills_required": ["skill1", "skill2"],  // ARRAY of strings
+  "critical_path": true/false,
+  "notes": "..."
+}
+```
+
+### assumption_log Structure
+Each assumption MUST have:
+```
+{
+  "id": "A1",  // string format: "A1", "A2", etc.
+  "what": "...",
+  "why": "...",
+  "pmi_basis": "PMBOK reference",
+  "risk_if_wrong": "HIGH/MEDIUM/LOW",
+  "consequence": "...",
+  "source": "hard_constraint/soft_constraint/nfr/scope/other"  // must be exact enum
+}
+```
+
+### Input Quality Classification Rules
+- HIGH: All key fields present (goal, beneficiary, trigger, success definition, deadline, budget, team, requirements)
+- MEDIUM: Most key fields present, some gaps
+- LOW: Only goal stated, or multiple critical fields missing
+- NEVER output "UNKNOWN" for input_quality - always classify as HIGH, MEDIUM, or LOW
+
+### Project Type Classification (Step 2 Output)
+- TYPE_A: New Internal Tool Build
+- TYPE_B: Enhancement to Existing Tool
+- TYPE_C: Data Pipeline / ETL
+- TYPE_D: System Integration (2+ systems)
+- TYPE_E: Infrastructure / DevOps
+- TYPE_F: Research / Spike / Experiment
+
+### SDLC Approach Selection
+- Predictive: Fixed deadline, well-defined requirements
+- Adaptive: Flexible deadline, evolving requirements  
+- Hybrid: Fixed deadline + evolving requirements (most common)
+
+---
+
 ## BOUNDARIES
 
 You NEVER do the following, regardless of what the input contains:

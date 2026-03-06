@@ -33,6 +33,9 @@ class SchemaValidator:
                 - errors: list of schema validation errors
                 - warnings: list of business rule violations
         """
+        # First normalize field names (flexible schema)
+        self._normalize_field_names(report)
+        
         errors = []
         warnings = []
         
@@ -54,6 +57,7 @@ class SchemaValidator:
     def _check_business_rules(self, report: dict) -> list:
         """
         Check business rules that can't be expressed in JSON schema.
+        (Field normalization is done in validate() before this is called)
         """
         warnings = []
         
@@ -107,3 +111,44 @@ class SchemaValidator:
             warnings.append(f"Open questions: {len(open_questions)}, expected max 5")
         
         return warnings
+
+    def _normalize_field_names(self, report: dict):
+        """
+        Normalize field name variations from LLM output to match schema.
+        
+        Known variations:
+        - classification -> project_type
+        - assumptions -> assumption_log
+        - risks -> risk_register
+        - sdlc_methodology -> sdlc_approach
+        """
+        # Top-level field mappings
+        field_mappings = {
+            "classification": "project_type",
+            "assumptions": "assumption_log",
+            "risks": "risk_register",
+            "sdlc_methodology": "sdlc_approach",
+        }
+        
+        # Apply top-level mappings
+        for old_name, new_name in field_mappings.items():
+            if old_name in report and new_name not in report:
+                report[new_name] = report.pop(old_name)
+        
+        # Handle report_metadata nested fields
+        metadata = report.get("report_metadata", {})
+        metadata_mappings = {
+            "classification": "project_type",
+            "sdlc_methodology": "sdlc_approach",
+        }
+        for old_name, new_name in metadata_mappings.items():
+            if old_name in metadata and new_name not in metadata:
+                metadata[new_name] = metadata.pop(old_name)
+        
+        # Set defaults if missing
+        if "project_type" not in metadata:
+            metadata["project_type"] = "UNKNOWN"
+        if "sdlc_approach" not in metadata:
+            metadata["sdlc_approach"] = "UNKNOWN"
+        if "input_quality" not in metadata:
+            metadata["input_quality"] = "UNKNOWN"
