@@ -112,7 +112,7 @@
               },
               "tasks": {
                 "type": "array",
-                "minItems": 1,
+                "minItems": 0,
                 "items": {
                   "type": "object",
                   "required": ["id", "name", "phase", "effort_hours", "owner_role", "dependencies", "risk_flag", "critical_path", "slack_days", "definition_of_done"],

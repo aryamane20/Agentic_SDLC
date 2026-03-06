@@ -15,10 +15,10 @@ import time
 from pathlib import Path
 from datetime import datetime
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from agent import PMAgent
-from validator import SchemaValidator
+from agent.agent import PMAgent
+from src.validator import SchemaValidator
 
 
 # ─────────────────────────────────────────────────────────────
