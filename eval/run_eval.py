@@ -65,6 +65,7 @@ def run_consistency_test(tc_perfect: dict, agent: PMAgent, runs: int = 5) -> dic
     print(f"  [Consistency] Running TC-01 {runs} times...")
     scores = []
     types = []
+    sdlc_approaches = []
     risk_counts = []
 
     for i in range(runs):
@@ -73,11 +74,13 @@ def run_consistency_test(tc_perfect: dict, agent: PMAgent, runs: int = 5) -> dic
             report = result["report"]
             score = report.get("pm_confidence_score", {}).get("score", 0)
             ptype = report.get("report_metadata", {}).get("project_type", "UNKNOWN")
+            sdlc = report.get("report_metadata", {}).get("sdlc_approach", "UNKNOWN")
             risks = len(report.get("risk_register", []))
             scores.append(score)
             types.append(ptype)
+            sdlc_approaches.append(sdlc)
             risk_counts.append(risks)
-            print(f"    Run {i+1}: score={score}, type={ptype}, risks={risks}")
+            print(f"    Run {i+1}: score={score}, type={ptype}, sdlc={sdlc}, risks={risks}")
             time.sleep(1)  # Avoid rate limiting
         except Exception as e:
             print(f"    Run {i+1}: ERROR — {e}")
@@ -87,19 +90,22 @@ def run_consistency_test(tc_perfect: dict, agent: PMAgent, runs: int = 5) -> dic
 
     score_variance = max(scores) - min(scores)
     type_consistent = len(set(types)) == 1
+    sdlc_consistent = len(set(sdlc_approaches)) == 1
     risk_variance = max(risk_counts) - min(risk_counts)
 
     return {
         "dimension": "Consistency",
-        "target": "Score variance < 5, type identical across runs",
+        "target": "Score variance < 5, type identical across runs, SDLC consistent",
         "result": {
             "score_variance": score_variance,
             "score_range": f"{min(scores)}-{max(scores)}",
             "type_consistent": type_consistent,
             "types_seen": list(set(types)),
+            "sdlc_consistent": sdlc_consistent,
+            "sdlc_approaches_seen": list(set(sdlc_approaches)),
             "risk_count_variance": risk_variance
         },
-        "passed": score_variance < 5 and type_consistent
+        "passed": score_variance < 5 and type_consistent and sdlc_consistent
     }
 
 
@@ -194,6 +200,43 @@ def run_rubric_scoring(report: dict) -> dict:
     else:
         scores["internal_consistency"] = 2
 
+    # 3f: SDLC Approach (v1.1.0) - Check if SDLC approach is present
+    metadata = report.get("report_metadata", {})
+    has_sdlc = "sdlc_approach" in metadata and metadata.get("sdlc_approach") in ["Predictive", "Adaptive", "Hybrid"]
+    has_sdlc_rationale = "sdlc_rationale" in metadata and len(metadata.get("sdlc_rationale", "")) > 5
+    
+    if has_sdlc and has_sdlc_rationale:
+        scores["sdlc_approach"] = 5
+    elif has_sdlc:
+        scores["sdlc_approach"] = 3
+    else:
+        scores["sdlc_approach"] = 1
+
+    # 3g: Critical Path Calculation (v1.1.0) - Check for critical_path and slack_days
+    all_tasks = [t for p in report.get("project_plan", {}).get("phases", []) for t in p.get("tasks", [])]
+    tasks_with_critical_path = [t for t in all_tasks if "critical_path" in t]
+    tasks_with_slack = [t for t in all_tasks if "slack_days" in t]
+    
+    has_critical_path_summary = "critical_path_summary" in report.get("project_plan", {})
+    
+    if all_tasks and len(tasks_with_critical_path) == len(all_tasks) and len(tasks_with_slack) == len(all_tasks) and has_critical_path_summary:
+        scores["critical_path"] = 5
+    elif all_tasks and (len(tasks_with_critical_path) > 0 or has_critical_path_summary):
+        scores["critical_path"] = 3
+    else:
+        scores["critical_path"] = 1
+
+    # 3h: Assumption Source (v1.1.0) - Check for source field on assumptions
+    assumptions = report.get("assumption_log", [])
+    assumptions_with_source = [a for a in assumptions if "source" in a]
+    
+    if assumptions and len(assumptions_with_source) == len(assumptions):
+        scores["assumption_source"] = 5
+    elif assumptions_with_source:
+        scores["assumption_source"] = 3
+    else:
+        scores["assumption_source"] = 1
+
     average = round(sum(scores.values()) / len(scores), 2)
 
     return {
@@ -218,12 +261,15 @@ EDGE_CASE_EXPECTATIONS = {
     "tc-01": {
         "min_confidence": 75,
         "max_assumptions": 3,
-        "must_classify": ["TYPE_A", "TYPE_B", "TYPE_C", "TYPE_D"]
+        "must_classify": ["TYPE_A", "TYPE_B", "TYPE_C", "TYPE_D"],
+        "must_have_sdlc": True,
+        "must_have_critical_path": True
     },
     "tc-04": {
         "max_confidence": 50,
         "min_assumptions": 5,
-        "must_flag_risks": True
+        "must_flag_risks": True,
+        "must_have_nfr_assumptions": True  # Vague input should trigger NFR assumptions
     },
     "tc-05": {
         "max_confidence": 40,
@@ -289,6 +335,42 @@ def run_edge_cases(test_cases: list, agent: PMAgent) -> dict:
                     "check": f"Assumptions >= {expectations['min_assumptions']}",
                     "passed": passed,
                     "actual": count
+                })
+
+            # v1.1.0: Check for SDLC approach
+            if expectations.get("must_have_sdlc"):
+                metadata = report.get("report_metadata", {})
+                has_sdlc = "sdlc_approach" in metadata and metadata.get("sdlc_approach") in ["Predictive", "Adaptive", "Hybrid"]
+                passed_checks.append(has_sdlc)
+                tc_result["checks"].append({
+                    "check": "SDLC approach present in report_metadata",
+                    "passed": has_sdlc,
+                    "actual": metadata.get("sdlc_approach", "MISSING")
+                })
+
+            # v1.1.0: Check for critical path fields
+            if expectations.get("must_have_critical_path"):
+                all_tasks = [t for p in report.get("project_plan", {}).get("phases", []) for t in p.get("tasks", [])]
+                has_critical_path = all("critical_path" in t and "slack_days" in t for t in all_tasks) if all_tasks else False
+                has_summary = "critical_path_summary" in report.get("project_plan", {})
+                passed = has_critical_path and has_summary
+                passed_checks.append(passed)
+                tc_result["checks"].append({
+                    "check": "Critical path and slack_days on all tasks + summary block",
+                    "passed": passed,
+                    "actual": f"tasks={len(all_tasks)}, has_cp={has_critical_path}, has_summary={has_summary}"
+                })
+
+            # v1.1.0: Check for NFR assumptions (vague input should generate NFR gaps)
+            if expectations.get("must_have_nfr_assumptions"):
+                assumptions = report.get("assumption_log", [])
+                nfr_assumptions = [a for a in assumptions if a.get("source") == "nfr"]
+                has_nfr = len(nfr_assumptions) > 0
+                passed_checks.append(has_nfr)
+                tc_result["checks"].append({
+                    "check": "At least one assumption with source=nfr (Non-Functional Requirement gap)",
+                    "passed": has_nfr,
+                    "actual": f"nfr_assumptions={len(nfr_assumptions)}"
                 })
 
             tc_result["overall_passed"] = validation["valid"] and all(passed_checks)
