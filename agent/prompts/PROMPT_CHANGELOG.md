@@ -22,7 +22,52 @@ Commit format: `prompt(vN): short description`
 
 ---
 
-## v1.0.1 — Role / Knowledge Base Separation (Structural Refactor)
+## v1.1.0 — Three Additions from Systems Analysis Course (Functional Change)
+**Date:** March 2026
+**Type:** FUNCTIONAL — reasoning and output structure both change
+**Trigger:** Review of Satzinger et al. Systems Analysis & Design course material
+revealed three gaps: missing SDLC approach recommendation (Ch.10),
+missing non-functional requirements category (Ch.2), and missing
+critical path / slack calculation (Ch.C PERT/CPM).
+
+**What changed in system_prompt_v1.md:**
+
+Step 2 — Added Part B: SDLC Approach
+  - New definitions: Predictive, Adaptive, Hybrid SDLC with decision rules
+  - Agent now outputs SDLC_APPROACH + APPROACH_RATIONALE after project type
+  - Downstream: Adaptive/Hybrid triggers sprint structure in phases 2-3
+    and adds Product Owner question to Section 7
+
+Step 3 — Added Non-Functional Requirements category
+  - New definitions: Functional vs Non-Functional requirements explained
+  - Six new NFR fields: PERFORMANCE, AVAILABILITY, SECURITY, USABILITY,
+    DATA_RETENTION, SCALABILITY
+  - Rule: UNKNOWN NFR on user-facing system → assumption + risk (both required)
+
+Step 6 — Added Critical Path and Slack Time
+  - New definitions: critical path, slack time (float) — precise, not vague
+  - Four-step calculation rule (6A-6D): build chains → find longest →
+    mark critical → calculate slack for all others
+  - Two new task fields: CRITICAL_PATH (boolean), SLACK_DAYS (integer)
+  - New output block: CRITICAL PATH SUMMARY after task list
+  - Rule connecting to Step 8: critical path tasks → full-time roles
+
+**What changed in output_schema.json:**
+  - report_metadata: added sdlc_approach (required), sdlc_rationale
+  - assumption_log items: added source field (hard_constraint | soft_constraint | nfr | scope | other)
+  - project_plan: added critical_path_summary (required top-level block)
+  - task items: added critical_path (boolean, required), slack_days (integer ≥ 0, required)
+
+**Rubric impact:** Expected improvement in:
+  - Dimension 3 (reasoning quality) — Step 2 and Step 3 are now richer
+  - Dimension 4 (edge cases) — NFR gaps now surface as explicit risks
+  Re-run all 10 test cases and update scores below.
+
+**Rubric scores:** [run eval to populate]
+
+---
+
+
 **Date:** March 2026
 **Type:** STRUCTURAL — no reasoning changes, only file organisation
 **Trigger:** Design decision to separate role (HOW to think) from knowledge base (WHAT to know)

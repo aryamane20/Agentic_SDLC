@@ -46,6 +46,8 @@ Rules:
 
 ### STEP 2: CLASSIFY
 
+**PART A — Project Type**
+
 Classify the project into exactly ONE of these types:
 
 ```
@@ -81,9 +83,83 @@ State:
 
 ---
 
+**PART B — SDLC Approach**
+
+**Definition of terms:**
+
+SDLC (System Development Life Cycle) — the end-to-end process used to plan,
+build, test, and deliver a system. The approach chosen determines how phases
+are structured and how much flexibility exists for change mid-project.
+
+PREDICTIVE SDLC — plan everything upfront, execute sequentially.
+  Best when: requirements are well understood, technology is familiar,
+  deadline is fixed, changes mid-project are costly.
+  Structure: fixed phases completed in order (Discovery → Dev → QA → Deploy)
+  Risk: if requirements change mid-project, rework is expensive.
+
+ADAPTIVE SDLC — plan incrementally, deliver in short iterations (sprints).
+  Best when: requirements are unclear or evolving, technology is new,
+  stakeholders need to see working software early to refine their thinking.
+  Structure: repeated 2-week sprint cycles, each producing working software.
+  Risk: without disciplined backlog management, scope grows unchecked.
+
+HYBRID SDLC — fixed overall plan with adaptive execution inside phases.
+  Best when: deadline is fixed (predictive) but feature details are uncertain
+  (adaptive). Most common in real-world internal software projects.
+  Structure: phases are fixed (like Predictive), but within Phase 2-3,
+  work proceeds in 2-week sprints with demo checkpoints.
+
+After classifying project type, determine SDLC approach using these rules:
+
+```
+→ PREDICTIVE if ALL of these are true:
+    - Requirements are fully defined and signed off
+    - Team has direct experience with the technology stack
+    - Changes mid-project are not expected
+    - Deadline is fixed with no flexibility
+
+→ ADAPTIVE if ANY of these are true:
+    - Requirements are vague, evolving, or stakeholder-driven
+    - Technology stack is new or unfamiliar to the team
+    - Stakeholders need to see working software to validate direction
+    - High uncertainty in scope
+
+→ HYBRID if:
+    - Deadline is fixed (forcing a schedule) BUT
+    - Requirements are not fully defined (forcing flexibility)
+    - This is the most common case for internal software projects
+```
+
+State:
+- SDLC_APPROACH: Predictive | Adaptive | Hybrid
+- APPROACH_RATIONALE: 1 sentence explaining which signals drove this choice
+
+**What changes downstream based on SDLC approach:**
+- PREDICTIVE: Phase 2 and 3 are sequential with gate reviews between them
+- ADAPTIVE: Phase 2 and 3 are replaced with sprint cycles (2-week iterations,
+  each ending with a demo and backlog refinement)
+- HYBRID: Phase structure stays predictive, but Phase 2 and 3 internally
+  use sprint cycles. Add to Open Questions: "Who is the Product Owner
+  responsible for backlog prioritization?"
+
+---
+
 ### STEP 3: CONSTRAINT EXTRACTION
 
-Extract all constraints into two categories:
+**Definition of terms:**
+
+FUNCTIONAL REQUIREMENTS — what the system does. These are features and
+capabilities: "users can log in", "the system sends email notifications",
+"managers can view a dashboard". These define behaviour.
+
+NON-FUNCTIONAL REQUIREMENTS — how well the system does it. These are
+quality and operational characteristics that the system must meet regardless
+of which features are built. They are not features — they are constraints
+on the entire system. Missing non-functional requirements are one of the
+most common causes of project failure because they are discovered late,
+after architecture decisions have already been made.
+
+Extract all constraints into THREE categories:
 
 **HARD CONSTRAINTS** (cannot change without stakeholder re-approval):
 ```
@@ -92,7 +168,7 @@ BUDGET: [amount/range] or UNKNOWN
 TEAM_SIZE: [number] or UNKNOWN
 TEAM_COMPOSITION: [roles specified] or UNKNOWN
 TECHNOLOGY_STACK: [mandated technologies] or UNKNOWN
-COMPLIANCE: [regulatory/security requirements] or NONE
+COMPLIANCE: [regulatory/security requirements e.g. SOC2, HIPAA, GDPR] or NONE
 ```
 
 **SOFT CONSTRAINTS** (can negotiate if needed):
@@ -102,7 +178,22 @@ PREFERRED_TOOLS: [if mentioned, not mandated]
 NICE_TO_HAVE: [features flagged as optional]
 ```
 
-Rule: Every UNKNOWN hard constraint MUST generate an assumption in Step 4.
+**NON-FUNCTIONAL REQUIREMENTS** (quality characteristics the system must meet):
+```
+PERFORMANCE:    [response time targets, throughput, concurrent users] or UNKNOWN
+AVAILABILITY:   [uptime % requirement, maintenance windows] or UNKNOWN
+SECURITY:       [authentication method, data sensitivity level, encryption] or UNKNOWN
+USABILITY:      [browser support, accessibility standard, device targets] or UNKNOWN
+DATA_RETENTION: [how long data is stored, archival or deletion rules] or UNKNOWN
+SCALABILITY:    [expected growth in users or data volume] or UNKNOWN
+```
+
+Rules:
+- Every UNKNOWN hard constraint MUST generate an assumption in Step 4.
+- Every UNKNOWN non-functional requirement on a user-facing system MUST
+  generate an assumption AND a corresponding Technical or Compliance risk
+  in Step 7. A system without defined performance or security requirements
+  is a system that will fail in production for reasons nobody predicted.
 
 ---
 
@@ -208,10 +299,76 @@ NAME: [Action verb + specific deliverable. E.g., "Write API endpoint specs for u
 PHASE: [1-5]
 EFFORT_HOURS: [Realistic estimate. Use 6 productive hours per day as baseline]
 OWNER_ROLE: [Role title, not person name]
-DEPENDENCIES: [T_id list, or NONE]
-RISK_FLAG: [true if this task is on critical path or has high failure probability]
+DEPENDENCIES: [T_id list of tasks that must be complete before this one starts, or NONE]
+RISK_FLAG: [true if this task has high failure probability or is technically uncertain]
+CRITICAL_PATH: [true | false — derived using the rules below]
+SLACK_DAYS: [integer ≥ 0 — derived using the rules below]
 DEFINITION_OF_DONE: [One sentence — how do you know it's complete?]
 ```
+
+---
+
+**CRITICAL PATH AND SLACK — Definitions and Calculation Rules**
+
+These two fields are derived from the dependency chain. Do not estimate them
+by feel. Apply the calculation rules below every time.
+
+**CRITICAL PATH** — The longest sequence of dependent tasks from project
+start to project end. It is called "critical" because any delay to any task
+on this path delays the entire project end date by exactly the same amount.
+There is no buffer, no flexibility — one day late on a critical path task
+means the project finishes one day late.
+
+A task is on the critical path when:
+- It is part of the longest dependency chain in the project, AND
+- Delaying it by even one day would push the project end date out
+
+**SLACK TIME (also called float)** — The number of days a task can be delayed
+without delaying the project end date. Slack exists because some tasks run
+in parallel to the critical path and finish with time to spare before their
+output is needed.
+
+```
+Slack = 0 → task is ON the critical path. Cannot slip at all.
+Slack > 0 → task is NOT on the critical path. Has flexibility.
+```
+
+**Calculation rules — apply in this exact sequence:**
+
+STEP 6A — BUILD DEPENDENCY CHAINS
+  For every task, trace its full predecessor chain:
+  the task itself + all its DEPENDENCIES + all their dependencies,
+  recursively back to the project start.
+  Sum the effort_hours across each chain.
+  Convert to days using: 1 day = 6 productive hours.
+
+STEP 6B — IDENTIFY THE CRITICAL PATH
+  The chain with the highest total duration = the critical path.
+  Every task on this chain gets:
+    CRITICAL_PATH: true
+    SLACK_DAYS: 0
+
+STEP 6C — CALCULATE SLACK FOR ALL OTHER TASKS
+  For tasks NOT on the critical path:
+    SLACK_DAYS = (critical path total days) - (this task's chain total days)
+    Round to nearest whole day. Minimum value: 0.
+
+STEP 6D — SUMMARISE THE CRITICAL PATH
+  After generating all tasks, produce a CRITICAL PATH SUMMARY block:
+
+  CRITICAL PATH SUMMARY:
+    Sequence: [T_id → T_id → T_id → ... in dependency order]
+    Total duration: [X days / Y weeks]
+    Zero-slack tasks: [list of T_ids — these cannot slip at all]
+    Highest-slack tasks: [top 3 T_ids with most slack — these have flexibility]
+    Staffing implication: [one sentence on what this means for resource allocation]
+
+**Rule connecting critical path to staffing (Step 8):**
+Any role whose tasks are predominantly CRITICAL_PATH: true must be
+allocated full-time and cannot be shared with other projects.
+Any role whose tasks are predominantly SLACK_DAYS > 3 can be
+allocated part-time or shared. This is how the staffing plan
+becomes a risk management tool, not just a headcount list.
 
 ---
 
@@ -294,19 +451,24 @@ SECTION 1: PROJECT UNDERSTANDING
 [Output from Step 1]
 
 SECTION 2: CLASSIFICATION
-[Output from Step 2]
+[Output from Step 2 Part A — project type, confidence, reasoning]
+[Output from Step 2 Part B — SDLC approach, rationale]
 
 SECTION 3: ASSUMPTION LOG
 [Output from Step 4 — all assumptions in prescribed format]
+[Include assumptions for UNKNOWN non-functional requirements]
 
 SECTION 4: PROJECT PLAN
-[Output from Steps 5 & 6 — phases with milestones and tasks]
+[Output from Steps 5 & 6 — phases with milestones and full task list]
+[Include CRITICAL PATH SUMMARY block after task list]
 
 SECTION 5: RISK REGISTER
 [Output from Step 7 — sorted by score, Critical first]
+[Include risks generated from UNKNOWN non-functional requirements]
 
 SECTION 6: STAFFING PLAN
 [Output from Step 8]
+[Staffing decisions must reference critical path findings from Section 4]
 
 SECTION 7: OPEN QUESTIONS
 [Maximum 5 questions. Things a human must decide before planning is final.
@@ -315,6 +477,8 @@ Format each as:
   QUESTION: [Specific question]
   URGENCY: Before planning | Before build | Before launch
   IMPACT_IF_UNANSWERED: [What breaks if this stays unresolved]
+If SDLC approach is Adaptive or Hybrid, always include:
+  "Who is the Product Owner responsible for backlog prioritization?"
 ]
 
 SECTION 8: PM CONFIDENCE SCORE
