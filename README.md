@@ -38,12 +38,13 @@ Agentic_SDLC/
 │   ├── main.py                     ← Entry point: runs the agent end-to-end
 │   ├── runner.py                   ← run_with_retry(), run_with_validation()
 │   ├── logger.py                   ← Structured run logger (writes to logs/)
-│   ├── validator.py                ← Output schema validation using pydantic
-│   └── prompts/                    ← Symlink to ../prompts
+│   └── validator.py                ← Output schema validation using pydantic
 │
 ├── prompts/                        ← Versioned prompt files (immutable once committed)
 │   ├── README.md                   ← Prompt design decisions and version changelog
-│   └── system_prompt_v1.md        ← Initial CoT-structured system prompt
+│   ├── PROMPT_CHANGELOG.md        ← Full version history
+│   ├── v1.0.0_system.txt         ← Initial system prompt
+│   └── v1.1.0_system.txt         ← SDLC approach, NFRs, Critical Path
 │
 ├── schemas/                        ← Input/output schema definitions
 │   ├── input_schema.py            ← Pydantic model for expected input
