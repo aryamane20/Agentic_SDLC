@@ -21,7 +21,7 @@ class ProjectType(str, Enum):
 
 class InputQuality(str, Enum):
     HIGH = "HIGH"
-    MEDIUM = "LOW"
+    MEDIUM = "MEDIUM"
     LOW = "LOW"
 
 

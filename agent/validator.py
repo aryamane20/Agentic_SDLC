@@ -16,7 +16,7 @@ class SchemaValidator:
 
     def __init__(self, schema_path: str = None):
         if schema_path is None:
-            schema_path = Path(__file__).parent.parent / "agent" / "schema" / "output_schema.json"
+            schema_path = Path(__file__).parent.parent / "schemas" / "output_schema.json"
         else:
             schema_path = Path(schema_path)
         

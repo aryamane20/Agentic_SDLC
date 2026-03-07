@@ -27,67 +27,76 @@ This use case evolves across all three course projects:
 ## Repository Structure
 
 ```
-pm-digital-twin/
+Agentic_SDLC/
 │
-├── README.md                        ← You are here
-├── .env.example                     ← Environment variables template
-├── .gitignore
+├── README.md                        ← Architecture answers + project status
+├── .gitignore                      ← Standard Python + logs exclusion
+├── requirements.txt                ← All Python dependencies pinned
 │
-├── docs/                            ← All design documentation
-│   ├── ARCHITECTURE.md              ← Full system design
-│   ├── DESIGN_DECISIONS.md          ← Why we made each choice
-│   ├── PRE_MORTEM.md                ← Predicted failure modes
-│   └── EVALUATION_RUBRIC.md        ← How we score output quality
+├── agent/                          ← Agent implementation code
+│   ├── __init__.py
+│   ├── main.py                     ← Entry point: runs the agent end-to-end
+│   ├── runner.py                   ← run_with_retry(), run_with_validation()
+│   ├── logger.py                   ← Structured run logger (writes to logs/)
+│   ├── validator.py                ← Output schema validation using pydantic
+│   └── prompts/                    ← Symlink to ../prompts
 │
-├── agent/                           ← The PM brain
-│   ├── prompts/
-│   │   ├── system_prompt_v1.md      ← Active system prompt
-│   │   └── PROMPT_CHANGELOG.md      ← Version history of every change
-│   └── schema/
-│       └── output_schema.json       ← JSON contract for all outputs
+├── prompts/                        ← Versioned prompt files (immutable once committed)
+│   ├── README.md                   ← Prompt design decisions and version changelog
+│   └── system_prompt_v1.md        ← Initial CoT-structured system prompt
 │
-├── knowledge-base/                  ← PM domain knowledge (inline for P1)
-│   ├── templates/
-│   │   ├── type-a-new-tool.md       ← New internal tool template
-│   │   ├── type-c-data-pipeline.md  ← Data pipeline template
-│   │   └── type-d-integration.md   ← System integration template
-│   ├── risks/
-│   │   └── risk-patterns.md         ← PMI-grounded risk catalog
-│   └── staffing/
-│       └── role-definitions.md      ← Role benchmarks and effort estimates
+├── schemas/                        ← Input/output schema definitions
+│   ├── input_schema.py            ← Pydantic model for expected input
+│   └── output_schema.py           ← Pydantic model for expected output
 │
-├── inputs/                          ← All test case inputs
-│   └── test-cases/
-│       ├── tc-01-perfect.txt        ← Complete requirements
-│       ├── tc-02-good.txt           ← Most fields, minor gaps
-│       ├── tc-03-medium.txt         ← Key fields, significant gaps
-│       ├── tc-04-vague.txt          ← Goal only, nothing else
-│       ├── tc-05-contradictory.txt  ← Impossible constraints
-│       ├── tc-06-type-a.txt         ← New internal tool
-│       ├── tc-07-type-c.txt         ← Data pipeline
-│       ├── tc-08-type-d.txt         ← System integration
-│       ├── tc-09-short-timeline.txt ← 2 weeks, complex project
-│       └── tc-10-solo-team.txt      ← 1 person, large project
+├── tests/                          ← pytest test suite
+│   ├── __init__.py
+│   ├── conftest.py                ← pytest fixtures
+│   ├── test_happy_path.py         ← Valid input → expected output
+│   ├── test_edge_cases.py         ← Malformed/empty/boundary inputs
+│   └── test_retry.py              ← Mock API failure → retry → success
 │
-├── outputs/                         ← Auto-generated, gitignored except samples
+├── logs/                           ← Run logs (gitignored except samples)
+│   ├── .gitignore                 ← Ignore all run logs EXCEPT samples/
 │   └── samples/
-│       └── tc-01-sample-output.json ← Reference output for TC-01
+│       ├── sample_success.json     ← Representative successful run
+│       └── sample_failure.json     ← Representative failure run
 │
-├── src/                             ← All source code
-│   ├── main.py                      ← Entry point
-│   ├── agent.py                     ← LLM call + prompt management
-│   ├── parser.py                    ← JSON extraction + cleaning
-│   ├── validator.py                 ← Schema validation
-│   └── logger.py                    ← Structured execution logging
+├── docs/                           ← Architecture doc, pre-mortem, design decisions
+│   ├── ARCHITECTURE.md            ← 5 Architecture Questions answered
+│   ├── PRE_MORTEM.md              ← Failure mode table (predicted)
+│   └── EVALUATION_RUBRIC.md       ← 4-dimension eval results
 │
-└── eval/                            ← Evaluation framework
-    ├── run_eval.py                  ← Master eval runner
-    ├── schema_validator.py          ← Dimension 1: correctness
-    ├── consistency_test.py          ← Dimension 2: determinism
-    ├── rubric_scorer.py             ← Dimension 3: reasoning quality
-    ├── edge_case_runner.py          ← Dimension 4: edge cases
-    └── results/
-        └── eval_report_template.json
+├── scripts/                        ← Utility scripts
+│   ├── run_eval.py                ← Runs agent on eval set, outputs scorecard
+│   └── analyze_logs.py            ← Parses logs/ for latency, failure rate
+│
+├── knowledge-base/                 ← PM domain knowledge (inline for P1)
+│   ├── templates/
+│   │   ├── type-a-new-tool.md    ← New internal tool template
+│   │   ├── type-c-data-pipeline.md ← Data pipeline template
+│   │   └── type-d-integration.md ← System integration template
+│   ├── risks/
+│   │   └── risk-patterns.md      ← PMI-grounded risk catalog
+│   └── staffing/
+│       └── role-definitions.md    ← Role benchmarks and effort estimates
+│
+├── inputs/                         ← All test case inputs
+│   └── test-cases/
+│       ├── tc-01-perfect.txt      ← Complete requirements
+│       ├── tc-02-good.txt         ← Most fields, minor gaps
+│       ├── tc-03-medium.txt       ← Key fields, significant gaps
+│       ├── tc-04-vague.txt        ← Goal only, nothing else
+│       ├── tc-05-contradictory.txt ← Impossible constraints
+│       ├── tc-06-type-a.txt       ← New internal tool
+│       ├── tc-07-type-c.txt       ← Data pipeline
+│       ├── tc-08-type-d.txt      ← System integration
+│       ├── tc-09-short-timeline.txt ← 2 weeks, complex project
+│       └── tc-10-solo-team.txt   ← 1 person, large project
+│
+└── outputs/                       ← Auto-generated, gitignored except samples
+    └── samples/
+        └── tc-01-sample_output.json ← Reference output for TC-01
 ```
 
 ---
@@ -97,25 +106,29 @@ pm-digital-twin/
 ### Setup
 ```bash
 git clone <your-repo>
-cd pm-digital-twin
+cd Agentic_SDLC
 pip install -r requirements.txt
-cp .env.example .env
-# Add your API key to .env
+# Add your API key to .env (ANTHROPIC_API_KEY)
 ```
 
 ### Run on a single input
 ```bash
-python src/main.py --input inputs/test-cases/tc-01-perfect.txt
+python -m agent.main --input inputs/test-cases/tc-01-perfect.txt
 ```
 
 ### Run full evaluation suite
 ```bash
-python eval/run_eval.py --all
+python scripts/run_eval.py --all
 ```
 
 ### Run specific test case
 ```bash
-python src/main.py --input inputs/test-cases/tc-04-vague.txt --verbose
+python -m agent.main --input inputs/test-cases/tc-04-vague.txt --verbose
+```
+
+### Run tests
+```bash
+pytest tests/
 ```
 
 ---
@@ -166,4 +179,4 @@ prompt(v2): tighten assumption log format
 - Tested on TC-01 through TC-05, rubric improved 3.2→3.8
 ```
 
-See `agent/prompts/PROMPT_CHANGELOG.md` for full history.
+See `prompts/README.md` for full history.

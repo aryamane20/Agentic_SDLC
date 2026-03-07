@@ -17,8 +17,8 @@ from datetime import datetime
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from agent.agent import PMAgent
-from src.validator import SchemaValidator
+from agent.main import PMAgent
+from agent.validator import SchemaValidator
 
 
 # ─────────────────────────────────────────────────────────────
