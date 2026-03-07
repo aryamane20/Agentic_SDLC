@@ -50,95 +50,74 @@
 
 ## SCHEDULE RISKS
 
-| Pattern | Probability | Impact | Score | Trigger Signal |
-|---------|-------------|--------|-------|----------------|
-| Fixed deadline + undefined scope | HIGH | HIGH | CRITICAL | Deadline given but requirements incomplete |
-| Aggressive timeline + new technology | HIGH | HIGH | CRITICAL | < 8 weeks + unfamiliar stack |
-| No buffer in schedule for integration testing | MEDIUM | HIGH | HIGH | Testing phase < 15% of timeline |
-| Dependency on external team delivery | HIGH | MEDIUM | HIGH | Another team must deliver before yours can start |
-| Sequential phases with no overlap allowed | MEDIUM | MEDIUM | MEDIUM | Strict gate reviews between each phase |
-| Key holidays / planned leave not accounted for | MEDIUM | MEDIUM | MEDIUM | Long project without capacity planning |
-| Estimate based on ideal conditions, not realistic | HIGH | HIGH | CRITICAL | No buffer added to developer estimates |
-
-**Mitigation patterns:**
-- Always add 15% schedule reserve (PMBOK 6.5)
-- Identify dependencies in Phase 1, not Phase 3
-- Scope freeze gate before development begins
+| Pattern | Probability | Impact | Trigger Signal |
+|---------|-------------|--------|----------------|
+| Fixed deadline + undefined scope | HIGH | HIGH | Deadline given but requirements incomplete |
+| Aggressive timeline + new technology | HIGH | HIGH | < 8 weeks + unfamiliar stack |
+| No buffer in schedule for integration testing | MEDIUM | HIGH | Testing phase < 15% of timeline |
+| Dependency on external team delivery | HIGH | MEDIUM | Another team must deliver before yours can start |
+| Estimate based on ideal conditions, not realistic | HIGH | HIGH | No buffer added to developer estimates |
 
 ---
 
 ## RESOURCE RISKS
 
-| Pattern | Probability | Impact | Score | Trigger Signal |
-|---------|-------------|--------|-------|----------------|
-| Single point of failure on critical path | MEDIUM | HIGH | HIGH | One person owns the entire critical path |
-| Part-time team members on critical path | HIGH | MEDIUM | HIGH | Any critical path role < 60% allocation |
-| Team unfamiliar with required technology | MEDIUM | HIGH | HIGH | New stack with no existing expertise |
-| Key person dependency (bus factor = 1) | MEDIUM | HIGH | HIGH | Only one person understands a critical system |
-| Over-allocated team (>80% on project) | HIGH | MEDIUM | HIGH | Developer scheduled at 100% |
-| Offshore/distributed team coordination | MEDIUM | MEDIUM | MEDIUM | >4 hour timezone gap on critical path work |
-| Team too small for scope | HIGH | HIGH | CRITICAL | Scope requires more parallel tracks than team allows |
-
-**Mitigation patterns:**
-- Never allocate critical path role > 80% (PMBOK 9.2)
-- Document bus factor risks in Phase 1
-- Cross-train at least one backup per critical path role on projects > 3 months
+| Pattern | Probability | Impact | Trigger Signal |
+|---------|-------------|--------|----------------|
+| Single point of failure on critical path | MEDIUM | HIGH | One person owns the entire critical path |
+| Part-time team members on critical path | HIGH | MEDIUM | Any critical path role < 60% allocation |
+| Team unfamiliar with required technology | MEDIUM | HIGH | New stack with no existing expertise |
+| Key person dependency (bus factor = 1) | MEDIUM | HIGH | Only one person understands a critical system |
+| Over-allocated team (>80% on project) | HIGH | MEDIUM | Developer scheduled at 100% |
+| Team too small for scope | HIGH | HIGH | Scope requires more parallel tracks than team allows |
 
 ---
 
 ## TECHNICAL RISKS
 
-| Pattern | Probability | Impact | Score | Trigger Signal |
-|---------|-------------|--------|-------|----------------|
-| New third-party API without sandbox testing | MEDIUM | HIGH | HIGH | External API mentioned, no sandbox confirmed |
-| No established CI/CD pipeline | LOW | MEDIUM | LOW | First project for this team/system |
-| Performance requirements undefined | MEDIUM | MEDIUM | MEDIUM | No latency/throughput targets in requirements |
-| Technical debt in existing codebase | HIGH | MEDIUM | HIGH | Enhancement project on legacy system |
-| Undefined security requirements | MEDIUM | HIGH | HIGH | No security requirements in input, but handles user data |
-| Lack of automated testing infrastructure | MEDIUM | MEDIUM | MEDIUM | No existing test suite mentioned |
-| Third-party library/service deprecation risk | LOW | HIGH | MEDIUM | Relying on external library with uncertain future |
-| Scalability requirements undefined | MEDIUM | HIGH | HIGH | Expected load/volume not specified |
+| Pattern | Probability | Impact | Trigger Signal |
+|---------|-------------|--------|----------------|
+| New third-party API without sandbox testing | MEDIUM | HIGH | External API mentioned, no sandbox confirmed |
+| Performance requirements undefined | MEDIUM | MEDIUM | No latency/throughput targets in requirements |
+| Technical debt in existing codebase | HIGH | MEDIUM | Enhancement project on legacy system |
+| Undefined security requirements | MEDIUM | HIGH | No security requirements in input, but handles user data |
+| Scalability requirements undefined | MEDIUM | HIGH | Expected load/volume not specified |
 
 ---
 
 ## SCOPE RISKS
 
-| Pattern | Probability | Impact | Score | Trigger Signal |
-|---------|-------------|--------|-------|----------------|
-| Requirements not formally signed off | HIGH | HIGH | CRITICAL | No stakeholder approval mentioned |
-| Multiple stakeholders, no single decision maker | HIGH | HIGH | CRITICAL | Multiple teams / executives mentioned as stakeholders |
-| No change control process defined | MEDIUM | HIGH | HIGH | No mention of how scope changes will be handled |
-| Scope creep from well-intentioned additions | HIGH | MEDIUM | HIGH | Any project with multiple stakeholders |
-| "Nice to have" features creeping into MVP | HIGH | MEDIUM | HIGH | Features labeled "nice to have" but stakeholder expects them |
-| Success criteria vague or unmeasurable | MEDIUM | HIGH | HIGH | "Better", "faster", "improved" without numbers |
-| Stakeholder not available for timely decisions | MEDIUM | HIGH | HIGH | Decision-maker mentioned as busy / traveling |
-
-**Mitigation patterns:**
-- Scope baseline document signed off before Phase 2 (PMBOK 5.4)
-- Change request process documented in Phase 1
-- Success metrics defined in numbers, not adjectives
+| Pattern | Probability | Impact | Trigger Signal |
+|---------|-------------|--------|----------------|
+| Requirements not formally signed off | HIGH | HIGH | No stakeholder approval mentioned |
+| Multiple stakeholders, no single decision maker | HIGH | HIGH | Multiple teams / executives mentioned as stakeholders |
+| No change control process defined | MEDIUM | HIGH | No mention of how scope changes will be handled |
+| Scope creep from well-intentioned additions | HIGH | MEDIUM | Any project with multiple stakeholders |
+| "Nice to have" features creeping into MVP | HIGH | MEDIUM | Features labeled "nice to have" but stakeholder expects them |
+| Success criteria vague or unmeasurable | MEDIUM | HIGH | "Better", "faster", "improved" without numbers |
+| Stakeholder not available for timely decisions | MEDIUM | HIGH | Decision-maker mentioned as busy / traveling |
 
 ---
 
 ## EXTERNAL / INTEGRATION RISKS
 
-| Pattern | Probability | Impact | Score | Trigger Signal |
-|---------|-------------|--------|-------|----------------|
-| External API rate limiting | MEDIUM | MEDIUM | MEDIUM | High-volume integration with third-party API |
-| External API schema change | MEDIUM | HIGH | HIGH | Depending on external API not under our control |
-| External system downtime affecting integration | MEDIUM | HIGH | HIGH | Integration with external system that has its own SLA |
-| Vendor/third-party delivery delay | HIGH | MEDIUM | HIGH | Project depends on external team or vendor delivery |
-| Data access permissions delay | HIGH | MEDIUM | HIGH | Need read access to external system not yet approved |
-| Compliance approval process duration unknown | MEDIUM | HIGH | HIGH | Legal/security review required but not scoped |
+| Pattern | Probability | Impact | Trigger Signal |
+|---------|-------------|--------|----------------|
+| External API rate limiting | MEDIUM | MEDIUM | High-volume integration with third-party API |
+| External API schema change | MEDIUM | HIGH | Depending on external API not under our control |
+| External system downtime affecting integration | MEDIUM | HIGH | Integration with external system that has its own SLA |
+| Vendor/third-party delivery delay | HIGH | MEDIUM | Project depends on external team or vendor delivery |
+| Data access permissions delay | HIGH | MEDIUM | Need read access to external system not yet approved |
+| Compliance approval process duration unknown | MEDIUM | HIGH | Legal/security review required but not scoped |
 
 ---
 
 ## COMPLIANCE RISKS
 
-| Pattern | Probability | Impact | Score | Trigger Signal |
-|---------|-------------|--------|-------|----------------|
-| Security review not scoped | MEDIUM | HIGH | HIGH | System handles user data, no security review in plan |
-| SOC 2 / HIPAA / GDPR requirements | MEDIUM | HIGH | HIGH | Compliance requirements mentioned in input |
-| Penetration testing not planned | LOW | HIGH | MEDIUM | User-facing system with no pentest in plan |
-| Data retention policy not defined | MEDIUM | MEDIUM | MEDIUM | System stores user/business data |
-| Audit trail requirements not implemented | MEDIUM | HIGH | HIGH | Regulated industry or financial data |
+| Pattern | Probability | Impact | Trigger Signal |
+|---------|-------------|--------|----------------|
+| Security review not scoped | MEDIUM | HIGH | System handles user data, no security review in plan |
+| SOC 2 / HIPAA / GDPR requirements | MEDIUM | HIGH | Compliance requirements mentioned in input |
+| Penetration testing not planned | LOW | HIGH | User-facing system with no pentest in plan |
+| Data retention policy not defined | MEDIUM | MEDIUM | System stores user/business data |
+| Audit trail requirements not implemented | MEDIUM | HIGH | Regulated industry or financial data |

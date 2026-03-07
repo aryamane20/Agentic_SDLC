@@ -39,14 +39,6 @@ Phase 5 MUST include:
   - Ownership handoff (who maintains this post-launch?)
 ```
 
-### Common Risks (specific to Type A)
-```
-- Scope creep: stakeholders add features during build → add change control gate at Phase 2 start
-- Unclear ownership post-launch: nobody maintains it → document owner in Phase 1
-- Adoption failure: tool built but nobody uses it → include adoption plan in Phase 5
-- UX under-investment: skipping design leads to low adoption → protect Phase 1 UX time
-```
-
 ### Typical Team Composition
 ```
 1 Product Manager (critical path, all phases)
@@ -87,14 +79,6 @@ Phase 4 MUST include:
   - Performance comparison vs baseline
 ```
 
-### Common Risks (specific to Type B)
-```
-- Regression: new code breaks existing features → full regression suite required
-- Technical debt: existing codebase makes changes harder → audit in Phase 1
-- Scope creep from existing bugs: team discovers bugs and gets distracted
-- Deployment risk: existing users affected → feature flags and rollback plan
-```
-
 ### Typical Team Composition
 ```
 1 Product Manager (critical path)
@@ -130,15 +114,6 @@ Phase 4 MUST include:
   - Data accuracy validation (compare output to source of truth)
   - End-user acceptance of report/dashboard output
   - Monitoring and alerting for pipeline failures
-```
-
-### Common Risks (specific to Type C)
-```
-- Data quality at source: source systems have dirty/inconsistent data → assess in Phase 1
-- Schema changes mid-build: source system changes schema → version control on schemas
-- Performance at scale: pipeline works on sample data, fails on full volume → test early
-- Access delays: getting read access to source systems takes weeks → start in Phase 1
-- Stakeholder expectation mismatch: "I wanted this metric calculated differently" → define metrics in Phase 1
 ```
 
 ### Typical Team Composition
@@ -183,16 +158,6 @@ Phase 4 MUST include:
   - Monitoring and alerting for integration failures
 ```
 
-### Common Risks (specific to Type D)
-```
-- External API changes: third-party changes their API mid-project → contract versioning, change notification setup
-- Sandbox access delays: getting test credentials takes weeks → request in Phase 1 day 1
-- Rate limiting: hitting API limits in production → document limits, design around them
-- Authentication complexity: OAuth flows, certificate rotation → allocate dedicated time
-- Data mapping errors: field semantics differ between systems → data mapping document in Phase 1
-- External API downtime: integration breaks when external system is down → circuit breaker pattern
-```
-
 ### Typical Team Composition
 ```
 1 Product Manager (critical path)
@@ -233,14 +198,6 @@ Phase 4 MUST include:
   - Stakeholder sign-off on migration completeness
 ```
 
-### Common Risks (specific to Type E)
-```
-- Data loss during migration → validated backup + rollback plan required
-- Downtime exceeds tolerance → parallel run strategy
-- Feature parity gaps → inventory of current features before migration
-- Performance regression → benchmark old system before migrating
-```
-
 ---
 
 ## TYPE F — Process Automation
@@ -264,10 +221,3 @@ Phase 4 MUST include:
   - Parallel run with manual process (both running simultaneously)
 ```
 
-### Common Risks (specific to Type F)
-```
-- Unhandled exceptions: automation fails on edge cases the human handled intuitively → inventory in Phase 1
-- Audit trail gaps: automated actions not logged → compliance and debugging risk
-- User resistance: people don't trust the automation → stakeholder alignment in Phase 1
-- Scope of automation unclear: "automate this" is vague → document exact decision boundaries
-```
