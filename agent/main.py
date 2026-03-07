@@ -3,7 +3,7 @@ PM Digital Twin — Agent Core
 Handles: prompt loading, knowledge base compilation, LLM call, JSON extraction
 
 ARCHITECTURE NOTE:
-  Role (HOW to think)      → agent/prompts/system_prompt_vN.md
+  Role (HOW to think)      → prompts/vN_system.txt
   Knowledge Base (WHAT to know) → knowledge-base/{templates,risks,staffing}/
 
   These are compiled into one context at runtime by _build_system_context().
@@ -52,11 +52,11 @@ class PMAgent:
         The role encodes: WHO the agent is, HOW it thinks, WHAT it never does.
         Change this when reasoning quality or behavior needs to improve.
         """
-        role_path = Path(f"agent/prompts/system_prompt_{self.prompt_version}.md")
+        role_path = Path(f"prompts/v{self.prompt_version.replace('v', '')}_system.txt")
         if not role_path.exists():
             raise FileNotFoundError(
                 f"Role file not found: {role_path}\n"
-                f"Available versions: {list(Path('agent/prompts').glob('system_prompt_*.md'))}"
+                f"Available versions: {list(Path('prompts').glob('v*_system.txt'))}"
             )
         return role_path.read_text(encoding="utf-8")
 
