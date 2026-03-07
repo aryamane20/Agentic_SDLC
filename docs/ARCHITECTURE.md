@@ -1,4 +1,4 @@
-# ARCHITECTURE.md
+# Architecture.md
 ## PM Digital Twin — Full System Design
 
 ---
