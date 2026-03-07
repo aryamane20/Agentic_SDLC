@@ -21,3 +21,8 @@ build/
 
 # OS
 .DS_Store
+
+# Logs - ignore all except samples/
+logs/*.jsonl
+logs/*.log
+!logs/samples/

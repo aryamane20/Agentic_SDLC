@@ -16,7 +16,7 @@ class PMReportLogger:
     Logs to both file (JSON) and console (human-readable summary).
     """
 
-    def __init__(self, log_dir: str = "outputs/logs"):
+    def __init__(self, log_dir: str = "logs"):
         self.log_dir = Path(log_dir)
         self.log_dir.mkdir(parents=True, exist_ok=True)
         

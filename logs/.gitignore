@@ -1,0 +1,14 @@
+# Ignore all run logs EXCEPT samples/
+*
+
+# Keep these
+!.gitignore
+!samples/
+
+# Ignore all in logs/ except samples/
+logs/*
+!logs/samples/
+
+# Ignore all in samples/
+logs/samples/*
+!logs/samples/.gitkeep
