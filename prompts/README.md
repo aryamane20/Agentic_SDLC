@@ -12,9 +12,14 @@ Each version is stored as an immutable .txt file once committed.
 - All 5 system prompt components
 
 ### v1.1.0_system.txt
-- Added Part B: SDLC Approach (Predictive, Adaptive, Hybrid)
+- Added SDLC Approach (Predictive, Adaptive, Hybrid)
 - Added Non-Functional Requirements category
 - Added Critical Path and Slack Time calculations
+
+### v1.2.0_system.txt (PERFORMANCE)
+- No reasoning changes
+- Infrastructure optimization: Claude 4 prompt caching enabled
+- See PROMPT_CHANGELOG.md for details
 
 ---
 

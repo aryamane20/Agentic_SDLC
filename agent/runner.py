@@ -68,6 +68,8 @@ class AgentRunner:
                         "input_source": input_source,
                         "runtime_seconds": runtime,
                         "tokens_used": result.get("tokens_used"),
+                        "cache_read_tokens": result.get("cache_read_tokens", 0),
+                        "cache_creation_tokens": result.get("cache_creation_tokens", 0),
                         "attempt": attempt
                     }
                 )
@@ -79,6 +81,8 @@ class AgentRunner:
                     "attempts": attempt,
                     "error": None,
                     "tokens_used": result.get("tokens_used"),
+                    "cache_read_tokens": result.get("cache_read_tokens", 0),
+                    "cache_creation_tokens": result.get("cache_creation_tokens", 0),
                     "runtime_seconds": runtime
                 }
                 
@@ -150,6 +154,8 @@ class AgentRunner:
             "success": validation_result is None or validation_result.get("valid", False),
             "attempts": result["attempts"],
             "tokens_used": result.get("tokens_used"),
+            "cache_read_tokens": result.get("cache_read_tokens", 0),
+            "cache_creation_tokens": result.get("cache_creation_tokens", 0),
             "runtime_seconds": result.get("runtime_seconds")
         }
 

@@ -424,6 +424,16 @@ def main():
     print(f"{'='*60}\n")
 
     agent = PMAgent(prompt_version=args.prompt_version)
+    
+    # Warmup call to prime the prompt cache
+    # This ensures TC-01 doesn't pay full price - all 10 test cases benefit from cache
+    print("[WARMUP] Priming prompt cache...")
+    try:
+        agent.run("warmup")
+        print("[WARMUP] Cache primed - subsequent calls will use cached prompt\n")
+    except Exception as e:
+        print(f"[WARMUP] Warning: {e}\n")
+    
     test_cases = load_test_cases()
 
     if not test_cases:

@@ -91,13 +91,47 @@ Test Cases Affected: All (previously failing schema validation)
 
 ---
 
-## v1.1.0 — [NEXT VERSION — fill in after first eval run]
+## v1.2.0 — [RESERVED FOR NEXT PROMPT CHANGE]
 **Date:** TBD  
 **Trigger:** [What eval result triggered this change?]  
 **Changed:** [What specifically changed in the prompt?]  
 **Rubric Before:** [scores]  
 **Rubric After:** [scores]  
 **Test Cases Affected:** [which TCs changed behavior?]
+
+---
+
+## v1.2.0 — Performance: Prompt Caching Enabled
+**Date:** March 2026
+**Type:** PERFORMANCE — no reasoning changes, infrastructure optimization
+**Trigger:** Need to reduce API costs and latency for eval runs
+
+**What changed in agent/main.py:**
+- System prompt now passed as list with cache_control for Claude 4 prompt caching
+- New format: `system=[{"type": "text", "text": <prompt>, "cache_control": {"type": "ephemeral"}}]`
+- Response now captures cache metrics: `cache_read_input_tokens`, `cache_creation_input_tokens`
+- Logging updated to show cache status (cache_read vs cache_created)
+
+**How caching works:**
+- First API call: `cache_creation_input_tokens` = full prompt size, `cache_read_input_tokens` = 0
+- Subsequent calls (within 5 minutes): `cache_read_input_tokens` = full prompt size, `cache_creation_input_tokens` = 0
+- Cache TTL: 5 minutes — expires between separate sessions, holds for entire eval suite
+
+**What changed in scripts/run_eval.py:**
+- Added warmup call before test case loop to prime the cache
+- Without warmup: TC-01 pays full price, inflating latency numbers
+- With warmup: All 10 test cases benefit from cached prompt equally
+
+**Cost impact (expected):**
+- Eval run without cache: 10 × full prompt tokens
+- Eval run with cache: 1 × full prompt tokens + 9 × cached reads
+- Savings: ~90% on prompt token costs for eval runs
+
+**Latency impact (expected):**
+- First call: Same latency as before (prompt processing time)
+- Subsequent calls: Significantly faster (no reprocessing of system prompt)
+
+**Rubric impact:** None — this is purely infrastructure, no reasoning changes
 
 ---
 

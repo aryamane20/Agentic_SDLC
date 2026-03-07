@@ -127,18 +127,29 @@ class PMAgent:
         user_message = self._build_user_message(raw_input)
 
         # Call LLM with compiled role + knowledge base context
+        # Using cache_control for prompt caching (Claude 4 feature)
         response = self.client.messages.create(
             model=self.model,
             max_tokens=self.max_tokens,
             temperature=self.temperature,
-            system=self.system_prompt,   # compiled role + KB
+            system=[
+                {
+                    "type": "text",
+                    "text": self.system_prompt,
+                    "cache_control": {"type": "ephemeral"}
+                }
+            ],
             messages=[
                 {"role": "user", "content": user_message}
             ]
         )
 
         raw_output = response.content[0].text
+        
+        # Capture all token metrics including cache
         tokens_used = response.usage.input_tokens + response.usage.output_tokens
+        cache_read_tokens = getattr(response.usage, 'cache_read_input_tokens', 0)
+        cache_creation_tokens = getattr(response.usage, 'cache_creation_input_tokens', 0)
 
         # Extract and parse JSON from response
         report = self._extract_json(raw_output)
@@ -152,7 +163,9 @@ class PMAgent:
         return {
             "report": report,
             "raw_output": raw_output,
-            "tokens_used": tokens_used
+            "tokens_used": tokens_used,
+            "cache_read_tokens": cache_read_tokens,
+            "cache_creation_tokens": cache_creation_tokens
         }
 
     def _build_user_message(self, raw_input: str) -> str:

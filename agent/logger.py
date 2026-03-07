@@ -50,6 +50,8 @@ class PMReportLogger:
             "input_source": metadata.get("input_source") if metadata else None,
             "runtime_seconds": metadata.get("runtime_seconds") if metadata else None,
             "tokens_used": metadata.get("tokens_used") if metadata else None,
+            "cache_read_tokens": metadata.get("cache_read_tokens") if metadata else 0,
+            "cache_creation_tokens": metadata.get("cache_creation_tokens") if metadata else 0,
             "report": report,
             "summary": self._generate_summary(report)
         }
@@ -57,8 +59,11 @@ class PMReportLogger:
         # Log as JSON to file
         self.logger.info(json.dumps(log_entry))
         
-        # Log summary to console
-        self.logger.info(f"Report generated: {log_entry['summary']}")
+        # Log summary to console with cache status
+        cache_read = metadata.get("cache_read_tokens", 0) if metadata else 0
+        cache_created = metadata.get("cache_creation_tokens", 0) if metadata else 0
+        cache_status = "cache_read" if cache_read > 0 else ("cache_created" if cache_created > 0 else "no_cache")
+        self.logger.info(f"Report generated: {log_entry['summary']} | {cache_status}")
         
         return log_entry
 
