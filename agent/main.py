@@ -38,7 +38,7 @@ class PMAgent:
     the 8-step PM reasoning process on raw requirements input.
     """
 
-    def __init__(self, prompt_version: str = "v1"):
+    def __init__(self, prompt_version: str = "v1.2.0"):
         self.prompt_version = prompt_version
         self.client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
         self.model = "claude-sonnet-4-20250514"

@@ -414,7 +414,7 @@ def main():
     parser.add_argument("--all", action="store_true", help="Run all dimensions")
     parser.add_argument("--dimension", choices=["schema", "consistency", "rubric", "edge"], help="Run one dimension")
     parser.add_argument("--tc", help="Run specific test case only")
-    parser.add_argument("--prompt-version", default="v1")
+    parser.add_argument("--prompt-version", default="v1.2.0")
     args = parser.parse_args()
 
     print(f"\n{'='*60}")
