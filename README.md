@@ -44,7 +44,8 @@ Agentic_SDLC/
 │   ├── README.md                   ← Prompt design decisions and version changelog
 │   ├── PROMPT_CHANGELOG.md        ← Full version history
 │   ├── v1.0.0_system.txt         ← Initial system prompt
-│   └── v1.1.0_system.txt         ← SDLC approach, NFRs, Critical Path
+│   ├── v1.1.0_system.txt         ← SDLC approach, NFRs, Critical Path
+│   └── v1.2.0_system.txt         ← Prompt caching enabled (PERFORMANCE)
 │
 ├── schemas/                        ← Input/output schema definitions
 │   ├── input_schema.py            ← Pydantic model for expected input
