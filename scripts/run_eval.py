@@ -543,8 +543,11 @@ def main():
         perfect_tc = next((tc for tc in test_cases if tc["id"] == "tc-01"), test_cases[0])
         result = run_consistency_test(perfect_tc, agent, runs=3)
         all_results["dimensions"]["consistency"] = result
-        status = "✅ PASS" if result["passed"] else "❌ FAIL"
-        print(f"  Score Variance: {result['result'].get('score_variance', 'N/A')} {status}\n")
+        status = "✅ PASS" if result.get("passed") else "❌ FAIL"
+        if "result" in result:
+            print(f"  Score Variance: {result['result'].get('score_variance', 'N/A')} {status}\n")
+        else:
+            print(f"  Error: {result.get('error', 'Unknown error')} {status}\n")
 
     # Dimension 3: Rubric
     if run_all or args.dimension == "rubric":
