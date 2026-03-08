@@ -110,6 +110,25 @@ class SchemaValidator:
         if len(open_questions) > 5:
             warnings.append(f"Open questions: {len(open_questions)}, expected max 5")
         
+        # Critical path: every task must have critical_path boolean
+        all_tasks = []
+        for phase in phases:
+            all_tasks.extend(phase.get("tasks", []))
+        
+        tasks_without_critical_path = [t.get("name", "unnamed") for t in all_tasks if "critical_path" not in t]
+        if tasks_without_critical_path:
+            warnings.append(f"Tasks missing critical_path field: {tasks_without_critical_path}")
+        
+        # Slack days: every task must have slack_days integer
+        tasks_without_slack = [t.get("name", "unnamed") for t in all_tasks if "slack_days" not in t]
+        if tasks_without_slack:
+            warnings.append(f"Tasks missing slack_days field: {tasks_without_slack}")
+        
+        # Confidence calibration rule: >= 5 assumptions -> score cannot exceed 60
+        assumptions = report.get("assumption_log", [])
+        if len(assumptions) >= 5 and score_val > 60:
+            warnings.append(f"PM Confidence Score is {score_val} but has {len(assumptions)} assumptions (>=5), score should not exceed 60")
+        
         return warnings
 
     def _normalize_field_names(self, report: dict):

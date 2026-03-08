@@ -278,6 +278,11 @@ EDGE_CASE_EXPECTATIONS = {
     "tc-09": {
         "must_have_risk_score": ["CRITICAL", "HIGH"],
         "must_flag_timeline": True
+    },
+    "tc-10": {
+        # Solo developer on 6-month project - should flag staffing gap
+        "must_flag_staffing_gap": True,
+        "max_confidence": 50  # Low confidence due to unrealistic staffing
     }
 }
 
@@ -371,6 +376,80 @@ def run_edge_cases(test_cases: list, agent: PMAgent) -> dict:
                     "check": "At least one assumption with source=nfr (Non-Functional Requirement gap)",
                     "passed": has_nfr,
                     "actual": f"nfr_assumptions={len(nfr_assumptions)}"
+                })
+
+            # TC-04: Check that risks are flagged
+            if expectations.get("must_flag_risks"):
+                risks = report.get("risk_register", [])
+                has_risks = len(risks) > 0
+                passed_checks.append(has_risks)
+                tc_result["checks"].append({
+                    "check": "At least one risk in risk_register",
+                    "passed": has_risks,
+                    "actual": f"risks={len(risks)}"
+                })
+
+            # TC-05: Check for contradiction detection
+            if expectations.get("must_detect_contradiction"):
+                # Check if open_questions or assumptions mention contradiction/inconsistency
+                open_q = report.get("open_questions", [])
+                assumptions = report.get("assumption_log", [])
+                contradiction_keywords = ["contradict", "inconsistent", "conflict", "mismatch", "unclear"]
+                has_contradiction = any(
+                    any(kw in str(q).lower() for kw in contradiction_keywords)
+                    for q in open_q
+                ) or any(
+                    any(kw in str(a.get("assumption", "")).lower() for kw in contradiction_keywords)
+                    for a in assumptions
+                )
+                passed_checks.append(has_contradiction)
+                tc_result["checks"].append({
+                    "check": "Detected contradiction in requirements",
+                    "passed": has_contradiction,
+                    "actual": f"has_contradiction={has_contradiction}"
+                })
+
+            # TC-09: Check for critical timeline risk
+            if expectations.get("must_flag_timeline"):
+                risks = report.get("risk_register", [])
+                timeline_risks = [r for r in risks if "timeline" in str(r.get("risk", "")).lower() or "deadline" in str(r.get("risk", "")).lower()]
+                has_timeline_risk = len(timeline_risks) > 0
+                passed_checks.append(has_timeline_risk)
+                tc_result["checks"].append({
+                    "check": "At least one timeline/deadline risk flagged",
+                    "passed": has_timeline_risk,
+                    "actual": f"timeline_risks={len(timeline_risks)}"
+                })
+
+            # TC-09: Check for CRITICAL/HIGH risk scores
+            if expectations.get("must_have_risk_score"):
+                risks = report.get("risk_register", [])
+                required_scores = expectations.get("must_have_risk_score")
+                has_required_score = any(r.get("score") in required_scores for r in risks)
+                passed_checks.append(has_required_score)
+                tc_result["checks"].append({
+                    "check": f"At least one risk with score in {required_scores}",
+                    "passed": has_required_score,
+                    "actual": f"risk_scores={[r.get('score') for r in risks]}"
+                })
+
+            # TC-10: Staffing gap check
+            if expectations.get("must_flag_staffing_gap"):
+                staffing = report.get("staffing_plan", [])
+                # Check for staffing gap: either explicit gap flag or unrealistic allocation
+                has_gap_flag = any(r.get("staffing_gap", False) for r in staffing)
+                # Or check for single person with >80% allocation on large project
+                is_solo_overloaded = len(staffing) == 1 and staffing[0].get("allocation_percent", 0) > 80
+                has_staffing_risk = any(
+                    "staff" in r.get("risk", "").lower() or "resource" in r.get("risk", "").lower()
+                    for r in report.get("risk_register", [])
+                )
+                flagged = has_gap_flag or is_solo_overloaded or has_staffing_risk
+                passed_checks.append(flagged)
+                tc_result["checks"].append({
+                    "check": "Staffing gap flagged for solo developer on 6-month project",
+                    "passed": flagged,
+                    "actual": f"gap_flag={has_gap_flag}, solo_overloaded={is_solo_overloaded}, staffing_risk={has_staffing_risk}"
                 })
 
             tc_result["overall_passed"] = validation["valid"] and all(passed_checks)
