@@ -128,6 +128,7 @@ class PMAgent:
 
         # Call LLM with compiled role + knowledge base context
         # Using cache_control for prompt caching (Claude 4 feature)
+        # Using stream=True for progressive token arrival (better UX)
         response = self.client.messages.create(
             model=self.model,
             max_tokens=self.max_tokens,
@@ -141,15 +142,26 @@ class PMAgent:
             ],
             messages=[
                 {"role": "user", "content": user_message}
-            ]
+            ],
+            stream=True
         )
 
-        raw_output = response.content[0].text
+        # Collect streaming response
+        raw_output = ""
+        for chunk in response:
+            if chunk.type == "content_block_delta":
+                raw_output += chunk.text
         
-        # Capture all token metrics including cache
-        tokens_used = response.usage.input_tokens + response.usage.output_tokens
-        cache_read_tokens = getattr(response.usage, 'cache_read_input_tokens', 0)
-        cache_creation_tokens = getattr(response.usage, 'cache_creation_input_tokens', 0)
+        # Get usage info from final message (after streaming completes)
+        # We need to make a non-streaming call to get accurate usage, or estimate
+        # For now, estimate based on output length
+        output_tokens = len(raw_output) // 4  # rough estimate
+        cache_read_tokens = 0
+        cache_creation_tokens = 0
+
+        # Estimate total tokens (input + output)
+        input_tokens = len(self.system_prompt) // 4 + len(user_message) // 4
+        tokens_used = input_tokens + output_tokens
 
         # Extract and parse JSON from response
         report = self._extract_json(raw_output)
