@@ -129,6 +129,22 @@ class SchemaValidator:
         if len(assumptions) >= 5 and score_val > 60:
             warnings.append(f"PM Confidence Score is {score_val} but has {len(assumptions)} assumptions (>=5), score should not exceed 60")
         
+        # Viability section validation
+        viability = report.get("project_viability")
+        if viability:
+            # If viability exists, it should have valid status
+            status = viability.get("viability_status", "")
+            if status not in ["VIABLE", "AT_RISK", "NOT_VIABLE", "CANNOT_ASSESS"]:
+                warnings.append(f"Invalid viability_status: {status}")
+            
+            # If status is NOT_VIABLE, scoping_options should exist
+            if status == "NOT_VIABLE":
+                scoping = viability.get("scoping_options", [])
+                if not scoping:
+                    warnings.append("viability_status is NOT_VIABLE but no scoping_options provided")
+                elif len(scoping) < 2:
+                    warnings.append("viability_status is NOT_VIABLE but fewer than 2 scoping_options provided")
+        
         return warnings
 
     def _normalize_field_names(self, report: dict):

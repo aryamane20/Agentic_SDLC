@@ -269,20 +269,38 @@ EDGE_CASE_EXPECTATIONS = {
         "max_confidence": 50,
         "min_assumptions": 5,
         "must_flag_risks": True,
-        "must_have_nfr_assumptions": True  # Vague input should trigger NFR assumptions
+        "must_have_nfr_assumptions": True,  # Vague input should trigger NFR assumptions
+        # Viability check: No constraints provided, should skip viability check
+        "viability_should_be_none": True
     },
     "tc-05": {
         "max_confidence": 40,
-        "must_detect_contradiction": True
+        "must_detect_contradiction": True,
+        # Viability check: Has budget ($5,000) and deadline (2 weeks)
+        # Expected: NOT_VIABLE, BOTH gaps, scoping_options >= 2
+        "viability_status": "NOT_VIABLE",
+        "viability_gap_type": "BOTH",
+        "viability_min_scoping_options": 2
     },
     "tc-09": {
         "must_have_risk_score": ["CRITICAL", "HIGH"],
-        "must_flag_timeline": True
+        "must_flag_timeline": True,
+        # Viability check: Has deadline (2 weeks), no budget
+        # Expected: NOT_VIABLE (schedule), SCHEDULE gap, scoping_options >= 2
+        "viability_status": "NOT_VIABLE",
+        "viability_gap_type": "SCHEDULE",
+        "viability_min_scoping_options": 2
     },
     "tc-10": {
         # Solo developer on 6-month project - should flag staffing gap
         "must_flag_staffing_gap": True,
-        "max_confidence": 50  # Low confidence due to unrealistic staffing
+        "max_confidence": 50,  # Low confidence due to unrealistic staffing
+        # Viability check: Has budget ($100k) and deadline (6 months = 24 weeks)
+        # Expected: NOT_VIABLE - agent should recommend additional staff to make this viable,
+        # which pushes cost above $100K threshold, so BOTH (budget + schedule)
+        "viability_status": "NOT_VIABLE",
+        "viability_gap_type": "BOTH",
+        "viability_min_scoping_options": 2
     }
 }
 
@@ -452,6 +470,55 @@ def run_edge_cases(test_cases: list, agent: PMAgent) -> dict:
                     "actual": f"gap_flag={has_gap_flag}, solo_overloaded={is_solo_overloaded}, staffing_risk={has_staffing_risk}"
                 })
 
+            # === VIABILITY CHECK ASSERTIONS (v1.3.0) ===
+            viability = report.get("project_viability")
+            
+            # TC-04: No constraints - viability should be None
+            if expectations.get("viability_should_be_none"):
+                is_none = viability is None
+                passed_checks.append(is_none)
+                tc_result["checks"].append({
+                    "check": "Viability check skipped (no constraints provided)",
+                    "passed": is_none,
+                    "actual": f"project_viability={'None' if viability is None else 'present'}"
+                })
+            
+            # TC-05, TC-09, TC-10: Check viability status
+            if expectations.get("viability_status"):
+                expected_status = expectations.get("viability_status")
+                actual_status = viability.get("viability_status") if viability else None
+                status_match = actual_status == expected_status
+                passed_checks.append(status_match)
+                tc_result["checks"].append({
+                    "check": f"Viability status is {expected_status}",
+                    "passed": status_match,
+                    "actual": f"viability_status={actual_status}"
+                })
+                
+                # Check gap type
+                if expectations.get("viability_gap_type"):
+                    expected_gap = expectations.get("viability_gap_type")
+                    actual_gap = viability.get("gap_type") if viability else None
+                    gap_match = actual_gap == expected_gap
+                    passed_checks.append(gap_match)
+                    tc_result["checks"].append({
+                        "check": f"Gap type is {expected_gap}",
+                        "passed": gap_match,
+                        "actual": f"gap_type={actual_gap}"
+                    })
+                
+                # Check scoping options count
+                if expectations.get("viability_min_scoping_options"):
+                    min_options = expectations.get("viability_min_scoping_options")
+                    actual_options = len(viability.get("scoping_options", [])) if viability else 0
+                    has_options = actual_options >= min_options
+                    passed_checks.append(has_options)
+                    tc_result["checks"].append({
+                        "check": f"At least {min_options} scoping options when NOT_VIABLE",
+                        "passed": has_options,
+                        "actual": f"scoping_options={actual_options}"
+                    })
+
             tc_result["overall_passed"] = validation["valid"] and all(passed_checks)
             results.append(tc_result)
 
@@ -493,7 +560,7 @@ def main():
     parser.add_argument("--all", action="store_true", help="Run all dimensions")
     parser.add_argument("--dimension", choices=["schema", "consistency", "rubric", "edge"], help="Run one dimension")
     parser.add_argument("--tc", help="Run specific test case only")
-    parser.add_argument("--prompt-version", default="v1.2.0")
+    parser.add_argument("--prompt-version", default="v1.3.0")
     args = parser.parse_args()
 
     print(f"\n{'='*60}")

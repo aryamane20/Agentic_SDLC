@@ -135,6 +135,58 @@ Test Cases Affected: All (previously failing schema validation)
 
 ---
 
+## v1.3.0 — Conditional Viability Check (Functional Change)
+**Date:** March 2026
+**Type:** FUNCTIONAL — new reasoning step and output section added
+**Trigger:** Need to flag projects that exceed budget or timeline constraints with scoping options
+
+**What changed in prompts/v1.3.0_system.txt:**
+- Added Step 8b: VIABILITY CHECK (Conditional)
+  - Only runs if budget OR deadline is provided in input
+  - Budget check: NOT_VIABLE if estimated_cost > budget × 1.5
+  - Schedule check: NOT_VIABLE if duration > deadline × 1.3, AT_RISK if > 1.0
+  - Generates 2-3 scoping options when status is NOT_VIABLE
+
+- Added Section 9: PROJECT VIABILITY FLAG to output contract
+  - VIABILITY_STATUS: VIABLE | AT_RISK | NOT_VIABLE | CANNOT_ASSESS
+  - GAP_TYPE: BUDGET | SCHEDULE | BOTH | N/A
+  - GAP_AMOUNT: specific gap or "N/A"
+  - SCOPING_OPTIONS: only if NOT_VIABLE
+
+**What changed in schemas/output_schema.py:**
+- Added ViabilityStatus enum
+- Added GapType enum
+- Added ScopingOption model
+- Added ProjectViability model
+- Added optional project_viability field to PMReport
+
+**What changed in agent/viability_checker.py (NEW):**
+- Created new module with conditional logic
+- _extract_constraints(): parses budget/deadline from raw input
+- check_viability(): applies thresholds, generates scoping options
+
+**What changed in agent/runner.py:**
+- Added check_viability_flag parameter to run_with_validation()
+- Integrates viability check after agent completes
+- Adds project_viability to report when constraints provided
+
+**What changed in agent/validator.py:**
+- Added viability validation rules
+- Validates status values and scoping_options when NOT_VIABLE
+
+**Rubric impact:** New Dimension 4 assertions:
+- TC-05: viability_status=NOT_VIABLE, gap_type=BOTH, scoping_options>=2
+- TC-09: viability_status=NOT_VIABLE, gap_type=SCHEDULE, scoping_options>=2
+- TC-04: project_viability should be None (no constraints)
+
+**Authoritative Viability Determination:**
+- Section 9 (PROJECT VIABILITY FLAG) in the LLM output is **narrative reasoning only** — it explains the agent's own analysis of viability
+- The authoritative, deterministic viability assessment comes from **viability_checker.py post-processing module**
+- This module extracts constraints from input, calculates estimated cost from staffing plan, applies thresholds programmatically
+- The post-processed viability is what triggers approval gates in production; Section 9 is supporting context for the PM
+
+---
+
 *Rule: Never overwrite a prompt version. Always create a new file (v2, v3...).*
 *Rule: Always run eval before AND after a prompt change and record both scores.*
 *Rule: If a change improves one test case but regresses another, document both.*

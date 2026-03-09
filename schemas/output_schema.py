@@ -169,6 +169,42 @@ class Deduction(BaseModel):
     reason: str
 
 
+class ViabilityStatus(str, Enum):
+    VIABLE = "VIABLE"
+    AT_RISK = "AT_RISK"
+    NOT_VIABLE = "NOT_VIABLE"
+    CANNOT_ASSESS = "CANNOT_ASSESS"
+
+
+class GapType(str, Enum):
+    BUDGET = "BUDGET"
+    SCHEDULE = "SCHEDULE"
+    BOTH = "BOTH"
+    N_A = "N/A"
+
+
+class ScopingOption(BaseModel):
+    option_id: str
+    description: str
+    impact: str
+    tradeoffs: str
+
+
+class ProjectViability(BaseModel):
+    """Project viability assessment - only included when constraints are provided."""
+    viability_status: ViabilityStatus
+    gap_type: GapType
+    gap_amount: str = "N/A"
+    scoping_options: Optional[List[ScopingOption]] = None
+    
+    @field_validator('scoping_options')
+    @classmethod
+    def scoping_requires_not_viable(cls, v, info):
+        """Scoping options only required when status is NOT_VIABLE."""
+        # This is a soft validation - we'll handle it in business rules
+        return v
+
+
 class PMConfidenceScore(BaseModel):
     score: float = Field(ge=0, le=100)
     deductions: List[Deduction]
@@ -187,6 +223,9 @@ class PMReport(BaseModel):
     staffing_plan: List[StaffingPlanItem] = Field(min_length=1)
     open_questions: List[OpenQuestion] = Field(max_length=5)
     pm_confidence_score: PMConfidenceScore
+    
+    # Project viability - only included when constraints are provided
+    project_viability: Optional[ProjectViability] = None
     
     # Handle parse errors
     parse_error: Optional[bool] = None

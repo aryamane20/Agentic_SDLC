@@ -10,6 +10,7 @@ from datetime import datetime
 
 from agent.logger import PMReportLogger
 from agent.validator import SchemaValidator
+from agent.viability_checker import check_viability
 
 
 class AgentRunner:
@@ -118,7 +119,8 @@ class AgentRunner:
         self,
         raw_input: str,
         input_source: Optional[str] = None,
-        validate_output: bool = True
+        validate_output: bool = True,
+        check_viability_flag: bool = True
     ) -> Dict[str, Any]:
         """
         Run the agent and validate output against schema.
@@ -127,9 +129,10 @@ class AgentRunner:
             raw_input: Raw project requirements text
             input_source: Optional source identifier
             validate_output: Whether to validate the output
+            check_viability_flag: Whether to run viability check (default True)
 
         Returns:
-            dict with 'report', 'validation_result', 'success' keys
+            dict with 'report', 'validation_result', 'success', 'viability_result' keys
         """
         # First run with retry
         result = self.run_with_retry(raw_input, input_source)
@@ -139,7 +142,8 @@ class AgentRunner:
                 "report": None,
                 "validation_result": None,
                 "success": False,
-                "error": result["error"]
+                "error": result["error"],
+                "viability_result": None
             }
         
         # Validate if requested
@@ -147,10 +151,19 @@ class AgentRunner:
         if validate_output:
             validation_result = self.validator.validate(result["report"])
         
+        # Run viability check if requested
+        viability_result = None
+        if check_viability_flag and result["report"]:
+            viability_result = check_viability(raw_input, result["report"])
+            # Add viability to report if constraints were provided
+            if viability_result:
+                result["report"]["project_viability"] = viability_result
+        
         return {
             "report": result["report"],
             "raw_output": result.get("raw_output"),
             "validation_result": validation_result,
+            "viability_result": viability_result,
             "success": validation_result is None or validation_result.get("valid", False),
             "attempts": result["attempts"],
             "tokens_used": result.get("tokens_used"),
