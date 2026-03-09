@@ -1,0 +1,826 @@
+{
+  "$defs": {
+    "Assumption": {
+      "properties": {
+        "id": {
+          "pattern": "^A[0-9]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "what": {
+          "minLength": 10,
+          "title": "What",
+          "type": "string"
+        },
+        "why": {
+          "minLength": 10,
+          "title": "Why",
+          "type": "string"
+        },
+        "pmi_basis": {
+          "minLength": 5,
+          "title": "Pmi Basis",
+          "type": "string"
+        },
+        "risk_if_wrong": {
+          "$ref": "#/$defs/RiskLevel"
+        },
+        "consequence": {
+          "minLength": 10,
+          "title": "Consequence",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AssumptionSource"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "what",
+        "why",
+        "pmi_basis",
+        "risk_if_wrong",
+        "consequence"
+      ],
+      "title": "Assumption",
+      "type": "object"
+    },
+    "AssumptionSource": {
+      "enum": [
+        "hard_constraint",
+        "soft_constraint",
+        "nfr",
+        "scope",
+        "other"
+      ],
+      "title": "AssumptionSource",
+      "type": "string"
+    },
+    "CriticalPathSummary": {
+      "properties": {
+        "sequence": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Sequence",
+          "type": "array"
+        },
+        "total_duration_days": {
+          "minimum": 1,
+          "title": "Total Duration Days",
+          "type": "number"
+        },
+        "zero_slack_tasks": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Zero Slack Tasks",
+          "type": "array"
+        },
+        "highest_slack_tasks": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Highest Slack Tasks"
+        },
+        "staffing_implication": {
+          "minLength": 10,
+          "title": "Staffing Implication",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sequence",
+        "total_duration_days",
+        "zero_slack_tasks",
+        "staffing_implication"
+      ],
+      "title": "CriticalPathSummary",
+      "type": "object"
+    },
+    "Deduction": {
+      "properties": {
+        "amount": {
+          "title": "Amount",
+          "type": "number"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount",
+        "reason"
+      ],
+      "title": "Deduction",
+      "type": "object"
+    },
+    "GapType": {
+      "enum": [
+        "BUDGET",
+        "SCHEDULE",
+        "BOTH",
+        "N/A"
+      ],
+      "title": "GapType",
+      "type": "string"
+    },
+    "InputQuality": {
+      "enum": [
+        "HIGH",
+        "MEDIUM",
+        "LOW"
+      ],
+      "title": "InputQuality",
+      "type": "string"
+    },
+    "OpenQuestion": {
+      "properties": {
+        "priority": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Priority",
+          "type": "integer"
+        },
+        "question": {
+          "minLength": 10,
+          "title": "Question",
+          "type": "string"
+        },
+        "urgency": {
+          "$ref": "#/$defs/Urgency"
+        },
+        "impact_if_unanswered": {
+          "minLength": 10,
+          "title": "Impact If Unanswered",
+          "type": "string"
+        }
+      },
+      "required": [
+        "priority",
+        "question",
+        "urgency",
+        "impact_if_unanswered"
+      ],
+      "title": "OpenQuestion",
+      "type": "object"
+    },
+    "PMConfidenceScore": {
+      "properties": {
+        "score": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Score",
+          "type": "number"
+        },
+        "deductions": {
+          "items": {
+            "$ref": "#/$defs/Deduction"
+          },
+          "title": "Deductions",
+          "type": "array"
+        },
+        "interpretation": {
+          "minLength": 10,
+          "title": "Interpretation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score",
+        "deductions",
+        "interpretation"
+      ],
+      "title": "PMConfidenceScore",
+      "type": "object"
+    },
+    "Phase": {
+      "properties": {
+        "phase_number": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Phase Number",
+          "type": "integer"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "duration_weeks": {
+          "minimum": 0.5,
+          "title": "Duration Weeks",
+          "type": "number"
+        },
+        "percentage_of_total": {
+          "maximum": 50,
+          "minimum": 5,
+          "title": "Percentage Of Total",
+          "type": "number"
+        },
+        "milestones": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Milestones",
+          "type": "array"
+        },
+        "tasks": {
+          "items": {
+            "$ref": "#/$defs/Task"
+          },
+          "title": "Tasks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "phase_number",
+        "name",
+        "duration_weeks",
+        "percentage_of_total",
+        "milestones",
+        "tasks"
+      ],
+      "title": "Phase",
+      "type": "object"
+    },
+    "ProjectPlan": {
+      "properties": {
+        "total_duration_weeks": {
+          "minimum": 1,
+          "title": "Total Duration Weeks",
+          "type": "number"
+        },
+        "buffer_applied_percent": {
+          "minimum": 0,
+          "title": "Buffer Applied Percent",
+          "type": "number"
+        },
+        "critical_path_summary": {
+          "$ref": "#/$defs/CriticalPathSummary"
+        },
+        "phases": {
+          "items": {
+            "$ref": "#/$defs/Phase"
+          },
+          "maxItems": 5,
+          "minItems": 5,
+          "title": "Phases",
+          "type": "array"
+        }
+      },
+      "required": [
+        "total_duration_weeks",
+        "buffer_applied_percent",
+        "critical_path_summary",
+        "phases"
+      ],
+      "title": "ProjectPlan",
+      "type": "object"
+    },
+    "ProjectType": {
+      "enum": [
+        "TYPE_A",
+        "TYPE_B",
+        "TYPE_C",
+        "TYPE_D",
+        "TYPE_E",
+        "TYPE_F"
+      ],
+      "title": "ProjectType",
+      "type": "string"
+    },
+    "ProjectUnderstanding": {
+      "properties": {
+        "primary_goal": {
+          "minLength": 10,
+          "title": "Primary Goal",
+          "type": "string"
+        },
+        "beneficiary": {
+          "title": "Beneficiary",
+          "type": "string"
+        },
+        "trigger": {
+          "title": "Trigger",
+          "type": "string"
+        },
+        "success_definition": {
+          "title": "Success Definition",
+          "type": "string"
+        },
+        "supporting_quotes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supporting Quotes"
+        }
+      },
+      "required": [
+        "primary_goal",
+        "beneficiary",
+        "trigger",
+        "success_definition"
+      ],
+      "title": "ProjectUnderstanding",
+      "type": "object"
+    },
+    "ProjectViability": {
+      "description": "Project viability assessment - only included when constraints are provided.",
+      "properties": {
+        "viability_status": {
+          "$ref": "#/$defs/ViabilityStatus"
+        },
+        "gap_type": {
+          "$ref": "#/$defs/GapType"
+        },
+        "gap_amount": {
+          "default": "N/A",
+          "title": "Gap Amount",
+          "type": "string"
+        },
+        "scoping_options": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ScopingOption"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scoping Options"
+        }
+      },
+      "required": [
+        "viability_status",
+        "gap_type"
+      ],
+      "title": "ProjectViability",
+      "type": "object"
+    },
+    "ReportMetadata": {
+      "properties": {
+        "generated_at": {
+          "title": "Generated At",
+          "type": "string"
+        },
+        "input_quality": {
+          "$ref": "#/$defs/InputQuality"
+        },
+        "pm_confidence_score": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Pm Confidence Score",
+          "type": "number"
+        },
+        "project_type": {
+          "$ref": "#/$defs/ProjectType"
+        },
+        "classification_confidence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InputQuality"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sdlc_approach": {
+          "$ref": "#/$defs/SdlcApproach"
+        },
+        "sdlc_rationale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sdlc Rationale"
+        },
+        "prompt_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Version"
+        }
+      },
+      "required": [
+        "generated_at",
+        "input_quality",
+        "pm_confidence_score",
+        "project_type",
+        "sdlc_approach"
+      ],
+      "title": "ReportMetadata",
+      "type": "object"
+    },
+    "Risk": {
+      "properties": {
+        "id": {
+          "pattern": "^R[0-9]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "category": {
+          "$ref": "#/$defs/RiskCategory"
+        },
+        "description": {
+          "minLength": 20,
+          "title": "Description",
+          "type": "string"
+        },
+        "probability": {
+          "$ref": "#/$defs/RiskLevel"
+        },
+        "impact": {
+          "$ref": "#/$defs/RiskLevel"
+        },
+        "score": {
+          "$ref": "#/$defs/RiskScore"
+        },
+        "trigger": {
+          "minLength": 10,
+          "title": "Trigger",
+          "type": "string"
+        },
+        "mitigation": {
+          "minLength": 10,
+          "title": "Mitigation",
+          "type": "string"
+        },
+        "contingency": {
+          "minLength": 10,
+          "title": "Contingency",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "category",
+        "description",
+        "probability",
+        "impact",
+        "score",
+        "trigger",
+        "mitigation",
+        "contingency"
+      ],
+      "title": "Risk",
+      "type": "object"
+    },
+    "RiskCategory": {
+      "enum": [
+        "Schedule",
+        "Resource",
+        "Technical",
+        "Scope",
+        "External",
+        "Compliance"
+      ],
+      "title": "RiskCategory",
+      "type": "string"
+    },
+    "RiskLevel": {
+      "enum": [
+        "HIGH",
+        "MEDIUM",
+        "LOW"
+      ],
+      "title": "RiskLevel",
+      "type": "string"
+    },
+    "RiskScore": {
+      "enum": [
+        "CRITICAL",
+        "HIGH",
+        "MEDIUM",
+        "LOW"
+      ],
+      "title": "RiskScore",
+      "type": "string"
+    },
+    "ScopingOption": {
+      "properties": {
+        "option_id": {
+          "title": "Option Id",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "impact": {
+          "title": "Impact",
+          "type": "string"
+        },
+        "tradeoffs": {
+          "title": "Tradeoffs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "option_id",
+        "description",
+        "impact",
+        "tradeoffs"
+      ],
+      "title": "ScopingOption",
+      "type": "object"
+    },
+    "SdlcApproach": {
+      "enum": [
+        "Predictive",
+        "Adaptive",
+        "Hybrid"
+      ],
+      "title": "SdlcApproach",
+      "type": "string"
+    },
+    "StaffingPlanItem": {
+      "properties": {
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "phase_involvement": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Phase Involvement",
+          "type": "array"
+        },
+        "total_hours": {
+          "minimum": 1,
+          "title": "Total Hours",
+          "type": "number"
+        },
+        "allocation_percent": {
+          "maximum": 80,
+          "minimum": 1,
+          "title": "Allocation Percent",
+          "type": "number"
+        },
+        "skills_required": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Skills Required",
+          "type": "array"
+        },
+        "critical_path": {
+          "title": "Critical Path",
+          "type": "boolean"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "role",
+        "phase_involvement",
+        "total_hours",
+        "allocation_percent",
+        "skills_required",
+        "critical_path"
+      ],
+      "title": "StaffingPlanItem",
+      "type": "object"
+    },
+    "Task": {
+      "properties": {
+        "id": {
+          "pattern": "^T[0-9]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 5,
+          "title": "Name",
+          "type": "string"
+        },
+        "phase": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Phase",
+          "type": "integer"
+        },
+        "effort_hours": {
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Effort Hours",
+          "type": "number"
+        },
+        "owner_role": {
+          "title": "Owner Role",
+          "type": "string"
+        },
+        "dependencies": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dependencies",
+          "type": "array"
+        },
+        "risk_flag": {
+          "title": "Risk Flag",
+          "type": "boolean"
+        },
+        "critical_path": {
+          "title": "Critical Path",
+          "type": "boolean"
+        },
+        "slack_days": {
+          "minimum": 0,
+          "title": "Slack Days",
+          "type": "integer"
+        },
+        "definition_of_done": {
+          "minLength": 10,
+          "title": "Definition Of Done",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "phase",
+        "effort_hours",
+        "owner_role",
+        "dependencies",
+        "risk_flag",
+        "critical_path",
+        "slack_days",
+        "definition_of_done"
+      ],
+      "title": "Task",
+      "type": "object"
+    },
+    "Urgency": {
+      "enum": [
+        "Before planning",
+        "Before build",
+        "Before launch"
+      ],
+      "title": "Urgency",
+      "type": "string"
+    },
+    "ViabilityStatus": {
+      "enum": [
+        "VIABLE",
+        "AT_RISK",
+        "NOT_VIABLE",
+        "CANNOT_ASSESS"
+      ],
+      "title": "ViabilityStatus",
+      "type": "string"
+    }
+  },
+  "description": "Complete PM Digital Twin report output model.",
+  "properties": {
+    "report_metadata": {
+      "$ref": "#/$defs/ReportMetadata"
+    },
+    "project_understanding": {
+      "$ref": "#/$defs/ProjectUnderstanding"
+    },
+    "assumption_log": {
+      "items": {
+        "$ref": "#/$defs/Assumption"
+      },
+      "minItems": 1,
+      "title": "Assumption Log",
+      "type": "array"
+    },
+    "project_plan": {
+      "$ref": "#/$defs/ProjectPlan"
+    },
+    "risk_register": {
+      "items": {
+        "$ref": "#/$defs/Risk"
+      },
+      "minItems": 3,
+      "title": "Risk Register",
+      "type": "array"
+    },
+    "staffing_plan": {
+      "items": {
+        "$ref": "#/$defs/StaffingPlanItem"
+      },
+      "minItems": 1,
+      "title": "Staffing Plan",
+      "type": "array"
+    },
+    "open_questions": {
+      "items": {
+        "$ref": "#/$defs/OpenQuestion"
+      },
+      "maxItems": 5,
+      "title": "Open Questions",
+      "type": "array"
+    },
+    "pm_confidence_score": {
+      "$ref": "#/$defs/PMConfidenceScore"
+    },
+    "project_viability": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProjectViability"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "parse_error": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parse Error"
+    },
+    "raw_output": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Raw Output"
+    }
+  },
+  "required": [
+    "report_metadata",
+    "project_understanding",
+    "assumption_log",
+    "project_plan",
+    "risk_register",
+    "staffing_plan",
+    "open_questions",
+    "pm_confidence_score"
+  ],
+  "title": "PMReport",
+  "type": "object"
+}

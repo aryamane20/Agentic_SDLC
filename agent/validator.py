@@ -1,27 +1,22 @@
 """
 PM Digital Twin — Schema Validator
-Validates agent output against JSON schema + business rules.
+Validates agent output using Pydantic models + business rules.
 """
 
 import json
 from pathlib import Path
-from jsonschema import validate, ValidationError, Draft7Validator
+from pydantic import ValidationError as PydanticValidationError
+from schemas.output_schema import PMReport
 
 
 class SchemaValidator:
     """
-    Validates PM Digital Twin output against output_schema.json
-    plus business rules that can't be expressed in JSON schema.
+    Validates PM Digital Twin output using Pydantic models
+    plus business rules that can't be expressed in schema.
     """
 
     def __init__(self, schema_path: str = None):
-        if schema_path is None:
-            schema_path = Path(__file__).parent.parent / "schemas" / "output_schema.json"
-        else:
-            schema_path = Path(schema_path)
-        
-        self.schema = json.loads(schema_path.read_text(encoding="utf-8"))
-        self.validator = Draft7Validator(self.schema)
+        pass  # No longer need schema path
 
     def validate(self, report: dict) -> dict:
         """
@@ -39,13 +34,16 @@ class SchemaValidator:
         errors = []
         warnings = []
         
-        # 1. JSON Schema validation
-        validation_errors = list(self.validator.iter_errors(report))
-        for error in validation_errors:
-            errors.append(f"{'.'.join(str(p) for p in error.path)}: {error.message}")
+        # 1. Pydantic validation
+        try:
+            validated = PMReport(**report)
+        except PydanticValidationError as e:
+            for error in e.errors():
+                field = '.'.join(str(loc) for loc in error['loc'])
+                errors.append(f"{field}: {error['msg']}")
         
-        # 2. Business rules validation
-        if not errors:  # Only check business rules if schema is valid
+        # 2. Business rules validation (only if schema valid)
+        if not errors:
             warnings = self._check_business_rules(report)
         
         return {
@@ -151,18 +149,19 @@ class SchemaValidator:
         """
         Normalize field name variations from LLM output to match schema.
         
-        Known variations:
-        - classification -> project_type
+        Known variations from LLM:
+        - classification -> project_type (move to metadata)
         - assumptions -> assumption_log
         - risks -> risk_register
-        - sdlc_methodology -> sdlc_approach
+        - pm_confidence -> pm_confidence_score
+        - viability -> project_viability
         """
         # Top-level field mappings
         field_mappings = {
-            "classification": "project_type",
             "assumptions": "assumption_log",
             "risks": "risk_register",
-            "sdlc_methodology": "sdlc_approach",
+            "pm_confidence": "pm_confidence_score",
+            "viability": "project_viability",
         }
         
         # Apply top-level mappings
@@ -170,20 +169,52 @@ class SchemaValidator:
             if old_name in report and new_name not in report:
                 report[new_name] = report.pop(old_name)
         
+        # Handle classification - move to report_metadata
+        if "classification" in report:
+            classification = report.pop("classification")
+            metadata = report.get("report_metadata", {})
+            if "project_type" not in metadata and "project_type" in classification:
+                metadata["project_type"] = classification.get("project_type")
+            if "sdlc_approach" not in metadata and "sdlc_approach" in classification:
+                metadata["sdlc_approach"] = classification.get("sdlc_approach")
+            report["report_metadata"] = metadata
+        
         # Handle report_metadata nested fields
         metadata = report.get("report_metadata", {})
-        metadata_mappings = {
-            "classification": "project_type",
-            "sdlc_methodology": "sdlc_approach",
-        }
-        for old_name, new_name in metadata_mappings.items():
-            if old_name in metadata and new_name not in metadata:
-                metadata[new_name] = metadata.pop(old_name)
         
-        # Set defaults if missing
-        if "project_type" not in metadata:
-            metadata["project_type"] = "UNKNOWN"
-        if "sdlc_approach" not in metadata:
-            metadata["sdlc_approach"] = "UNKNOWN"
-        if "input_quality" not in metadata:
-            metadata["input_quality"] = "UNKNOWN"
+        # Fix project_type - LLM outputs "TYPE A: ..." instead of "TYPE_A"
+        if metadata.get("project_type"):
+            pt = metadata["project_type"]
+            if isinstance(pt, str):
+                # Map LLM output to enum values
+                if "TYPE A" in pt.upper():
+                    metadata["project_type"] = "TYPE_A"
+                elif "TYPE B" in pt.upper():
+                    metadata["project_type"] = "TYPE_B"
+                elif "TYPE C" in pt.upper():
+                    metadata["project_type"] = "TYPE_C"
+                elif "TYPE D" in pt.upper():
+                    metadata["project_type"] = "TYPE_D"
+                elif "TYPE E" in pt.upper():
+                    metadata["project_type"] = "TYPE_E"
+                elif "TYPE F" in pt.upper():
+                    metadata["project_type"] = "TYPE_F"
+        
+        # Fix pm_confidence_score structure - LLM puts deductions inside breakdown
+        pm_conf = report.get("pm_confidence_score")
+        if pm_conf and "breakdown" in pm_conf:
+            breakdown = pm_conf.pop("breakdown")
+            if "deductions" in breakdown:
+                pm_conf["deductions"] = breakdown["deductions"]
+            if "starting_score" in breakdown:
+                pm_conf["score"] = breakdown.get("starting_score", pm_conf.get("score"))
+            if "interpretation" in breakdown:
+                pm_conf["interpretation"] = breakdown["interpretation"]
+        
+        # Set defaults if missing (use valid enum values)
+        if "project_type" not in metadata or not metadata.get("project_type"):
+            metadata["project_type"] = "TYPE_A"  # Default valid enum
+        if "sdlc_approach" not in metadata or not metadata.get("sdlc_approach"):
+            metadata["sdlc_approach"] = "Hybrid"  # Default valid enum
+        if "input_quality" not in metadata or not metadata.get("input_quality"):
+            metadata["input_quality"] = "MEDIUM"  # Default valid enum

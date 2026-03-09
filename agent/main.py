@@ -143,25 +143,21 @@ class PMAgent:
             messages=[
                 {"role": "user", "content": user_message}
             ],
-            stream=True
+            stream=False  # Use non-streaming to get accurate usage
         )
 
-        # Collect streaming response
-        raw_output = ""
-        for chunk in response:
-            if chunk.type == "content_block_delta":
-                raw_output += chunk.text
+        # Get the response
+        raw_output = response.content[0].text
         
-        # Get usage info from final message (after streaming completes)
-        # We need to make a non-streaming call to get accurate usage, or estimate
-        # For now, estimate based on output length
-        output_tokens = len(raw_output) // 4  # rough estimate
-        cache_read_tokens = 0
-        cache_creation_tokens = 0
-
-        # Estimate total tokens (input + output)
-        input_tokens = len(self.system_prompt) // 4 + len(user_message) // 4
+        # Get usage info from response
+        usage = response.usage
+        input_tokens = usage.input_tokens
+        output_tokens = usage.output_tokens
         tokens_used = input_tokens + output_tokens
+        
+        # Get cache metrics if available
+        cache_read_tokens = getattr(usage, 'cache_read_input_tokens', 0)
+        cache_creation_tokens = getattr(usage, 'cache_creation_input_tokens', 0)
 
         # Extract and parse JSON from response
         report = self._extract_json(raw_output)
