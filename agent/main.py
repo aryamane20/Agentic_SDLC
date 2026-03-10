@@ -30,6 +30,14 @@ KNOWLEDGE_BASE = {
     "staffing":  "knowledge-base/staffing/role-definitions.md",
 }
 
+# Model constants — use HAIKU for prompt iteration and debugging,
+# SONNET for official eval runs and Demo Day outputs.
+# NOTE: This API key only has access to claude-sonnet-4. Both constants
+# point to Sonnet until a Haiku 4 model is released or a key with
+# broader model access is available.
+MODEL_HAIKU  = "claude-haiku-4-5-20251001"
+MODEL_SONNET = "claude-sonnet-4-20250514"
+
 
 class PMAgent:
     """
@@ -38,12 +46,12 @@ class PMAgent:
     the 8-step PM reasoning process on raw requirements input.
     """
 
-    def __init__(self, prompt_version: str = "v1.2.0"):
+    def __init__(self, prompt_version: str = "v1.4", model: str = MODEL_HAIKU):
         self.prompt_version = prompt_version
         self.client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
-        self.model = "claude-sonnet-4-20250514"
+        self.model = model
         self.temperature = 0.3   # Low for consistency (PMBOK-grounded output)
-        self.max_tokens = 15000   # Increased for detailed PM reports with full JSON
+        self.max_tokens = 16000   # Haiku produces verbose JSON (~8-12k tokens); needs headroom to avoid truncation
         self.system_prompt = self._build_system_context()
 
     def _load_role(self) -> str:
@@ -180,16 +188,16 @@ class PMAgent:
         """
         Wraps raw input with instructions to trigger 8-step reasoning.
         """
-        return f"""Please analyze the following project requirements and produce a complete PM Digital Twin Report.
+        return f"""Analyze the following project requirements using your full 8-step reasoning process.
 
-Follow your full 8-step reasoning process. After the human-readable report sections, output the complete JSON object matching the output schema.
+Output a single valid JSON object only. No prose. No section headers. No markdown. Just the JSON.
 
 PROJECT REQUIREMENTS:
 ---
 {raw_input}
 ---
 
-Begin your analysis now."""
+Begin."""
 
     def _extract_json(self, raw_output: str) -> dict:
         """

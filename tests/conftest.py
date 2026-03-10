@@ -20,7 +20,7 @@ def mock_anthropic_client():
     mock_response = Mock()
     mock_response.content = [Mock(text='{"report": "test"}')]
     mock_response.usage = Mock(
-        input_tokens=100, 
+        input_tokens=100,
         output_tokens=200,
         cache_read_input_tokens=0,
         cache_creation_input_tokens=0
@@ -32,7 +32,7 @@ def mock_anthropic_client():
 @pytest.fixture
 def agent(mock_anthropic_client):
     """Create a PMAgent instance with mocked client."""
-    agent = PMAgent(prompt_version="v1.2.0")
+    agent = PMAgent(prompt_version="v1.4")
     agent.client = mock_anthropic_client
     return agent
 

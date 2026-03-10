@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-03-10T04:11:27.367286Z",
+  "prompt_version": "v1.4",
+  "dimensions": {
+    "schema_validation": {
+      "dimension": "Schema Validation",
+      "target": "100%",
+      "result": "1/1 (100%)",
+      "passed": true,
+      "details": [
+        {
+          "test_case": "tc-01-perfect",
+          "passed": true,
+          "errors": [],
+          "warnings": []
+        }
+      ]
+    }
+  }
+}

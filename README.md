@@ -38,18 +38,23 @@ Agentic_SDLC/
 │   ├── main.py                     ← Entry point: runs the agent end-to-end
 │   ├── runner.py                   ← run_with_retry(), run_with_validation()
 │   ├── logger.py                   ← Structured run logger (writes to logs/)
-│   └── validator.py                ← Output schema validation using pydantic
+│   ├── validator.py                ← Output schema validation using pydantic
+│   └── viability_checker.py        ← Project viability assessment logic
 │
 ├── prompts/                        ← Versioned prompt files (immutable once committed)
 │   ├── README.md                   ← Prompt design decisions and version changelog
 │   ├── PROMPT_CHANGELOG.md        ← Full version history
-│   ├── v1.0.0_system.txt         ← Initial system prompt
-│   ├── v1.1.0_system.txt         ← SDLC approach, NFRs, Critical Path
-│   └── v1.2.0_system.txt         ← Prompt caching enabled (PERFORMANCE)
+│   ├── v1.0_system.txt           ← Baseline prompt
+│   ├── v1.1_system.txt           ← Reasoning completeness (SDLC, NFR, critical path)
+│   ├── v1.2_system.txt           ← Output reliability (JSON skeleton, calibration)
+│   ├── v1.3_system.txt           ← Production architecture (JSON-only, scratchpad)
+│   ├── v1.4_system.txt           ← Haiku compatibility (Budget risk, priority caps)
+│   └── archive/                   ← Intermediate prompt versions for reproducibility
 │
 ├── schemas/                        ← Input/output schema definitions
 │   ├── input_schema.py            ← Pydantic model for expected input
-│   └── output_schema.py           ← Pydantic model for expected output
+│   ├── output_schema.py           ← Pydantic model for expected output
+│   └── output_schema.json         ← Generated JSON schema (from Pydantic)
 │
 ├── tests/                          ← pytest test suite
 │   ├── __init__.py
@@ -75,9 +80,7 @@ Agentic_SDLC/
 │
 ├── knowledge-base/                 ← PM domain knowledge (inline for P1)
 │   ├── templates/
-│   │   ├── type-a-new-tool.md    ← New internal tool template
-│   │   ├── type-c-data-pipeline.md ← Data pipeline template
-│   │   └── type-d-integration.md ← System integration template
+│   │   └── project-type-templates.md ← All project type templates (A-F)
 │   ├── risks/
 │   │   └── risk-patterns.md      ← PMI-grounded risk catalog
 │   └── staffing/
@@ -113,11 +116,6 @@ pip install -r requirements.txt
 # Add your API key to .env (ANTHROPIC_API_KEY)
 ```
 
-### Run on a single input
-```bash
-python -m agent.main --input inputs/test-cases/tc-01-perfect.txt
-```
-
 ### Run full evaluation suite
 ```bash
 python scripts/run_eval.py --all
@@ -125,7 +123,12 @@ python scripts/run_eval.py --all
 
 ### Run specific test case
 ```bash
-python -m agent.main --input inputs/test-cases/tc-04-vague.txt --verbose
+python scripts/run_eval.py --tc tc-01-perfect
+```
+
+### Run specific dimension
+```bash
+python scripts/run_eval.py --dimension schema --tc tc-01-perfect
 ```
 
 ### Run tests

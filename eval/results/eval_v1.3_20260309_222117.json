@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-03-09T22:19:26.445100Z",
+  "prompt_version": "v1.3",
+  "dimensions": {
+    "reasoning_quality": {
+      "dimension": "Reasoning Quality",
+      "target": "Average > 3.5/5",
+      "scores": {
+        "assumption_quality": 5,
+        "plan_completeness": 5,
+        "risk_realism": 5,
+        "staffing_validity": 3,
+        "internal_consistency": 5,
+        "sdlc_approach": 5,
+        "critical_path": 5,
+        "assumption_source": 5
+      },
+      "average": 4.75,
+      "passed": true,
+      "human_review_needed": [
+        "Verify risks are specific to input (not generic)",
+        "Verify assumption PMI references are accurate",
+        "Verify action items follow from identified risks"
+      ]
+    }
+  }
+}

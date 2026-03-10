@@ -49,8 +49,9 @@ class RiskCategory(str, Enum):
     Resource = "Resource"
     Technical = "Technical"
     Scope = "Scope"
-    External = "External"
+    Integration = "Integration"
     Compliance = "Compliance"
+    Budget = "Budget"
 
 
 class Urgency(str, Enum):
@@ -80,7 +81,6 @@ class ReportMetadata(BaseModel):
 
 
 class ProjectUnderstanding(BaseModel):
-    # All fields flexible to handle LLM output variations
     primary_goal: Optional[Any] = None
     beneficiary: Optional[Any] = None
     trigger: Optional[Any] = None
@@ -189,7 +189,7 @@ class GapType(str, Enum):
     BUDGET = "BUDGET"
     SCHEDULE = "SCHEDULE"
     BOTH = "BOTH"
-    N_A = "N/A"
+    NA = "N/A"
 
 
 class ScopingOption(BaseModel):

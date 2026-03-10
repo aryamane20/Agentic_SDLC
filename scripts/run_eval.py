@@ -3,49 +3,70 @@ PM Digital Twin — Master Evaluation Runner
 Runs all 5 evaluation dimensions and produces a report.
 
 Usage:
-  python eval/run_eval.py --all
-  python eval/run_eval.py --dimension schema
-  python eval/run_eval.py --tc tc-01
+  python scripts/run_eval.py --all
+  python scripts/run_eval.py --dimension schema
+  python scripts/run_eval.py --tc tc-01-perfect
 """
 
 import argparse
 import json
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from datetime import datetime
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from agent.main import PMAgent
+from agent.main import PMAgent, MODEL_HAIKU, MODEL_SONNET
 from agent.validator import SchemaValidator
 
 
 # ─────────────────────────────────────────────────────────────
 # DIMENSION 1: Schema Validation
 # ─────────────────────────────────────────────────────────────
-def run_schema_validation(test_cases: list, agent: PMAgent) -> dict:
-    """Every output must pass schema validation. Target: 100%."""
-    results = []
-    for tc in test_cases:
-        print(f"  [Schema] Running {tc['id']}...")
+def _run_schema_one(tc: dict, agent: PMAgent, max_retries: int = 3) -> dict:
+    """Run schema validation for a single test case with rate-limit retry."""
+    print(f"  [Schema] Running {tc['id']}...")
+    for attempt in range(max_retries):
         try:
             result = agent.run(tc["input"])
             validator = SchemaValidator()
             validation = validator.validate(result["report"])
-            results.append({
+            return {
                 "test_case": tc["id"],
                 "passed": validation["valid"],
                 "errors": validation["errors"],
                 "warnings": validation["warnings"]
-            })
+            }
         except Exception as e:
-            results.append({
+            if "429" in str(e) or "rate_limit" in str(e).lower():
+                wait = 65 * (attempt + 1)
+                print(f"    [Rate limit] {tc['id']} — waiting {wait}s (attempt {attempt+1}/{max_retries})")
+                time.sleep(wait)
+                continue
+            return {
                 "test_case": tc["id"],
                 "passed": False,
                 "errors": [str(e)],
                 "warnings": []
-            })
+            }
+    return {
+        "test_case": tc["id"],
+        "passed": False,
+        "errors": ["Rate limit exceeded after all retries"],
+        "warnings": []
+    }
+
+
+def run_schema_validation(test_cases: list, agent: PMAgent, workers: int = 5) -> dict:
+    """Every output must pass schema validation. Target: 100%."""
+    results = [None] * len(test_cases)
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = {pool.submit(_run_schema_one, tc, agent): i
+                   for i, tc in enumerate(test_cases)}
+        for future in as_completed(futures):
+            results[futures[future]] = future.result()
 
     passed = sum(1 for r in results if r["passed"])
     return {
@@ -304,230 +325,231 @@ EDGE_CASE_EXPECTATIONS = {
     }
 }
 
-def run_edge_cases(test_cases: list, agent: PMAgent) -> dict:
-    """Test edge case handling. Target: > 80% pass rate."""
-    results = []
-
-    for tc in test_cases:
-        print(f"  [Edge Case] Running {tc['id']}...")
+def _run_edge_case_one(tc: dict, agent: PMAgent, max_retries: int = 3) -> dict:
+    """Run edge case checks for a single test case with rate-limit retry."""
+    print(f"  [Edge Case] Running {tc['id']}...")
+    for attempt in range(max_retries):
         try:
-            result = agent.run(tc["input"])
-            report = result["report"]
-            validator = SchemaValidator()
-            validation = validator.validate(report)
-
-            tc_result = {
-                "test_case": tc["id"],
-                "schema_valid": validation["valid"],
-                "confidence_score": report.get("pm_confidence_score", {}).get("score"),
-                "assumption_count": len(report.get("assumption_log", [])),
-                "risk_count": len(report.get("risk_register", [])),
-                "project_type": report.get("report_metadata", {}).get("project_type"),
-                "checks": []
-            }
-
-            # Run expectations if defined
-            expectations = EDGE_CASE_EXPECTATIONS.get(tc["id"], {})
-            passed_checks = []
-
-            if "min_confidence" in expectations:
-                score = tc_result["confidence_score"] or 0
-                passed = score >= expectations["min_confidence"]
-                passed_checks.append(passed)
-                tc_result["checks"].append({
-                    "check": f"Confidence >= {expectations['min_confidence']}",
-                    "passed": passed,
-                    "actual": score
-                })
-
-            if "max_confidence" in expectations:
-                score = tc_result["confidence_score"] or 100
-                passed = score <= expectations["max_confidence"]
-                passed_checks.append(passed)
-                tc_result["checks"].append({
-                    "check": f"Confidence <= {expectations['max_confidence']} (low quality input)",
-                    "passed": passed,
-                    "actual": score
-                })
-
-            if "min_assumptions" in expectations:
-                count = tc_result["assumption_count"]
-                passed = count >= expectations["min_assumptions"]
-                passed_checks.append(passed)
-                tc_result["checks"].append({
-                    "check": f"Assumptions >= {expectations['min_assumptions']}",
-                    "passed": passed,
-                    "actual": count
-                })
-
-            # v1.1.0: Check for SDLC approach
-            if expectations.get("must_have_sdlc"):
-                metadata = report.get("report_metadata", {})
-                has_sdlc = "sdlc_approach" in metadata and metadata.get("sdlc_approach") in ["Predictive", "Adaptive", "Hybrid"]
-                passed_checks.append(has_sdlc)
-                tc_result["checks"].append({
-                    "check": "SDLC approach present in report_metadata",
-                    "passed": has_sdlc,
-                    "actual": metadata.get("sdlc_approach", "MISSING")
-                })
-
-            # v1.1.0: Check for critical path fields
-            if expectations.get("must_have_critical_path"):
-                all_tasks = [t for p in report.get("project_plan", {}).get("phases", []) for t in p.get("tasks", [])]
-                has_critical_path = all("critical_path" in t and "slack_days" in t for t in all_tasks) if all_tasks else False
-                has_summary = "critical_path_summary" in report.get("project_plan", {})
-                passed = has_critical_path and has_summary
-                passed_checks.append(passed)
-                tc_result["checks"].append({
-                    "check": "Critical path and slack_days on all tasks + summary block",
-                    "passed": passed,
-                    "actual": f"tasks={len(all_tasks)}, has_cp={has_critical_path}, has_summary={has_summary}"
-                })
-
-            # v1.1.0: Check for NFR assumptions (vague input should generate NFR gaps)
-            if expectations.get("must_have_nfr_assumptions"):
-                assumptions = report.get("assumption_log", [])
-                nfr_assumptions = [a for a in assumptions if a.get("source") == "nfr"]
-                has_nfr = len(nfr_assumptions) > 0
-                passed_checks.append(has_nfr)
-                tc_result["checks"].append({
-                    "check": "At least one assumption with source=nfr (Non-Functional Requirement gap)",
-                    "passed": has_nfr,
-                    "actual": f"nfr_assumptions={len(nfr_assumptions)}"
-                })
-
-            # TC-04: Check that risks are flagged
-            if expectations.get("must_flag_risks"):
-                risks = report.get("risk_register", [])
-                has_risks = len(risks) > 0
-                passed_checks.append(has_risks)
-                tc_result["checks"].append({
-                    "check": "At least one risk in risk_register",
-                    "passed": has_risks,
-                    "actual": f"risks={len(risks)}"
-                })
-
-            # TC-05: Check for contradiction detection
-            if expectations.get("must_detect_contradiction"):
-                # Check if open_questions or assumptions mention contradiction/inconsistency
-                open_q = report.get("open_questions", [])
-                assumptions = report.get("assumption_log", [])
-                contradiction_keywords = ["contradict", "inconsistent", "conflict", "mismatch", "unclear"]
-                has_contradiction = any(
-                    any(kw in str(q).lower() for kw in contradiction_keywords)
-                    for q in open_q
-                ) or any(
-                    any(kw in str(a.get("assumption", "")).lower() for kw in contradiction_keywords)
-                    for a in assumptions
-                )
-                passed_checks.append(has_contradiction)
-                tc_result["checks"].append({
-                    "check": "Detected contradiction in requirements",
-                    "passed": has_contradiction,
-                    "actual": f"has_contradiction={has_contradiction}"
-                })
-
-            # TC-09: Check for critical timeline risk
-            if expectations.get("must_flag_timeline"):
-                risks = report.get("risk_register", [])
-                timeline_risks = [r for r in risks if "timeline" in str(r.get("risk", "")).lower() or "deadline" in str(r.get("risk", "")).lower()]
-                has_timeline_risk = len(timeline_risks) > 0
-                passed_checks.append(has_timeline_risk)
-                tc_result["checks"].append({
-                    "check": "At least one timeline/deadline risk flagged",
-                    "passed": has_timeline_risk,
-                    "actual": f"timeline_risks={len(timeline_risks)}"
-                })
-
-            # TC-09: Check for CRITICAL/HIGH risk scores
-            if expectations.get("must_have_risk_score"):
-                risks = report.get("risk_register", [])
-                required_scores = expectations.get("must_have_risk_score")
-                has_required_score = any(r.get("score") in required_scores for r in risks)
-                passed_checks.append(has_required_score)
-                tc_result["checks"].append({
-                    "check": f"At least one risk with score in {required_scores}",
-                    "passed": has_required_score,
-                    "actual": f"risk_scores={[r.get('score') for r in risks]}"
-                })
-
-            # TC-10: Staffing gap check
-            if expectations.get("must_flag_staffing_gap"):
-                staffing = report.get("staffing_plan", [])
-                # Check for staffing gap: either explicit gap flag or unrealistic allocation
-                has_gap_flag = any(r.get("staffing_gap", False) for r in staffing)
-                # Or check for single person with >80% allocation on large project
-                is_solo_overloaded = len(staffing) == 1 and staffing[0].get("allocation_percent", 0) > 80
-                has_staffing_risk = any(
-                    "staff" in r.get("risk", "").lower() or "resource" in r.get("risk", "").lower()
-                    for r in report.get("risk_register", [])
-                )
-                flagged = has_gap_flag or is_solo_overloaded or has_staffing_risk
-                passed_checks.append(flagged)
-                tc_result["checks"].append({
-                    "check": "Staffing gap flagged for solo developer on 6-month project",
-                    "passed": flagged,
-                    "actual": f"gap_flag={has_gap_flag}, solo_overloaded={is_solo_overloaded}, staffing_risk={has_staffing_risk}"
-                })
-
-            # === VIABILITY CHECK ASSERTIONS (v1.3.0) ===
-            viability = report.get("project_viability")
-            
-            # TC-04: No constraints - viability should be None
-            if expectations.get("viability_should_be_none"):
-                is_none = viability is None
-                passed_checks.append(is_none)
-                tc_result["checks"].append({
-                    "check": "Viability check skipped (no constraints provided)",
-                    "passed": is_none,
-                    "actual": f"project_viability={'None' if viability is None else 'present'}"
-                })
-            
-            # TC-05, TC-09, TC-10: Check viability status
-            if expectations.get("viability_status"):
-                expected_status = expectations.get("viability_status")
-                actual_status = viability.get("viability_status") if viability else None
-                status_match = actual_status == expected_status
-                passed_checks.append(status_match)
-                tc_result["checks"].append({
-                    "check": f"Viability status is {expected_status}",
-                    "passed": status_match,
-                    "actual": f"viability_status={actual_status}"
-                })
-                
-                # Check gap type
-                if expectations.get("viability_gap_type"):
-                    expected_gap = expectations.get("viability_gap_type")
-                    actual_gap = viability.get("gap_type") if viability else None
-                    gap_match = actual_gap == expected_gap
-                    passed_checks.append(gap_match)
-                    tc_result["checks"].append({
-                        "check": f"Gap type is {expected_gap}",
-                        "passed": gap_match,
-                        "actual": f"gap_type={actual_gap}"
-                    })
-                
-                # Check scoping options count
-                if expectations.get("viability_min_scoping_options"):
-                    min_options = expectations.get("viability_min_scoping_options")
-                    actual_options = len(viability.get("scoping_options", [])) if viability else 0
-                    has_options = actual_options >= min_options
-                    passed_checks.append(has_options)
-                    tc_result["checks"].append({
-                        "check": f"At least {min_options} scoping options when NOT_VIABLE",
-                        "passed": has_options,
-                        "actual": f"scoping_options={actual_options}"
-                    })
-
-            tc_result["overall_passed"] = validation["valid"] and all(passed_checks)
-            results.append(tc_result)
-
+            return _run_edge_case_inner(tc, agent)
         except Exception as e:
-            results.append({
+            if "429" in str(e) or "rate_limit" in str(e).lower():
+                wait = 65 * (attempt + 1)
+                print(f"    [Rate limit] {tc['id']} — waiting {wait}s (attempt {attempt+1}/{max_retries})")
+                time.sleep(wait)
+                continue
+            return {
                 "test_case": tc["id"],
                 "overall_passed": False,
                 "error": str(e)
+            }
+    return {
+        "test_case": tc["id"],
+        "overall_passed": False,
+        "error": "Rate limit exceeded after all retries"
+    }
+
+
+def _run_edge_case_inner(tc: dict, agent: PMAgent) -> dict:
+    """Core edge case logic (extracted for retry wrapper)."""
+    try:
+        result = agent.run(tc["input"])
+        report = result["report"]
+        validator = SchemaValidator()
+        validation = validator.validate(report)
+
+        tc_result = {
+            "test_case": tc["id"],
+            "schema_valid": validation["valid"],
+            "confidence_score": report.get("pm_confidence_score", {}).get("score"),
+            "assumption_count": len(report.get("assumption_log", [])),
+            "risk_count": len(report.get("risk_register", [])),
+            "project_type": report.get("report_metadata", {}).get("project_type"),
+            "checks": []
+        }
+
+        expectations = EDGE_CASE_EXPECTATIONS.get(tc["id"], {})
+        passed_checks = []
+
+        if "min_confidence" in expectations:
+            score = tc_result["confidence_score"] or 0
+            passed = score >= expectations["min_confidence"]
+            passed_checks.append(passed)
+            tc_result["checks"].append({
+                "check": f"Confidence >= {expectations['min_confidence']}",
+                "passed": passed, "actual": score
             })
+
+        if "max_confidence" in expectations:
+            score = tc_result["confidence_score"] or 100
+            passed = score <= expectations["max_confidence"]
+            passed_checks.append(passed)
+            tc_result["checks"].append({
+                "check": f"Confidence <= {expectations['max_confidence']} (low quality input)",
+                "passed": passed, "actual": score
+            })
+
+        if "min_assumptions" in expectations:
+            count = tc_result["assumption_count"]
+            passed = count >= expectations["min_assumptions"]
+            passed_checks.append(passed)
+            tc_result["checks"].append({
+                "check": f"Assumptions >= {expectations['min_assumptions']}",
+                "passed": passed, "actual": count
+            })
+
+        if expectations.get("must_have_sdlc"):
+            metadata = report.get("report_metadata", {})
+            has_sdlc = "sdlc_approach" in metadata and metadata.get("sdlc_approach") in ["Predictive", "Adaptive", "Hybrid"]
+            passed_checks.append(has_sdlc)
+            tc_result["checks"].append({
+                "check": "SDLC approach present in report_metadata",
+                "passed": has_sdlc, "actual": metadata.get("sdlc_approach", "MISSING")
+            })
+
+        if expectations.get("must_have_critical_path"):
+            all_tasks = [t for p in report.get("project_plan", {}).get("phases", []) for t in p.get("tasks", [])]
+            has_critical_path = all("critical_path" in t and "slack_days" in t for t in all_tasks) if all_tasks else False
+            has_summary = "critical_path_summary" in report.get("project_plan", {})
+            passed = has_critical_path and has_summary
+            passed_checks.append(passed)
+            tc_result["checks"].append({
+                "check": "Critical path and slack_days on all tasks + summary block",
+                "passed": passed,
+                "actual": f"tasks={len(all_tasks)}, has_cp={has_critical_path}, has_summary={has_summary}"
+            })
+
+        if expectations.get("must_have_nfr_assumptions"):
+            assumptions = report.get("assumption_log", [])
+            nfr_assumptions = [a for a in assumptions if a.get("source") == "nfr"]
+            has_nfr = len(nfr_assumptions) > 0
+            passed_checks.append(has_nfr)
+            tc_result["checks"].append({
+                "check": "At least one assumption with source=nfr (Non-Functional Requirement gap)",
+                "passed": has_nfr, "actual": f"nfr_assumptions={len(nfr_assumptions)}"
+            })
+
+        if expectations.get("must_flag_risks"):
+            risks = report.get("risk_register", [])
+            has_risks = len(risks) > 0
+            passed_checks.append(has_risks)
+            tc_result["checks"].append({
+                "check": "At least one risk in risk_register",
+                "passed": has_risks, "actual": f"risks={len(risks)}"
+            })
+
+        if expectations.get("must_detect_contradiction"):
+            open_q = report.get("open_questions", [])
+            assumptions = report.get("assumption_log", [])
+            contradiction_keywords = ["contradict", "inconsistent", "conflict", "mismatch", "unclear"]
+            has_contradiction = any(
+                any(kw in str(q).lower() for kw in contradiction_keywords) for q in open_q
+            ) or any(
+                any(kw in str(a.get("assumption", "")).lower() for kw in contradiction_keywords)
+                for a in assumptions
+            )
+            passed_checks.append(has_contradiction)
+            tc_result["checks"].append({
+                "check": "Detected contradiction in requirements",
+                "passed": has_contradiction, "actual": f"has_contradiction={has_contradiction}"
+            })
+
+        if expectations.get("must_flag_timeline"):
+            risks = report.get("risk_register", [])
+            timeline_risks = [r for r in risks if "timeline" in str(r.get("risk", "")).lower() or "deadline" in str(r.get("risk", "")).lower()]
+            has_timeline_risk = len(timeline_risks) > 0
+            passed_checks.append(has_timeline_risk)
+            tc_result["checks"].append({
+                "check": "At least one timeline/deadline risk flagged",
+                "passed": has_timeline_risk, "actual": f"timeline_risks={len(timeline_risks)}"
+            })
+
+        if expectations.get("must_have_risk_score"):
+            risks = report.get("risk_register", [])
+            required_scores = expectations.get("must_have_risk_score")
+            has_required_score = any(r.get("score") in required_scores for r in risks)
+            passed_checks.append(has_required_score)
+            tc_result["checks"].append({
+                "check": f"At least one risk with score in {required_scores}",
+                "passed": has_required_score,
+                "actual": f"risk_scores={[r.get('score') for r in risks]}"
+            })
+
+        if expectations.get("must_flag_staffing_gap"):
+            staffing = report.get("staffing_plan", [])
+            has_gap_flag = any(r.get("staffing_gap", False) for r in staffing)
+            is_solo_overloaded = len(staffing) == 1 and staffing[0].get("allocation_percent", 0) > 80
+            has_staffing_risk = any(
+                "staff" in r.get("risk", "").lower() or "resource" in r.get("risk", "").lower()
+                for r in report.get("risk_register", [])
+            )
+            flagged = has_gap_flag or is_solo_overloaded or has_staffing_risk
+            passed_checks.append(flagged)
+            tc_result["checks"].append({
+                "check": "Staffing gap flagged for solo developer on 6-month project",
+                "passed": flagged,
+                "actual": f"gap_flag={has_gap_flag}, solo_overloaded={is_solo_overloaded}, staffing_risk={has_staffing_risk}"
+            })
+
+        viability = report.get("project_viability")
+
+        if expectations.get("viability_should_be_none"):
+            is_none = viability is None
+            passed_checks.append(is_none)
+            tc_result["checks"].append({
+                "check": "Viability check skipped (no constraints provided)",
+                "passed": is_none,
+                "actual": f"project_viability={'None' if viability is None else 'present'}"
+            })
+
+        if expectations.get("viability_status"):
+            expected_status = expectations.get("viability_status")
+            actual_status = viability.get("viability_status") if viability else None
+            status_match = actual_status == expected_status
+            passed_checks.append(status_match)
+            tc_result["checks"].append({
+                "check": f"Viability status is {expected_status}",
+                "passed": status_match, "actual": f"viability_status={actual_status}"
+            })
+
+            if expectations.get("viability_gap_type"):
+                expected_gap = expectations.get("viability_gap_type")
+                actual_gap = viability.get("gap_type") if viability else None
+                gap_match = actual_gap == expected_gap
+                passed_checks.append(gap_match)
+                tc_result["checks"].append({
+                    "check": f"Gap type is {expected_gap}",
+                    "passed": gap_match, "actual": f"gap_type={actual_gap}"
+                })
+
+            if expectations.get("viability_min_scoping_options"):
+                min_options = expectations.get("viability_min_scoping_options")
+                actual_options = len(viability.get("scoping_options", [])) if viability else 0
+                has_options = actual_options >= min_options
+                passed_checks.append(has_options)
+                tc_result["checks"].append({
+                    "check": f"At least {min_options} scoping options when NOT_VIABLE",
+                    "passed": has_options, "actual": f"scoping_options={actual_options}"
+                })
+
+        tc_result["overall_passed"] = validation["valid"] and all(passed_checks)
+        return tc_result
+
+    except Exception as e:
+        return {
+            "test_case": tc["id"],
+            "overall_passed": False,
+            "error": str(e)
+        }
+
+
+def run_edge_cases(test_cases: list, agent: PMAgent, workers: int = 5) -> dict:
+    """Test edge case handling. Target: > 80% pass rate."""
+    results = [None] * len(test_cases)
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = {pool.submit(_run_edge_case_one, tc, agent): i
+                   for i, tc in enumerate(test_cases)}
+        for future in as_completed(futures):
+            results[futures[future]] = future.result()
 
     passed = sum(1 for r in results if r.get("overall_passed"))
     return {
@@ -559,32 +581,39 @@ def main():
     parser = argparse.ArgumentParser(description="PM Digital Twin Evaluation Suite")
     parser.add_argument("--all", action="store_true", help="Run all dimensions")
     parser.add_argument("--dimension", choices=["schema", "consistency", "rubric", "edge"], help="Run one dimension")
-    parser.add_argument("--tc", help="Run specific test case only")
-    parser.add_argument("--prompt-version", default="v1.3.0")
+    parser.add_argument("--tc", help="Run specific test case only (e.g. tc-01-perfect)")
+    parser.add_argument("--prompt-version", default="v1.4")
+    parser.add_argument("--model", default=MODEL_HAIKU,
+                        help=f"Model to use. haiku={MODEL_HAIKU}, sonnet={MODEL_SONNET}")
+    parser.add_argument("--workers", type=int, default=1,
+                        help="Parallel workers for schema/edge-case dimensions (default 1). "
+                             "Haiku free tier: 10k output tokens/min — 1 worker avoids rate limits.")
     args = parser.parse_args()
 
     print(f"\n{'='*60}")
     print(f"PM DIGITAL TWIN — EVALUATION SUITE")
-    print(f"Prompt Version: {args.prompt_version}")
-    print(f"Timestamp: {datetime.utcnow().isoformat()}Z")
+    print(f"Prompt Version : {args.prompt_version}")
+    print(f"Model          : {args.model}")
+    print(f"Parallel workers: {args.workers}")
+    print(f"Timestamp      : {datetime.utcnow().isoformat()}Z")
     print(f"{'='*60}\n")
 
-    agent = PMAgent(prompt_version=args.prompt_version)
+    agent = PMAgent(prompt_version=args.prompt_version, model=args.model)
     
-    # Warmup call to prime the prompt cache
-    # This ensures TC-01 doesn't pay full price - all 10 test cases benefit from cache
-    print("[WARMUP] Priming prompt cache...")
-    try:
-        agent.run("warmup")
-        print("[WARMUP] Cache primed - subsequent calls will use cached prompt\n")
-    except Exception as e:
-        print(f"[WARMUP] Warning: {e}\n")
+    # Warmup skipped — consumes output token budget on rate-limited tiers.
+    # Cache still gets primed on first real TC call.
     
     test_cases = load_test_cases()
 
     if not test_cases:
         print("ERROR: No test cases found in inputs/test-cases/")
         return
+
+    if args.tc:
+        test_cases = [tc for tc in test_cases if tc["id"] == args.tc]
+        if not test_cases:
+            print(f"ERROR: Test case '{args.tc}' not found.")
+            return
 
     print(f"Loaded {len(test_cases)} test cases: {[tc['id'] for tc in test_cases]}\n")
 
@@ -599,7 +628,7 @@ def main():
     # Dimension 1: Schema
     if run_all or args.dimension == "schema":
         print("[DIMENSION 1] Schema Validation")
-        result = run_schema_validation(test_cases, agent)
+        result = run_schema_validation(test_cases, agent, workers=args.workers)
         all_results["dimensions"]["schema_validation"] = result
         status = "✅ PASS" if result["passed"] else "❌ FAIL"
         print(f"  Result: {result['result']} {status}\n")
@@ -621,18 +650,34 @@ def main():
         print("[DIMENSION 3] Reasoning Quality Rubric")
         perfect_tc = next((tc for tc in test_cases if tc["id"] == "tc-01"), test_cases[0])
         run_result = agent.run(perfect_tc["input"])
-        result = run_rubric_scoring(run_result["report"])
+        report = run_result["report"]
+        result = run_rubric_scoring(report)
         all_results["dimensions"]["reasoning_quality"] = result
         status = "✅ PASS" if result["passed"] else "❌ FAIL"
         print(f"  Average Score: {result['average']}/5 {status}")
         for dim, score in result["scores"].items():
             print(f"    {dim}: {score}/5")
+
+        # Confidence score sanity check
+        assumption_count = len(report.get("assumption_log", []))
+        cs = report.get("pm_confidence_score", {})
+        cs_score = cs.get("score", "N/A") if isinstance(cs, dict) else cs
+        deductions = cs.get("deductions", []) if isinstance(cs, dict) else []
+        interpretation = cs.get("interpretation", "MISSING") if isinstance(cs, dict) else "MISSING"
+        cap_note = " ← cap ≥5 assumptions applies (≤60)" if assumption_count >= 5 else ""
+        print(f"\n  Confidence Score Sanity Check:")
+        print(f"    Score          : {cs_score}{cap_note}")
+        print(f"    Assumptions    : {assumption_count}")
+        print(f"    Deductions     : {len(deductions)}")
+        for d in deductions:
+            print(f"      -{d.get('amount', '?')}  {d.get('reason', '?')}")
+        print(f"    Interpretation : {interpretation}")
         print()
 
     # Dimension 4: Edge Cases
     if run_all or args.dimension == "edge":
         print("[DIMENSION 4] Edge Case Handling")
-        result = run_edge_cases(test_cases, agent)
+        result = run_edge_cases(test_cases, agent, workers=args.workers)
         all_results["dimensions"]["edge_cases"] = result
         status = "✅ PASS" if result["passed"] else "❌ FAIL"
         print(f"  Result: {result['result']} {status}\n")

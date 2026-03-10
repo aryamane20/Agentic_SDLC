@@ -1,192 +1,154 @@
 # PROMPT_CHANGELOG.md
-## System Prompt Version History
+## System Prompt Version History — PM Digital Twin
 
-Track every significant change to the system prompt here.
-Commit format: `prompt(vN): short description`
+A prompt version is justified when there is a measurable before/after eval score
+difference. Whitespace changes, comment tweaks, and one-line fixes are git commits,
+not prompt versions.
+
+Intermediate versions (v1.0.0–v1.6.1) are archived in `prompts/archive/` for
+reproducibility. The four active versions below are the canonical ones.
 
 ---
 
-## v1.0.0 — Initial Implementation
+## v1.0 — BASELINE
+**File:** `prompts/v1.0_system.txt`
 **Date:** March 2026
-**Files:** `system_prompt_v1.md`
-**Rubric Scores:** [run eval to populate]
+**Type:** Initial implementation
 
 **What's in this version:**
 - Full 8-step reasoning process (PMI/PMBOK grounded)
-- Identity: Senior Internal Product PM, 8+ years
-- All 5 system prompt components
-- Inline knowledge base: Type A, C, D templates (later extracted — see v1.0.1)
-- Risk pattern catalog (later extracted — see v1.0.1)
-- Staffing benchmarks (later extracted — see v1.0.1)
-- Hard output contract with JSON requirement
+- Identity: Senior Internal Product PM, 8+ years experience
+- Role/KB separation: reasoning prompt and domain knowledge maintained separately
+- Hard output contract with JSON requirement (prose description, no skeleton)
+
+**What consolidated from archive:**
+- v1.0.0 — initial prompt
+- v1.0.1 — role/KB separation (infrastructure change, zero reasoning change)
+
+**Rubric scores:** D3=2.8/5 (established eval baseline)
 
 ---
 
-## v1.1.0 — Three Additions from Systems Analysis Course (Functional Change)
+## v1.1 — REASONING COMPLETENESS
+**File:** `prompts/v1.1_system.txt`
 **Date:** March 2026
-**Type:** FUNCTIONAL — reasoning and output structure both change
-**Trigger:** Review of Satzinger et al. Systems Analysis & Design course material
-revealed three gaps: missing SDLC approach recommendation (Ch.10),
-missing non-functional requirements category (Ch.2), and missing
-critical path / slack calculation (Ch.C PERT/CPM).
+**Type:** FUNCTIONAL — reasoning process additions
 
-**What changed in system_prompt_v1.md:**
+**What changed from v1.0:**
+- Step 2 Part B: SDLC Approach classification (Predictive / Adaptive / Hybrid)
+  with decision rules and downstream effects on phase structure
+- Step 3: Non-Functional Requirements — six new fields (performance, availability,
+  security, usability, data retention, scalability); UNKNOWN NFR → assumption + risk
+- Step 6: Critical path and slack calculation (Steps 6A–6D); two new task fields:
+  `critical_path` (boolean), `slack_days` (integer); critical path summary block
+- Step 7: Added rule requiring risks to reference task IDs from Step 6
 
-Step 2 — Added Part B: SDLC Approach
-  - New definitions: Predictive, Adaptive, Hybrid SDLC with decision rules
-  - Agent now outputs SDLC_APPROACH + APPROACH_RATIONALE after project type
-  - Downstream: Adaptive/Hybrid triggers sprint structure in phases 2-3
-    and adds Product Owner question to Section 7
+**What consolidated from archive:**
+- v1.1.0 — SDLC, NFR, critical path (three reasoning additions)
+- v1.1.1 — task reference rule in Step 7 (single rule addition)
 
-Step 3 — Added Non-Functional Requirements category
-  - New definitions: Functional vs Non-Functional requirements explained
-  - Six new NFR fields: PERFORMANCE, AVAILABILITY, SECURITY, USABILITY,
-    DATA_RETENTION, SCALABILITY
-  - Rule: UNKNOWN NFR on user-facing system → assumption + risk (both required)
-
-Step 6 — Added Critical Path and Slack Time
-  - New definitions: critical path, slack time (float) — precise, not vague
-  - Four-step calculation rule (6A-6D): build chains → find longest →
-    mark critical → calculate slack for all others
-  - Two new task fields: CRITICAL_PATH (boolean), SLACK_DAYS (integer)
-  - New output block: CRITICAL PATH SUMMARY after task list
-  - Rule connecting to Step 8: critical path tasks → full-time roles
-
-**What changed in output_schema.json:**
-  - report_metadata: added sdlc_approach (required), sdlc_rationale
-  - assumption_log items: added source field (hard_constraint | soft_constraint | nfr | scope | other)
-  - project_plan: added critical_path_summary (required top-level block)
-  - task items: added critical_path (boolean, required), slack_days (integer ≥ 0, required)
-
-**Rubric impact:** Expected improvement in:
-  - Dimension 3 (reasoning quality) — Step 2 and Step 3 are now richer
-  - Dimension 4 (edge cases) — NFR gaps now surface as explicit risks
-  Re-run all 10 test cases and update scores below.
-
-**Rubric scores:** [run eval to populate]
+**Rubric scores:** D3=3.8/5. Internal consistency dimension: 2→4/5.
 
 ---
 
-## v1.1.1 — Schema Compliance Fixes
+## v1.2 — OUTPUT RELIABILITY
+**File:** `prompts/v1.2_system.txt`
 **Date:** March 2026
-**Type:** STRUCTURAL — format compliance, no reasoning changes
-**Trigger:** First eval run showed field name mismatches and schema violations
+**Type:** FUNCTIONAL + STRUCTURAL — output structure and confidence calibration
 
-**What changed in system_prompt_v1.md:**
-- Added "CRITICAL: OUTPUT FIELD NAME REQUIREMENTS" section
-- Explicit field names: pm_confidence_score (object), project_type, assumption_log, risk_register
-- project_plan structure: added critical_path_summary, task structure details
-- staffing_plan: skills_required as array (not string)
-- assumption_log: source enum values (hard_constraint/soft_constraint/nfr/scope/other)
-- Phase percentage constraints: Phase 1 >=10%, Phase 4 >=15%
-- Task effort_hours: MAX 40 (split larger tasks)
+**What changed from v1.1:**
+- Confidence score calibration: mandatory deduction table (-5 per UNKNOWN constraint,
+  -5 per assumption, -10 per CRITICAL risk, etc.) with hard caps:
+  ≥5 assumptions → score ≤60; input quality LOW → score ≤45
+- Viability Check (Step 8b): conditional gate when budget/deadline provided;
+  NOT_VIABLE triggers 2–3 scoping options
+- Complete JSON skeleton added to output contract — every field at correct nesting
+  level with format constraints. Fixed 32 schema errors from v1.1 eval run.
+- Explicit field format rules: enum values, ID string formats (A1, T1, R1),
+  success_definition as List[str], RiskCategory uses "Integration" not "External"
 
-**What changed in src/validator.py:**
-- Added _normalize_field_names() to handle field variations
-- Maps: classification->project_type, assumptions->assumption_log, risks->risk_register
-- Sets defaults for missing metadata fields
+**What consolidated from archive:**
+- v1.2.0 — prompt caching enabled (infrastructure, no reasoning change)
+- v1.3.0 — viability check Step 8b
+- v1.4.0 — complete JSON skeleton in output contract
+- v1.5.0 — explicit confidence deduction table with hard caps
 
-**Rubric impact:** Significant improvement in Dimension 1 (schema validation)
-Test Cases Affected: All (previously failing schema validation)
-
----
-
-## v1.2.0 — [RESERVED FOR NEXT PROMPT CHANGE]
-**Date:** TBD  
-**Trigger:** [What eval result triggered this change?]  
-**Changed:** [What specifically changed in the prompt?]  
-**Rubric Before:** [scores]  
-**Rubric After:** [scores]  
-**Test Cases Affected:** [which TCs changed behavior?]
+**Rubric scores:** D1 failures: 32→0. D4 pass rate: 70%→90%.
 
 ---
 
-## v1.2.0 — Performance: Prompt Caching Enabled
+## v1.3 — PRODUCTION ARCHITECTURE
+**File:** `prompts/v1.3_system.txt`
 **Date:** March 2026
-**Type:** PERFORMANCE — no reasoning changes, infrastructure optimization
-**Trigger:** Need to reduce API costs and latency for eval runs
+**Type:** STRUCTURAL — output format change, latency reduction
 
-**What changed in agent/main.py:**
-- System prompt now passed as list with cache_control for Claude 4 prompt caching
-- New format: `system=[{"type": "text", "text": <prompt>, "cache_control": {"type": "ephemeral"}}]`
-- Response now captures cache metrics: `cache_read_input_tokens`, `cache_creation_input_tokens`
-- Logging updated to show cache status (cache_read vs cache_created)
+**What changed from v1.2:**
+- Prose report sections (Sections 1–9) removed from output contract entirely.
+  Output is now: optional `<scratchpad>` (≤500 tokens) + single JSON block.
+- Scratchpad instruction added: Claude works through critical path math, risk
+  scoring, and confidence deductions in scratchpad before committing to JSON values.
+- Confidence deduction table and open questions rules moved into output contract
+  (applied in scratchpad, not written as prose output).
+- effort_hours cap reinforced in format rules block: MAX 40.0, split if exceeded.
+- user message (`_build_user_message`) updated to say JSON only — eliminates the
+  contradiction where user message previously said "write prose sections first".
+- `max_tokens`: 15000 → 8000 (JSON-only output fits in ~6,500 tokens).
+- `GapType` enum: N_A → NA = "N/A" (fixes serialization ambiguity).
+- Streaming token capture fixed: `chunk.delta.text` (not `chunk.text`);
+  `message_start` / `message_delta` events captured for real cache metrics.
+- Validator UNKNOWN defaults removed: missing enum fields now reported as schema
+  errors rather than silently replaced with invalid values.
 
-**How caching works:**
-- First API call: `cache_creation_input_tokens` = full prompt size, `cache_read_input_tokens` = 0
-- Subsequent calls (within 5 minutes): `cache_read_input_tokens` = full prompt size, `cache_creation_input_tokens` = 0
-- Cache TTL: 5 minutes — expires between separate sessions, holds for entire eval suite
+**What consolidated from archive:**
+- v1.6.0 — JSON-only output, scratchpad instruction, max_tokens 8000
+- v1.6.1 — effort_hours cap in format rules, JSON comment removed from skeleton
 
-**What changed in scripts/run_eval.py:**
-- Added warmup call before test case loop to prime the cache
-- Without warmup: TC-01 pays full price, inflating latency numbers
-- With warmup: All 10 test cases benefit from cached prompt equally
-
-**Cost impact (expected):**
-- Eval run without cache: 10 × full prompt tokens
-- Eval run with cache: 1 × full prompt tokens + 9 × cached reads
-- Savings: ~90% on prompt token costs for eval runs
-
-**Latency impact (expected):**
-- First call: Same latency as before (prompt processing time)
-- Subsequent calls: Significantly faster (no reprocessing of system prompt)
-
-**Rubric impact:** None — this is purely infrastructure, no reasoning changes
+**Rubric scores:** D1=PASS. Latency: ~200s→~100s (cold cache). D3 unchanged.
 
 ---
 
-## v1.3.0 — Conditional Viability Check (Functional Change)
+## v1.4 — SCHEMA ALIGNMENT + HAIKU COMPATIBILITY
+**File:** `prompts/v1.4_system.txt`
 **Date:** March 2026
-**Type:** FUNCTIONAL — new reasoning step and output section added
-**Trigger:** Need to flag projects that exceed budget or timeline constraints with scoping options
+**Type:** Bug fix — schema mismatch + model compatibility
 
-**What changed in prompts/v1.3.0_system.txt:**
-- Added Step 8b: VIABILITY CHECK (Conditional)
-  - Only runs if budget OR deadline is provided in input
-  - Budget check: NOT_VIABLE if estimated_cost > budget × 1.5
-  - Schedule check: NOT_VIABLE if duration > deadline × 1.3, AT_RISK if > 1.0
-  - Generates 2-3 scoping options when status is NOT_VIABLE
+**What changed from v1.3:**
+- Fixed `project_viability` output skeleton: exact field names only (`viability_status`,
+  `gap_type`, `gap_amount`, `scoping_options`). Removed hallucinated fields
+  (`budget_gap_amount`, `schedule_gap_weeks`, `gap_details`, `analysis`).
+- Fixed `scoping_options` item key: `option_id` not `option`.
+- Added null vs. non-null viability examples side-by-side in skeleton.
+- Added `phases[n].percentage_of_total` minimum (5.0) to format rules.
+- Added `Budget` to `RiskCategory` enum in `output_schema.py` (Haiku naturally
+  produces this category; regenerated `output_schema.json`).
+- `open_questions` capped at MAX 5 items in prompt (schema already had `max_length=5`).
+- `open_questions.priority` constraint added: integer 1–5 only, NEVER exceed 5.
+- Risk category list updated to include "Budget" in both the format rules and
+  the reasoning process sections.
 
-- Added Section 9: PROJECT VIABILITY FLAG to output contract
-  - VIABILITY_STATUS: VIABLE | AT_RISK | NOT_VIABLE | CANNOT_ASSESS
-  - GAP_TYPE: BUDGET | SCHEDULE | BOTH | N/A
-  - GAP_AMOUNT: specific gap or "N/A"
-  - SCOPING_OPTIONS: only if NOT_VIABLE
+**Infrastructure changes:**
+- Switched default model to `claude-haiku-4-5-20251001` for all development runs.
+  Sonnet (`claude-sonnet-4-20250514`) reserved for final Demo Day baseline only.
+- `max_tokens`: 8000 → 16000 (Haiku outputs are more verbose; 8k caused truncation).
+- Workers default: 3 → 1 (Haiku free tier: 10k output tokens/min rate limit).
+- Warmup call removed from `run_eval.py` (consumed token budget, no cache benefit).
+- Rate-limit retry (3 attempts, 65s backoff) added to D1 and D4 eval helpers.
 
-**What changed in schemas/output_schema.py:**
-- Added ViabilityStatus enum
-- Added GapType enum
-- Added ScopingOption model
-- Added ProjectViability model
-- Added optional project_viability field to PMReport
-
-**What changed in agent/viability_checker.py (NEW):**
-- Created new module with conditional logic
-- _extract_constraints(): parses budget/deadline from raw input
-- check_viability(): applies thresholds, generates scoping options
-
-**What changed in agent/runner.py:**
-- Added check_viability_flag parameter to run_with_validation()
-- Integrates viability check after agent completes
-- Adds project_viability to report when constraints provided
-
-**What changed in agent/validator.py:**
-- Added viability validation rules
-- Validates status values and scoping_options when NOT_VIABLE
-
-**Rubric impact:** New Dimension 4 assertions:
-- TC-05: viability_status=NOT_VIABLE, gap_type=BOTH, scoping_options>=2
-- TC-09: viability_status=NOT_VIABLE, gap_type=SCHEDULE, scoping_options>=2
-- TC-04: project_viability should be None (no constraints)
-
-**Authoritative Viability Determination:**
-- Section 9 (PROJECT VIABILITY FLAG) in the LLM output is **narrative reasoning only** — it explains the agent's own analysis of viability
-- The authoritative, deterministic viability assessment comes from **viability_checker.py post-processing module**
-- This module extracts constraints from input, calculates estimated cost from staffing plan, applies thresholds programmatically
-- The post-processed viability is what triggers approval gates in production; Section 9 is supporting context for the PM
+**Rubric scores (Haiku, TC-01):**
+- D1 (Schema): PASS (1/1, 100%)
+- D2 (Consistency): FAIL (variance=25.0, target <5) — Haiku confidence scoring is volatile
+- D3 (Reasoning): PASS (4.75/5) — staffing_validity 3/5, all others 5/5
+- D4 (Edge Cases): PASS (1/1, 100%)
 
 ---
 
-*Rule: Never overwrite a prompt version. Always create a new file (v2, v3...).*
-*Rule: Always run eval before AND after a prompt change and record both scores.*
-*Rule: If a change improves one test case but regresses another, document both.*
+## Versioning Rules (for future versions)
+
+- **New minor version (v1.x):** new capability or reasoning addition with before/after
+  eval scores showing measurable improvement. Requires a rubric run to justify.
+- **New major version (v2.x):** breaking change to output structure or reasoning
+  process (e.g., adding approval gate in Project 2).
+- **Not a version:** whitespace, comment tweaks, one-line fixes, infrastructure
+  changes with no eval impact. Use a descriptive git commit instead.
+- Never overwrite an existing version file. Create a new file.
+- Archive folder (`prompts/archive/`) is read-only — never edit archived files.

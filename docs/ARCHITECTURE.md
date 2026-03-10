@@ -58,7 +58,7 @@
 
 ### Layer 1: System Prompt (The Thinking Layer)
 **What it encodes:** WHO the agent is and HOW it thinks.
-**Lives in:** `agent/prompts/system_prompt_v1.md`
+**Lives in:** `prompts/v1.4_system.txt` (current active version)
 **Changes when:** Reasoning quality improves through prompt iteration.
 **Version controlled:** Yes — every change committed with rubric scores.
 
@@ -228,7 +228,7 @@ Hard rules:
 
 ## 4. Output Schema
 
-See `agent/schema/output_schema.json` for full JSON Schema definition.
+See `schemas/output_schema.json` for full JSON Schema definition.
 
 Top-level structure:
 ```json
@@ -284,7 +284,7 @@ The agent handles all input formats without rejection:
 
 | Layer | Technology | Why |
 |-------|-----------|-----|
-| LLM | Claude (claude-sonnet-4-20250514) | Consistent structured output |
+| LLM | Claude (claude-haiku-4-5-20251001 dev / claude-sonnet-4-20250514 eval) | Consistent structured output |
 | Language | Python 3.11+ | OpenHands compatible |
 | Validation | jsonschema library | Schema enforcement |
 | Logging | Python logging + JSON | Structured, parseable logs |
