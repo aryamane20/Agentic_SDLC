@@ -310,6 +310,7 @@ Input → Agent → Output
          [Critical Risk present?]  →  PAUSE → Human Review → Approve/Reject
                   │
                   ▼ (if approved)
+                  
             Final Report
 ```
 
