@@ -5,8 +5,8 @@ A prompt version is justified when there is a measurable before/after eval score
 difference. Whitespace changes, comment tweaks, and one-line fixes are git commits,
 not prompt versions.
 
-Intermediate versions (v1.0.0–v1.6.1) are archived in `prompts/archive/` for
-reproducibility. The four active versions below are the canonical ones.
+Intermediate versions (v1.0.0–v1.6.1) are archived in `prompts/archive/`.
+Active versions: v1.0 through v1.5.
 
 ---
 
@@ -134,11 +134,31 @@ reproducibility. The four active versions below are the canonical ones.
 - Warmup call removed from `run_eval.py` (consumed token budget, no cache benefit).
 - Rate-limit retry (3 attempts, 65s backoff) added to D1 and D4 eval helpers.
 
-**Rubric scores (Haiku, TC-01):**
-- D1 (Schema): PASS (1/1, 100%)
-- D2 (Consistency): FAIL (variance=25.0, target <5) — Haiku confidence scoring is volatile
+**Rubric scores (Haiku, 10 test cases):**
+- D1 (Schema): PASS (10/10, 100%)
+- D2 (Consistency): FAIL (variance=30.0, target <5) — Haiku confidence scoring is volatile
 - D3 (Reasoning): PASS (4.75/5) — staffing_validity 3/5, all others 5/5
-- D4 (Edge Cases): PASS (1/1, 100%)
+- D4 (Edge Cases): PASS (10/10, 100%)
+
+---
+
+## v1.5 — STRUCTURAL TRIM + ANTI-PATTERNS
+**File:** `prompts/v1.5_system.txt`
+**Date:** March 2026
+**Type:** STRUCTURAL + FUNCTIONAL — prompt trim and input quality gates
+
+**What changed from v1.4:**
+- **Structural trim:** Removed SDLC/NFR definition prose. Trimmed phase milestones
+  to 2 per phase. Removed critical path definition prose, kept calculation rules.
+- Step 1 (EXTRACT): Added anti-pattern check — Solution Smuggling, Feature Factory,
+  Stakeholder Driven. Flag any detected in open_questions (urgency "Before planning").
+- Step 4 (ASSUMPTION LOG): Added `tradeoff` field — what plan gains vs. risks.
+- Format rules: added `tradeoff` to assumption_log; restored open_questions MAX 5.
+- Skeleton: `prompt_version` → v1.5.0.
+
+**Builds on v1.4 (10 test cases):** D1 10/10, D2 FAIL, D3 4.75/5, D4 10/10.
+
+**Rubric scores:** Pending eval.
 
 ---
 

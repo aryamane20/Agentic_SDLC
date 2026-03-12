@@ -582,7 +582,7 @@ def main():
     parser.add_argument("--all", action="store_true", help="Run all dimensions")
     parser.add_argument("--dimension", choices=["schema", "consistency", "rubric", "edge"], help="Run one dimension")
     parser.add_argument("--tc", help="Run specific test case only (e.g. tc-01-perfect)")
-    parser.add_argument("--prompt-version", default="v1.4")
+    parser.add_argument("--prompt-version", default="v1.5")
     parser.add_argument("--model", default=MODEL_HAIKU,
                         help=f"Model to use. haiku={MODEL_HAIKU}, sonnet={MODEL_SONNET}")
     parser.add_argument("--workers", type=int, default=1,
