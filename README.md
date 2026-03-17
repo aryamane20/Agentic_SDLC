@@ -49,6 +49,7 @@ Agentic_SDLC/
 │   ├── v1.2_system.txt           ← Output reliability (JSON skeleton, calibration)
 │   ├── v1.3_system.txt           ← Production architecture (JSON-only, scratchpad)
 │   ├── v1.4_system.txt           ← Haiku compatibility (Budget risk, priority caps)
+│   ├── v1.5_system.txt           ← Structural trim + anti-patterns
 │   └── archive/                   ← Intermediate prompt versions for reproducibility
 │
 ├── schemas/                        ← Input/output schema definitions
@@ -160,7 +161,7 @@ Every input — no matter how vague — goes through this exact sequence:
 | Dimension | What It Tests | Automated? |
 |-----------|--------------|------------|
 | Schema Validation | Output structure correctness | Yes |
-| Consistency | Same input = same output (5 runs) | Yes |
+| Consistency | Same input = same output (3 runs on TC-01) | Yes |
 | Reasoning Quality | Rubric scored 1-5 per dimension | Semi-manual |
 | Edge Cases | 10 test cases across input spectrum | Yes |
 | PM Comparison | Agent vs manual PM output | Manual |

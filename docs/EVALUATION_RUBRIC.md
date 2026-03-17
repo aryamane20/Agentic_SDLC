@@ -21,7 +21,7 @@
 
 **How to run:**
 ```bash
-python eval/run_eval.py --dimension schema
+python scripts/run_eval.py --dimension schema
 ```
 
 **Pass criteria:** Every field in `output_schema.json` is present and correctly typed.
@@ -45,13 +45,12 @@ python eval/run_eval.py --dimension schema
 
 **How to run:**
 ```bash
-python eval/run_eval.py --dimension consistency
+python scripts/run_eval.py --dimension consistency
 ```
 
 **Pass criteria:**
-- PM Confidence Score variance < 5 points across 5 runs
-- Project type classification identical across all runs
-- Risk count variance ≤ 1
+- PM Confidence Score variance < 5 points across 3 runs (TC-01)
+- Project type and SDLC approach identical across all runs
 
 **Why this matters:** Production agents must be predictable. A PM that gives wildly different assessments of the same project on different days is not trustworthy.
 
@@ -63,7 +62,7 @@ python eval/run_eval.py --dimension consistency
 
 **How to run:**
 ```bash
-python eval/run_eval.py --dimension rubric
+python scripts/run_eval.py --dimension rubric
 ```
 
 **Scoring guide (1-5 per sub-dimension):**
@@ -189,8 +188,7 @@ This pattern — using an LLM to evaluate another LLM's output — is the natura
 
 | Prompt Version | D1 Schema | D2 Consistency | D3 Rubric Avg | D4 Edge Cases | Notes |
 |----------------|-----------|----------------|---------------|---------------|-------|
-| v1 | TBD | TBD | TBD | TBD | Initial implementation |
-| v2 | | | | | |
-| v3 | | | | | |
+| v1.4 | 10/10 | FAIL (variance 30) | 4.75/5 | 10/10 | Haiku, 10 test cases |
+| v1.5 | Pending | Pending | Pending | Pending | Structural trim + anti-patterns |
 
-*Fill this in as you iterate. This table is the evidence that prompt engineering is working.*
+*Fill this in as you iterate. See `prompts/PROMPT_CHANGELOG.md` for full history.*

@@ -16,11 +16,11 @@ It has failed. This document works backward from that failure to identify what c
 | # | Hypothesis | Trigger Condition | Detection Method | Severity | Mitigation |
 |---|-----------|------------------|-----------------|----------|------------|
 | F1 | Agent skips assumption log on clean inputs | Input appears complete, agent skips Step 4 | Schema validation — assumption_log is empty | HIGH | Schema validator enforces minItems: 1. Minimum assumption checklist in prompt |
-| F2 | Sections are internally inconsistent | Risks don't reference tasks, staffing doesn't match phases | Rubric Dimension 5 (internal consistency scorer) | HIGH | Output contract requires cross-references. Consistency check in rubric_scorer.py |
+| F2 | Sections are internally inconsistent | Risks don't reference tasks, staffing doesn't match phases | Rubric Dimension 3e (internal consistency) in run_eval.py | HIGH | Output contract requires cross-references. run_rubric_scoring checks coherence |
 | F3 | Phase minimums violated under deadline pressure | TC-09 (tight timeline) — agent compresses Phase 4 below 15% | Business rule check in validator.py | HIGH | Hard rule in system prompt: "NEVER compress Phase 4 below 15%" |
 | F4 | PM Confidence Score is overconfident | TC-05 (contradictory input) — agent scores itself 80+ | TC-05 expected max confidence of 40 | MEDIUM | Confidence deduction rules explicit in system prompt. TC-05 is edge case test |
 | F5 | Hallucinated tasks for unknown project types | Input contains unfamiliar domain (biotech, legal) | Real PM comparison test | MEDIUM | Knowledge base templates cover 6 types. Unknown type → agent flags LOW confidence |
-| F6 | JSON parsing fails | LLM adds prose before or after JSON block | parse_error flag in output + logger | LOW | Three-strategy parser in parser.py. Fallback returns structured error |
+| F6 | JSON parsing fails | LLM adds prose before or after JSON block | parse_error flag in output + logger | LOW | Three-strategy extraction in main.py _extract_json. Fallback returns structured error |
 | F7 | Generic risks not specific to input | Any run — risks sound copy-pasted | Rubric Dimension 3 (risk realism) | HIGH | Prompt requires risks to reference specific input details |
 | F8 | Staffing plan missing QA role | Vague input doesn't mention testing | QA ratio business rule in validator | MEDIUM | Mandatory staffing heuristic: always include QA regardless of input |
 | F9 | Over-allocation of roles | Single-person team inputs (TC-10) | Business rule: allocation_percent <= 80 | HIGH | Schema enforces maximum: 80. Validator flags violations |

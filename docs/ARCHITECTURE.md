@@ -34,7 +34,7 @@
 │   │                  OUTPUT PIPELINE                         │   │
 │   │                                                           │   │
 │   │  1. Raw LLM Response                                      │   │
-│   │  2. JSON Extraction (parser.py)                          │   │
+│   │  2. JSON Extraction (main.py _extract_json)              │   │
 │   │  3. Schema Validation (validator.py)                     │   │
 │   │  4. Structured Logging (logger.py)                       │   │
 │   │  5. Final Report                                         │   │
@@ -58,7 +58,7 @@
 
 ### Layer 1: System Prompt (The Thinking Layer)
 **What it encodes:** WHO the agent is and HOW it thinks.
-**Lives in:** `prompts/v1.4_system.txt` (current active version)
+**Lives in:** `prompts/v1.5_system.txt` (current active version)
 **Changes when:** Reasoning quality improves through prompt iteration.
 **Version controlled:** Yes — every change committed with rubric scores.
 
@@ -240,27 +240,14 @@ Top-level structure:
   "risk_register": [],
   "staffing_plan": [],
   "open_questions": [],
-  "pm_confidence_score": 0-100
+  "pm_confidence_score": { "score", "deductions", "interpretation" },
+  "project_viability": null | { "viability_status", "gap_type", "gap_amount", "scoping_options" }
 }
 ```
 
 ### PM Confidence Score Calculation
-```
-Base score: 100
-
-Deductions:
-  -10 per UNKNOWN hard constraint
-  -5 per HIGH risk_if_wrong assumption
-  -15 if classification confidence is LOW
-  -20 if contradictory constraints detected
-  +0 floor (minimum score: 0)
-
-Interpretation:
-  80-100: High quality input, output reliable
-  60-79:  Medium quality, review assumptions carefully
-  40-59:  Low quality input, treat as draft only
-  0-39:   Very low, human must validate everything
-```
+See the mandatory deduction table and hard caps in the system prompt (output contract).
+Interpretation: 80-100 = high quality; 60-79 = medium; 40-59 = low; 0-39 = very low.
 
 ---
 
@@ -310,7 +297,7 @@ Input → Agent → Output
          [Critical Risk present?]  →  PAUSE → Human Review → Approve/Reject
                   │
                   ▼ (if approved)
-                  
+
             Final Report
 ```
 
