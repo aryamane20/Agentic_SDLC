@@ -297,9 +297,9 @@ The agent handles all input formats without rejection:
 
 ### Project 1: Single Agent
 ```
-Input → System Prompt → LLM → Parser → Validator → Output
+Input → [System Prompt + KB compiled together] → LLM → Parser → Validator → Output
 ```
-Everything in one agent. Knowledge base embedded in system prompt.
+Everything in one agent. KB lives in separate files, compiled into context at runtime on every call..
 
 ### Project 2: Add Approval Gates
 ```
