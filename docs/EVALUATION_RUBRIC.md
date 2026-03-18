@@ -188,7 +188,10 @@ This pattern — using an LLM to evaluate another LLM's output — is the natura
 
 | Prompt Version | D1 Schema | D2 Consistency | D3 Rubric Avg | D4 Edge Cases | Notes |
 |----------------|-----------|----------------|---------------|---------------|-------|
-| v1.4 | 10/10 | FAIL (variance 30) | 4.75/5 | 10/10 | Haiku, 10 test cases |
-| v1.5 | Pending | Pending | Pending | Pending | Structural trim + anti-patterns |
+| v1.4 | 10/10 | FAIL (variance 30) | 4.75/5 (staffing 3/5) | 10/10 | Haiku, temp 0.3 |
+| v1.5 | Pending | FAIL (variance 52) | Pending | Pending | Structural trim + anti-patterns |
+| v1.6 | 1/1 (TC-01) | **PASS** (variance 0.0) | Pending | Pending | All consistency fixes. Temp 0.0. Scratchpad removed. |
 
-*Fill this in as you iterate. See `prompts/PROMPT_CHANGELOG.md` for full history.*
+D2 also verified on TC-04 (variance=0.0, Adaptive x3) and TC-05 (variance=0.0, Predictive x3).
+
+*Active version: v1.6. Full suite (all TCs, all dimensions) pending. D5 manual comparison pending.*

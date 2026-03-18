@@ -162,31 +162,59 @@ Active versions: v1.0 through v1.6.
 
 ---
 
-## v1.6 — D2 FIX + D3 FIX + D1 WARNINGS
+## v1.6 — D2 FIX + D3 FIX + D1 WARNINGS + CONSISTENCY FIXES
 **File:** `prompts/v1.6_system.txt`
 **Date:** March 2026
-**Type:** BUG FIX — scoring determinism, staffing completeness, allocation clarity
+**Type:** BUG FIX — scoring determinism, staffing completeness, allocation clarity,
+SDLC consistency, assumption anchoring, risk determinism
 
 **What changed from v1.5:**
+
+*Original v1.6.0 changes:*
 - **Mechanical confidence score rule** (OUTPUT CONTRACT, after deduction table):
   Deductions must be calculated from actual JSON array counts (assumption_count,
   high_risk_count, critical_risk_count, unknown_constraints). Eliminates re-judgment
-  at scoring time. Fixes D2 variance of 30.
+  at scoring time.
 - **Staffing completeness rule** (STEP 8, after hard rules):
   Any role flagged as missing/lacking in risk_register must appear in staffing_plan.
-  Fixes D3 staffing_validity 3/5 (QA risk without QA role).
 - **80% allocation clarification** (STEP 8, hard rules):
   Small teams / short timelines still obey the 80% cap. Multi-role persons must be
   split into separate staffing entries each ≤ 80%, with overlap flagged as Resource Risk.
-  Fixes D1 warnings on TC-09 and TC-10.
+
+*Consistency fixes (iterative, same file):*
+- **SDLC tie-breaker** (STEP 2 Part B): Evaluate PREDICTIVE conditions first. If all
+  four are satisfied → Predictive, do not fall through to Hybrid. Closes the loophole
+  where integration complexity was treated as an SDLC signal instead of a risk.
+- **Team experience default** (STEP 2 tie-breaker): If input specifies stack but does
+  NOT say the team lacks experience, assume experience. Integration complexity and
+  external APIs are Technical/Integration risks, not SDLC signals.
+- **NFR assumption rule** (STEP 3): Log an NFR assumption ONLY when BOTH (a) the field
+  is UNKNOWN AND (b) getting it wrong would materially change architecture/timeline/cost.
+  Prevents inflating assumption count with standard defaults.
+- **Assumption anchoring** (STEP 4): Do not restate known facts as assumptions. Only log
+  when the corresponding field is UNKNOWN or ambiguous.
+- **Risk checklist defaults** (STEP 7): Three ambiguous checklist items (first project of
+  type, single-person critical path, external dependencies) now have explicit resolution
+  rules so the decision is made for the agent, not by the agent.
+- **Probability anchors** (STEP 7): HIGH only when the trigger condition is already present
+  in the input. When in doubt, default to MEDIUM. Prevents speculative HIGH assignments.
+- **Scratchpad removed** (OUTPUT CONTRACT): Replaced with "Do NOT output a scratchpad or
+  any text before the JSON." Haiku was writing multi-thousand-token scratchpads that caused
+  truncation and parse failures (~30-50% of runs). JSON-only output eliminates this.
 
 **Infrastructure changes:**
+- Temperature: 0.3 → 0.0 (greedy decoding for maximum consistency).
 - Fixed TC-01 data capture bug in `run_eval.py`: `pm_confidence_score` field handled
   as both dict and float (was returning null when LLM returned a flat number).
+- D2 consistency test: parse failure retry (1 retry per run), diagnostic logging
+  (prints first 300 chars of raw output on failure).
+- All eval dimensions now save agent report JSON to `outputs/` for inspection.
 
 **Builds on v1.5 (D1 10/10, D2 FAIL variance 30, D3 4.75/5, D4 10/10).**
 
-**Rubric scores:** Pending eval.
+**Rubric scores (Haiku, temp 0.0, TC-01):**
+- D2 (Consistency): **PASS** (variance=0.0, Predictive x3, TYPE_A x3, score=82 x3)
+- D2 also verified on TC-04 (variance=0.0, Adaptive x3) and TC-05 (variance=0.0, Predictive x3)
 
 ---
 

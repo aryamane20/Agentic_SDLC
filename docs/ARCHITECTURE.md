@@ -58,7 +58,7 @@
 
 ### Layer 1: System Prompt (The Thinking Layer)
 **What it encodes:** WHO the agent is and HOW it thinks.
-**Lives in:** `prompts/v1.5_system.txt` (current active version)
+**Lives in:** `prompts/v1.6_system.txt` (current active version)
 **Changes when:** Reasoning quality improves through prompt iteration.
 **Version controlled:** Yes — every change committed with rubric scores.
 
@@ -274,6 +274,8 @@ The agent handles all input formats without rejection:
 | LLM | Claude (claude-haiku-4-5-20251001 dev / claude-sonnet-4-20250514 eval) | Consistent structured output |
 | Language | Python 3.11+ | OpenHands compatible |
 | Validation | jsonschema library | Schema enforcement |
+| UI | Streamlit | Single-file web app, no HTML/CSS/JS required |
+| Deployment | Streamlit Cloud | Free hosting, public URL for demos |
 | Logging | Python logging + JSON | Structured, parseable logs |
 | Testing | pytest | Unit + integration tests |
 | Version Control | Git | Prompt versioning + code |
@@ -288,20 +290,29 @@ Input → [System Prompt + KB compiled together] → LLM → Parser → Validato
 ```
 Everything in one agent. KB lives in separate files, compiled into context at runtime on every call..
 
-### Project 2: Add Approval Gates
+### Project 2: Approval Gates + Refinement Loop
 ```
 Input → Agent → Output
                   │
                   ▼
-         [Confidence Score < 60?]  →  PAUSE → Human Review → Approve/Reject
-         [Critical Risk present?]  →  PAUSE → Human Review → Approve/Reject
+         [Confidence Score < 60?]  →  PAUSE → Human Review → Approve/Reject/Refine
+         [Critical Risk present?]  →  PAUSE → Human Review → Approve/Reject/Refine
+         [Anti-pattern detected?]  →  PAUSE → Human Review → Approve/Reject/Refine
                   │
-                  ▼ (if approved)
-
-            Final Report
+          [If feedback given]
+                  │
+                  ▼
+         Agent receives constraint update
+         Re-runs Steps 5-8 with new information
+         Previous extraction (Steps 1-4) stays locked
+                  │
+                  ▼
+            Updated Report
 ```
 
-New components: `approval_gate.py`, `review_interface.py`, `feedback_logger.py`
+New components: `approval_gate.py`, `feedback_logger.py`
+UI: Streamlit chat interface — PM submits brief, reads report, types refinements
+The agent holds previous JSON in context and updates only affected sections.
 
 ### Project 3: Multi-Agent Orchestration
 ```
@@ -318,4 +329,5 @@ Input
   [Synthesis Agent]     → Consistency check → Final Report
 ```
 
-Knowledge base extracted to vector store. Each agent queries only its section.
+Knowledge base extracted to vector store. Each agent queries only its relevant section.
+5 specialized agents replace the single monolithic agent.
