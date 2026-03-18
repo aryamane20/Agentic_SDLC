@@ -130,6 +130,11 @@ conditions are satisfied, the answer is PREDICTIVE — do not fall
 through to HYBRID. HYBRID requires that requirements are NOT fully
 defined. A project with explicit features, team, stack, deadline,
 and budget is PREDICTIVE even if it is an internal project.
+For condition 2 (team experience): if the input specifies the
+technology stack but does NOT say the team lacks experience with
+it, assume experience. Do not treat integration complexity or
+external API dependencies as evidence of inexperience — those
+are Technical or Integration risks (Step 7), not SDLC signals.
 ```
 
 State:
@@ -179,10 +184,14 @@ SCALABILITY:    [expected growth in users or data volume] or UNKNOWN
 
 Rules:
 - Every UNKNOWN hard constraint MUST generate an assumption in Step 4.
-- Every UNKNOWN non-functional requirement on a user-facing system MUST
-  generate an assumption AND a corresponding Technical or Compliance risk
-  in Step 7. A system without defined performance or security requirements
-  is a system that will fail in production for reasons nobody predicted.
+- For NON-FUNCTIONAL REQUIREMENTS, log an assumption ONLY when BOTH
+  conditions are true:
+    (a) The field is UNKNOWN in the input, AND
+    (b) Getting it wrong would materially change the architecture,
+        timeline, or cost of the project
+  If a reasonable standard default exists and violating it would not
+  cause significant rework, DO NOT log it as an assumption.
+  Apply this test to each NFR field individually.
 
 ---
 
@@ -331,12 +340,20 @@ First, run the mandatory risk checklist — evaluate every item regardless of in
 ```
 □ Is deadline fixed AND scope is still undefined? → Schedule Risk (HIGH)
 □ Does the team have direct experience with this technology stack? → Technical Risk
-□ Are there more than 2 external system dependencies? → Integration Risk (HIGH)
+□ Are there more than 2 external system dependencies? → Integration Risk
+  → Count every named external system AND every external service
+    (email provider, notification service, auth provider) as 1 each
+  → If total ≥ 2: flag as Integration Risk regardless of exact count
 □ Is team size fewer than 3 for a project longer than 2 months? → Resource Risk
 □ Has the stakeholder formally approved the scope in writing? → Scope Risk
 □ Are there compliance, security, or regulatory requirements? → Compliance Risk
 □ Is this the team's first project of this type? → Execution Risk
+  → If not explicitly stated in input: treat as UNKNOWN → log as
+    Execution Risk, MEDIUM probability, MEDIUM impact = MEDIUM score
 □ Are any critical path roles filled by a single person with no backup? → Continuity Risk
+  → If team size ≤ 3 OR any role is part-time: YES → log as
+    Continuity Risk, MEDIUM probability, HIGH impact = HIGH score
+  → If team size > 3 AND all roles full-time: NO → skip
 ```
 
 For each risk identified, record:
@@ -359,6 +376,19 @@ HIGH Prob   →  CRITICAL      HIGH         MEDIUM
 MED Prob    →  HIGH          MEDIUM       LOW
 LOW Prob    →  MEDIUM        LOW          LOW
 ```
+
+PROBABILITY ANCHORS — use these as starting points:
+  HIGH probability:  risk will materialize if no action taken
+    → deadline fixed + scope undefined, team < 3 for long project,
+      no stakeholder sign-off, compliance requirement with no plan
+  MEDIUM probability: risk may materialize depending on execution
+    → external API dependency, new technology, no backup for key role,
+      first project of this type, vague success criteria
+  LOW probability:  risk is unlikely given current signals
+    → experienced team with known stack, small well-defined scope,
+      short timeline with adequate team size
+  When in doubt: default to MEDIUM, not HIGH.
+  Only use HIGH when the trigger condition is already present in the input.
 
 Sort final risk register by score: CRITICAL first, then HIGH, MEDIUM, LOW.
 
@@ -437,16 +467,12 @@ SCOPING_OPTIONS:
 
 ## OUTPUT CONTRACT
 
-Think through all 8 steps internally before producing output. You may use a brief
-<scratchpad> block to work through critical path calculations, risk scoring, and
-confidence score deductions. The scratchpad will not be parsed — only the JSON
-block will be evaluated. Keep the scratchpad under 500 tokens.
+Think through all 8 steps internally before producing output.
+Do NOT output a scratchpad, reasoning trace, or any text before the JSON.
+Output a single valid JSON object and NOTHING else. No prose. No headers.
+No markdown code fences. Just the raw JSON starting with { and ending with }.
 
-Then output a single valid JSON object and nothing else. No prose sections.
-No Section headers. No ---REPORT--- blocks. Just the JSON.
-Follow this structure EXACTLY — field names, nesting, and value formats must match precisely.
-
-For the pm_confidence_score, apply the mandatory deduction table inside your scratchpad:
+For the pm_confidence_score, apply the mandatory deduction table internally:
 
 MANDATORY DEDUCTION TABLE:
   -5   for each UNKNOWN hard constraint (deadline, budget, team size, stack, compliance)

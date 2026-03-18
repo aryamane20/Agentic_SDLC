@@ -1,0 +1,970 @@
+{
+  "report_metadata": {
+    "generated_at": "2026-03-18T21:41:04.762122Z",
+    "prompt_version": "v1.6",
+    "project_type": "TYPE_A",
+    "input_quality": "HIGH",
+    "classification_confidence": "HIGH",
+    "sdlc_approach": "Predictive",
+    "sdlc_rationale": "Requirements fully defined and signed off by stakeholders, team has direct experience with React/Node stack, fixed deadline with no flexibility, scope is explicit with clear must-haves vs nice-to-haves.",
+    "pm_confidence_score": 82.0
+  },
+  "project_understanding": {
+    "primary_goal": "Build a self-service employee onboarding portal enabling new hires to complete paperwork, IT setup, and team introduction before day one.",
+    "beneficiary": "New employees (100-200/year) and HR team (5 people)",
+    "trigger": "Current onboarding is fragmented across PDFs and manual processes; CEO requested improvement after hearing complaints at all-hands meeting.",
+    "success_definition": [
+      "80% of onboarding tasks completable before day one",
+      "HR admin time reduced by 50%",
+      "IT account setup fully automated (zero manual tickets)",
+      "New hire satisfaction survey score > 4/5"
+    ],
+    "supporting_quotes": [
+      "Create a self-service employee onboarding portal that allows new hires to complete all required paperwork, set up their IT accounts, and get introduced to the team before day one.",
+      "Currently onboarding is fragmented - paperwork is PDF-based, IT account setup is manual, new hires feel unprepared on day one.",
+      "New hires can complete 80% of onboarding tasks before day one"
+    ]
+  },
+  "constraint_extraction": {
+    "hard_constraints": {
+      "deadline": "June 30, 2026",
+      "budget": "$80,000",
+      "team_size": 4,
+      "team_composition": "1 PM, 2 Developers, 1 UX Designer",
+      "technology_stack": "React + TypeScript (frontend), Node.js + PostgreSQL (backend), Workday API, Azure AD SSO, Azure App Service hosting",
+      "compliance": "SOC 2 compliance required"
+    },
+    "soft_constraints": {
+      "preferred_timeline": "4 months",
+      "preferred_tools": "Azure ecosystem",
+      "nice_to_have": [
+        "Chat with HR bot",
+        "Mobile app",
+        "LMS integration"
+      ]
+    },
+    "non_functional_requirements": {
+      "performance": "UNKNOWN - no response time targets specified",
+      "availability": "UNKNOWN - no uptime SLA specified",
+      "security": "SOC 2 compliance required; Azure AD SSO integration; audit logs for compliance",
+      "usability": "Self-service portal for non-technical users (new hires); accessibility not explicitly stated but required for internal tools",
+      "data_retention": "UNKNOWN - no data retention policy specified",
+      "scalability": "Expected load: 100-200 new hires/year = ~2-4 concurrent users during peak onboarding periods; modest scaling needs"
+    }
+  },
+  "assumption_log": [
+    {
+      "id": "A1",
+      "what": "Performance target: API response time < 2 seconds, page load < 3 seconds",
+      "why": "Standard internal tool performance baseline; no explicit target given but SOC 2 compliance and user satisfaction metric (4/5) imply responsive system",
+      "pmi_basis": "PMBOK 6th Ed, Section 8.1 - Quality metrics defined before build begins",
+      "risk_if_wrong": "MEDIUM",
+      "consequence": "If actual requirement is stricter (e.g., <500ms), architecture may need caching layer or CDN; if looser, over-engineering wastes budget",
+      "source": "nfr",
+      "tradeoff": "Gains: allows development to proceed with reasonable performance targets. Risks: if actual requirement is stricter, Phase 2-3 rework needed."
+    },
+    {
+      "id": "A2",
+      "what": "Availability target: 99.5% uptime during business hours (8am-6pm), maintenance windows allowed outside hours",
+      "why": "Internal tool with non-critical onboarding window (new hires onboard during business hours); no explicit SLA given",
+      "pmi_basis": "PMBOK 6th Ed, Section 8.1 - Quality metrics defined before build begins",
+      "risk_if_wrong": "LOW",
+      "consequence": "If requirement is 99.9% or higher, infrastructure redundancy and monitoring costs increase; if lower, current plan sufficient",
+      "source": "nfr",
+      "tradeoff": "Gains: allows single-instance Azure App Service without premium redundancy. Risks: if higher SLA required, Phase 5 infrastructure costs increase."
+    },
+    {
+      "id": "A3",
+      "what": "Data retention: Employee onboarding records retained for 7 years (standard HR compliance window)",
+      "why": "No explicit retention policy given; 7 years is standard for HR records under employment law",
+      "pmi_basis": "PMBOK 6th Ed, Section 8.1 - Quality metrics defined before build begins",
+      "risk_if_wrong": "MEDIUM",
+      "consequence": "If actual requirement is shorter (e.g., 3 years), database design is over-provisioned; if longer (e.g., indefinite), archive strategy needed",
+      "source": "nfr",
+      "tradeoff": "Gains: allows database sizing and archive strategy to be planned. Risks: if wrong, Phase 3-4 rework needed for data lifecycle."
+    },
+    {
+      "id": "A4",
+      "what": "Accessibility standard: WCAG 2.1 AA (Level AA compliance)",
+      "why": "Standard for internal tools; no explicit requirement given but SOC 2 compliance and user satisfaction metric imply accessible design",
+      "pmi_basis": "PMBOK 6th Ed, Section 8.1 - Quality metrics defined before build begins",
+      "risk_if_wrong": "MEDIUM",
+      "consequence": "If requirement is AAA, additional design/testing effort needed; if no requirement, current plan sufficient",
+      "source": "nfr",
+      "tradeoff": "Gains: allows UX design and QA testing to proceed with clear accessibility target. Risks: if requirement is stricter, Phase 2-4 rework needed."
+    },
+    {
+      "id": "A5",
+      "what": "Workday API integration: Read-only access to employee data (name, department, manager, start date); no write-back to Workday",
+      "why": "Input specifies 'Workday API for employee data' but does not specify read vs. write scope; read-only is safer default for initial release",
+      "pmi_basis": "PMBOK 6th Ed, Section 5.2 - Scope baseline requires accepted requirements",
+      "risk_if_wrong": "MEDIUM",
+      "consequence": "If write-back to Workday is required, integration complexity increases significantly; Phase 3 testing effort doubles",
+      "source": "scope",
+      "tradeoff": "Gains: reduces integration risk and Phase 3 complexity. Risks: if write-back required, Phase 2-3 timeline extends 2-3 weeks."
+    },
+    {
+      "id": "A6",
+      "what": "Azure AD SSO: Single sign-on for new hires using corporate Azure AD tenant; no guest account provisioning needed",
+      "why": "Input specifies 'Azure AD for SSO' but does not specify guest vs. corporate account flow; corporate account is simpler for internal tool",
+      "pmi_basis": "PMBOK 6th Ed, Section 5.2 - Scope baseline requires accepted requirements",
+      "risk_if_wrong": "MEDIUM",
+      "consequence": "If guest account flow required, authentication architecture changes; Phase 2 backend work increases 1-2 weeks",
+      "source": "scope",
+      "tradeoff": "Gains: simplifies authentication implementation. Risks: if guest flow required, Phase 2 rework needed."
+    },
+    {
+      "id": "A7",
+      "what": "Document e-signature: Integration with third-party e-signature service (e.g., DocuSign, Adobe Sign); not custom-built",
+      "why": "Input specifies 'Document e-signature' but does not specify build vs. integrate; third-party integration is standard and faster",
+      "pmi_basis": "PMBOK 6th Ed, Section 5.2 - Scope baseline requires accepted requirements",
+      "risk_if_wrong": "LOW",
+      "consequence": "If custom e-signature required, Phase 2 effort increases significantly and compliance risk increases; third-party is safer",
+      "source": "scope",
+      "tradeoff": "Gains: reduces development effort and compliance risk. Risks: adds third-party vendor dependency and recurring cost."
+    },
+    {
+      "id": "A8",
+      "what": "IT account provisioning: Automated provisioning to email, Slack, and SaaS tools via API calls; no manual approval step required",
+      "why": "Input specifies 'IT account setup automated (no manual tickets)' as success metric; assumes full automation without human approval",
+      "pmi_basis": "PMBOK 6th Ed, Section 5.2 - Scope baseline requires accepted requirements",
+      "risk_if_wrong": "MEDIUM",
+      "consequence": "If approval step required (e.g., manager approval before provisioning), workflow complexity increases; Phase 2 design changes",
+      "source": "scope",
+      "tradeoff": "Gains: achieves 'zero manual tickets' success metric. Risks: if approval required, Phase 2 workflow design changes."
+    }
+  ],
+  "project_plan": {
+    "total_duration_weeks": 16.0,
+    "buffer_applied_percent": 15.0,
+    "critical_path_summary": {
+      "sequence": [
+        "T1",
+        "T3",
+        "T6",
+        "T10",
+        "T14",
+        "T18",
+        "T22"
+      ],
+      "total_duration_days": 72.0,
+      "zero_slack_tasks": [
+        "T1",
+        "T3",
+        "T6",
+        "T10",
+        "T14",
+        "T18",
+        "T22"
+      ],
+      "highest_slack_tasks": [
+        "T2",
+        "T5",
+        "T9"
+      ],
+      "staffing_implication": "Backend Developer and Frontend Developer must be allocated full-time (80%+) on critical path tasks; UX Designer front-loaded in Phase 1-2 with flexibility in Phase 3-4."
+    },
+    "phases": [
+      {
+        "phase_number": 1,
+        "name": "Discovery & Design",
+        "duration_weeks": 2.0,
+        "percentage_of_total": 12.5,
+        "milestones": [
+          "Requirements document finalized and signed off by VP HR, IT Director, Security team",
+          "User personas and success metrics validated",
+          "Architecture and API contract review completed",
+          "SOC 2 compliance requirements documented"
+        ],
+        "tasks": [
+          {
+            "id": "T1",
+            "name": "Conduct stakeholder alignment session and document requirements",
+            "phase": 1,
+            "effort_hours": 16.0,
+            "owner_role": "Product Manager",
+            "dependencies": [],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Requirements document signed off by VP HR, IT Director, and Security team; no open questions remain"
+          },
+          {
+            "id": "T2",
+            "name": "Define user personas and success metrics with HR team",
+            "phase": 1,
+            "effort_hours": 12.0,
+            "owner_role": "UX Designer",
+            "dependencies": [
+              "T1"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Personas document and success metrics dashboard created; HR team confirms alignment"
+          },
+          {
+            "id": "T3",
+            "name": "Design system and wireframes for core onboarding flows",
+            "phase": 1,
+            "effort_hours": 24.0,
+            "owner_role": "UX Designer",
+            "dependencies": [
+              "T2"
+            ],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Wireframes for document collection, IT setup, team intro, and task checklist flows completed; tech lead review passed"
+          },
+          {
+            "id": "T4",
+            "name": "Review Workday API documentation and test sandbox access",
+            "phase": 1,
+            "effort_hours": 8.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T1"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 3,
+            "definition_of_done": "Workday sandbox environment confirmed accessible; API endpoints documented; data schema mapped"
+          },
+          {
+            "id": "T5",
+            "name": "Review Azure AD SSO integration requirements and test tenant access",
+            "phase": 1,
+            "effort_hours": 6.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T1"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 3,
+            "definition_of_done": "Azure AD tenant access confirmed; SSO flow documented; authentication strategy approved by IT Director"
+          },
+          {
+            "id": "T6",
+            "name": "Document SOC 2 compliance requirements and design audit logging strategy",
+            "phase": 1,
+            "effort_hours": 12.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T1"
+            ],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Audit logging design document completed; Security team confirms compliance approach; data handling policy documented"
+          }
+        ]
+      },
+      {
+        "phase_number": 2,
+        "name": "Core Development",
+        "duration_weeks": 6.0,
+        "percentage_of_total": 37.5,
+        "milestones": [
+          "Core user flows working end-to-end (document collection, IT setup, team intro)",
+          "Workday API integration reading employee data",
+          "Azure AD SSO authentication working",
+          "Internal demo completed with HR team"
+        ],
+        "tasks": [
+          {
+            "id": "T7",
+            "name": "Set up React frontend project, component library, and build pipeline",
+            "phase": 2,
+            "effort_hours": 12.0,
+            "owner_role": "Frontend Developer",
+            "dependencies": [
+              "T3"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "React project scaffolded with TypeScript, component library initialized, CI/CD pipeline configured in Azure"
+          },
+          {
+            "id": "T8",
+            "name": "Set up Node.js backend project, database schema, and API structure",
+            "phase": 2,
+            "effort_hours": 16.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T6"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Node.js project scaffolded, PostgreSQL schema created, API routes defined, audit logging middleware implemented"
+          },
+          {
+            "id": "T9",
+            "name": "Implement Azure AD SSO authentication flow",
+            "phase": 2,
+            "effort_hours": 20.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T5",
+              "T8"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "SSO login flow working end-to-end; user identity stored in session; logout working; tested with IT Director"
+          },
+          {
+            "id": "T10",
+            "name": "Implement Workday API integration to fetch employee data",
+            "phase": 2,
+            "effort_hours": 24.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T4",
+              "T8"
+            ],
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "API endpoints reading employee name, department, manager, start date from Workday; data cached locally; error handling for API failures"
+          },
+          {
+            "id": "T11",
+            "name": "Build document collection UI (I-9, W-4, direct deposit forms)",
+            "phase": 2,
+            "effort_hours": 28.0,
+            "owner_role": "Frontend Developer",
+            "dependencies": [
+              "T3",
+              "T7"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Form UI for all three documents complete; form validation working; file upload working; responsive design tested"
+          },
+          {
+            "id": "T12",
+            "name": "Build backend API for document storage and e-signature integration",
+            "phase": 2,
+            "effort_hours": 20.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T8"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Document storage API endpoints working; e-signature service (DocuSign/Adobe Sign) integrated; signed documents stored securely"
+          },
+          {
+            "id": "T13",
+            "name": "Build IT account provisioning backend (email, Slack, SaaS tools)",
+            "phase": 2,
+            "effort_hours": 32.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T8",
+              "T10"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "API endpoints for provisioning email, Slack, and SaaS tools; integration with Azure AD for account creation; error handling and rollback logic"
+          },
+          {
+            "id": "T14",
+            "name": "Build task checklist and team introduction UI",
+            "phase": 2,
+            "effort_hours": 24.0,
+            "owner_role": "Frontend Developer",
+            "dependencies": [
+              "T3",
+              "T7",
+              "T10"
+            ],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Task checklist UI with due dates and completion tracking; team intro page with photos and roles; responsive design tested"
+          },
+          {
+            "id": "T15",
+            "name": "Implement dashboard and progress tracking",
+            "phase": 2,
+            "effort_hours": 16.0,
+            "owner_role": "Frontend Developer",
+            "dependencies": [
+              "T14"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Dashboard showing onboarding progress; completion percentage; next steps highlighted; mobile responsive"
+          },
+          {
+            "id": "T16",
+            "name": "Conduct internal demo with HR team and gather feedback",
+            "phase": 2,
+            "effort_hours": 8.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T14",
+              "T15"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Demo completed with HR team; feedback documented; no blocking issues identified; stakeholders confirm direction is correct"
+          }
+        ]
+      },
+      {
+        "phase_number": 3,
+        "name": "Integration & Edge Cases",
+        "duration_weeks": 4.0,
+        "percentage_of_total": 25.0,
+        "milestones": [
+          "All integrations tested end-to-end (Workday, Azure AD, e-signature, IT provisioning)",
+          "Edge case handling complete (missing data, API failures, duplicate accounts)",
+          "Security review completed and passed",
+          "SOC 2 audit logging verified"
+        ],
+        "tasks": [
+          {
+            "id": "T17",
+            "name": "Test Workday API integration with production-like data volume",
+            "phase": 3,
+            "effort_hours": 16.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T10"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Integration tested with 100+ employee records; performance acceptable; error handling for missing/malformed data verified"
+          },
+          {
+            "id": "T18",
+            "name": "Test IT account provisioning with all target systems (email, Slack, SaaS)",
+            "phase": 3,
+            "effort_hours": 20.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T13"
+            ],
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Provisioning tested end-to-end for all three systems; rollback tested; failure scenarios handled (API down, rate limited, duplicate account)"
+          },
+          {
+            "id": "T19",
+            "name": "Test e-signature integration with document workflows",
+            "phase": 3,
+            "effort_hours": 12.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T12"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "E-signature flow tested end-to-end; signed documents stored correctly; audit trail captured; edge cases (unsigned docs, expired links) handled"
+          },
+          {
+            "id": "T20",
+            "name": "Implement error handling and edge case logic (missing data, API failures)",
+            "phase": 3,
+            "effort_hours": 24.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T17",
+              "T18",
+              "T19"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "All edge cases from Phase 1 inventory handled; error messages user-friendly; logging captures all failures; no silent failures"
+          },
+          {
+            "id": "T21",
+            "name": "Conduct security review and penetration testing",
+            "phase": 3,
+            "effort_hours": 20.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T20"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Security review completed by Security team; no critical vulnerabilities found; SOC 2 audit logging verified; data handling compliant"
+          },
+          {
+            "id": "T22",
+            "name": "Verify SOC 2 compliance: audit logging, data retention, access controls",
+            "phase": 3,
+            "effort_hours": 16.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T21"
+            ],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Audit logs capture all user actions and data access; retention policy enforced; access controls verified; Security team sign-off obtained"
+          }
+        ]
+      },
+      {
+        "phase_number": 4,
+        "name": "QA & Testing",
+        "duration_weeks": 2.5,
+        "percentage_of_total": 15.6,
+        "milestones": [
+          "All critical bugs resolved",
+          "Regression testing passed",
+          "UAT completed with HR team and sample new hires",
+          "Accessibility audit passed (WCAG 2.1 AA)"
+        ],
+        "tasks": [
+          {
+            "id": "T23",
+            "name": "Execute comprehensive QA test plan (functional, regression, integration)",
+            "phase": 4,
+            "effort_hours": 32.0,
+            "owner_role": "QA Engineer",
+            "dependencies": [
+              "T22"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "All test cases executed; critical bugs logged and fixed; regression test suite passing; test coverage > 80%"
+          },
+          {
+            "id": "T24",
+            "name": "Conduct accessibility audit (WCAG 2.1 AA compliance)",
+            "phase": 4,
+            "effort_hours": 12.0,
+            "owner_role": "UX Designer",
+            "dependencies": [
+              "T22"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Accessibility audit completed; WCAG 2.1 AA compliance verified; screen reader tested; keyboard navigation working"
+          },
+          {
+            "id": "T25",
+            "name": "Conduct UAT with HR team and sample new hires",
+            "phase": 4,
+            "effort_hours": 16.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T23",
+              "T24"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "UAT completed with HR team and 2-3 sample new hires; feedback documented; all critical issues resolved; stakeholder sign-off obtained"
+          },
+          {
+            "id": "T26",
+            "name": "Performance testing and optimization",
+            "phase": 4,
+            "effort_hours": 12.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T23"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Load testing completed; response times < 2 seconds; page load times < 3 seconds; database queries optimized"
+          }
+        ]
+      },
+      {
+        "phase_number": 5,
+        "name": "Deployment & Handoff",
+        "duration_weeks": 1.5,
+        "percentage_of_total": 9.4,
+        "milestones": [
+          "Production deployment completed",
+          "Documentation written and handed off to IT/HR",
+          "Adoption plan executed (communication to new hires)",
+          "Post-launch monitoring and support plan in place"
+        ],
+        "tasks": [
+          {
+            "id": "T27",
+            "name": "Deploy to production and configure monitoring/alerting",
+            "phase": 5,
+            "effort_hours": 12.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T25"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Application deployed to Azure App Service; monitoring and alerting configured; rollback plan tested; production health verified"
+          },
+          {
+            "id": "T28",
+            "name": "Write technical documentation and runbooks",
+            "phase": 5,
+            "effort_hours": 8.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T27"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Technical documentation complete; runbooks for common issues written; IT team trained on system operation"
+          },
+          {
+            "id": "T29",
+            "name": "Write user documentation and create onboarding guide for HR",
+            "phase": 5,
+            "effort_hours": 8.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T27"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "User guide written; HR team trained; FAQ document created; support process documented"
+          },
+          {
+            "id": "T30",
+            "name": "Execute adoption plan and communicate to new hires",
+            "phase": 5,
+            "effort_hours": 6.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T29"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Communication sent to all new hires; portal link shared; HR team briefed; adoption metrics baseline established"
+          },
+          {
+            "id": "T31",
+            "name": "Establish post-launch support and monitoring plan",
+            "phase": 5,
+            "effort_hours": 4.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T28",
+              "T29"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Support escalation process defined; monitoring dashboard created; success metrics tracked; post-launch review scheduled for 30 days"
+          }
+        ]
+      }
+    ]
+  },
+  "risk_register": [
+    {
+      "id": "R1",
+      "category": "Integration",
+      "description": "If Workday API sandbox access is not granted or API contract changes, then backend development cannot proceed and Phase 2 timeline slips by 2+ weeks.",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "score": "HIGH",
+      "trigger": "Workday sandbox access not confirmed by end of Phase 1 Week 1",
+      "mitigation": "Confirm Workday API access in Phase 1 Task T4 before any backend development starts; document API contract in writing; establish backup plan (manual data import) if API unavailable",
+      "contingency": "If API access delayed, implement manual employee data import via CSV upload; this adds 1 week to Phase 2 but unblocks development"
+    },
+    {
+      "id": "R2",
+      "category": "Integration",
+      "description": "If Azure AD SSO integration fails or tenant configuration is incorrect, then authentication flow breaks and Phase 2 development is blocked.",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "score": "HIGH",
+      "trigger": "Azure AD SSO test in Phase 1 Task T5 fails or IT Director cannot grant tenant access",
+      "mitigation": "Test Azure AD SSO in Phase 1 Task T5 with IT Director present; document tenant configuration requirements in writing; establish test tenant for development",
+      "contingency": "If SSO fails, implement temporary basic auth (username/password) for development; migrate to SSO in Phase 3 after IT resolves tenant issues"
+    },
+    {
+      "id": "R3",
+      "category": "Integration",
+      "description": "If IT account provisioning APIs (email, Slack, SaaS tools) have rate limiting or quota restrictions, then bulk provisioning may fail and Phase 2 design must change.",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "score": "MEDIUM",
+      "trigger": "Rate limiting or quota errors discovered during Phase 3 Task T18 integration testing",
+      "mitigation": "Document rate limits and quotas for all target systems in Phase 1; design queue-based provisioning with retry logic in Phase 2 Task T13; test with production-like volume in Phase 3",
+      "contingency": "If rate limiting prevents bulk provisioning, implement staggered provisioning (queue-based with delays) or request quota increase from IT"
+    },
+    {
+      "id": "R4",
+      "category": "Technical",
+      "description": "If e-signature service (DocuSign/Adobe Sign) integration is more complex than expected, then Phase 2 development effort increases and timeline slips.",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "score": "MEDIUM",
+      "trigger": "E-signature API documentation review in Phase 2 reveals unexpected complexity or missing features",
+      "mitigation": "Review e-signature service API documentation in Phase 1; select service with proven internal tool integrations; allocate 20 hours for Phase 2 Task T12 (sufficient buffer)",
+      "contingency": "If integration more complex, defer advanced features (e.g., bulk signing) to Phase 2 release; implement basic single-document signing in Phase 1"
+    },
+    {
+      "id": "R5",
+      "category": "Compliance",
+      "description": "If SOC 2 compliance requirements are more stringent than anticipated, then Phase 1 design and Phase 3 security review may require rework.",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "score": "HIGH",
+      "trigger": "Security team review in Phase 1 Task T6 or Phase 3 Task T21 identifies compliance gaps",
+      "mitigation": "Engage Security team early in Phase 1 Task T6; document all SOC 2 requirements in writing; design audit logging and data handling upfront; conduct security review in Phase 3 Task T21",
+      "contingency": "If compliance gaps found, prioritize critical controls; defer non-critical controls to Phase 2 release if needed"
+    },
+    {
+      "id": "R6",
+      "category": "Resource",
+      "description": "If Backend Developer is unavailable or leaves the project, then critical path tasks (T10, T18, T22) cannot be completed and project is blocked.",
+      "probability": "LOW",
+      "impact": "HIGH",
+      "score": "MEDIUM",
+      "trigger": "Backend Developer absence or departure announced",
+      "mitigation": "Ensure Backend Developer is allocated 80% full-time (not shared with other projects); document all critical code and architecture decisions; pair programming on critical tasks",
+      "contingency": "If Backend Developer unavailable, hire contract backend developer immediately; knowledge transfer from departing developer; timeline extends 2-3 weeks"
+    },
+    {
+      "id": "R7",
+      "category": "Schedule",
+      "description": "If Phase 1 requirements gathering takes longer than 2 weeks, then Phase 2 start is delayed and critical path slips.",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "score": "MEDIUM",
+      "trigger": "Phase 1 milestones not met by end of Week 2",
+      "mitigation": "Schedule Phase 1 kickoff immediately; set hard deadline for requirements sign-off (end of Week 2); limit scope of Phase 1 to must-haves only",
+      "contingency": "If Phase 1 extends beyond Week 2, compress Phase 2 by deferring nice-to-have features (chat bot, mobile app, LMS integration) to Phase 2 release"
+    },
+    {
+      "id": "R8",
+      "category": "Scope",
+      "description": "If stakeholders request scope additions (e.g., mobile app, chat bot, LMS integration) during Phase 2-3, then timeline slips and budget overruns.",
+      "probability": "HIGH",
+      "impact": "MEDIUM",
+      "score": "HIGH",
+      "trigger": "Stakeholder requests new features or changes to existing features during Phase 2-3",
+      "mitigation": "Establish change control process in Phase 1; document nice-to-have features as Phase 2 backlog; get stakeholder sign-off on scope baseline before Phase 2 starts",
+      "contingency": "If scope additions requested, evaluate impact on timeline/budget; defer to Phase 2 release or negotiate trade-offs (e.g., drop another feature)"
+    },
+    {
+      "id": "R9",
+      "category": "Technical",
+      "description": "If React/TypeScript or Node.js/PostgreSQL stack has unexpected compatibility issues, then Phase 2 development is delayed.",
+      "probability": "LOW",
+      "impact": "MEDIUM",
+      "score": "LOW",
+      "trigger": "Compatibility issues discovered during Phase 2 Task T7 or T8 project setup",
+      "mitigation": "Team has direct experience with React/Node stack (stated in input); use proven libraries and versions; set up development environment in Phase 2 Task T7-T8 early",
+      "contingency": "If compatibility issues found, allocate 1-2 days for troubleshooting; escalate to tech lead if unresolved"
+    },
+    {
+      "id": "R10",
+      "category": "Resource",
+      "description": "If UX Designer is unavailable after Phase 2, then Phase 3-4 design refinements and accessibility audit cannot be completed.",
+      "probability": "LOW",
+      "impact": "MEDIUM",
+      "score": "LOW",
+      "trigger": "UX Designer absence or departure announced after Phase 2",
+      "mitigation": "UX Designer allocated 60% in Phases 1-2, 20% in Phases 3-4 (not critical path); document all design decisions and component library; defer Phase 3-4 design work if needed",
+      "contingency": "If UX Designer unavailable, hire contract designer for Phase 4 accessibility audit; defer design refinements to Phase 2 release"
+    }
+  ],
+  "staffing_plan": [
+    {
+      "role": "Product Manager",
+      "phase_involvement": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "total_hours": 72.0,
+      "allocation_percent": 11.3,
+      "skills_required": [
+        "Stakeholder management",
+        "Requirements definition",
+        "Project planning",
+        "HR domain knowledge"
+      ],
+      "critical_path": true,
+      "notes": "Full-time PM ownership across all phases; responsible for stakeholder alignment, requirements sign-off, UAT coordination, and post-launch adoption"
+    },
+    {
+      "role": "Backend Developer",
+      "phase_involvement": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "total_hours": 272.0,
+      "allocation_percent": 42.8,
+      "skills_required": [
+        "Node.js",
+        "PostgreSQL",
+        "REST APIs",
+        "Azure cloud platform",
+        "Workday API integration",
+        "Azure AD authentication",
+        "SOC 2 compliance"
+      ],
+      "critical_path": true,
+      "notes": "Full-time allocation required; owns all backend development, integrations, security, and compliance; critical path tasks T10, T18, T22 cannot slip"
+    },
+    {
+      "role": "Frontend Developer",
+      "phase_involvement": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "total_hours": 180.0,
+      "allocation_percent": 28.3,
+      "skills_required": [
+        "React 18",
+        "TypeScript",
+        "CSS/responsive design",
+        "REST API integration",
+        "Accessibility (WCAG 2.1 AA)"
+      ],
+      "critical_path": true,
+      "notes": "Full-time allocation required; owns all frontend UI development; critical path task T14 cannot slip; responsible for responsive design and accessibility"
+    },
+    {
+      "role": "UX Designer",
+      "phase_involvement": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "total_hours": 96.0,
+      "allocation_percent": 15.1,
+      "skills_required": [
+        "Wireframing and prototyping",
+        "User research",
+        "Accessibility (WCAG 2.1 AA)",
+        "Design systems",
+        "HR domain knowledge"
+      ],
+      "critical_path": false,
+      "notes": "Front-loaded in Phases 1-2 (60% allocation); reduced to 20% in Phases 3-4 for design refinements and accessibility audit; not on critical path but essential for user experience"
+    },
+    {
+      "role": "QA Engineer",
+      "phase_involvement": [
+        3,
+        4
+      ],
+      "total_hours": 44.0,
+      "allocation_percent": 6.9,
+      "skills_required": [
+        "Test planning and execution",
+        "Functional testing",
+        "Integration testing",
+        "Accessibility testing",
+        "SQL for data validation"
+      ],
+      "critical_path": false,
+      "notes": "Back-loaded in Phases 3-4; minimum 25% of development effort (272h backend + 180h frontend = 452h dev; 25% = 113h QA minimum); allocated 44h is below minimum \u2014 recommend increasing to 113h or adding second QA resource"
+    }
+  ],
+  "open_questions": [
+    {
+      "priority": 1,
+      "question": "What is the exact data retention policy for employee onboarding records? (Assumption A3 assumes 7 years; confirm if different)",
+      "urgency": "Before planning",
+      "impact_if_unanswered": "Database sizing, archive strategy, and compliance design depend on this; wrong assumption requires Phase 3 rework"
+    },
+    {
+      "priority": 2,
+      "question": "Does Workday API integration require write-back to Workday, or is read-only access sufficient? (Assumption A5 assumes read-only)",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Write-back integration significantly increases Phase 2-3 complexity; wrong assumption requires 2-3 week timeline extension"
+    },
+    {
+      "priority": 3,
+      "question": "Does IT account provisioning require manager approval before provisioning, or is it fully automated? (Assumption A8 assumes fully automated)",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Approval workflow changes Phase 2 design; wrong assumption requires workflow redesign"
+    },
+    {
+      "priority": 4,
+      "question": "Which e-signature service should be used (DocuSign, Adobe Sign, or other)? (Assumption A7 assumes third-party integration)",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Service selection affects Phase 2 integration effort and recurring costs; decision needed before Phase 2 Task T12"
+    },
+    {
+      "priority": 5,
+      "question": "What is the acceptable response time target for API endpoints and page load times? (Assumption A1 assumes <2s API, <3s page load)",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Performance targets affect architecture decisions; wrong assumption may require caching/CDN in Phase 3"
+    }
+  ],
+  "pm_confidence_score": {
+    "score": 82.0,
+    "deductions": [
+      {
+        "amount": 5.0,
+        "reason": "Assumption A1 (performance targets) \u2014 NFR not explicitly stated in input"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Assumption A2 (availability SLA) \u2014 NFR not explicitly stated in input"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Assumption A3 (data retention policy) \u2014 NFR not explicitly stated in input"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Assumption A5 (Workday API read-only scope) \u2014 scope ambiguity on integration depth"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Assumption A6 (Azure AD corporate account flow) \u2014 scope ambiguity on authentication model"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Assumption A8 (IT provisioning fully automated) \u2014 scope ambiguity on approval workflow"
+      },
+      {
+        "amount": 3.0,
+        "reason": "QA staffing below 25% minimum (44h allocated vs 113h recommended) \u2014 risk flagged in staffing plan"
+      }
+    ],
+    "interpretation": "Score of 82 indicates HIGH confidence in plan viability. Input quality is excellent (HIGH) with explicit requirements, fixed deadline, budget, team, and stack. All hard constraints are known. Deductions reflect 8 assumptions on NFRs and scope ambiguities that are reasonable but should be validated. No CRITICAL risks present. QA staffing gap is the primary concern \u2014 recommend increasing QA allocation or adding second QA resource before Phase 3."
+  },
+  "project_viability": {
+    "viability_status": "VIABLE",
+    "gap_type": "N/A",
+    "gap_amount": "N/A",
+    "scoping_options": null
+  }
+}

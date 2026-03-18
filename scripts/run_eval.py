@@ -22,6 +22,17 @@ from agent.main import PMAgent, MODEL_HAIKU, MODEL_SONNET
 from agent.validator import SchemaValidator
 
 
+def _save_output(tc_id: str, report: dict, dimension: str, run_index: int = 0):
+    """Save agent report JSON to outputs/ for inspection."""
+    out_dir = Path("outputs")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    suffix = f"_run{run_index}" if run_index > 0 else ""
+    filename = out_dir / f"{tc_id}_{dimension}{suffix}.json"
+    with open(filename, "w") as f:
+        json.dump(report, f, indent=2)
+    print(f"    Output saved: {filename}")
+
+
 # ─────────────────────────────────────────────────────────────
 # DIMENSION 1: Schema Validation
 # ─────────────────────────────────────────────────────────────
@@ -31,6 +42,7 @@ def _run_schema_one(tc: dict, agent: PMAgent, max_retries: int = 3) -> dict:
     for attempt in range(max_retries):
         try:
             result = agent.run(tc["input"])
+            _save_output(tc["id"], result["report"], "schema")
             validator = SchemaValidator()
             validation = validator.validate(result["report"])
             return {
@@ -107,6 +119,7 @@ def run_consistency_test(tc_perfect: dict, agent: PMAgent, runs: int = 5) -> dic
                 ptype = report.get("report_metadata", {}).get("project_type", "UNKNOWN")
                 sdlc = report.get("report_metadata", {}).get("sdlc_approach", "UNKNOWN")
                 risks = len(report.get("risk_register", []))
+                _save_output(tc_perfect.get("id", "tc-01"), report, "consistency", run_index=i+1)
                 scores.append(score)
                 types.append(ptype)
                 sdlc_approaches.append(sdlc)
@@ -369,6 +382,7 @@ def _run_edge_case_inner(tc: dict, agent: PMAgent) -> dict:
     try:
         result = agent.run(tc["input"])
         report = result["report"]
+        _save_output(tc["id"], report, "edge")
         validator = SchemaValidator()
         validation = validator.validate(report)
 
@@ -670,6 +684,7 @@ def main():
         perfect_tc = next((tc for tc in test_cases if tc["id"] == "tc-01"), test_cases[0])
         run_result = agent.run(perfect_tc["input"])
         report = run_result["report"]
+        _save_output(perfect_tc["id"], report, "rubric")
         result = run_rubric_scoring(report)
         all_results["dimensions"]["reasoning_quality"] = result
         status = "✅ PASS" if result["passed"] else "❌ FAIL"
