@@ -1,30 +1,22 @@
 {
-  "timestamp": "2026-03-10T04:20:17.416309Z",
-  "prompt_version": "v1.4",
+  "timestamp": "2026-03-18T20:21:48.128777Z",
+  "prompt_version": "v1.6",
   "dimensions": {
     "schema_validation": {
       "dimension": "Schema Validation",
       "target": "100%",
-      "result": "0/1 (0%)",
-      "passed": false,
+      "result": "1/1 (100%)",
+      "passed": true,
       "details": [
         {
           "test_case": "tc-01-perfect",
-          "passed": false,
-          "errors": [
-            "report_metadata: 'input_quality' is a required property",
-            "report_metadata: 'pm_confidence_score' is a required property",
-            "report_metadata: 'project_type' is a required property",
-            "report_metadata: 'sdlc_approach' is a required property",
-            ": 'project_understanding' is a required property",
-            ": 'assumption_log' is a required property",
-            ": 'project_plan' is a required property",
-            ": 'risk_register' is a required property",
-            ": 'staffing_plan' is a required property",
-            ": 'open_questions' is a required property",
-            ": 'pm_confidence_score' is a required property"
-          ],
-          "warnings": []
+          "passed": true,
+          "errors": [],
+          "warnings": [
+            "Expected exactly 5 phases, found 0",
+            "Risk register has 0 risks, expected at least 3",
+            "Assumption log is empty, expected at least 1 assumption"
+          ]
         }
       ]
     },
@@ -40,9 +32,9 @@
         ],
         "sdlc_consistent": true,
         "sdlc_approaches_seen": [
-          "Hybrid"
+          "Predictive"
         ],
-        "risk_count_variance": 2
+        "risk_count_variance": 1
       },
       "passed": false
     },
@@ -76,9 +68,9 @@
         {
           "test_case": "tc-01-perfect",
           "schema_valid": true,
-          "confidence_score": 45.0,
-          "assumption_count": 7,
-          "risk_count": 10,
+          "confidence_score": 48.0,
+          "assumption_count": 5,
+          "risk_count": 9,
           "project_type": "TYPE_A",
           "checks": [],
           "overall_passed": true

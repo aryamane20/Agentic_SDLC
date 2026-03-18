@@ -90,21 +90,36 @@ def run_consistency_test(tc_perfect: dict, agent: PMAgent, runs: int = 5) -> dic
     risk_counts = []
 
     for i in range(runs):
-        try:
-            result = agent.run(tc_perfect["input"])
-            report = result["report"]
-            score = report.get("pm_confidence_score", {}).get("score", 0)
-            ptype = report.get("report_metadata", {}).get("project_type", "UNKNOWN")
-            sdlc = report.get("report_metadata", {}).get("sdlc_approach", "UNKNOWN")
-            risks = len(report.get("risk_register", []))
-            scores.append(score)
-            types.append(ptype)
-            sdlc_approaches.append(sdlc)
-            risk_counts.append(risks)
-            print(f"    Run {i+1}: score={score}, type={ptype}, sdlc={sdlc}, risks={risks}")
-            time.sleep(1)  # Avoid rate limiting
-        except Exception as e:
-            print(f"    Run {i+1}: ERROR — {e}")
+        max_attempts = 2
+        for attempt in range(max_attempts):
+            try:
+                result = agent.run(tc_perfect["input"])
+                report = result["report"]
+                if report.get("parse_error"):
+                    raw = report.get("raw_output", "")
+                    print(f"    Run {i+1}: parse failure (first 300 chars): {raw[:300]}")
+                    if attempt < max_attempts - 1:
+                        print(f"    Run {i+1}: retrying...")
+                        time.sleep(5)
+                        continue
+                cs = report.get("pm_confidence_score", {})
+                score = cs.get("score", 0) if isinstance(cs, dict) else (cs or 0)
+                ptype = report.get("report_metadata", {}).get("project_type", "UNKNOWN")
+                sdlc = report.get("report_metadata", {}).get("sdlc_approach", "UNKNOWN")
+                risks = len(report.get("risk_register", []))
+                scores.append(score)
+                types.append(ptype)
+                sdlc_approaches.append(sdlc)
+                risk_counts.append(risks)
+                print(f"    Run {i+1}: score={score}, type={ptype}, sdlc={sdlc}, risks={risks}")
+                time.sleep(1)
+                break
+            except Exception as e:
+                if attempt < max_attempts - 1:
+                    print(f"    Run {i+1}: ERROR — {e}, retrying...")
+                    time.sleep(5)
+                else:
+                    print(f"    Run {i+1}: ERROR — {e}")
 
     if not scores:
         return {"dimension": "Consistency", "passed": False, "error": "All runs failed"}
@@ -360,7 +375,11 @@ def _run_edge_case_inner(tc: dict, agent: PMAgent) -> dict:
         tc_result = {
             "test_case": tc["id"],
             "schema_valid": validation["valid"],
-            "confidence_score": report.get("pm_confidence_score", {}).get("score"),
+            "confidence_score": (
+                report.get("pm_confidence_score", {}).get("score")
+                if isinstance(report.get("pm_confidence_score"), dict)
+                else report.get("pm_confidence_score")
+            ),
             "assumption_count": len(report.get("assumption_log", [])),
             "risk_count": len(report.get("risk_register", [])),
             "project_type": report.get("report_metadata", {}).get("project_type"),
@@ -582,7 +601,7 @@ def main():
     parser.add_argument("--all", action="store_true", help="Run all dimensions")
     parser.add_argument("--dimension", choices=["schema", "consistency", "rubric", "edge"], help="Run one dimension")
     parser.add_argument("--tc", help="Run specific test case only (e.g. tc-01-perfect)")
-    parser.add_argument("--prompt-version", default="v1.5")
+    parser.add_argument("--prompt-version", default="v1.6")
     parser.add_argument("--model", default=MODEL_HAIKU,
                         help=f"Model to use. haiku={MODEL_HAIKU}, sonnet={MODEL_SONNET}")
     parser.add_argument("--workers", type=int, default=1,

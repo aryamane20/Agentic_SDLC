@@ -6,7 +6,7 @@ difference. Whitespace changes, comment tweaks, and one-line fixes are git commi
 not prompt versions.
 
 Intermediate versions (v1.0.0–v1.6.1) are archived in `prompts/archive/`.
-Active versions: v1.0 through v1.5.
+Active versions: v1.0 through v1.6.
 
 ---
 
@@ -157,6 +157,34 @@ Active versions: v1.0 through v1.5.
 - Skeleton: `prompt_version` → v1.5.0.
 
 **Builds on v1.4 (10 test cases):** D1 10/10, D2 FAIL, D3 4.75/5, D4 10/10.
+
+**Rubric scores:** Pending eval.
+
+---
+
+## v1.6 — D2 FIX + D3 FIX + D1 WARNINGS
+**File:** `prompts/v1.6_system.txt`
+**Date:** March 2026
+**Type:** BUG FIX — scoring determinism, staffing completeness, allocation clarity
+
+**What changed from v1.5:**
+- **Mechanical confidence score rule** (OUTPUT CONTRACT, after deduction table):
+  Deductions must be calculated from actual JSON array counts (assumption_count,
+  high_risk_count, critical_risk_count, unknown_constraints). Eliminates re-judgment
+  at scoring time. Fixes D2 variance of 30.
+- **Staffing completeness rule** (STEP 8, after hard rules):
+  Any role flagged as missing/lacking in risk_register must appear in staffing_plan.
+  Fixes D3 staffing_validity 3/5 (QA risk without QA role).
+- **80% allocation clarification** (STEP 8, hard rules):
+  Small teams / short timelines still obey the 80% cap. Multi-role persons must be
+  split into separate staffing entries each ≤ 80%, with overlap flagged as Resource Risk.
+  Fixes D1 warnings on TC-09 and TC-10.
+
+**Infrastructure changes:**
+- Fixed TC-01 data capture bug in `run_eval.py`: `pm_confidence_score` field handled
+  as both dict and float (was returning null when LLM returned a flat number).
+
+**Builds on v1.5 (D1 10/10, D2 FAIL variance 30, D3 4.75/5, D4 10/10).**
 
 **Rubric scores:** Pending eval.
 

@@ -46,11 +46,11 @@ class PMAgent:
     the 8-step PM reasoning process on raw requirements input.
     """
 
-    def __init__(self, prompt_version: str = "v1.5", model: str = MODEL_HAIKU):
+    def __init__(self, prompt_version: str = "v1.6", model: str = MODEL_HAIKU):
         self.prompt_version = prompt_version
         self.client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
         self.model = model
-        self.temperature = 0.3   # Low for consistency (PMBOK-grounded output)
+        self.temperature = 0.0   # Greedy decoding for maximum consistency (D2 fix)
         self.max_tokens = 16000   # Haiku produces verbose JSON (~8-12k tokens); needs headroom to avoid truncation
         self.system_prompt = self._build_system_context()
 

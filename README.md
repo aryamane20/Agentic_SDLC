@@ -132,10 +132,14 @@ python scripts/run_eval.py --tc tc-01-perfect
 python scripts/run_eval.py --dimension schema --tc tc-01-perfect
 ```
 
-### Run tests
+### Run unit tests
 ```bash
 pytest tests/
 ```
+
+Unit tests use a **mocked Anthropic client** — no API key or tokens needed.
+They verify code correctness (JSON extraction, retry logic, schema validation, logging)
+independently from prompt/output quality, which is covered by the eval suite above.
 
 ---
 
