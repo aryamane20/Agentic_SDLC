@@ -26,3 +26,8 @@ build/
 logs/*.jsonl
 logs/*.log
 !logs/samples/
+
+# Outputs - cached agent outputs (versioned by prompt, regenerable)
+outputs/v*/
+outputs/.cache/
+!outputs/samples/

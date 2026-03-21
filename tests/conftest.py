@@ -32,7 +32,7 @@ def mock_anthropic_client():
 @pytest.fixture
 def agent(mock_anthropic_client):
     """Create a PMAgent instance with mocked client."""
-    agent = PMAgent(prompt_version="v1.6")
+    agent = PMAgent(prompt_version="v1.6.1")
     agent.client = mock_anthropic_client
     return agent
 

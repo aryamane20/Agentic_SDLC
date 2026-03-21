@@ -44,7 +44,8 @@ class SchemaValidator:
         
         # 2. Business rules validation (only if schema valid)
         if not errors:
-            warnings = self._check_business_rules(report)
+            br_errors, warnings = self._check_business_rules(report)
+            errors.extend(br_errors)
         
         return {
             "valid": len(errors) == 0,
@@ -52,11 +53,12 @@ class SchemaValidator:
             "warnings": warnings
         }
 
-    def _check_business_rules(self, report: dict) -> list:
+    def _check_business_rules(self, report: dict) -> tuple:
         """
         Check business rules that can't be expressed in JSON schema.
-        (Field normalization is done in validate() before this is called)
+        Returns (errors, warnings) — errors cause D1 FAIL.
         """
+        errors = []
         warnings = []
         
         # Phase rules
@@ -69,10 +71,10 @@ class SchemaValidator:
         if phase_1 and phase_1.get("percentage_of_total", 0) < 10:
             warnings.append(f"Phase 1 is {phase_1.get('percentage_of_total')}%, must be >= 10%")
         
-        # Phase 4 must be >= 15%
+        # Phase 4 must be >= 15% — HARD MINIMUM (F3 pre-mortem)
         phase_4 = next((p for p in phases if p.get("phase_number") == 4), None)
         if phase_4 and phase_4.get("percentage_of_total", 0) < 15:
-            warnings.append(f"Phase 4 is {phase_4.get('percentage_of_total')}%, must be >= 15%")
+            errors.append(f"Phase 4 is {phase_4.get('percentage_of_total')}%, must be >= 15% — HARD MINIMUM")
         
         # Staffing: no role > 80%
         staffing = report.get("staffing_plan", [])
@@ -122,10 +124,18 @@ class SchemaValidator:
         if tasks_without_slack:
             warnings.append(f"Tasks missing slack_days field: {tasks_without_slack}")
         
-        # Confidence calibration rule: >= 5 assumptions -> score cannot exceed 60
+        # Hard cap enforcement — violations are errors, not warnings
         assumptions = report.get("assumption_log", [])
-        if len(assumptions) >= 5 and score_val > 60:
-            warnings.append(f"PM Confidence Score is {score_val} but has {len(assumptions)} assumptions (>=5), score should not exceed 60")
+        assumption_count = len(assumptions)
+        critical_risks = [r for r in risks if r.get("score") == "CRITICAL"]
+
+        if assumption_count >= 8 and score_val > 40:
+            errors.append(f"Hard cap violated: score {score_val} with {assumption_count} assumptions (>=8), max allowed 40")
+        elif assumption_count >= 5 and score_val > 60:
+            errors.append(f"Hard cap violated: score {score_val} with {assumption_count} assumptions (>=5), max allowed 60")
+
+        if critical_risks and assumption_count >= 3 and score_val > 50:
+            errors.append(f"Hard cap violated: score {score_val} with {len(critical_risks)} CRITICAL risk(s) and {assumption_count} assumptions (>=3), max allowed 50")
         
         # Viability section validation
         viability = report.get("project_viability")
@@ -143,7 +153,7 @@ class SchemaValidator:
                 elif len(scoping) < 2:
                     warnings.append("viability_status is NOT_VIABLE but fewer than 2 scoping_options provided")
         
-        return warnings
+        return errors, warnings
 
     def _normalize_field_names(self, report: dict):
         """

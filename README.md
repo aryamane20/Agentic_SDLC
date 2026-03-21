@@ -117,7 +117,7 @@ pip install -r requirements.txt
 # Add your API key to .env (ANTHROPIC_API_KEY)
 ```
 
-### Run full evaluation suite
+### Run full evaluation suite (live — calls API)
 ```bash
 python scripts/run_eval.py --all
 ```
@@ -131,6 +131,23 @@ python scripts/run_eval.py --tc tc-01-perfect
 ```bash
 python scripts/run_eval.py --dimension schema --tc tc-01-perfect
 ```
+
+### Cost-saving workflow (generate once, replay free)
+```bash
+# Step 1: Generate outputs for all test cases — 1 API call per TC
+python scripts/run_eval.py --generate
+
+# Step 2: Evaluate cached outputs — no API calls, $0 cost
+python scripts/run_eval.py --replay --dimension schema
+python scripts/run_eval.py --replay --dimension rubric
+python scripts/run_eval.py --replay --dimension edge
+
+# Re-run Step 2 unlimited times after changing validator, rubric logic, or expectations.
+# Only re-run Step 1 when the prompt changes.
+```
+
+Every eval run prints a **cost summary** (API calls, tokens, estimated USD).
+Outputs are cached in `outputs/{prompt-version}/` and versioned by prompt.
 
 ### Run unit tests
 ```bash

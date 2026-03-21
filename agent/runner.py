@@ -54,7 +54,7 @@ class AgentRunner:
                 start_time = time.time()
                 
                 # Run the agent
-                result = self.agent.run(raw_input)
+                result = self.agent.run(raw_input, input_source=input_source or "unknown")
                 runtime = time.time() - start_time
                 
                 # Add metadata

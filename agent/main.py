@@ -14,13 +14,21 @@ ARCHITECTURE NOTE:
   Project 3: This compiler will be replaced with RAG retrieval per sub-agent
 """
 
+import hashlib
 import json
 import os
 import re
 from pathlib import Path
 from datetime import datetime
 
+from dotenv import load_dotenv
+
+load_dotenv()  # load .env before other imports that read env vars
+
 import anthropic
+from langfuse import Langfuse, observe
+
+CACHE_DIR = Path("outputs/.cache")
 
 
 # Knowledge base file paths — update here if structure changes
@@ -46,9 +54,10 @@ class PMAgent:
     the 8-step PM reasoning process on raw requirements input.
     """
 
-    def __init__(self, prompt_version: str = "v1.6", model: str = MODEL_HAIKU):
+    def __init__(self, prompt_version: str = "v1.6.1", model: str = MODEL_HAIKU):
         self.prompt_version = prompt_version
         self.client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+        self.langfuse = Langfuse()  # reads LANGFUSE_* from env; no-ops if keys missing
         self.model = model
         self.temperature = 0.0   # Greedy decoding for maximum consistency (D2 fix)
         self.max_tokens = 16000   # Haiku produces verbose JSON (~8-12k tokens); needs headroom to avoid truncation
@@ -122,21 +131,63 @@ class PMAgent:
 
         return context
 
-    def run(self, raw_input: str) -> dict:
+    def _cache_key(self, raw_input: str) -> str:
+        """Deterministic hash of (prompt_version, model, temperature, input)."""
+        payload = f"{self.prompt_version}|{self.model}|{self.temperature}|{raw_input}"
+        return hashlib.sha256(payload.encode()).hexdigest()[:16]
+
+    def _load_from_cache(self, key: str) -> dict | None:
+        path = CACHE_DIR / f"{key}.json"
+        if path.exists():
+            with open(path) as f:
+                return json.load(f)
+        return None
+
+    def _save_to_cache(self, key: str, result: dict):
+        CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        path = CACHE_DIR / f"{key}.json"
+        with open(path, "w") as f:
+            json.dump(result, f, indent=2)
+
+    @observe(name="pm-agent-run")
+    def run(self, raw_input: str, input_source: str = "unknown",
+            use_cache: bool = True) -> dict:
         """
         Run the PM agent on raw requirements input.
 
         Args:
             raw_input: Any freeform project requirements text
+            input_source: Optional label for tracing (e.g. 'tc-01', 'streamlit-ui')
+            use_cache: If True, return cached result for identical input+prompt+model.
+                       Set False for consistency testing (D2) or when you need fresh output.
 
         Returns:
-            dict with 'report' (parsed JSON), 'tokens_used', 'context_source'
+            dict with 'report' (parsed JSON), 'tokens_used', 'input_tokens',
+            'output_tokens', 'cache_read_tokens', 'cache_creation_tokens'
         """
+        cache_key = self._cache_key(raw_input)
+
+        if use_cache:
+            cached = self._load_from_cache(cache_key)
+            if cached is not None:
+                cached["cache_hit"] = True
+                return cached
+
+        # Langfuse: update current observation with input + metadata.
+        # If langfuse.decorators exists, use: langfuse_context.update_current_observation(...)
+        self.langfuse.update_current_span(
+            name=f"pm-run-{self.prompt_version}",
+            input=raw_input,
+            metadata={
+                "prompt_version": self.prompt_version,
+                "model": self.model,
+                "input_source": input_source,
+                "temperature": self.temperature,
+            },
+        )
+
         user_message = self._build_user_message(raw_input)
 
-        # Call LLM with compiled role + knowledge base context
-        # Using cache_control for prompt caching (Claude 4 feature)
-        # Using stream=True for progressive token arrival (better UX)
         response = self.client.messages.create(
             model=self.model,
             max_tokens=self.max_tokens,
@@ -145,44 +196,57 @@ class PMAgent:
                 {
                     "type": "text",
                     "text": self.system_prompt,
-                    "cache_control": {"type": "ephemeral"}
+                    "cache_control": {"type": "ephemeral"},
                 }
             ],
-            messages=[
-                {"role": "user", "content": user_message}
-            ],
-            stream=False  # Use non-streaming to get accurate usage
+            messages=[{"role": "user", "content": user_message}],
+            stream=False,
         )
 
-        # Get the response
         raw_output = response.content[0].text
-        
-        # Get usage info from response
         usage = response.usage
         input_tokens = usage.input_tokens
         output_tokens = usage.output_tokens
         tokens_used = input_tokens + output_tokens
-        
-        # Get cache metrics if available
-        cache_read_tokens = getattr(usage, 'cache_read_input_tokens', 0)
-        cache_creation_tokens = getattr(usage, 'cache_creation_input_tokens', 0)
+        cache_read_tokens = getattr(usage, "cache_read_input_tokens", 0)
+        cache_creation_tokens = getattr(usage, "cache_creation_input_tokens", 0)
 
-        # Extract and parse JSON from response
         report = self._extract_json(raw_output)
+        parse_failed = report.get("parse_error", False)
 
-        # Inject metadata if not present
+        if not parse_failed:
+            self._enforce_hard_caps(report)
+
+        self.langfuse.update_current_span(
+            output=report,
+            metadata={
+                "tokens_used": tokens_used,
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
+                "parse_failed": parse_failed,
+            },
+        )
+
         if "report_metadata" not in report:
             report["report_metadata"] = {}
         report["report_metadata"]["generated_at"] = datetime.utcnow().isoformat() + "Z"
         report["report_metadata"]["prompt_version"] = self.prompt_version
 
-        return {
+        result = {
             "report": report,
             "raw_output": raw_output,
             "tokens_used": tokens_used,
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
             "cache_read_tokens": cache_read_tokens,
-            "cache_creation_tokens": cache_creation_tokens
+            "cache_creation_tokens": cache_creation_tokens,
+            "cache_hit": False,
         }
+
+        if use_cache and not parse_failed:
+            self._save_to_cache(cache_key, result)
+
+        return result
 
     def _build_user_message(self, raw_input: str) -> str:
         """
@@ -198,6 +262,54 @@ PROJECT REQUIREMENTS:
 ---
 
 Begin."""
+
+    def _enforce_hard_caps(self, report: dict):
+        """
+        Post-processing safety net: mechanically enforce hard cap rules
+        that the prompt instructs the LLM to follow but it often doesn't.
+
+        Caps (applied strictest-first):
+          - assumption_count >= 8 → score <= 40
+          - assumption_count >= 5 → score <= 60
+          - CRITICAL risk + assumptions >= 3 → score <= 50
+        """
+        assumptions = report.get("assumption_log", [])
+        assumption_count = len(assumptions)
+        risks = report.get("risk_register", [])
+        has_critical = any(r.get("score") == "CRITICAL" for r in risks)
+
+        cap = 100
+        cap_reasons = []
+        if assumption_count >= 8:
+            cap = min(cap, 40)
+            cap_reasons.append(f">=8 assumptions ({assumption_count}) -> cap 40")
+        elif assumption_count >= 5:
+            cap = min(cap, 60)
+            cap_reasons.append(f">=5 assumptions ({assumption_count}) -> cap 60")
+        if has_critical and assumption_count >= 3:
+            cap = min(cap, 50)
+            cap_reasons.append(f"CRITICAL risk + >=3 assumptions -> cap 50")
+
+        cs = report.get("pm_confidence_score", {})
+        if isinstance(cs, dict):
+            original = cs.get("score", 0)
+            if original > cap:
+                cs["score"] = cap
+                cs.setdefault("deductions", []).append({
+                    "amount": original - cap,
+                    "reason": f"Hard cap enforced by post-processing: {'; '.join(cap_reasons)}"
+                })
+            report["pm_confidence_score"] = cs
+            if "report_metadata" in report:
+                report["report_metadata"]["pm_confidence_score"] = cs["score"]
+        elif isinstance(cs, (int, float)):
+            if cs > cap:
+                report["pm_confidence_score"] = {"score": cap, "deductions": [{
+                    "amount": cs - cap,
+                    "reason": f"Hard cap enforced by post-processing: {'; '.join(cap_reasons)}"
+                }]}
+                if "report_metadata" in report:
+                    report["report_metadata"]["pm_confidence_score"] = cap
 
     def _extract_json(self, raw_output: str) -> dict:
         """

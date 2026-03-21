@@ -186,12 +186,13 @@ This pattern — using an LLM to evaluate another LLM's output — is the natura
 
 ## Tracking Rubric Scores Over Prompt Versions
 
-| Prompt Version | D1 Schema | D2 Consistency | D3 Rubric Avg | D4 Edge Cases | Notes |
-|----------------|-----------|----------------|---------------|---------------|-------|
-| v1.4 | 10/10 | FAIL (variance 30) | 4.75/5 (staffing 3/5) | 10/10 | Haiku, temp 0.3 |
-| v1.5 | Pending | FAIL (variance 52) | Pending | Pending | Structural trim + anti-patterns |
-| v1.6 | 1/1 (TC-01) | **PASS** (variance 0.0) | Pending | Pending | All consistency fixes. Temp 0.0. Scratchpad removed. |
+| Prompt Version | D1 Schema | D2 Consistency | D3 Rubric Avg | D4 Edge Cases | D5 PM compare | Notes |
+|----------------|-----------|----------------|---------------|---------------|---------------|-------|
+| v1.4 | 10/10 | FAIL (variance 30) | 4.75/5 (staffing 3/5) | 10/10 | — | Haiku, temp 0.3 |
+| v1.5 | Pending | FAIL (variance 52) | Pending | Pending | — | Structural trim + anti-patterns |
+| v1.6 | 1/1 (TC-01) | **PASS** (variance 0.0) | Pending | Pending | — | All consistency fixes. Temp 0.0. Scratchpad removed. |
+| **v1.6.1** | **10/10** | **PASS** (variance **0.0**; TYPE_A ×3, Predictive ×3) | **5.0/5** | **10/10** | **PENDING** | NFR materiality gate: TC-01 **3 assumptions**, score **82** live. Full suite `--generate` + `--all --replay` 2026-03-21. D2 pass also meets stricter **variance &lt; 5**. D1 warnings only TC-05 (94% alloc), TC-10 (100% alloc). D4: removed stale TC-04 `source=nfr` requirement (aligned with v1.6.1). **Complete D5** using `outputs/v1.6.1/tc-01-perfect.json`. |
 
-D2 also verified on TC-04 (variance=0.0, Adaptive x3) and TC-05 (variance=0.0, Predictive x3).
+D2 also verified on TC-04 (variance=0.0, Adaptive x3) and TC-05 (variance=0.0, Predictive x3) for v1.6.
 
-*Active version: v1.6. Full suite (all TCs, all dimensions) pending. D5 manual comparison pending.*
+*Active version: **v1.6.1** (default in code). **D5:** sign off manually — compare agent TC-01 output to your own plan; document PASS/FAIL in the D5 column above.*
