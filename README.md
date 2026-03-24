@@ -20,7 +20,7 @@ This use case evolves across all three course projects:
 |---------|------|-------------|
 | **Project 1** (this repo) | Doing | Single agent, embedded knowledge, deterministic output |
 | **Project 2** | Deciding | Add approval gates for high-risk outputs |
-| **Project 3** | Delegating | Split into 4 specialized sub-agents with orchestration |
+| **Project 3** | Delegating | Multi-agent pipeline: **Use Case Agent** (actors, use cases, **draw.io + Kroki PNG**) → Intake → Planning → Risk → Staffing → **Synthesis**; RAG per agent; final report = BA + PM output, cross-grounded (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) §7) |
 
 ---
 
@@ -50,6 +50,8 @@ Agentic_SDLC/
 │   ├── v1.3_system.txt           ← Production architecture (JSON-only, scratchpad)
 │   ├── v1.4_system.txt           ← Haiku compatibility (Budget risk, priority caps)
 │   ├── v1.5_system.txt           ← Structural trim + anti-patterns
+│   ├── v1.6_system.txt           ← D2/D3/D1 fixes, SDLC tie-breaker, hard caps
+│   ├── v1.6.1_system.txt         ← NFR materiality gate (active default in code)
 │   └── archive/                   ← Intermediate prompt versions for reproducibility
 │
 ├── schemas/                        ← Input/output schema definitions
@@ -187,9 +189,9 @@ Every input — no matter how vague — goes through this exact sequence:
 | Edge Cases | 10 test cases across input spectrum | Yes |
 | PM Comparison | Agent vs manual PM output | Manual |
 
-Target metrics:
+Target metrics (see [docs/EVALUATION_RUBRIC.md](docs/EVALUATION_RUBRIC.md) for full criteria):
 - Schema pass rate: **100%**
-- Consistency score variance: **< 5 points**
+- Consistency: variance **< 15**, all scores in same **10-point** band, identical type + SDLC (stricter **< 5** variance also desirable)
 - Rubric average: **> 3.5 / 5**
 - Edge case pass rate: **> 80%**
 

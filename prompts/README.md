@@ -12,6 +12,9 @@ Each version is stored as an immutable .txt file once committed.
 | v1.2 | Output Reliability | Confidence calibration, viability check, JSON skeleton, deduction table |
 | v1.3 | Production Architecture | JSON-only output, scratchpad instruction, effort_hours cap |
 | v1.4 | Haiku Compatibility | Budget risk category, priority caps, open_questions limit |
+| v1.5 | Structural trim | Anti-patterns, tradeoff field, shorter prompt |
+| v1.6 | Consistency + staffing + caps | Mechanical score rule, SDLC tie-breaker, staffing completeness, scratchpad removed |
+| v1.6.1 | NFR materiality | Fewer spurious NFR assumptions; **default prompt version in code** |
 
 ## Archive
 

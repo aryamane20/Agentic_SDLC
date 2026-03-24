@@ -85,6 +85,8 @@ The system prompt has 5 components:
 | Risk Pattern Catalog | Known risks per type/constraint | Step 7 |
 | Staffing Benchmarks | Role definitions, hour estimates | Step 8 |
 
+**Project 3:** The same KB (and additional BA / use-case guidance as needed) is **retrieved per agent** from a vector store instead of compiled wholesale. The **Use Case Agent** is the first consumer; Intake through Staffing agents query slices relevant to their step, always with access to the **use case model** produced in the zeroth stage.
+
 ---
 
 ## 3. The 8-Step Reasoning Process (Detailed)
@@ -269,16 +271,22 @@ The agent handles all input formats without rejection:
 
 ## 6. Technology Stack
 
-| Layer | Technology | Why |
-|-------|-----------|-----|
-| LLM | Claude (claude-haiku-4-5-20251001 dev / claude-sonnet-4-20250514 eval) | Consistent structured output |
-| Language | Python 3.11+ | OpenHands compatible |
-| Validation | jsonschema library | Schema enforcement |
-| UI | Streamlit | Single-file web app, no HTML/CSS/JS required |
-| Deployment | Streamlit Cloud | Free hosting, public URL for demos |
-| Logging | Python logging + JSON | Structured, parseable logs |
-| Testing | pytest | Unit + integration tests |
-| Version Control | Git | Prompt versioning + code |
+| Layer | Technology | Project | Why |
+|-------|-----------|---------|-----|
+| LLM | Claude Haiku (dev) / Sonnet (eval) | P1–P3 | Consistent structured output |
+| Language | Python 3.11+ | P1–P3 | Agent logic, eval scripts, FastAPI backend |
+| Validation | Pydantic (`schemas/output_schema.py` `PMReport`) + business rules in `validator.py` | P1 | Schema + PMI-style checks (P2–P3 may add per-artifact models) |
+| Logging | Python logging + JSON + Langfuse | P1–P3 | Structured run logs + LLM observability |
+| Testing | pytest (mocked API) | P1–P3 | Unit tests without burning API tokens |
+| Version Control | Git | P1–P3 | Prompt versioning + code |
+| API Backend | FastAPI + Uvicorn | P2–P3 | Async, Pydantic-native, auto OpenAPI docs |
+| Frontend | React + Vite + Tailwind CSS | P2–P3 | Fast dev server, utility-first styling |
+| UI Components | shadcn/ui + 21st.dev | P2–P3 | Copy-owned components, Radix UI + Tailwind |
+| Session Store | JSON files (sessions/) | P2 | Zero-setup MVP persistence, no DB needed |
+| Database | PostgreSQL (Supabase) | P3+ | Persistent multi-user storage at scale |
+| Vector Store | Pinecone / Weaviate | P3 | RAG retrieval per sub-agent |
+| Diagram Rendering | Kroki free API | P3 | draw.io XML → PNG, no auth required |
+| Deployment | Railway / Render (backend) + Vercel (frontend) | P3+ | Free tier, public URL |
 
 ---
 
@@ -291,43 +299,193 @@ Input → [System Prompt + KB compiled together] → LLM → Parser → Validato
 Everything in one agent. KB lives in separate files, compiled into context at runtime on every call..
 
 ### Project 2: Approval Gates + Refinement Loop
+
+> **Implementation status:** The `api/` and `frontend/` layout and endpoints below are the **target design** for Project 2. They are **not** present in the repository until that work is implemented; Project 1 today is `agent/`, `scripts/run_eval.py`, and CLI/JSON outputs only.
+
+**Stack:** FastAPI + Uvicorn (backend) · React + Vite + Tailwind CSS + shadcn/ui + 21st.dev (frontend)
+
+**Request flow:**
 ```
-Input → Agent → Output
-                  │
-                  ▼
-         [Confidence Score < 60?]  →  PAUSE → Human Review → Approve/Reject/Refine
-         [Critical Risk present?]  →  PAUSE → Human Review → Approve/Reject/Refine
-         [Anti-pattern detected?]  →  PAUSE → Human Review → Approve/Reject/Refine
-                  │
-          [If feedback given]
-                  │
-                  ▼
-         Agent receives constraint update
-         Re-runs Steps 5-8 with new information
-         Previous extraction (Steps 1-4) stays locked
-                  │
-                  ▼
-            Updated Report
+PM submits brief (React UI)
+    → POST /reports/generate  (FastAPI)
+        → PMAgent.run()  [Project 1 agent — unchanged]
+            → approval_gate.py checks output
+                → gate fired?  YES → return report + gate details
+                → gate clear?  NO  → return report + auto-approved
+    → React displays report cards + GateAlert banner (if fired)
+        → PM approves   → POST /gates/{id}/decision  { decision: "approve" }
+        → PM rejects    → POST /gates/{id}/decision  { decision: "reject" }
+        → PM refines    → POST /reports/{id}/refine  { feedback: "..." }
+            → refinement.py injects previous report + feedback
+                → PMAgent.run() re-runs Steps 5–8 only
+                → Steps 1–4 extraction stays locked
+            → returns updated report + new gate status
 ```
 
-New components: `approval_gate.py`, `feedback_logger.py`
-UI: Streamlit chat interface — PM submits brief, reads report, types refinements
-The agent holds previous JSON in context and updates only affected sections.
-
-### Project 3: Multi-Agent Orchestration
+**New files (api/ and frontend/ sit alongside existing P1 code):**
 ```
-Input
-  │
-  ▼
-[Orchestrator]
-  ├── [Intake Agent]    → Steps 1-4 → structured_brief.json
-  ├── [Planning Agent]  → Steps 5-6 → project_plan.json
-  ├── [Risk Agent]      → Step 7    → risk_register.json
-  └── [Staffing Agent]  → Step 8    → staffing_plan.json
-        │
-        ▼
-  [Synthesis Agent]     → Consistency check → Final Report
+api/
+  main.py                   ← FastAPI app, CORS, router registration
+  routers/
+    sessions.py             ← POST /sessions, GET /sessions/{id}
+    reports.py              ← POST /reports/generate, GET /reports/{id}
+    gates.py                ← GET /gates/{report_id}, POST /gates/{report_id}/decision
+    refine.py               ← POST /reports/{id}/refine
+  services/
+    approval_gate.py        ← Gate trigger logic (pure function, no side effects)
+    feedback_logger.py      ← Append every gate decision to logs/gate_decisions.jsonl
+    refinement.py           ← Partial re-run: inject constraint, re-run Steps 5–8
+  models/
+    session.py              ← Session, Report Pydantic models
+    gate.py                 ← ApprovalGate, GateDecision, RefinementRequest
+  db/
+    store.py                ← JSON file store (sessions/{session_id}.json)
+  requirements.txt          ← fastapi, uvicorn, pydantic, python-dotenv
+
+frontend/
+  src/
+    App.jsx                 ← State machine: brief → loading → report/gate → refine
+    components/
+      BriefInput.jsx        ← Textarea + submit (21st.dev component)
+      Report.jsx            ← 9 accordion sections (shadcn Accordion)
+      ConfidenceScore.jsx   ← Color-coded score bar + deductions
+      GateAlert.jsx         ← Amber banner + approve/reject/refine buttons
+      RefinementInput.jsx   ← Chat-style constraint update (21st.dev component)
+    hooks/
+      useReport.js          ← All API state: report, gate, loading, generate/decide/refine
+    api/
+      client.js             ← fetch wrapper, VITE_API_URL from .env
+  .env                      ← VITE_API_URL=http://localhost:8000
+  package.json
+  vite.config.js
+  tailwind.config.js
 ```
 
-Knowledge base extracted to vector store. Each agent queries only its relevant section.
-5 specialized agents replace the single monolithic agent.
+**Approval gate trigger conditions** (`approval_gate.py` — fires when ANY is true):
+```
+confidence_score < 60                              → plan needs review
+any risk_register[].score == "CRITICAL"            → critical risk requires PM decision
+project_viability.viability_status == "NOT_VIABLE" → impossible constraints
+any open_questions[].urgency == "Before planning"  → anti-pattern detected
+```
+If none triggered → `fired: False` (auto-approved, no human action needed).
+
+**Refinement loop — locked vs re-run:**
+```
+Steps 1–4  LOCKED  — extraction already done, brief didn't change
+Steps 5–8b RE-RUN  — plan, tasks, risks, staffing, viability recalculated
+```
+Refinement message passes `previous_report` JSON + `feedback` string; agent updates only downstream sections.
+
+**MVP persistence** — `sessions/{session_id}.json` (no database):
+```json
+{
+  "session_id": "abc123",
+  "reports": [{
+    "report_id": "rpt_001",
+    "report": { "...agent output..." },
+    "gate": { "fired": true, "reasons": ["..."], "decision": null },
+    "refinements": [{ "feedback": "cut timeline to 8 weeks", "report": {}, "gate": {} }]
+  }]
+}
+```
+
+**Local dev (two terminals):**
+```bash
+uvicorn api.main:app --reload --port 8000   # backend
+cd frontend && npm run dev                   # frontend → localhost:5173
+```
+
+**Unchanged from Project 1:** `agent/main.py`, `agent/validator.py`, `prompts/`, `knowledge-base/`, all eval scripts.
+
+### Project 3: Multi-Agent Orchestration (BA + PM pipeline)
+
+> **Implementation status:** Project 3 is **specified** here for course progression; sub-agents, RAG, `drawio_generator.py`, Kroki, and orchestrator gates are **not** implemented in this repo yet.
+
+**Goal:** Replace monolithic `_build_system_context()` with **RAG retrieval** per agent and split work across **specialized sub-agents**. The pipeline is grounded in a shared use-case model so plan, risks, and staffing stay internally consistent.
+
+**Zeroth step — Use Case Agent (before Intake):**
+The Use Case Agent is the first sub-agent. It reads raw requirements and produces a structured intermediate artifact consumed by every downstream agent.
+
+**Diagram generation — two-step design (LLM for reasoning, Python for rendering):**
+```
+Step 1 — LLM produces structured use case data (what to draw):
+{
+  "system_boundary": "Employee Onboarding Portal",
+  "actors": [
+    { "id": "A1", "name": "New Hire",      "type": "primary"   },
+    { "id": "A2", "name": "HR Team",       "type": "secondary" },
+    { "id": "A3", "name": "IT Department", "type": "external"  }
+  ],
+  "use_cases": [
+    { "id": "UC1", "name": "Complete paperwork",  "actors": ["A1"]       },
+    { "id": "UC2", "name": "Provision IT access", "actors": ["A1", "A3"] },
+    { "id": "UC3", "name": "Monitor progress",    "actors": ["A2"]       }
+  ],
+  "relationships": [
+    { "type": "includes", "from": "UC1", "to": "UC4" }
+  ]
+}
+
+Step 2 — drawio_generator.py converts structured data → valid draw.io XML (Python only):
+  - Grid layout algorithm handles positioning (no overlaps)
+  - Deterministic unique cell IDs — no LLM involvement
+  - Correct draw.io style strings from templates
+  Result: valid .drawio XML the PM can edit in app.diagrams.net (no install required)
+```
+
+**Diagram delivery:**
+```
+drawio_generator.py  →  .drawio XML file
+      ↓
+Kroki free API  →  POST diagram XML  →  PNG returned
+      ↓
+React report: inline PNG image + "Download .drawio" button
+```
+
+**Full agent pipeline (end-to-end):**
+```
+Raw requirements
+      │
+      ▼
+[Use Case Agent]   → actors, use cases, draw.io XML, PNG → use_case_model.json
+      │  ← Orchestrator gate: input quality LOW or anti-pattern detected?
+      ▼
+[Intake Agent]     → Steps 1–4 → structured_brief.json
+                     (extraction grounded in named use cases)
+      │  ← Orchestrator gate: confidence < 60 or >5 assumptions?
+      ▼
+[Planning Agent]   → Steps 5–6 → project_plan.json
+                     (phases/milestones/tasks tied to use case IDs)
+      │  ← Orchestrator gate: timeline HIGH RISK?
+      ▼
+[Risk Agent]       → Step 7 → risk_register.json
+                     (risks tied to use cases and actors)
+      │  ← Orchestrator gate: CRITICAL risks require PM decision?
+      ▼
+[Staffing Agent]   → Step 8 → staffing_plan.json
+                     (roles matched to use-case complexity and load)
+      │  ← Auto-validated by business rules (no human gate needed)
+      ▼
+[Synthesis Agent]  → consistency check (use case ↔ plan ↔ risks ↔ staffing)
+      │  ← Orchestrator gate: cross-section contradictions found?
+      ▼
+Final integrated report
+  ├── Use case diagram (editable .drawio + inline PNG)
+  ├── Structured use case descriptions
+  ├── Project plan (phases tied to use case IDs)
+  ├── Risk register (risks tied to use cases)
+  ├── Staffing plan (roles matched to use case complexity)
+  └── All existing metadata (assumptions, confidence, viability)
+```
+
+**Approval gates in P3 — at every handoff, not just at the end:**
+Each gate pauses only the affected agent. Downstream agents do not run until the gate clears. When the PM provides feedback, only the agent that owns the flagged section re-runs — not the full pipeline.
+
+**Knowledge base and RAG:**
+KB material moves to a vector store (Pinecone or Weaviate). Each agent retrieves only its relevant slice. `_build_system_context()` in `agent/main.py` is replaced with RAG retrieval — method signature unchanged, only the implementation changes.
+
+**Orchestrator:**
+Coordinates ordering, passes `use_case_model` and prior JSON between agents, handles retries, runs gate checks at each handoff, invokes Synthesis for a consistency pass before returning the final artifact.
+
+**Agent count:** Six specialized LLM steps — **Use Case**, **Intake**, **Planning**, **Risk**, **Staffing**, **Synthesis** — replacing the single P1 agent while preserving the same 8-step reasoning semantics across the pipeline.

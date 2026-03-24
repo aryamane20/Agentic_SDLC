@@ -100,4 +100,4 @@ A QA phase compressed below 15% in production means a PM would receive a plan th
 | F14 — scratchpad truncation | ✅ Fixed in v1.6 — scratchpad removed |
 | D2 variance | ✅ Fixed — variance 0.0 on TC-01, TC-04, TC-05 (temp 0.0 + all prompt fixes) |
 
-*Last updated: March 2026 — based on v1.4, v1.5, and v1.6 eval runs.*
+*Last updated: March 2026 — v1.6.1 full automated eval (D1–D4) documented in [EVALUATION_RUBRIC.md](EVALUATION_RUBRIC.md); D5 manual pending. Project 2/3 sections in [ARCHITECTURE.md](ARCHITECTURE.md) describe target designs; not all are implemented in repo yet.*

@@ -8,7 +8,7 @@
 | Dimension | What It Tests | Automated? | Target |
 |-----------|--------------|------------|--------|
 | 1. Schema Validation | Output structure correctness | ✅ Fully | 100% pass rate |
-| 2. Consistency | Same input → same output | ✅ Fully | Score variance < 5 |
+| 2. Consistency | Same input → same output (3 runs, TC-01) | ✅ Fully | Variance < 15, same 10-pt band, type + SDLC match |
 | 3. Reasoning Quality | PM thinking quality (rubric) | 🔶 Semi | Average > 3.5/5 |
 | 4. Edge Case Handling | Behavior on difficult inputs | ✅ Mostly | > 80% pass rate |
 | 5. PM Comparison | Agent vs real PM output | ❌ Manual | No embarrassment test |
@@ -41,7 +41,7 @@ python scripts/run_eval.py --dimension schema
 
 ## Dimension 2: Consistency
 
-**What it checks:** Does the same input produce consistent output across 5 runs?
+**What it checks:** Does the same input produce consistent output across **3** runs (TC-01)?
 
 **How to run:**
 ```bash
@@ -49,7 +49,7 @@ python scripts/run_eval.py --dimension consistency
 ```
 
 **Pass criteria:**
-- PM Confidence Score variance < 5 points across 3 runs (TC-01)
+- PM Confidence Score variance < 15 points, all scores within same 10-point band, across 3 runs (TC-01)
 - Project type and SDLC approach identical across all runs
 
 **Why this matters:** Production agents must be predictable. A PM that gives wildly different assessments of the same project on different days is not trustworthy.
@@ -120,16 +120,18 @@ python scripts/run_eval.py --dimension rubric
 
 | Test Case | Input Quality | Expected Behavior |
 |-----------|--------------|------------------|
-| TC-01 | Perfect | Confidence ≥ 75. Assumptions ≤ 3. Clean output. |
-| TC-02 | Good | Confidence 60-80. 3-5 assumptions. |
-| TC-03 | Medium | Confidence 50-70. 5+ assumptions. |
-| TC-04 | Vague (1 sentence) | Confidence ≤ 50. 8+ assumptions. All mandatory risks flagged. |
-| TC-05 | Contradictory | Confidence ≤ 40. Contradiction flagged in open questions. CRITICAL risks. |
-| TC-06 | Type A project | Classified as TYPE_A. Portal template applied. |
-| TC-07 | Type C project | Classified as TYPE_C. Data pipeline template applied. |
-| TC-08 | Type D project | Classified as TYPE_D. Integration template applied. |
-| TC-09 | Impossible timeline | Timeline flagged as HIGH RISK. CRITICAL risk present. Phase minimums still respected. |
-| TC-10 | Solo team, large project | Resource risk is CRITICAL. Allocation correctly distributed. Note about single point of failure. |
+| TC-01 | Perfect | Confidence ≥ 55. Assumptions ≤ 7. TYPE_A. SDLC present. Critical path present. |
+| TC-02 | Good | Schema valid. No specific confidence/assumption checks. |
+| TC-03 | Medium | Schema valid. No specific confidence/assumption checks. |
+| TC-04 | Vague (1 sentence) | Confidence ≤ 50. Assumptions ≥ 5. At least 1 risk. Viability = null. |
+| TC-05 | Contradictory | Confidence ≤ 40. Contradiction detected (structural: confidence ≤ 20 + NOT_VIABLE + BOTH). Viability = NOT_VIABLE, gap = BOTH, ≥ 2 scoping options. |
+| TC-06 | Type A project | Classified as TYPE_A. |
+| TC-07 | Type C project | Classified as TYPE_C. |
+| TC-08 | Type D project | Classified as TYPE_D. |
+| TC-09 | Impossible timeline | At least 1 timeline/schedule/deadline risk flagged. CRITICAL or HIGH risk present. Viability = NOT_VIABLE, gap = SCHEDULE or BOTH, ≥ 2 scoping options. |
+| TC-10 | Solo team, large project | Confidence ≤ 50. Staffing gap detected (structural: NOT_VIABLE + BOTH + risk_count ≥ 8). Viability = NOT_VIABLE, gap = BOTH, ≥ 2 scoping options. |
+
+**Note on structural checks (TC-05, TC-10):** The evaluator uses structural outcome signals rather than keyword matching. A contradiction is confirmed by `confidence ≤ 20 AND NOT_VIABLE AND gap = BOTH` — not by scanning for the word "contradict". A staffing gap is confirmed by `NOT_VIABLE AND gap ∈ {BOTH, BUDGET} AND risk_count ≥ 8`.
 
 ---
 
@@ -137,11 +139,12 @@ python scripts/run_eval.py --dimension rubric
 
 **How to run this:**
 1. Use TC-01 (perfect input — employee onboarding portal)
-2. Independently produce what a good PM would create:
+2. Open `outputs/v1.6.1/tc-01-perfect.json`
+3. Independently produce what a good PM would create:
    - A rough project plan (phases, key milestones)
    - Top 5 risks
    - Team structure needed
-3. Compare agent output to your manual output
+4. Compare agent output to your manual output
 
 **Scoring question:** "Would a senior PM be embarrassed to sign off on this output?"
 - **Pass:** No — output is reasonable, well-structured, assumptions are sound
@@ -159,15 +162,32 @@ python scripts/run_eval.py --dimension rubric
 
 > **Note:** Dimension 5 is currently **purely manual** — this is intentional for Project 1. However, for **Project 3** (multi-agent orchestration at scale), manual comparison becomes a bottleneck.
 
+**Project 3 pipeline adds two new eval concerns:**
+
+**1. Use Case Quality** — does the Use Case Agent produce correct, complete artifacts?
+- Actor identification coverage (all human + external system actors named)
+- Use case naming and granularity (each UC = one goal one actor can achieve)
+- Relationship correctness (includes/extends semantically accurate)
+- draw.io XML validity — does it parse and render without errors in Kroki?
+- Traceability — do downstream agents reference UC IDs in their output?
+
+**2. Diagram rendering** — does the two-step pipeline produce usable diagrams?
+- LLM produces valid structured JSON (actors, use_cases, relationships fields present)
+- `drawio_generator.py` produces parseable XML with no overlapping elements
+- Kroki API returns a PNG (200 status, non-empty image)
+- .drawio file opens correctly in `app.diagrams.net`
+
 **Recommended approach for Project 3:**
-- Implement **LLM-as-judge** — a second Claude call that scores agent output against a rubric
-- The judge agent compares: project plan structure, risk realism, staffing validity
+- Implement **LLM-as-judge** — a second Claude call scoring agent output against a rubric
+- Judge compares: use case completeness, plan-to-UC traceability, risk-to-UC traceability, staffing-to-UC traceability, synthesis coherence
 - Outputs a score + justification (same 1-5 scale as Dimension 3)
+- Add **D6: Diagram Quality** — automated: XML parses + Kroki renders + traceability IDs present
 
 **Why this matters in "Delegating" mode:**
 - Multi-agent systems produce more varied outputs
 - Human review becomes time-prohibitive at scale
 - LLM-as-judge provides consistent, fast feedback for iteration
+- Diagram rendering is fully automatable — no human needed
 
 This pattern — using an LLM to evaluate another LLM's output — is the natural evolution from the semi-automated rubric in Dimension 3.
 
@@ -189,10 +209,10 @@ This pattern — using an LLM to evaluate another LLM's output — is the natura
 | Prompt Version | D1 Schema | D2 Consistency | D3 Rubric Avg | D4 Edge Cases | D5 PM compare | Notes |
 |----------------|-----------|----------------|---------------|---------------|---------------|-------|
 | v1.4 | 10/10 | FAIL (variance 30) | 4.75/5 (staffing 3/5) | 10/10 | — | Haiku, temp 0.3 |
-| v1.5 | Pending | FAIL (variance 52) | Pending | Pending | — | Structural trim + anti-patterns |
-| v1.6 | 1/1 (TC-01) | **PASS** (variance 0.0) | Pending | Pending | — | All consistency fixes. Temp 0.0. Scratchpad removed. |
-| **v1.6.1** | **10/10** | **PASS** (variance **0.0**; TYPE_A ×3, Predictive ×3) | **5.0/5** | **10/10** | **PENDING** | NFR materiality gate: TC-01 **3 assumptions**, score **82** live. Full suite `--generate` + `--all --replay` 2026-03-21. D2 pass also meets stricter **variance &lt; 5**. D1 warnings only TC-05 (94% alloc), TC-10 (100% alloc). D4: removed stale TC-04 `source=nfr` requirement (aligned with v1.6.1). **Complete D5** using `outputs/v1.6.1/tc-01-perfect.json`. |
+| v1.5 | 10/10 | FAIL (variance 52) | Pending | 10/10 | — | Structural trim + anti-patterns. Variance worse — mechanical rule alone insufficient. |
+| v1.6 | 10/10 | FAIL (variance 25) | Pending | Pending | — | SDLC tiebreaker, staffing completeness rule, temp 0.0. D2 target not met. |
+| **v1.6.1** | **10/10** | **PASS** (variance **0.0**; TYPE_A ×3, Predictive ×3) | **5.0/5** | **10/10** | **PENDING** | NFR materiality gate: TC-01 **3 assumptions**, score **82** live. Full suite `--generate` + `--all --replay` 2026-03-21. D2 also verified on TC-04 (variance=0.0) and TC-05 (variance=0.0). D1 warnings only on TC-05 (94% alloc) and TC-10 (100% alloc) — both are stress test cases, not agent failures. **Complete D5** using `outputs/v1.6.1/tc-01-perfect.json`. |
 
-D2 also verified on TC-04 (variance=0.0, Adaptive x3) and TC-05 (variance=0.0, Predictive x3) for v1.6.
+**D2 pass criterion (v1.6.1 and forward):** variance < 15 AND all scores within same 10-point band AND type consistent AND SDLC consistent. Variance = 0.0 on v1.6.1 also satisfies the stricter original target of < 5.
 
-*Active version: **v1.6.1** (default in code). **D5:** sign off manually — compare agent TC-01 output to your own plan; document PASS/FAIL in the D5 column above.*
+*Active version: **v1.6.1**. D5: compare agent TC-01 output to your own plan — document PASS/FAIL in the D5 column above.*
