@@ -76,10 +76,13 @@ class SchemaValidator:
         if phase_4 and phase_4.get("percentage_of_total", 0) < 15:
             errors.append(f"Phase 4 is {phase_4.get('percentage_of_total')}%, must be >= 15% — HARD MINIMUM")
         
-        # Staffing: no role > 80%
+        # Staffing: no role > 80% (actionable plan hygiene).
+        # Skip when already NOT_VIABLE — high allocation reflects impossible inputs, not agent error.
+        viability_early = report.get("project_viability") or {}
+        viability_status_early = (viability_early.get("viability_status") or "").strip()
         staffing = report.get("staffing_plan", [])
         for person in staffing:
-            if person.get("allocation_percent", 0) > 80:
+            if viability_status_early != "NOT_VIABLE" and person.get("allocation_percent", 0) > 80:
                 warnings.append(f"Role {person.get('role')} is allocated {person.get('allocation_percent')}%, exceeds 80%")
         
         # QA rule: QA hours >= 25% of dev hours
