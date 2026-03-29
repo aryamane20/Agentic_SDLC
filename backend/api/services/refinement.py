@@ -40,10 +40,23 @@ def _strip_and_compact(report: dict[str, Any]) -> str:
     return json.dumps(stripped, ensure_ascii=False, separators=(",", ":"))
 
 
-def merge_locked_sections_from_prior(previous_report: dict[str, Any], new_report: dict[str, Any]) -> dict[str, Any]:
-    """Preserve extraction + classification; allow plan / risks / staffing / viability to update."""
+def merge_locked_sections_from_prior(
+    previous_report: dict[str, Any],
+    new_report: dict[str, Any],
+    *,
+    update_brief: bool = False,
+) -> dict[str, Any]:
+    """
+    After refine, copy locked sections from the prior report so they cannot drift.
+
+    Default: lock project_understanding + assumption_log (plan-only refinements).
+    update_brief=True: lock only project_understanding; assumption_log comes from the model.
+    """
     merged = copy.deepcopy(new_report)
-    for key in LOCKED_SECTIONS:
+    sections_to_lock: frozenset[str] = (
+        frozenset({"project_understanding"}) if update_brief else LOCKED_SECTIONS
+    )
+    for key in sections_to_lock:
         if key in previous_report:
             merged[key] = copy.deepcopy(previous_report[key])
     prev_meta = previous_report.get("report_metadata")
@@ -106,10 +119,13 @@ def run_refinement(
     original_brief: str,
     previous_report: dict,
     feedback: str,
+    update_brief: bool = False,
 ) -> dict:
     messages = build_refinement_messages(original_brief, previous_report, feedback)
     result = agent.run_with_history(messages, input_source="backend-refine")
-    merged = merge_locked_sections_from_prior(previous_report, result["report"])
+    merged = merge_locked_sections_from_prior(
+        previous_report, result["report"], update_brief=update_brief
+    )
     result["report"] = merged
     result["gate"] = evaluate_gate(merged).model_dump(mode="json")
     return result

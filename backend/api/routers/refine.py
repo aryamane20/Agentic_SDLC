@@ -46,6 +46,7 @@ def refine(report_id: str, body: RefineRequest) -> dict:
         original_brief=entry.brief,
         previous_report=prior,
         feedback=body.feedback,
+        update_brief=body.update_brief,
     )
     new_report = out["report"]
     gate = evaluate_gate(new_report)

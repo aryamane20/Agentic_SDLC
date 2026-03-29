@@ -83,7 +83,7 @@ def test_merge_restores_extraction_and_classification():
         },
         "project_plan": {"phases": [{"name": "build"}]},
     }
-    m = merge_locked_sections_from_prior(prior, new)
+    m = merge_locked_sections_from_prior(prior, new, update_brief=False)
     assert m["project_understanding"] == prior["project_understanding"]
     assert m["assumption_log"] == prior["assumption_log"]
     meta = m["report_metadata"]
@@ -96,3 +96,24 @@ def test_merge_restores_extraction_and_classification():
     assert meta["pm_confidence_score"] == 90.0
     assert meta["generated_at"] == "2026-01-02"
     assert m["project_plan"] == new["project_plan"]
+
+
+def test_merge_update_brief_keeps_understanding_unlocks_assumptions():
+    prior = {
+        "project_understanding": {"primary_goal": "A"},
+        "assumption_log": [{"id": "A1", "what": "old"}],
+        "report_metadata": {"input_quality": "HIGH", "project_type": "T"},
+        "project_plan": {},
+    }
+    new = {
+        "project_understanding": {"primary_goal": "SHOULD_NOT_APPLY"},
+        "assumption_log": [{"id": "A2", "what": "revised"}],
+        "report_metadata": {"input_quality": "LOW", "project_type": "X"},
+        "project_plan": {"phases": [1]},
+    }
+    m = merge_locked_sections_from_prior(prior, new, update_brief=True)
+    assert m["project_understanding"] == prior["project_understanding"]
+    assert m["assumption_log"] == new["assumption_log"]
+    meta = m["report_metadata"]
+    assert meta["input_quality"] == "HIGH"
+    assert meta["project_type"] == "T"

@@ -21,6 +21,8 @@ class GateDecisionRequest(BaseModel):
 class RefineRequest(BaseModel):
     session_id: str
     feedback: str = Field(..., min_length=1)
+    #: Scenario B — new constraint in feedback; only lock project_understanding; allow assumption_log to change.
+    update_brief: bool = False
 
 
 class GenerateReportRequest(BaseModel):
