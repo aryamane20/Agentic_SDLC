@@ -1,0 +1,833 @@
+{
+  "session_id": "fd0bc6c4-7cc8-4839-81c4-f70af08c1e5b",
+  "report_id": "rpt_3c4c657eef57",
+  "report": {
+    "report_metadata": {
+      "generated_at": "2026-03-27T23:09:23.809418Z",
+      "prompt_version": "v1.6.1",
+      "project_type": "TYPE_A",
+      "input_quality": "LOW",
+      "classification_confidence": "MEDIUM",
+      "sdlc_approach": "Predictive",
+      "sdlc_rationale": "Deadline is fixed (March 15) and non-negotiable per input, forcing a predictive schedule despite massive scope and resource gaps.",
+      "pm_confidence_score": 15.0
+    },
+    "project_understanding": {
+      "primary_goal": "Build native iOS and Android mobile apps with real-time video streaming, offline sync, AI recommendations, social sharing, and in-app payments.",
+      "beneficiary": "External customers (not internal team)",
+      "trigger": "CEO mandate to create a flagship market-disrupting product",
+      "success_definition": [
+        "Both iOS and Android apps deployed to app stores",
+        "Real-time video streaming functional",
+        "Offline mode with sync working",
+        "AI recommendations operational",
+        "Social sharing integrated",
+        "In-app payments processing",
+        "Support 1 million concurrent users",
+        "Zero downtime in production"
+      ],
+      "supporting_quotes": [
+        "Build a mobile app for customers",
+        "Deadline: 2 weeks (must be done by March 15)",
+        "Budget: $5,000 (very limited)",
+        "Full-featured native iOS and Android apps",
+        "Real-time video streaming capability",
+        "Must support 1 million concurrent users",
+        "Zero downtime allowed",
+        "The CEO wants this to be a flagship product that disrupts the market"
+      ]
+    },
+    "constraint_analysis": {
+      "hard_constraints": {
+        "deadline": "March 15, 2026 (2 weeks from input date)",
+        "budget": "$5,000 USD",
+        "team_size": "1 person",
+        "team_composition": "1 junior developer (no other roles specified)",
+        "technology_stack": "Legacy VB6 backend (mandated, cannot be changed)",
+        "compliance": "NONE"
+      },
+      "soft_constraints": {
+        "preferred_timeline": "NONE",
+        "preferred_tools": "NONE",
+        "nice_to_have": "NONE"
+      },
+      "non_functional_requirements": {
+        "performance": "Real-time video streaming (latency target UNKNOWN)",
+        "availability": "Zero downtime allowed (100% uptime requirement)",
+        "security": "In-app payments (PCI-DSS compliance UNKNOWN)",
+        "usability": "Native iOS and Android (implies responsive, platform-native UX)",
+        "data_retention": "UNKNOWN",
+        "scalability": "1 million concurrent users (explicitly stated)"
+      }
+    },
+    "assumption_log": [
+      {
+        "id": "A1",
+        "what": "Video streaming latency target is < 2 seconds end-to-end (standard for real-time video)",
+        "why": "Input specifies 'real-time video streaming' but no latency SLA. Standard web/mobile video assumes < 2s latency.",
+        "pmi_basis": "PMBOK 6th Ed, Section 8.1 — Quality metrics must be defined before build begins",
+        "risk_if_wrong": "HIGH",
+        "consequence": "If actual requirement is < 500ms (broadcast-grade), entire video architecture must be re-engineered mid-project. Streaming codec, CDN, and buffer strategy all change.",
+        "source": "nfr",
+        "tradeoff": "Gains: allows video module design to proceed without stakeholder delay. Risks: if wrong, video subsystem becomes critical path blocker in week 2."
+      },
+      {
+        "id": "A2",
+        "what": "PCI-DSS compliance for in-app payments is handled by a third-party payment processor (Stripe, Square, etc.), not built in-house",
+        "why": "Input requires in-app payments but budget is $5,000 and team is 1 junior developer. Building PCI-DSS-compliant payment processing from scratch is impossible in 2 weeks.",
+        "pmi_basis": "PMBOK 6th Ed, Section 11.2 — Risk identification before planning baseline",
+        "risk_if_wrong": "HIGH",
+        "consequence": "If in-house payment processing is required, project becomes non-viable immediately. PCI-DSS audit alone takes 4-8 weeks.",
+        "source": "nfr",
+        "tradeoff": "Gains: payment processing becomes a 2-3 day integration task instead of 4-week build. Risks: if stakeholder requires in-house processing, project fails."
+      },
+      {
+        "id": "A3",
+        "what": "AI recommendations engine is a third-party API (e.g., TensorFlow Lite pre-trained model or cloud API), not custom-built",
+        "why": "Building a production-grade AI recommendation system requires data science expertise, training data, and validation. One junior developer cannot deliver this in 2 weeks.",
+        "pmi_basis": "PMBOK 6th Ed, Section 9.2 — Resource estimation tied to WBS",
+        "risk_if_wrong": "HIGH",
+        "consequence": "If custom AI model is required, project scope becomes 8-12 weeks minimum. Entire timeline collapses.",
+        "source": "scope",
+        "tradeoff": "Gains: AI feature becomes a 1-week integration task. Risks: if stakeholder expects proprietary ML model, feature is cut or timeline extends 6+ weeks."
+      },
+      {
+        "id": "A4",
+        "what": "Offline sync uses a standard mobile sync library (e.g., Firebase Realtime Database, Realm, or SQLite + background sync), not custom-built",
+        "why": "Building a robust offline-first sync engine with conflict resolution is a 3-4 week task for an experienced team. One junior developer cannot deliver this.",
+        "pmi_basis": "PMBOK 6th Ed, Section 6.4 — Schedule baseline derived from scope definition",
+        "risk_if_wrong": "HIGH",
+        "consequence": "If custom sync engine is required, add 4 weeks to timeline. Data consistency issues will emerge in production.",
+        "source": "scope",
+        "tradeoff": "Gains: offline sync becomes a 2-week integration task using proven library. Risks: if stakeholder requires custom sync logic, timeline extends 4+ weeks."
+      },
+      {
+        "id": "A5",
+        "what": "VB6 backend is a legacy system that already exists and is operational; the project integrates with it via REST/SOAP API, not replaces or refactors it",
+        "why": "Input states 'Must use legacy VB6 backend (cannot be changed)'. This implies the backend exists. If the backend must be built or significantly modified, timeline becomes impossible.",
+        "pmi_basis": "PMBOK 6th Ed, Section 5.4 — Scope baseline requires accepted requirements",
+        "risk_if_wrong": "CRITICAL",
+        "consequence": "If VB6 backend does not exist or requires major refactoring, project cannot start. Mobile app cannot function without backend.",
+        "source": "hard_constraint",
+        "tradeoff": "Gains: allows mobile development to proceed in parallel with backend integration. Risks: if backend is not ready or API contract is undefined, mobile development blocks in week 1."
+      },
+      {
+        "id": "A6",
+        "what": "1 million concurrent users is the target scale for infrastructure planning, but the MVP launch targets 10,000-50,000 concurrent users in week 1",
+        "why": "Scaling to 1 million concurrent users requires load testing, CDN, database sharding, and auto-scaling infrastructure. This cannot be built in 2 weeks by 1 developer. MVP must launch at smaller scale.",
+        "pmi_basis": "PMBOK 6th Ed, Section 11.2 — Risk identification before planning baseline",
+        "risk_if_wrong": "CRITICAL",
+        "consequence": "If 1 million concurrent users must be supported on day 1, infrastructure costs exceed $5,000 budget by 100x. App will crash under load.",
+        "source": "nfr",
+        "tradeoff": "Gains: MVP launches on time with 10k-50k user capacity. Risks: if stakeholder expects 1M users on day 1, project fails immediately."
+      },
+      {
+        "id": "A7",
+        "what": "Zero downtime requirement applies to planned maintenance windows only, not to unplanned outages or emergency patches",
+        "why": "Achieving true zero downtime (100% uptime, no maintenance windows) requires blue-green deployment, database replication, and load balancing. This is infrastructure-heavy and conflicts with the $5,000 budget.",
+        "pmi_basis": "PMBOK 6th Ed, Section 8.1 — Quality metrics defined before build begins",
+        "risk_if_wrong": "HIGH",
+        "consequence": "If zero downtime includes emergency patches, any critical bug discovered post-launch cannot be fixed without violating the constraint. App becomes unmaintainable.",
+        "source": "nfr",
+        "tradeoff": "Gains: allows standard deployment practices (scheduled maintenance windows). Risks: if stakeholder requires true 24/7 zero downtime, infrastructure costs balloon and timeline extends 4+ weeks."
+      },
+      {
+        "id": "A8",
+        "what": "The junior developer has prior experience with iOS and Android native development (Swift/Kotlin), not just general programming",
+        "why": "Input specifies 'native iOS and Android apps' but does not state the developer's platform experience. If the developer has only web or backend experience, ramp-up time adds 2-3 weeks.",
+        "pmi_basis": "PMBOK 6th Ed, Section 9.2 — Resource estimation tied to WBS",
+        "risk_if_wrong": "HIGH",
+        "consequence": "If developer lacks iOS/Android experience, first 2 weeks are spent learning, not building. Project timeline becomes 4-6 weeks minimum.",
+        "source": "hard_constraint",
+        "tradeoff": "Gains: allows development to start immediately. Risks: if developer is new to mobile platforms, project fails in week 1."
+      }
+    ],
+    "anti_pattern_detection": [
+      {
+        "pattern": "SOLUTION_SMUGGLING",
+        "detected": true,
+        "description": "Input lists features (iOS app, Android app, video streaming, AI, payments) without stating the underlying business problem. Why do customers need this app? What problem does it solve? This is missing.",
+        "flag_urgency": "Before planning"
+      },
+      {
+        "pattern": "FEATURE_FACTORY",
+        "detected": true,
+        "description": "Six major features listed (native iOS/Android, real-time video, offline sync, AI recommendations, social sharing, in-app payments) with no prioritization, no MVP definition, and no success metrics tied to each feature.",
+        "flag_urgency": "Before planning"
+      },
+      {
+        "pattern": "STAKEHOLDER_DRIVEN",
+        "detected": true,
+        "description": "Sole justification is CEO mandate ('flagship product that disrupts the market'). No customer research, no market validation, no user feedback. Project is driven by executive desire, not customer need.",
+        "flag_urgency": "Before planning"
+      },
+      {
+        "pattern": "IMPOSSIBLE_CONSTRAINTS",
+        "detected": true,
+        "description": "Deadline (2 weeks) + Budget ($5,000) + Team (1 junior) + Scope (6 major features) + Scale (1M concurrent users) + Tech debt (VB6 backend) are mathematically incompatible. This is not a planning problem — it is a viability problem.",
+        "flag_urgency": "Before planning"
+      }
+    ],
+    "project_plan": {
+      "total_duration_weeks": 2.0,
+      "buffer_applied_percent": 0.0,
+      "buffer_note": "No buffer can be applied. Timeline is fixed at 2 weeks by hard constraint. Any buffer would violate the deadline.",
+      "critical_path_summary": {
+        "sequence": [
+          "T1",
+          "T2",
+          "T3",
+          "T4",
+          "T5",
+          "T6",
+          "T7",
+          "T8",
+          "T9",
+          "T10"
+        ],
+        "total_duration_days": 10.0,
+        "total_duration_weeks": 2.0,
+        "zero_slack_tasks": [
+          "T1",
+          "T2",
+          "T3",
+          "T4",
+          "T5",
+          "T6",
+          "T7",
+          "T8",
+          "T9",
+          "T10"
+        ],
+        "highest_slack_tasks": [],
+        "staffing_implication": "Every task is on the critical path. One junior developer cannot execute 10 sequential critical-path tasks in 10 days. Project will slip immediately."
+      },
+      "phases": [
+        {
+          "phase_number": 1,
+          "name": "Discovery & Design",
+          "duration_weeks": 0.2,
+          "percentage_of_total": 10.0,
+          "milestones": [
+            "Requirements finalized (IMPOSSIBLE — scope is contradictory)",
+            "Architecture approved (IMPOSSIBLE — no architect assigned)"
+          ],
+          "tasks": [
+            {
+              "id": "T1",
+              "name": "Clarify scope and prioritize features into MVP vs Phase 2",
+              "phase": 1,
+              "effort_hours": 8.0,
+              "owner_role": "Product Manager",
+              "dependencies": [],
+              "risk_flag": true,
+              "critical_path": true,
+              "slack_days": 0,
+              "definition_of_done": "Written MVP scope document signed by CEO and stakeholders, listing which 2-3 features are in MVP and which are deferred"
+            },
+            {
+              "id": "T2",
+              "name": "Design iOS and Android app architecture and UI wireframes",
+              "phase": 1,
+              "effort_hours": 12.0,
+              "owner_role": "UX Designer / Architect",
+              "dependencies": [
+                "T1"
+              ],
+              "risk_flag": true,
+              "critical_path": true,
+              "slack_days": 0,
+              "definition_of_done": "Wireframes for all MVP screens approved by stakeholders; architecture diagram showing VB6 backend integration points"
+            }
+          ]
+        },
+        {
+          "phase_number": 2,
+          "name": "Core Development",
+          "duration_weeks": 0.8,
+          "percentage_of_total": 40.0,
+          "milestones": [
+            "iOS app skeleton with navigation working",
+            "Android app skeleton with navigation working",
+            "VB6 backend API integration tested"
+          ],
+          "tasks": [
+            {
+              "id": "T3",
+              "name": "Set up iOS project, authentication, and VB6 API client",
+              "phase": 2,
+              "effort_hours": 16.0,
+              "owner_role": "iOS Developer",
+              "dependencies": [
+                "T2"
+              ],
+              "risk_flag": true,
+              "critical_path": true,
+              "slack_days": 0,
+              "definition_of_done": "iOS app builds and runs on simulator; user can authenticate and make API calls to VB6 backend"
+            },
+            {
+              "id": "T4",
+              "name": "Set up Android project, authentication, and VB6 API client",
+              "phase": 2,
+              "effort_hours": 16.0,
+              "owner_role": "Android Developer",
+              "dependencies": [
+                "T2"
+              ],
+              "risk_flag": true,
+              "critical_path": true,
+              "slack_days": 0,
+              "definition_of_done": "Android app builds and runs on emulator; user can authenticate and make API calls to VB6 backend"
+            },
+            {
+              "id": "T5",
+              "name": "Implement core feature 1 (highest priority MVP feature) on iOS",
+              "phase": 2,
+              "effort_hours": 20.0,
+              "owner_role": "iOS Developer",
+              "dependencies": [
+                "T3"
+              ],
+              "risk_flag": true,
+              "critical_path": true,
+              "slack_days": 0,
+              "definition_of_done": "Feature is functional end-to-end on iOS; data persists and syncs with VB6 backend"
+            },
+            {
+              "id": "T6",
+              "name": "Implement core feature 1 (highest priority MVP feature) on Android",
+              "phase": 2,
+              "effort_hours": 20.0,
+              "owner_role": "Android Developer",
+              "dependencies": [
+                "T4"
+              ],
+              "risk_flag": true,
+              "critical_path": true,
+              "slack_days": 0,
+              "definition_of_done": "Feature is functional end-to-end on Android; data persists and syncs with VB6 backend"
+            }
+          ]
+        },
+        {
+          "phase_number": 3,
+          "name": "Integration & Edge Cases",
+          "duration_weeks": 0.5,
+          "percentage_of_total": 25.0,
+          "milestones": [
+            "All integrations tested (payment processor, third-party APIs)",
+            "Offline sync tested on both platforms"
+          ],
+          "tasks": [
+            {
+              "id": "T7",
+              "name": "Integrate third-party payment processor (Stripe/Square) on iOS and Android",
+              "phase": 3,
+              "effort_hours": 12.0,
+              "owner_role": "Full Stack Developer",
+              "dependencies": [
+                "T5",
+                "T6"
+              ],
+              "risk_flag": true,
+              "critical_path": true,
+              "slack_days": 0,
+              "definition_of_done": "Test payment transaction completes end-to-end on both platforms; receipt is generated and stored"
+            },
+            {
+              "id": "T8",
+              "name": "Integrate third-party AI recommendations API (TensorFlow Lite or cloud API)",
+              "phase": 3,
+              "effort_hours": 8.0,
+              "owner_role": "Full Stack Developer",
+              "dependencies": [
+                "T5",
+                "T6"
+              ],
+              "risk_flag": true,
+              "critical_path": true,
+              "slack_days": 0,
+              "definition_of_done": "Recommendations are returned from API and displayed in app on both platforms"
+            }
+          ]
+        },
+        {
+          "phase_number": 4,
+          "name": "QA & Testing",
+          "duration_weeks": 0.3,
+          "percentage_of_total": 15.0,
+          "milestones": [
+            "Critical bugs fixed",
+            "UAT completed with stakeholders"
+          ],
+          "tasks": [
+            {
+              "id": "T9",
+              "name": "Manual testing of MVP features on iOS and Android; bug fixes",
+              "phase": 4,
+              "effort_hours": 12.0,
+              "owner_role": "QA Engineer / Developer",
+              "dependencies": [
+                "T7",
+                "T8"
+              ],
+              "risk_flag": true,
+              "critical_path": true,
+              "slack_days": 0,
+              "definition_of_done": "All critical bugs (crashes, data loss, payment failures) are fixed; app is stable on both platforms"
+            }
+          ]
+        },
+        {
+          "phase_number": 5,
+          "name": "Deployment & Handoff",
+          "duration_weeks": 0.2,
+          "percentage_of_total": 10.0,
+          "milestones": [
+            "Apps submitted to App Store and Google Play",
+            "Documentation written"
+          ],
+          "tasks": [
+            {
+              "id": "T10",
+              "name": "Submit iOS and Android apps to App Store and Google Play; write deployment documentation",
+              "phase": 5,
+              "effort_hours": 8.0,
+              "owner_role": "DevOps / Release Manager",
+              "dependencies": [
+                "T9"
+              ],
+              "risk_flag": true,
+              "critical_path": true,
+              "slack_days": 0,
+              "definition_of_done": "Apps are submitted to both stores; deployment runbook is written; post-launch monitoring is configured"
+            }
+          ]
+        }
+      ]
+    },
+    "risk_register": [
+      {
+        "id": "R1",
+        "category": "Schedule",
+        "description": "If deadline is fixed at 2 weeks AND scope includes 6 major features (iOS, Android, video, offline sync, AI, payments) AND team is 1 junior developer, then project will slip by 8-12 weeks minimum. Deadline cannot be met.",
+        "probability": "HIGH",
+        "impact": "HIGH",
+        "score": "CRITICAL",
+        "trigger": "Project kickoff — scope vs. timeline mismatch becomes apparent in first planning meeting",
+        "mitigation": "BEFORE starting: Reduce scope to 1-2 MVP features only. Defer video streaming, AI recommendations, and offline sync to Phase 2 (post-launch). Get stakeholder sign-off on reduced MVP.",
+        "contingency": "If scope cannot be reduced: Extend deadline to 12-16 weeks OR add 4-5 senior developers. Budget must increase to $50,000+."
+      },
+      {
+        "id": "R2",
+        "category": "Resource",
+        "description": "If team is 1 junior developer AND project requires both iOS and Android native development AND developer lacks platform experience, then developer will spend 2-3 weeks learning Swift/Kotlin instead of building. Effective delivery time is 0 weeks.",
+        "probability": "HIGH",
+        "impact": "HIGH",
+        "score": "CRITICAL",
+        "trigger": "Developer starts work and discovers unfamiliar platform; ramp-up begins",
+        "mitigation": "BEFORE starting: Confirm developer has 1+ years of iOS and Android native development experience. If not, hire a senior iOS developer and senior Android developer (2 additional people). Budget increases to $30,000+.",
+        "contingency": "If developer is new to mobile: Extend timeline to 6-8 weeks for learning + delivery. Accept that first 2 weeks are ramp-up only."
+      },
+      {
+        "id": "R3",
+        "category": "Technical",
+        "description": "If VB6 backend does not exist or requires significant refactoring AND mobile app depends on it, then mobile development blocks in week 1. No API to integrate against = no progress.",
+        "probability": "HIGH",
+        "impact": "HIGH",
+        "score": "CRITICAL",
+        "trigger": "Developer attempts to integrate with VB6 backend; API contract is undefined or backend is not ready",
+        "mitigation": "BEFORE starting: Confirm VB6 backend exists, is operational, and has documented REST/SOAP API. Get backend team to commit to API availability and support during mobile development.",
+        "contingency": "If backend is not ready: Delay mobile development start by 2-4 weeks until backend is available. Or build mock backend API for mobile development to proceed in parallel."
+      },
+      {
+        "id": "R4",
+        "category": "Budget",
+        "description": "If budget is $5,000 AND project requires native iOS and Android development AND infrastructure must support 1 million concurrent users, then budget is insufficient by 100x. Infrastructure costs alone (CDN, load balancing, database, auto-scaling) exceed $5,000 per month.",
+        "probability": "HIGH",
+        "impact": "HIGH",
+        "score": "CRITICAL",
+        "trigger": "Infrastructure planning begins; cloud cost estimates are generated",
+        "mitigation": "BEFORE starting: Clarify actual user scale for MVP launch. If 1M concurrent users is day-1 requirement, budget must increase to $50,000+ for infrastructure. If MVP targets 10k-50k users, infrastructure costs are $500-2,000/month.",
+        "contingency": "If budget is fixed at $5,000: Launch MVP with 10k-50k user capacity only. Plan Phase 2 scaling to 1M users after revenue is generated."
+      },
+      {
+        "id": "R5",
+        "category": "Scope",
+        "description": "If scope includes 6 major features (iOS, Android, video streaming, offline sync, AI recommendations, in-app payments) AND no MVP definition exists AND no feature prioritization exists, then scope creep is guaranteed. Stakeholders will expect all features in week 2.",
+        "probability": "HIGH",
+        "impact": "HIGH",
+        "score": "CRITICAL",
+        "trigger": "Stakeholders review progress in week 1; discover that only 1-2 features are partially complete; demand all 6 features be finished by deadline",
+        "mitigation": "BEFORE starting: Get written stakeholder sign-off on MVP scope. Define exactly which 2-3 features are in MVP and which are deferred to Phase 2. Use this as the scope baseline.",
+        "contingency": "If scope creep occurs: Freeze scope immediately. Document all new feature requests as Phase 2 backlog. Do not add features mid-project."
+      },
+      {
+        "id": "R6",
+        "category": "Compliance",
+        "description": "If project includes in-app payments AND PCI-DSS compliance is required AND compliance is not handled by third-party processor, then project cannot launch. PCI-DSS audit takes 4-8 weeks minimum.",
+        "probability": "MEDIUM",
+        "impact": "HIGH",
+        "score": "HIGH",
+        "trigger": "Payment feature is built; compliance review begins; auditor identifies PCI-DSS gaps",
+        "mitigation": "BEFORE starting: Use third-party payment processor (Stripe, Square, Apple Pay, Google Pay) that handles PCI-DSS compliance. Do not build in-house payment processing.",
+        "contingency": "If in-house payment processing is required: Hire security consultant immediately. Budget increases to $20,000+. Timeline extends to 8-12 weeks."
+      },
+      {
+        "id": "R7",
+        "category": "Technical",
+        "description": "If real-time video streaming is required AND latency target is not defined AND infrastructure is not designed for video, then video feature will fail. Streaming requires CDN, adaptive bitrate encoding, and buffer management.",
+        "probability": "MEDIUM",
+        "impact": "HIGH",
+        "score": "HIGH",
+        "trigger": "Video feature is built; testing reveals buffering, latency, or quality issues; re-architecture required",
+        "mitigation": "BEFORE starting: Define video latency target (e.g., < 2 seconds). Use third-party video streaming service (Twilio, Agora, Wowza) instead of building from scratch. Integrate their SDK.",
+        "contingency": "If custom video streaming is required: Add 4-6 weeks to timeline. Hire video engineer. Budget increases to $15,000+."
+      },
+      {
+        "id": "R8",
+        "category": "Technical",
+        "description": "If offline sync is required AND no sync library is used AND custom sync engine is built, then data consistency issues will emerge in production. Conflict resolution is complex.",
+        "probability": "MEDIUM",
+        "impact": "HIGH",
+        "score": "HIGH",
+        "trigger": "Offline sync is tested; data conflicts occur; users see stale or duplicate data",
+        "mitigation": "BEFORE starting: Use Firebase Realtime Database, Realm, or SQLite + background sync library. Do not build custom sync engine.",
+        "contingency": "If custom sync is required: Add 4 weeks to timeline. Hire experienced backend engineer. Budget increases to $10,000+."
+      },
+      {
+        "id": "R9",
+        "category": "Technical",
+        "description": "If AI recommendations are required AND custom ML model is built AND no data science expertise exists, then recommendations will be poor quality or non-functional.",
+        "probability": "MEDIUM",
+        "impact": "MEDIUM",
+        "score": "MEDIUM",
+        "trigger": "AI feature is tested; recommendations are random or irrelevant; stakeholders reject feature",
+        "mitigation": "BEFORE starting: Use pre-trained ML model (TensorFlow Lite) or third-party recommendation API (Amazon Personalize, Google Recommendations AI). Do not build custom model.",
+        "contingency": "If custom ML model is required: Add 6-8 weeks to timeline. Hire data scientist. Budget increases to $25,000+."
+      },
+      {
+        "id": "R10",
+        "category": "Resource",
+        "description": "If team is 1 junior developer AND project requires iOS, Android, backend integration, QA, and DevOps, then developer is over-allocated across 5+ roles. Context switching will destroy productivity.",
+        "probability": "HIGH",
+        "impact": "HIGH",
+        "score": "CRITICAL",
+        "trigger": "Developer attempts to work on iOS, Android, and backend simultaneously; progress stalls",
+        "mitigation": "BEFORE starting: Hire specialist developers: 1 senior iOS developer, 1 senior Android developer, 1 backend engineer, 1 QA engineer. Team size increases to 4-5 people. Budget increases to $40,000+.",
+        "contingency": "If team remains 1 developer: Reduce scope to single-platform (iOS only) MVP. Defer Android to Phase 2. Timeline becomes 4-6 weeks for iOS MVP."
+      },
+      {
+        "id": "R11",
+        "category": "Schedule",
+        "description": "If zero downtime is required AND infrastructure is not designed for blue-green deployment or database replication, then any bug fix or update will cause downtime.",
+        "probability": "MEDIUM",
+        "impact": "HIGH",
+        "score": "HIGH",
+        "trigger": "Critical bug is discovered post-launch; fix requires deployment; downtime occurs; stakeholder escalates",
+        "mitigation": "BEFORE starting: Clarify zero downtime requirement. If it applies to emergency patches, design blue-green deployment and database replication. Budget increases to $10,000+.",
+        "contingency": "If zero downtime is required: Accept that emergency patches will cause brief downtime (< 5 minutes). Use feature flags to disable broken features without redeployment."
+      },
+      {
+        "id": "R12",
+        "category": "Scope",
+        "description": "If 1 million concurrent users is the day-1 requirement AND infrastructure is not designed for this scale AND load testing is not performed, then app will crash under load.",
+        "probability": "HIGH",
+        "impact": "HIGH",
+        "score": "CRITICAL",
+        "trigger": "App launches; 100,000+ users attempt to access simultaneously; servers are overwhelmed; app becomes unavailable",
+        "mitigation": "BEFORE starting: Clarify actual day-1 user scale. If 1M concurrent users is required, design for horizontal scaling, database sharding, and CDN. Budget increases to $50,000+. Timeline extends to 8-12 weeks.",
+        "contingency": "If 1M concurrent users is day-1 requirement: Launch MVP with 10k-50k capacity. Plan Phase 2 scaling after revenue is generated."
+      }
+    ],
+    "staffing_plan": [
+      {
+        "role": "Product Manager",
+        "phase_involvement": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "total_hours": 40.0,
+        "allocation_percent": 10.0,
+        "skills_required": [
+          "Scope management",
+          "Stakeholder communication",
+          "Mobile product strategy"
+        ],
+        "critical_path": true,
+        "notes": "MISSING FROM INPUT. PM is required to manage scope, prioritize features, and communicate with CEO. Without PM, project will have no direction and scope will spiral."
+      },
+      {
+        "role": "iOS Developer (Senior)",
+        "phase_involvement": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "total_hours": 160.0,
+        "allocation_percent": 40.0,
+        "skills_required": [
+          "Swift 5+",
+          "iOS 14+",
+          "REST API integration",
+          "Core Data or Realm",
+          "XCTest"
+        ],
+        "critical_path": true,
+        "notes": "MISSING FROM INPUT. Input specifies '1 junior developer' but does not confirm iOS experience. Senior iOS developer is required to deliver in 2 weeks. Junior developer cannot do this alone."
+      },
+      {
+        "role": "Android Developer (Senior)",
+        "phase_involvement": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "total_hours": 160.0,
+        "allocation_percent": 40.0,
+        "skills_required": [
+          "Kotlin 1.5+",
+          "Android 10+",
+          "REST API integration",
+          "Room or Realm",
+          "JUnit"
+        ],
+        "critical_path": true,
+        "notes": "MISSING FROM INPUT. Input specifies '1 junior developer' but does not confirm Android experience. Senior Android developer is required to deliver in 2 weeks. Junior developer cannot do this alone."
+      },
+      {
+        "role": "Backend Engineer",
+        "phase_involvement": [
+          1,
+          2,
+          3
+        ],
+        "total_hours": 80.0,
+        "allocation_percent": 20.0,
+        "skills_required": [
+          "VB6 (legacy system knowledge)",
+          "REST API design",
+          "Database design",
+          "API documentation"
+        ],
+        "critical_path": true,
+        "notes": "MISSING FROM INPUT. Backend engineer is required to define and document VB6 API contract for mobile apps. Without this, mobile development blocks."
+      },
+      {
+        "role": "QA Engineer",
+        "phase_involvement": [
+          3,
+          4
+        ],
+        "total_hours": 60.0,
+        "allocation_percent": 15.0,
+        "skills_required": [
+          "iOS testing",
+          "Android testing",
+          "Test automation",
+          "Bug reporting"
+        ],
+        "critical_path": true,
+        "notes": "MISSING FROM INPUT. QA effort must be minimum 25% of development effort (PMBOK 8.2). With 400 dev hours, QA minimum is 100 hours. Input has no QA role."
+      },
+      {
+        "role": "UX Designer",
+        "phase_involvement": [
+          1,
+          2
+        ],
+        "total_hours": 40.0,
+        "allocation_percent": 10.0,
+        "skills_required": [
+          "Mobile UI/UX design",
+          "Wireframing",
+          "User research",
+          "Figma or Sketch"
+        ],
+        "critical_path": false,
+        "notes": "MISSING FROM INPUT. UX designer is required to create wireframes and design system for iOS and Android apps. Without this, developers will waste time on UI decisions."
+      },
+      {
+        "role": "DevOps / Infrastructure Engineer",
+        "phase_involvement": [
+          4,
+          5
+        ],
+        "total_hours": 40.0,
+        "allocation_percent": 10.0,
+        "skills_required": [
+          "App Store deployment",
+          "Google Play deployment",
+          "CI/CD pipeline",
+          "Monitoring and alerting"
+        ],
+        "critical_path": true,
+        "notes": "MISSING FROM INPUT. DevOps engineer is required to set up deployment pipelines and submit apps to App Store and Google Play. Without this, apps cannot launch."
+      }
+    ],
+    "staffing_completeness_check": {
+      "status": "INCOMPLETE",
+      "missing_roles": [
+        "Product Manager",
+        "iOS Developer (Senior)",
+        "Android Developer (Senior)",
+        "Backend Engineer",
+        "QA Engineer",
+        "UX Designer",
+        "DevOps Engineer"
+      ],
+      "reason": "Input specifies '1 junior developer' only. This is insufficient for a 2-week, 6-feature mobile app project. Every missing role is identified in the risk register as a blocker.",
+      "required_team_size": "7-8 people (1 PM, 1 iOS dev, 1 Android dev, 1 backend dev, 1 QA, 1 UX designer, 1 DevOps engineer, plus 1 junior dev for support)"
+    },
+    "open_questions": [
+      {
+        "priority": 1,
+        "question": "What is the actual MVP scope? Which 2-3 features are required for launch, and which features are deferred to Phase 2?",
+        "urgency": "Before planning",
+        "impact_if_unanswered": "Without MVP definition, scope will spiral to include all 6 features. Project will fail to deliver any feature in 2 weeks."
+      },
+      {
+        "priority": 2,
+        "question": "Does the VB6 backend exist and is it operational? What is the API contract (endpoints, schemas, authentication)?",
+        "urgency": "Before planning",
+        "impact_if_unanswered": "If backend does not exist or API is undefined, mobile development cannot start. Project blocks in week 1."
+      },
+      {
+        "priority": 3,
+        "question": "What is the actual target user scale for MVP launch? Is 1 million concurrent users a day-1 requirement or a Phase 2 goal?",
+        "urgency": "Before planning",
+        "impact_if_unanswered": "If 1M concurrent users is day-1 requirement, infrastructure costs exceed $5,000 budget by 100x. App will crash under load."
+      },
+      {
+        "priority": 4,
+        "question": "Does the junior developer have prior experience with iOS and Android native development (Swift/Kotlin)? Or is this their first mobile project?",
+        "urgency": "Before planning",
+        "impact_if_unanswered": "If developer is new to mobile platforms, first 2 weeks are spent learning, not building. Effective delivery time is 0 weeks."
+      },
+      {
+        "priority": 5,
+        "question": "Is the $5,000 budget fixed, or can it be increased? What is the actual budget available for team, infrastructure, and third-party services?",
+        "urgency": "Before planning",
+        "impact_if_unanswered": "If budget is truly $5,000, project cannot afford senior developers, infrastructure, or third-party services. Project becomes non-viable."
+      }
+    ],
+    "pm_confidence_score": {
+      "score": 15.0,
+      "deductions": [
+        {
+          "amount": 5.0,
+          "reason": "UNKNOWN hard constraint: Deadline is fixed but scope is undefined (6 features, no MVP definition)"
+        },
+        {
+          "amount": 5.0,
+          "reason": "UNKNOWN hard constraint: Budget is $5,000 but team composition is 1 junior developer (insufficient for scope)"
+        },
+        {
+          "amount": 5.0,
+          "reason": "UNKNOWN hard constraint: Technology stack includes VB6 backend but API contract is not documented"
+        },
+        {
+          "amount": 5.0,
+          "reason": "UNKNOWN hard constraint: Team size is 1 junior developer but project requires iOS, Android, backend, QA, DevOps (5+ roles)"
+        },
+        {
+          "amount": 5.0,
+          "reason": "UNKNOWN hard constraint: Stakeholder sign-off is not mentioned; scope is driven by CEO mandate without formal approval"
+        },
+        {
+          "amount": 40.0,
+          "reason": "Assumption count is 8 (A1-A8). Hard cap applies: assumption_count >= 8 → final score CANNOT exceed 40"
+        },
+        {
+          "amount": 10.0,
+          "reason": "Input quality is LOW: Single paragraph with contradictory constraints, no success metrics, no user research, no MVP definition"
+        },
+        {
+          "amount": 10.0,
+          "reason": "CRITICAL risks present: R1 (Schedule), R2 (Resource), R3 (Technical), R4 (Budget), R5 (Scope), R10 (Resource), R12 (Scope) = 7 CRITICAL risks"
+        },
+        {
+          "amount": 5.0,
+          "reason": "SDLC approach is Predictive (deadline is fixed) but scope is undefined (should be Adaptive). Mismatch indicates high uncertainty."
+        },
+        {
+          "amount": 10.0,
+          "reason": "Timeline is HIGH RISK: 2 weeks for 6 major features + 1 junior developer + $5,000 budget is mathematically impossible"
+        }
+      ],
+      "total_deductions": 100.0,
+      "raw_score_before_caps": 100.0,
+      "hard_caps_applied": [
+        {
+          "cap_name": "assumption_count >= 8",
+          "cap_value": 40.0,
+          "reason": "8 assumptions logged (A1-A8). PMBOK 11.2 requires risk identification before planning. This many unvalidated assumptions indicate project is not ready for execution."
+        },
+        {
+          "cap_name": "CRITICAL_risk_count >= 7 AND assumption_count >= 3",
+          "cap_value": 50.0,
+          "reason": "7 CRITICAL risks present AND 8 assumptions logged. Project viability is in question."
+        },
+        {
+          "cap_name": "input_quality = LOW",
+          "cap_value": 45.0,
+          "reason": "Input quality is LOW (single paragraph, contradictory constraints, no success metrics). Output reliability is limited."
+        }
+      ],
+      "final_cap_applied": "assumption_count >= 8 → 40.0",
+      "interpretation": "Confidence score of 15.0 indicates this project plan is NOT VIABLE as specified. The input contains 7 CRITICAL risks, 8 unvalidated assumptions, and mathematically impossible constraints (2-week deadline + 6 features + 1 junior developer + $5,000 budget). This is not a planning problem — it is a viability problem. Immediate stakeholder intervention is required before any work begins."
+    },
+    "project_viability": {
+      "viability_status": "NOT_VIABLE",
+      "gap_type": "BOTH",
+      "gap_amount": "Timeline gap: 10-14 weeks past deadline (2 weeks available vs 12-16 weeks required). Budget gap: $45,000-$95,000 over budget ($5,000 available vs $50,000-$100,000 required).",
+      "scoping_options": [
+        {
+          "option_id": "O1",
+          "description": "Reduce scope to single-platform MVP (iOS only) with 1-2 core features (e.g., user authentication + basic content viewing). Defer Android, video streaming, offline sync, AI recommendations, and social sharing to Phase 2 (post-launch).",
+          "impact": "Delivers iOS MVP in 4-6 weeks with 2-3 developers. Budget: $15,000-$20,000. Allows market validation before investing in full feature set.",
+          "tradeoffs": "Android users cannot access app at launch. Advanced features (video, AI, offline) are deferred 6+ months. CEO's 'flagship product' vision is delayed."
+        },
+        {
+          "option_id": "O2",
+          "description": "Extend deadline to 12-16 weeks. Hire full team (1 PM, 2 senior developers, 1 backend engineer, 1 QA, 1 UX designer, 1 DevOps engineer). Deliver full scope (iOS, Android, video, offline sync, AI, payments) with proper testing and infrastructure.",
+          "impact": "Full feature set delivered with quality. Budget: $60,000-$80,000. Timeline: 12-16 weeks. Allows proper architecture and testing.",
+          "tradeoffs": "Misses March 15 deadline by 10+ weeks. Budget increases 12x. Requires CEO approval for extended timeline and budget."
+        },
+        {
+          "option_id": "O3",
+          "description": "Keep 2-week deadline but reduce scope to 1 feature only (e.g., user authentication + basic content viewing on iOS). Use third-party services for payments, video, AI, and sync. Hire 2 senior iOS developers + 1 backend engineer. Budget: $25,000.",
+          "impact": "Delivers minimal iOS app in 2 weeks. Proves concept. Allows Phase 2 to add features based on user feedback.",
+          "tradeoffs": "Only iOS, only 1 feature. Android deferred. Advanced features deferred. Not a 'flagship product' at launch. Requires CEO to accept minimal MVP."
+        }
+      ]
+    }
+  },
+  "gate": {
+    "fired": true,
+    "reasons": [
+      "confidence_score < 60 — plan needs review",
+      "risk_register contains CRITICAL risk — PM decision required",
+      "project_viability is NOT_VIABLE — impossible constraints as stated",
+      "open_questions include urgency Before planning — resolve before trusting plan"
+    ],
+    "decision": null
+  },
+  "validation": {
+    "valid": true,
+    "errors": [],
+    "warnings": []
+  },
+  "tokens_used": 11496,
+  "input_tokens": 235,
+  "output_tokens": 11261,
+  "cache_hit": false
+}

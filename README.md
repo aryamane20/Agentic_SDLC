@@ -19,7 +19,7 @@ This use case evolves across all three course projects:
 | Project | Mode | What Changes |
 |---------|------|-------------|
 | **Project 1** (this repo) | Doing | Single agent, embedded knowledge, deterministic output |
-| **Project 2** | Deciding | Add approval gates for high-risk outputs |
+| **Project 2** | In progress | FastAPI HITL API + gates + refine (React UI pending) |
 | **Project 3** | Delegating | Multi-agent pipeline: **Use Case Agent** (actors, use cases, **draw.io + Kroki PNG**) → Intake → Planning → Risk → Staffing → **Synthesis**; RAG per agent; final report = BA + PM output, cross-grounded (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) §7) |
 
 ---
@@ -81,6 +81,15 @@ Agentic_SDLC/
 │   ├── run_eval.py                ← Runs agent on eval set, outputs scorecard
 │   └── analyze_logs.py            ← Parses logs/ for latency, failure rate
 │
+├── backend/                       ← Project 2: backend root (deps, future shared code)
+│   ├── requirements.txt           ← fastapi, uvicorn (install with root requirements.txt)
+│   └── api/                       ← FastAPI app package
+│       ├── main.py                ← App + CORS + routers
+│       ├── routers/               ← sessions, reports, gates, refine
+│       ├── services/              ← approval_gate, feedback_logger, refinement
+│       ├── models/                ← Pydantic API models
+│       └── db/store.py            ← JSON persistence under sessions/
+│
 ├── knowledge-base/                 ← PM domain knowledge (inline for P1)
 │   ├── templates/
 │   │   └── project-type-templates.md ← All project type templates (A-F)
@@ -116,8 +125,15 @@ Agentic_SDLC/
 git clone <your-repo>
 cd Agentic_SDLC
 pip install -r requirements.txt
+pip install -r backend/requirements.txt
 # Add your API key to .env (ANTHROPIC_API_KEY)
 ```
+
+### Project 2 — Run the FastAPI backend (from repo root)
+```bash
+uvicorn backend.api.main:app --reload --port 8000
+```
+Open **http://127.0.0.1:8000/docs** for OpenAPI. Typical flow: `POST /sessions` → `POST /reports/generate` with `session_id` + `brief` → optional `POST /gates/{report_id}/decision` → optional `POST /reports/{report_id}/refine`. Session JSON lives in `sessions/` (gitignored). Gate decisions append to `logs/gate_decisions.jsonl`.
 
 ### Run full evaluation suite (live — calls API)
 ```bash

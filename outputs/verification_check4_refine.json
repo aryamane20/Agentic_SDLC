@@ -1,0 +1,25 @@
+{
+  "before_keys": [
+    "report_metadata",
+    "project_understanding",
+    "assumption_log",
+    "project_plan",
+    "risk_register",
+    "staffing_plan",
+    "open_questions",
+    "pm_confidence_score",
+    "project_viability"
+  ],
+  "after_keys": [
+    "report_metadata",
+    "project_understanding",
+    "assumption_log",
+    "project_plan",
+    "risk_register",
+    "staffing_plan",
+    "open_questions",
+    "pm_confidence_score",
+    "project_viability"
+  ],
+  "lock_ok": false
+}

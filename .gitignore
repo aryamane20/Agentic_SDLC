@@ -31,3 +31,6 @@ logs/*.log
 outputs/v*/
 outputs/.cache/
 !outputs/samples/
+
+# Project 2 local session store (regenerable)
+sessions/

@@ -300,7 +300,7 @@ Everything in one agent. KB lives in separate files, compiled into context at ru
 
 ### Project 2: Approval Gates + Refinement Loop
 
-> **Implementation status:** The `api/` and `frontend/` layout and endpoints below are the **target design** for Project 2. They are **not** present in the repository until that work is implemented; Project 1 today is `agent/`, `scripts/run_eval.py`, and CLI/JSON outputs only.
+> **Implementation status:** **`backend/` is implemented** (FastAPI + session JSON store + gates + refine MVP). **`frontend/`** is still the target design only. Project 1 core (`agent/`, `scripts/run_eval.py`) remains unchanged.
 
 **Stack:** FastAPI + Uvicorn (backend) · React + Vite + Tailwind CSS + shadcn/ui + 21st.dev (frontend)
 
@@ -322,25 +322,26 @@ PM submits brief (React UI)
             → returns updated report + new gate status
 ```
 
-**New files (api/ and frontend/ sit alongside existing P1 code):**
+**New files (`backend/` + `backend/api/` and `frontend/` sit alongside existing P1 code):**
 ```
-api/
-  main.py                   ← FastAPI app, CORS, router registration
-  routers/
-    sessions.py             ← POST /sessions, GET /sessions/{id}
-    reports.py              ← POST /reports/generate, GET /reports/{id}
-    gates.py                ← GET /gates/{report_id}, POST /gates/{report_id}/decision
-    refine.py               ← POST /reports/{id}/refine
-  services/
-    approval_gate.py        ← Gate trigger logic (pure function, no side effects)
-    feedback_logger.py      ← Append every gate decision to logs/gate_decisions.jsonl
-    refinement.py           ← Partial re-run: inject constraint, re-run Steps 5–8
-  models/
-    session.py              ← Session, Report Pydantic models
-    gate.py                 ← ApprovalGate, GateDecision, RefinementRequest
-  db/
-    store.py                ← JSON file store (sessions/{session_id}.json)
+backend/
   requirements.txt          ← fastapi, uvicorn, pydantic, python-dotenv
+  api/
+    main.py                 ← FastAPI app, CORS, router registration
+    routers/
+      sessions.py           ← POST /sessions, GET /sessions/{id}
+      reports.py            ← POST /reports/generate, GET /reports/{id}
+      gates.py              ← GET /gates/{report_id}, POST /gates/{report_id}/decision
+      refine.py             ← POST /reports/{id}/refine
+    services/
+      approval_gate.py      ← Gate trigger logic (pure function, no side effects)
+      feedback_logger.py    ← Append every gate decision to logs/gate_decisions.jsonl
+      refinement.py         ← Partial re-run: inject constraint, re-run Steps 5–8
+    models/
+      session.py            ← Session, Report Pydantic models
+      gate.py               ← ApprovalGate, GateDecision, RefinementRequest
+    db/
+      store.py              ← JSON file store (sessions/{session_id}.json)
 
 frontend/
   src/
@@ -392,7 +393,7 @@ Refinement message passes `previous_report` JSON + `feedback` string; agent upda
 
 **Local dev (two terminals):**
 ```bash
-uvicorn api.main:app --reload --port 8000   # backend
+uvicorn backend.api.main:app --reload --port 8000   # backend
 cd frontend && npm run dev                   # frontend → localhost:5173
 ```
 

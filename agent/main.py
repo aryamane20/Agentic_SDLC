@@ -248,6 +248,87 @@ class PMAgent:
 
         return result
 
+    @observe(name="pm-agent-run-with-history")
+    def run_with_history(
+        self,
+        messages: list[dict],
+        input_source: str = "unknown",
+    ) -> dict:
+        """
+        Multi-turn Messages API call (same path as run(), no disk cache).
+
+        Used for refinement: brief → synthetic assistant (prior JSON, cacheable) → feedback.
+        Prompt-cache hits depend on Anthropic prefix rules; trace cache_read_tokens in metadata.
+        """
+        self.langfuse.update_current_span(
+            name=f"pm-run-history-{self.prompt_version}",
+            input={"roles": [m.get("role") for m in messages], "input_source": input_source},
+            metadata={
+                "prompt_version": self.prompt_version,
+                "model": self.model,
+                "input_source": input_source,
+                "temperature": self.temperature,
+                "message_count": len(messages),
+            },
+        )
+
+        response = self.client.messages.create(
+            model=self.model,
+            max_tokens=self.max_tokens,
+            temperature=self.temperature,
+            system=[
+                {
+                    "type": "text",
+                    "text": self.system_prompt,
+                    "cache_control": {"type": "ephemeral"},
+                }
+            ],
+            messages=messages,
+            stream=False,
+        )
+
+        raw_output = response.content[0].text
+        usage = response.usage
+        input_tokens = usage.input_tokens
+        output_tokens = usage.output_tokens
+        tokens_used = input_tokens + output_tokens
+        cache_read_tokens = getattr(usage, "cache_read_input_tokens", 0)
+        cache_creation_tokens = getattr(usage, "cache_creation_input_tokens", 0)
+
+        report = self._extract_json(raw_output)
+        parse_failed = report.get("parse_error", False)
+
+        if not parse_failed:
+            self._enforce_hard_caps(report)
+
+        self.langfuse.update_current_span(
+            output=report,
+            metadata={
+                "tokens_used": tokens_used,
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
+                "cache_read_tokens": cache_read_tokens,
+                "cache_creation_tokens": cache_creation_tokens,
+                "parse_failed": parse_failed,
+            },
+        )
+
+        if "report_metadata" not in report:
+            report["report_metadata"] = {}
+        report["report_metadata"]["generated_at"] = datetime.utcnow().isoformat() + "Z"
+        report["report_metadata"]["prompt_version"] = self.prompt_version
+
+        return {
+            "report": report,
+            "raw_output": raw_output,
+            "tokens_used": tokens_used,
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "cache_read_tokens": cache_read_tokens,
+            "cache_creation_tokens": cache_creation_tokens,
+            "cache_hit": False,
+        }
+
     def _build_user_message(self, raw_input: str) -> str:
         """
         Wraps raw input with instructions to trigger 8-step reasoning.
