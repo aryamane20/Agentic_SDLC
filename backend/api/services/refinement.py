@@ -13,8 +13,11 @@ import json
 from typing import Any
 
 from agent.main import PMAgent
+from agent.validator import SchemaValidator, sync_pm_confidence_metadata_mirrors
 
 from backend.api.services.approval_gate import evaluate_gate
+
+_refinement_validator = SchemaValidator()
 
 # Stripped from LLM input — merged back from previous_report after the call (Steps 1–4).
 LOCKED_SECTIONS = frozenset({"project_understanding", "assumption_log"})
@@ -126,6 +129,9 @@ def run_refinement(
     merged = merge_locked_sections_from_prior(
         previous_report, result["report"], update_brief=update_brief
     )
+    sync_pm_confidence_metadata_mirrors(merged)
+    _refinement_validator.validate(dict(merged))
+    sync_pm_confidence_metadata_mirrors(merged)
     result["report"] = merged
     result["gate"] = evaluate_gate(merged).model_dump(mode="json")
     return result

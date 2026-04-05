@@ -78,6 +78,8 @@ class ReportMetadata(BaseModel):
     sdlc_approach: Optional[SdlcApproach] = None
     sdlc_rationale: Optional[str] = None
     prompt_version: Optional[str] = None
+    # Mirror of pm_confidence_score.score (top-level); validator enforces parity
+    pm_confidence_score: Optional[float] = None
 
 
 class ProjectUnderstanding(BaseModel):

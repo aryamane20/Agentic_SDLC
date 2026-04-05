@@ -2,11 +2,12 @@
 
 from functools import lru_cache
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from agent.main import PMAgent
 
 from backend.api.db import store
+from backend.api.deps import planr_user_id
 from backend.api.models.gate import RefineRequest
 from backend.api.models.session import RefinementRecord
 from backend.api.services.approval_gate import evaluate_gate
@@ -21,8 +22,12 @@ def _agent_for_version(prompt_version: str) -> PMAgent:
 
 
 @router.post("/reports/{report_id}/refine")
-def refine(report_id: str, body: RefineRequest) -> dict:
-    found = store.find_report_session(report_id)
+def refine(
+    report_id: str,
+    body: RefineRequest,
+    user_id: str = Depends(planr_user_id),
+) -> dict:
+    found = store.find_report_session(user_id, report_id)
     if found is None:
         raise HTTPException(status_code=404, detail="Report not found")
     session_id, index = found
@@ -32,7 +37,7 @@ def refine(report_id: str, body: RefineRequest) -> dict:
             detail="session_id does not match report location",
         )
 
-    state = store.load_session(session_id)
+    state = store.load_session(user_id, session_id)
     assert state is not None
     entry = state.reports[index]
 
@@ -60,7 +65,7 @@ def refine(report_id: str, body: RefineRequest) -> dict:
     )
     entry.report = new_report
     entry.gate = gate
-    store.save_session(state)
+    store.save_session(user_id, state)
 
     return {
         "session_id": session_id,

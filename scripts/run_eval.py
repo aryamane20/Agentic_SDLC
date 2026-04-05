@@ -346,8 +346,21 @@ def run_rubric_scoring(report: dict) -> dict:
     total_pct = sum(p.get("percentage_of_total", 0) for p in phases)
     phase_1_ok = any(p.get("phase_number") == 1 and p.get("percentage_of_total", 0) >= 10 for p in phases)
     phase_4_ok = any(p.get("phase_number") == 4 and p.get("percentage_of_total", 0) >= 15 for p in phases)
+    phase_5 = next((p for p in phases if p.get("phase_number") == 5), None)
+    p5_raw = phase_5.get("percentage_of_total") if phase_5 else None
+    try:
+        p5_pct = float(p5_raw) if p5_raw is not None else None
+    except (TypeError, ValueError):
+        p5_pct = None
+    phase_5_ok = p5_pct is not None and p5_pct <= 10
 
-    if len(phases) == 5 and phase_1_ok and phase_4_ok and 95 <= total_pct <= 105:
+    if (
+        len(phases) == 5
+        and phase_1_ok
+        and phase_4_ok
+        and phase_5_ok
+        and 95 <= total_pct <= 105
+    ):
         scores["plan_completeness"] = 5
     elif len(phases) == 5 and (phase_1_ok or phase_4_ok):
         scores["plan_completeness"] = 3

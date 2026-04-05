@@ -10,9 +10,14 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(6px)" },
         },
+        "studio-shine": {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+        },
       },
       animation: {
         "cue-float": "cue-float 2.2s ease-in-out infinite",
+        "studio-shine": "studio-shine 5s ease-in-out infinite",
       },
       borderRadius: {
         lg: "var(--radius)",

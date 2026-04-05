@@ -39,6 +39,30 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-black text-zinc-200 antialiased;
+  }
+}
+
+@layer utilities {
+  @keyframes plan-loader-indeterminate {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(320%);
+    }
+  }
+
+  .animate-plan-loader-indeterminate {
+    animation: plan-loader-indeterminate 1.35s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-plan-loader-indeterminate {
+      animation: none;
+      transform: none;
+      margin-left: auto;
+      margin-right: auto;
+    }
   }
 }

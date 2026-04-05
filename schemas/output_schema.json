@@ -287,6 +287,19 @@
           ],
           "default": null,
           "title": "Prompt Version"
+        },
+        "pm_confidence_score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Must equal top-level pm_confidence_score.score",
+          "title": "Pm Confidence Score"
         }
       },
       "title": "ReportMetadata",

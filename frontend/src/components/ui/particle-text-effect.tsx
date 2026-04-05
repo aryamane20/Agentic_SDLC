@@ -437,7 +437,7 @@ export function ParticleTextEffect({
       {!hideCaption && (
         <div className="mt-4 max-w-md text-center text-sm text-white">
           <p className="mb-2">Particle Text Effect</p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-zinc-300">
             Right-click and hold while moving mouse to destroy particles • Words change
             automatically every 4 seconds
           </p>

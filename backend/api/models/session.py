@@ -25,9 +25,23 @@ class ReportEntry(BaseModel):
 
 
 class SessionState(BaseModel):
+    """
+    One **plan** workspace: `reports` holds plan versions; each `ReportEntry.refinements`
+    is the in-plan feedback loop (chat) for that version.
+    """
+
     session_id: str
     reports: list[ReportEntry] = Field(default_factory=list)
 
 
 class CreateSessionResponse(BaseModel):
     session_id: str
+
+
+class SessionSummary(BaseModel):
+    """Row for GET /sessions — persisted chats with at least one generated report."""
+
+    session_id: str
+    report_count: int
+    updated_at: float
+    preview: str

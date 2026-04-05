@@ -374,23 +374,40 @@ Begin."""
         cs = report.get("pm_confidence_score", {})
         if isinstance(cs, dict):
             original = cs.get("score", 0)
-            if original > cap:
+            try:
+                original_f = float(original)
+            except (TypeError, ValueError):
+                original_f = 0.0
+            if original_f > cap:
                 cs["score"] = cap
                 cs.setdefault("deductions", []).append({
-                    "amount": original - cap,
+                    "amount": original_f - cap,
                     "reason": f"Hard cap enforced by post-processing: {'; '.join(cap_reasons)}"
                 })
+                prev_i = cs.get("interpretation")
+                suffix = (
+                    f" Hard-cap enforced: reported score is {cap} "
+                    f"(model output was {original_f:g})."
+                )
+                if isinstance(prev_i, str) and prev_i.strip():
+                    cs["interpretation"] = prev_i.rstrip() + suffix
+                else:
+                    cs["interpretation"] = suffix.strip()
             report["pm_confidence_score"] = cs
-            if "report_metadata" in report:
-                report["report_metadata"]["pm_confidence_score"] = cs["score"]
+            if cs.get("score") is not None:
+                try:
+                    report.setdefault("report_metadata", {})[
+                        "pm_confidence_score"
+                    ] = float(cs["score"])
+                except (TypeError, ValueError):
+                    pass
         elif isinstance(cs, (int, float)):
             if cs > cap:
                 report["pm_confidence_score"] = {"score": cap, "deductions": [{
                     "amount": cs - cap,
                     "reason": f"Hard cap enforced by post-processing: {'; '.join(cap_reasons)}"
                 }]}
-                if "report_metadata" in report:
-                    report["report_metadata"]["pm_confidence_score"] = cap
+                report.setdefault("report_metadata", {})["pm_confidence_score"] = cap
 
     def _extract_json(self, raw_output: str) -> dict:
         """

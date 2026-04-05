@@ -9,6 +9,22 @@ from pydantic import ValidationError as PydanticValidationError
 from schemas.output_schema import PMReport
 
 
+def sync_pm_confidence_metadata_mirrors(report: dict) -> None:
+    """
+    Canonical numeric PM confidence is pm_confidence_score.score (top-level object).
+    Mirror the same float into report_metadata.pm_confidence_score for parity with the prompt
+    and gate logic.
+    """
+    pm_top = report.get("pm_confidence_score")
+    if isinstance(pm_top, dict) and pm_top.get("score") is not None:
+        try:
+            canon = float(pm_top["score"])
+            metadata = report.setdefault("report_metadata", {})
+            metadata["pm_confidence_score"] = canon
+        except (TypeError, ValueError):
+            pass
+
+
 class SchemaValidator:
     """
     Validates PM Digital Twin output using Pydantic models
@@ -75,6 +91,16 @@ class SchemaValidator:
         phase_4 = next((p for p in phases if p.get("phase_number") == 4), None)
         if phase_4 and phase_4.get("percentage_of_total", 0) < 15:
             errors.append(f"Phase 4 is {phase_4.get('percentage_of_total')}%, must be >= 15% — HARD MINIMUM")
+
+        # Phase 5 band is 5-10% — ceiling 10% (architecture / prompt band)
+        phase_5 = next((p for p in phases if p.get("phase_number") == 5), None)
+        if phase_5 is not None:
+            p5_pct = float(phase_5.get("percentage_of_total") or 0)
+            if p5_pct > 10:
+                warnings.append(
+                    f"Phase 5 is {phase_5.get('percentage_of_total')}%, must be <= 10% "
+                    "(Deployment & Handoff band maximum)"
+                )
         
         # Staffing: no role > 80% (actionable plan hygiene).
         # Skip when already NOT_VIABLE — high allocation reflects impossible inputs, not agent error.
@@ -223,6 +249,8 @@ class SchemaValidator:
                 pm_conf["score"] = breakdown.get("starting_score", pm_conf.get("score"))
             if "interpretation" in breakdown:
                 pm_conf["interpretation"] = breakdown["interpretation"]
+
+        sync_pm_confidence_metadata_mirrors(report)
         
         # Set defaults if missing (use valid enum values)
         if "project_type" not in metadata or not metadata.get("project_type"):

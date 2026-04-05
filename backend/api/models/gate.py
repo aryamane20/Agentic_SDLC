@@ -2,7 +2,7 @@
 
 from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class GateState(BaseModel):
@@ -27,6 +27,17 @@ class RefineRequest(BaseModel):
 
 class GenerateReportRequest(BaseModel):
     session_id: str
-    brief: str = Field(..., min_length=1)
+    #: Freeform description; may be empty if `prd_text` carries requirements.
+    brief: str = ""
+    #: Extracted text from an uploaded PRD (.txt / .md / .pdf / .docx).
+    prd_text: Optional[str] = None
     use_cache: bool = True
     prompt_version: Optional[str] = None
+
+    @model_validator(mode="after")
+    def brief_or_prd(self) -> "GenerateReportRequest":
+        b = (self.brief or "").strip()
+        p = (self.prd_text or "").strip()
+        if not b and not p:
+            raise ValueError("Provide a brief and/or PRD content")
+        return self

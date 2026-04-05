@@ -38,11 +38,11 @@ export function ScrollCueAuroraGlass({ demo, className }: AuroraProps) {
           "motion-safe:transition motion-safe:duration-300 group-hover:scale-[1.03] group-hover:border-white/20",
         )}
       >
-        <span className="text-xs font-medium uppercase tracking-[0.2em] text-zinc-400 motion-safe:transition-colors group-hover:text-zinc-100">
+        <span className="text-xs font-medium uppercase tracking-[0.2em] text-zinc-300 motion-safe:transition-colors group-hover:text-white">
           What is PLANR
         </span>
         <ChevronDown
-          className="h-5 w-5 text-zinc-400 motion-safe:animate-cue-float motion-safe:transition-colors group-hover:text-white"
+          className="h-5 w-5 text-zinc-300 motion-safe:animate-cue-float motion-safe:transition-colors group-hover:text-white"
           aria-hidden
         />
       </span>

@@ -2,10 +2,11 @@
 
 from typing import Literal
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from backend.api.db import store
+from backend.api.deps import planr_user_id
 from backend.api.models.gate import GateState
 from backend.api.services.feedback_logger import log_gate_decision
 
@@ -18,12 +19,15 @@ class _GateDecisionBody(BaseModel):
 
 
 @router.get("/{report_id}")
-def get_gate(report_id: str) -> dict:
-    found = store.find_report_session(report_id)
+def get_gate(
+    report_id: str,
+    user_id: str = Depends(planr_user_id),
+) -> dict:
+    found = store.find_report_session(user_id, report_id)
     if found is None:
         raise HTTPException(status_code=404, detail="Report not found")
     session_id, index = found
-    state = store.load_session(session_id)
+    state = store.load_session(user_id, session_id)
     assert state is not None
     g = state.reports[index].gate
     return {
@@ -34,8 +38,12 @@ def get_gate(report_id: str) -> dict:
 
 
 @router.post("/{report_id}/decision")
-def post_decision(report_id: str, body: _GateDecisionBody) -> dict:
-    found = store.find_report_session(report_id)
+def post_decision(
+    report_id: str,
+    body: _GateDecisionBody,
+    user_id: str = Depends(planr_user_id),
+) -> dict:
+    found = store.find_report_session(user_id, report_id)
     if found is None:
         raise HTTPException(status_code=404, detail="Report not found")
     session_id, index = found
@@ -45,7 +53,7 @@ def post_decision(report_id: str, body: _GateDecisionBody) -> dict:
             detail="session_id does not match report location",
         )
 
-    state = store.load_session(session_id)
+    state = store.load_session(user_id, session_id)
     assert state is not None
     entry = state.reports[index]
 
@@ -54,7 +62,7 @@ def post_decision(report_id: str, body: _GateDecisionBody) -> dict:
         reasons=entry.gate.reasons,
         decision=body.decision,
     )
-    store.save_session(state)
+    store.save_session(user_id, state)
 
     log_gate_decision(
         session_id=session_id,
