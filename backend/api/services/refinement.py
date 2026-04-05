@@ -131,6 +131,7 @@ def run_refinement(
     )
     sync_pm_confidence_metadata_mirrors(merged)
     _refinement_validator.validate(dict(merged))
+    agent._enforce_hard_caps(merged)
     sync_pm_confidence_metadata_mirrors(merged)
     result["report"] = merged
     result["gate"] = evaluate_gate(merged).model_dump(mode="json")

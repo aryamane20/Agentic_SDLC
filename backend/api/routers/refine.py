@@ -45,7 +45,7 @@ def refine(
     if entry.refinements:
         prior = entry.refinements[-1].report
 
-    agent = _agent_for_version("v1.6.1")
+    agent = _agent_for_version("v1.6.2")
     out = run_refinement(
         agent=agent,
         original_brief=entry.brief,

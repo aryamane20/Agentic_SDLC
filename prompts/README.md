@@ -14,7 +14,8 @@ Each version is stored as an immutable .txt file once committed.
 | v1.4 | Haiku Compatibility | Budget risk category, priority caps, open_questions limit |
 | v1.5 | Structural trim | Anti-patterns, tradeoff field, shorter prompt |
 | v1.6 | Consistency + staffing + caps | Mechanical score rule, SDLC tie-breaker, staffing completeness, scratchpad removed |
-| v1.6.1 | NFR materiality | Fewer spurious NFR assumptions; **default prompt version in code** |
+| v1.6.1 | NFR materiality | Fewer spurious NFR assumptions; replay / comparison |
+| v1.6.2 | Urgency + staffing + interpretation | Open-question rubric + per-role staffing assumptions; PM confidence interpretation lead-in; **default in code** |
 
 ## Archive
 

@@ -10,6 +10,7 @@ import {
 } from "@/lib/session-hydration"
 import type {
   GateDTO,
+  PlanVersionSnapshot,
   ReportRecord,
   SessionSummary,
   ThreadMessage,
@@ -55,6 +56,7 @@ export function useReportWorkflow() {
     []
   )
   const [sessionSwitching, setSessionSwitching] = useState(false)
+  const [planSnapshots, setPlanSnapshots] = useState<PlanVersionSnapshot[]>([])
   /** After Start over / New plan, next Generate must bypass agent disk cache (same brief would replay). */
   const skipAgentCacheOnceRef = useRef(false)
 
@@ -147,6 +149,7 @@ export function useReportWorkflow() {
         report: ReportRecord
         gate: GateDTO
       }
+      setPlanSnapshots([])
       setReportId(j.report_id)
       setReport(j.report)
       setGate(j.gate)
@@ -197,6 +200,12 @@ export function useReportWorkflow() {
         gate: GateDTO
       }
       const nextVersion = planVersion + 1
+      if (priorReport != null && priorGate != null) {
+        setPlanSnapshots((s) => [
+          ...s,
+          { version: planVersion, report: priorReport, gate: priorGate },
+        ])
+      }
       setReport(j.report)
       setGate(j.gate)
       setRefineText("")
@@ -266,6 +275,7 @@ export function useReportWorkflow() {
       setReport(null)
       setGate(null)
       setLastDiff(null)
+      setPlanSnapshots([])
       setReportId(null)
       setPlanVersion(0)
       setSessionId(null)
@@ -306,6 +316,7 @@ export function useReportWorkflow() {
           setReportId(null)
           setReport(null)
           setGate(null)
+          setPlanSnapshots([])
           setMessages([])
           setBrief("")
           setPrdText("")
@@ -316,6 +327,7 @@ export function useReportWorkflow() {
           return
         }
         const entry = reports[reports.length - 1]
+        setPlanSnapshots([])
         const split = splitComposedSessionBrief(entry.brief ?? "")
         setBrief(split.brief)
         setPrdText(split.prdText)
@@ -391,5 +403,6 @@ export function useReportWorkflow() {
     refreshSessionList,
     switchSession,
     sessionSwitching,
+    planSnapshots,
   }
 }

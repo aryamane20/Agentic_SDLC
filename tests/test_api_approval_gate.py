@@ -57,3 +57,17 @@ def test_gate_fires_before_planning_question():
     }
     g = evaluate_gate(report)
     assert g.fired is True
+
+
+def test_gate_does_not_fire_before_planning_when_plan_already_decomposed():
+    """Mis-tagged 'Before planning' must not block if WBS is present (v16.2 rubric alignment)."""
+    phases = [{"name": f"P{i}", "tasks": [{"id": f"T{i}", "title": "x"}]} for i in range(5)]
+    report = {
+        "pm_confidence_score": {"score": 80},
+        "risk_register": [],
+        "project_plan": {"phases": phases},
+        "open_questions": [{"urgency": "Before planning", "question": "HR sign-off in writing?"}],
+    }
+    g = evaluate_gate(report)
+    assert g.fired is False
+    assert not any("Before planning" in r for r in g.reasons)

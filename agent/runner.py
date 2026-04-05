@@ -54,7 +54,14 @@ class AgentRunner:
                 start_time = time.time()
                 
                 # Run the agent
-                result = self.agent.run(raw_input, input_source=input_source or "unknown")
+                # After any failure, skip disk cache so the next attempt can hit the API/mock
+                # again; otherwise retries re-read the same bad cached parse.
+                use_cache = last_error is None
+                result = self.agent.run(
+                    raw_input,
+                    input_source=input_source or "unknown",
+                    use_cache=use_cache,
+                )
                 runtime = time.time() - start_time
                 
                 # Add metadata

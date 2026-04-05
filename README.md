@@ -52,7 +52,7 @@ Agentic_SDLC/
 │   ├── v1.4_system.txt           ← Haiku compatibility (Budget risk, priority caps)
 │   ├── v1.5_system.txt           ← Structural trim + anti-patterns
 │   ├── v1.6_system.txt           ← D2/D3/D1 fixes, SDLC tie-breaker, hard caps
-│   ├── v1.6.1_system.txt         ← NFR materiality gate (active default in code)
+│   ├── v1.6.2_system.txt         ← active default in code (v1.6.1 retained for replay)
 │   └── archive/                   ← Intermediate prompt versions for reproducibility
 │
 ├── schemas/                        ← Input/output schema definitions

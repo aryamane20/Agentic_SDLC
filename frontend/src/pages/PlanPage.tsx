@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"
 
 import { GateAlert } from "@/components/plan/gate-alert"
 import { PlanFloatingComposer } from "@/components/plan/plan-floating-composer"
+import { PlanRefineExchange } from "@/components/plan/plan-refine-exchange"
 import { PlanReportView } from "@/components/plan/plan-report-view"
 import { PlanSidebar } from "@/components/plan/plan-sidebar"
 import { PlanWorkingLoader } from "@/components/plan/plan-working-loader"
@@ -12,10 +13,87 @@ import { Button } from "@/components/ui/button"
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 import { useReportWorkflow } from "@/hooks/use-report-workflow"
 import { PRD_ACCEPT } from "@/lib/prd-upload"
-import type { ChatHistoryEntry } from "@/types/plan"
+import type {
+  ChatHistoryEntry,
+  GateDTO,
+  PlanVersionSnapshot,
+  ThreadMessage,
+} from "@/types/plan"
 
 const BRIEF_PLACEHOLDER = "Describe your initiative, or attach a PRD with +"
 const REFINE_PLACEHOLDER = "What should change in the plan?"
+
+function refineMessagesAt(
+  messages: ThreadMessage[],
+  refineRoundIndex: number
+): {
+  user?: Extract<ThreadMessage, { variant: "refine" }>
+  assistant?: Extract<ThreadMessage, { variant: "refine_summary" }>
+} {
+  const i = 2 + 2 * refineRoundIndex
+  const u = messages[i]
+  const a = messages[i + 1]
+  return {
+    user:
+      u?.role === "user" && u.variant === "refine"
+        ? u
+        : undefined,
+    assistant:
+      a?.role === "assistant" && a.variant === "refine_summary"
+        ? a
+        : undefined,
+  }
+}
+
+function SnapshotGateBanner({
+  gate,
+  reduceMotion,
+}: {
+  gate: GateDTO
+  reduceMotion: boolean
+}) {
+  const gateFired = Boolean(gate?.fired)
+  if (gateFired) {
+    return (
+      <StudioShineBorder
+        tone="amber"
+        active={!reduceMotion}
+        innerClassName="p-1"
+      >
+        <GateAlert gate={gate} embedded />
+      </StudioShineBorder>
+    )
+  }
+  return (
+    <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/35 px-4 py-3 text-sm text-zinc-300 backdrop-blur-md">
+      No blocking gate on this version.
+    </div>
+  )
+}
+
+function EarlierPlanBlock({
+  snapshot,
+  exchange,
+  reduceMotion,
+}: {
+  snapshot: PlanVersionSnapshot
+  exchange: ReturnType<typeof refineMessagesAt>
+  reduceMotion: boolean
+}) {
+  return (
+    <div className="space-y-5 opacity-95">
+      <p className="text-xs font-medium text-zinc-500">
+        Earlier version · v{snapshot.version}
+      </p>
+      <SnapshotGateBanner gate={snapshot.gate} reduceMotion={reduceMotion} />
+      <PlanReportView report={snapshot.report} gate={snapshot.gate} />
+      <PlanRefineExchange
+        userMsg={exchange.user}
+        assistantMsg={exchange.assistant}
+      />
+    </div>
+  )
+}
 
 export function PlanPage() {
   const reduceMotion = usePrefersReducedMotion()
@@ -51,6 +129,8 @@ export function PlanPage() {
     prdBusy,
     loadPrdFile,
     clearPrd,
+    planSnapshots,
+    planVersion,
   } = useReportWorkflow()
 
   // Initial session only — do not re-run when sessionId changes or "New plan" races with a second POST /sessions.
@@ -68,6 +148,11 @@ export function PlanPage() {
   const showBriefComposer = phase === "IDLE"
   const showRefineComposer = phase === "REVIEW"
   const showFloatingComposer = showBriefComposer || showRefineComposer
+
+  const showPlanStack =
+    (phase === "REFINING" || phase === "REVIEW" || phase === "APPROVED") &&
+    report != null &&
+    gate != null
 
   const chatHistory = useMemo((): ChatHistoryEntry[] => {
     const fromApi = sessionSummaries
@@ -185,88 +270,130 @@ export function PlanPage() {
                 </p>
               ) : null}
 
-              {(phase === "GENERATING" || phase === "REFINING") && (
+              {phase === "GENERATING" ? (
                 <div className="mx-auto w-full max-w-sm py-8 sm:max-w-md">
                   <PlanWorkingLoader
-                    mode={phase === "GENERATING" ? "generate" : "refine"}
+                    mode="generate"
                     reduceMotion={reduceMotion}
                   />
                 </div>
-              )}
+              ) : null}
 
-              {(phase === "REVIEW" || phase === "APPROVED") && report && gate ? (
-                <div className="mx-auto w-full max-w-4xl space-y-5">
-                  {gateFired ? (
-                    <StudioShineBorder
-                      tone="amber"
-                      active={!reduceMotion}
-                      innerClassName="p-1"
-                    >
-                      <GateAlert gate={gate} embedded />
-                    </StudioShineBorder>
-                  ) : (
-                    <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/35 px-4 py-3 text-sm text-zinc-300 backdrop-blur-md">
-                      No blocking gate — use Refine below to iterate, or start over
-                      to run again with the same brief and PRD.
-                    </div>
-                  )}
+              {showPlanStack && report && gate ? (
+                <div className="mx-auto w-full max-w-4xl space-y-10">
+                  {planSnapshots.map((snap, j) => (
+                    <EarlierPlanBlock
+                      key={`snap-${snap.version}-${j}`}
+                      snapshot={snap}
+                      exchange={refineMessagesAt(messages, j)}
+                      reduceMotion={reduceMotion}
+                    />
+                  ))}
 
-                  <PlanReportView report={report} gate={gate} />
-
-                  <details className="group rounded-2xl border border-zinc-800/70 bg-zinc-950/25 backdrop-blur-md open:bg-zinc-950/35">
-                    <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-medium text-zinc-100 marker:content-none [&::-webkit-details-marker]:hidden">
-                      <ChevronDown className="h-4 w-4 shrink-0 transition group-open:rotate-180" />
-                      Raw JSON
-                    </summary>
-                    <pre className="max-h-[min(50vh,420px)] overflow-auto border-t border-zinc-800/70 p-3 text-[11px] leading-relaxed text-zinc-300">
-                      {JSON.stringify(report, null, 2)}
-                    </pre>
-                  </details>
-
-                  {phase === "REVIEW" && (
-                    <div className="space-y-4">
-                      <p className="mx-auto max-w-xl text-center text-xs leading-relaxed text-zinc-500">
-                        <span className="text-zinc-300">Refine</span> — use the
-                        composer below for human-in-the-loop feedback.{" "}
-                        <span className="text-zinc-300">Approve</span> — record
-                        sign-off for this plan.{" "}
-                        {gateFired ? (
-                          <>
-                            A blocking gate is shown above; approving still logs
-                            your decision.{" "}
-                          </>
-                        ) : null}
-                        <span className="text-zinc-300">Start over</span> — new
-                        session with the same brief and PRD so you can generate
-                        again from scratch.
-                      </p>
-                      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-center">
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          disabled={busy}
-                          onClick={() => void approve()}
-                        >
-                          Approve
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          className="text-zinc-300 hover:text-zinc-100"
-                          disabled={busy}
-                          onClick={() => void startNewPlan()}
-                        >
-                          Start over
-                        </Button>
+                  <div
+                    className={
+                      planSnapshots.length > 0
+                        ? "space-y-5 border-t border-zinc-800/80 pt-10"
+                        : "space-y-5"
+                    }
+                  >
+                    <p className="text-xs font-medium text-zinc-400">
+                      {planSnapshots.length > 0 ? "Current plan" : "Plan"} · v
+                      {planVersion}
+                    </p>
+                    {gateFired ? (
+                      <StudioShineBorder
+                        tone="amber"
+                        active={!reduceMotion}
+                        innerClassName="p-1"
+                      >
+                        <GateAlert gate={gate} embedded />
+                      </StudioShineBorder>
+                    ) : (
+                      <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/35 px-4 py-3 text-sm text-zinc-300 backdrop-blur-md">
+                        No blocking gate — use Refine below to iterate, or start
+                        over to run again with the same brief and PRD.
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {phase === "APPROVED" && (
-                    <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 px-4 py-3 text-center text-sm text-emerald-100 backdrop-blur-md">
-                      Plan approved for this session.
-                    </div>
-                  )}
+                    <PlanReportView report={report} gate={gate} />
+
+                    {phase === "REFINING" ? (
+                      <>
+                        <PlanRefineExchange
+                          userMsg={
+                            refineMessagesAt(messages, planSnapshots.length).user
+                          }
+                          assistantMsg={undefined}
+                        />
+                        <div className="mx-auto w-full max-w-sm sm:max-w-md">
+                          <PlanWorkingLoader
+                            mode="refine"
+                            reduceMotion={reduceMotion}
+                          />
+                        </div>
+                      </>
+                    ) : null}
+
+                    {phase === "REVIEW" || phase === "APPROVED" ? (
+                      <>
+                        <details className="group rounded-2xl border border-zinc-800/70 bg-zinc-950/25 backdrop-blur-md open:bg-zinc-950/35">
+                          <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-medium text-zinc-100 marker:content-none [&::-webkit-details-marker]:hidden">
+                            <ChevronDown className="h-4 w-4 shrink-0 transition group-open:rotate-180" />
+                            Raw JSON
+                          </summary>
+                          <pre className="max-h-[min(50vh,420px)] overflow-auto border-t border-zinc-800/70 p-3 text-[11px] leading-relaxed text-zinc-300">
+                            {JSON.stringify(report, null, 2)}
+                          </pre>
+                        </details>
+
+                        {phase === "REVIEW" && (
+                          <div className="space-y-4">
+                            <p className="mx-auto max-w-xl text-center text-xs leading-relaxed text-zinc-500">
+                              <span className="text-zinc-300">Refine</span> — use
+                              the composer below for human-in-the-loop feedback.{" "}
+                              <span className="text-zinc-300">Approve</span> —
+                              record sign-off for this plan.{" "}
+                              {gateFired ? (
+                                <>
+                                  A blocking gate is shown above; approving
+                                  still logs your decision.{" "}
+                                </>
+                              ) : null}
+                              <span className="text-zinc-300">Start over</span> —
+                              new session with the same brief and PRD so you can
+                              generate again from scratch.
+                            </p>
+                            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-center">
+                              <Button
+                                type="button"
+                                variant="secondary"
+                                disabled={busy}
+                                onClick={() => void approve()}
+                              >
+                                Approve
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                className="text-zinc-300 hover:text-zinc-100"
+                                disabled={busy}
+                                onClick={() => void startNewPlan()}
+                              >
+                                Start over
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+
+                        {phase === "APPROVED" && (
+                          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 px-4 py-3 text-center text-sm text-emerald-100 backdrop-blur-md">
+                            Plan approved for this session.
+                          </div>
+                        )}
+                      </>
+                    ) : null}
+                  </div>
                 </div>
               ) : null}
             </div>

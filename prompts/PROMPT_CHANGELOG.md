@@ -6,7 +6,22 @@ difference. Whitespace changes, comment tweaks, and one-line fixes are git commi
 not prompt versions.
 
 Intermediate versions (v1.0.0–v1.6.1) are archived in `prompts/archive/`.
-Active versions: v1.0 through v1.6.1 (latest default in code: `v1.6.1`).
+Active versions: v1.0 through **v1.6.2** (latest default in code: `v1.6.2`).
+
+---
+
+## v1.6.2 — OPEN QUESTIONS + STAFFING ASSUMPTIONS + INTERPRETATION ANCHOR
+**File:** `prompts/v1.6.2_system.txt`  
+**Date:** March 2026  
+**Type:** FUNCTIONAL — rubric clarity + validator safety net
+
+**What changed from v1.6.1:**
+- **OPEN QUESTION URGENCY:** Single concrete rule + two worked examples (scope unknown vs capacity unconfirmed). Explicit ban on emitting "Before planning" when a full phase/task plan is produced.
+- **Staffing:** Per-role `assumption_log` rows for QA, UX, Security, DevOps added beyond the stated team (no combined note); worked example. QA below 25% dev hours requires a **HIGH+** risk, not NOTES-only rationalization.
+- **PM confidence:** `interpretation` must **open** with the enforced score (“PM confidence score is X because …”).
+- **Validator (`agent/validator.py`):** (1) QA `total_hours` vs implementation hours + HIGH/CRITICAL ratio risk; (2) error if "Before planning" open questions coexist with populated tasks; (3) warning if expanded QA/UX/Security/DevOps staffing lacks matching assumption text vs `project_understanding` proxy.
+
+**Replay:** Use `PMAgent(prompt_version="v1.6.1")` for prior behavior.
 
 ---
 

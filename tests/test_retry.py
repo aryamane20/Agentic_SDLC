@@ -4,7 +4,7 @@ Mock API failure scenarios should trigger retry logic.
 """
 
 import pytest
-from unittest.mock import Mock, side_effect
+from unittest.mock import Mock
 import time
 
 
@@ -21,11 +21,21 @@ class TestRetry:
         # Mock client that fails twice then succeeds
         mock_response_fail = Mock()
         mock_response_fail.content = [Mock(text='{"error": "rate limit"}')]
-        mock_response_fail.usage = Mock(input_tokens=100, output_tokens=200)
-        
+        mock_response_fail.usage = Mock(
+            input_tokens=100,
+            output_tokens=200,
+            cache_read_input_tokens=0,
+            cache_creation_input_tokens=0,
+        )
+
         mock_response_success = Mock()
         mock_response_success.content = [Mock(text='{"project_understanding": {"primary_goal": "test"}, "report_metadata": {"generated_at": "2026-01-01"}}')]
-        mock_response_success.usage = Mock(input_tokens=100, output_tokens=200)
+        mock_response_success.usage = Mock(
+            input_tokens=100,
+            output_tokens=200,
+            cache_read_input_tokens=0,
+            cache_creation_input_tokens=0,
+        )
         
         # Create side effect that fails twice then succeeds
         call_count = [0]
@@ -36,9 +46,12 @@ class TestRetry:
             return mock_response_success
         
         agent.client.messages.create = Mock(side_effect=create_side_effect)
-        
-        result = runner.run_with_retry("Build a test project", input_source="test")
-        
+
+        # Bust disk cache so attempt 1 always exercises the API mock (retry behavior).
+        result = runner.run_with_retry(
+            "Build a test project __retry_side_effect__", input_source="test"
+        )
+
         # Should eventually succeed after retries
         assert result["success"] is True
         assert result["attempts"] == 3
@@ -119,8 +132,13 @@ class TestRetry:
         
         # Mock a valid response
         mock_response = Mock()
-        mock_response.content = [Mock(text='{"project_understanding": {"primary_goal": "test"}, "report_metadata": {"generated_at": "2026-01-01", "input_quality": "HIGH", "pm_confidence_score": 80, "project_type": "TYPE_A", "sdlc_approach": "Predictive"}, "assumption_log": [{"id": "A1", "what": "test", "why": "test", "pmi_basis": "test", "risk_if_wrong": "LOW", "consequence": "test"}], "project_plan": {"total_duration_weeks": 10, "buffer_applied_percent": 10, "critical_path_summary": {"sequence": ["T1"], "total_duration_days": 10, "zero_slack_tasks": ["T1"], "staffing_implication": "test"}, "phases": [{"phase_number": 1, "name": "Init", "duration_weeks": 2, "percentage_of_total": 15, "milestones": ["M1"], "tasks": []}, {"phase_number": 2, "name": "Plan", "duration_weeks": 2, "percentage_of_total": 15, "milestones": ["M1"], "tasks": []}, {"phase_number": 3, "name": "Build", "duration_weeks": 2, "percentage_of_total": 30, "milestones": ["M1"], "tasks": []}, {"phase_number": 4, "name": "Test", "duration_weeks": 2, "percentage_of_total": 20, "milestones": ["M1"], "tasks": []}, {"phase_number": 5, "name": "Deploy", "duration_weeks": 2, "percentage_of_total": 20, "milestones": ["M1"], "tasks": []}]}, "risk_register": [{"id": "R1", "category": "Technical", "description": "test risk", "probability": "MEDIUM", "impact": "HIGH", "score": "HIGH", "trigger": "trigger", "mitigation": "mitigate", "contingency": "contingency"}], "staffing_plan": [{"role": "Engineer", "phase_involvement": [1], "total_hours": 100, "allocation_percent": 50, "skills_required": ["test"], "critical_path": true}], "open_questions": [], "pm_confidence_score": {"score": 80, "deductions": [], "interpretation": "test"}}')]
-        mock_response.usage = Mock(input_tokens=100, output_tokens=200)
+        mock_response.content = [Mock(text='{"project_understanding": {"primary_goal": "test"}, "report_metadata": {"generated_at": "2026-01-01", "input_quality": "HIGH", "pm_confidence_score": 80, "project_type": "TYPE_A", "sdlc_approach": "Predictive"}, "assumption_log": [{"id": "A1", "what": "test", "why": "test", "pmi_basis": "test", "risk_if_wrong": "LOW", "consequence": "test"}], "project_plan": {"total_duration_weeks": 10, "buffer_applied_percent": 10, "critical_path_summary": {"sequence": ["T1"], "total_duration_days": 10, "zero_slack_tasks": ["T1"], "staffing_implication": "test"}, "phases": [{"phase_number": 1, "name": "Init", "duration_weeks": 2, "percentage_of_total": 18, "milestones": ["M1"], "tasks": []}, {"phase_number": 2, "name": "Plan", "duration_weeks": 2, "percentage_of_total": 18, "milestones": ["M1"], "tasks": []}, {"phase_number": 3, "name": "Build", "duration_weeks": 2, "percentage_of_total": 28, "milestones": ["M1"], "tasks": []}, {"phase_number": 4, "name": "Test", "duration_weeks": 2, "percentage_of_total": 26, "milestones": ["M1"], "tasks": []}, {"phase_number": 5, "name": "Deploy", "duration_weeks": 2, "percentage_of_total": 10, "milestones": ["M1"], "tasks": []}]}, "risk_register": [{"id": "R1", "category": "Technical", "description": "test risk", "probability": "MEDIUM", "impact": "HIGH", "score": "HIGH", "trigger": "trigger", "mitigation": "mitigate", "contingency": "contingency"}, {"id": "R2", "category": "Schedule", "description": "s", "probability": "LOW", "impact": "MEDIUM", "score": "MEDIUM", "trigger": "t", "mitigation": "m", "contingency": "c"}, {"id": "R3", "category": "Resource", "description": "QA hours below 25% rule — HIGH", "probability": "HIGH", "impact": "HIGH", "score": "HIGH", "trigger": "t", "mitigation": "m", "contingency": "c"}], "staffing_plan": [{"role": "Engineer", "phase_involvement": [1], "total_hours": 100, "allocation_percent": 40, "skills_required": ["test"], "critical_path": true}, {"role": "QA Engineer", "phase_involvement": [3, 4], "total_hours": 30, "allocation_percent": 12, "skills_required": ["test"], "critical_path": false}], "open_questions": [], "pm_confidence_score": {"score": 80, "deductions": [], "interpretation": "test"}}')]
+        mock_response.usage = Mock(
+            input_tokens=100,
+            output_tokens=200,
+            cache_read_input_tokens=0,
+            cache_creation_input_tokens=0,
+        )
         
         runner.agent.client.messages.create = Mock(return_value=mock_response)
         

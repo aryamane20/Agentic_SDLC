@@ -20,6 +20,13 @@ export type GateDTO = {
 
 export type ReportRecord = Record<string, unknown>
 
+/** Superseded plan + gate after a successful refine (v{n} before bumping to v{n+1}). */
+export type PlanVersionSnapshot = {
+  version: number
+  report: ReportRecord
+  gate: GateDTO
+}
+
 export type WorkflowPhase =
   | "IDLE"
   | "GENERATING"

@@ -56,8 +56,8 @@ class PMReportLogger:
             "summary": self._generate_summary(report)
         }
         
-        # Log as JSON to file
-        self.logger.info(json.dumps(log_entry))
+        # Log as JSON to file (default=str avoids rare non-serializable values e.g. in tests)
+        self.logger.info(json.dumps(log_entry, default=str))
         
         # Log summary to console with cache status
         cache_read = metadata.get("cache_read_tokens", 0) if metadata else 0
@@ -78,7 +78,7 @@ class PMReportLogger:
             "context": context or {}
         }
         
-        self.logger.error(json.dumps(log_entry))
+        self.logger.error(json.dumps(log_entry, default=str))
 
     def _generate_summary(self, report: Dict[str, Any]) -> str:
         """

@@ -54,7 +54,7 @@ class PMAgent:
     the 8-step PM reasoning process on raw requirements input.
     """
 
-    def __init__(self, prompt_version: str = "v1.6.1", model: str = MODEL_HAIKU):
+    def __init__(self, prompt_version: str = "v1.6.2", model: str = MODEL_HAIKU):
         self.prompt_version = prompt_version
         self.client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
         self.langfuse = Langfuse()  # reads LANGFUSE_* from env; no-ops if keys missing
@@ -380,19 +380,17 @@ Begin."""
                 original_f = 0.0
             if original_f > cap:
                 cs["score"] = cap
+                # Validator normalize would restore score from breakdown.starting_score — drop it.
+                cs.pop("breakdown", None)
                 cs.setdefault("deductions", []).append({
                     "amount": original_f - cap,
                     "reason": f"Hard cap enforced by post-processing: {'; '.join(cap_reasons)}"
                 })
-                prev_i = cs.get("interpretation")
-                suffix = (
-                    f" Hard-cap enforced: reported score is {cap} "
-                    f"(model output was {original_f:g})."
+                # Replace interpretation so prose cannot still cite the pre-cap number (e.g. 78 vs 60).
+                cs["interpretation"] = (
+                    f"PM confidence {cap} after hard-cap enforcement "
+                    f"(model-reported score was {original_f:g}; {'; '.join(cap_reasons)})."
                 )
-                if isinstance(prev_i, str) and prev_i.strip():
-                    cs["interpretation"] = prev_i.rstrip() + suffix
-                else:
-                    cs["interpretation"] = suffix.strip()
             report["pm_confidence_score"] = cs
             if cs.get("score") is not None:
                 try:

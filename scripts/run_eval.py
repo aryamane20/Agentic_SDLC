@@ -86,7 +86,7 @@ def _output_dir(prompt_version: str) -> Path:
     return Path("outputs") / prompt_version
 
 
-def _save_output(tc_id: str, report: dict, prompt_version: str = "v1.6.1",
+def _save_output(tc_id: str, report: dict, prompt_version: str = "v1.6.2",
                  run_index: int = 0):
     """Save agent report JSON to outputs/{prompt_version}/.
 
@@ -102,7 +102,7 @@ def _save_output(tc_id: str, report: dict, prompt_version: str = "v1.6.1",
     print(f"    Output saved: {filename}")
 
 
-def _load_output(tc_id: str, prompt_version: str = "v1.6.1",
+def _load_output(tc_id: str, prompt_version: str = "v1.6.2",
                  run_index: int = 0) -> dict | None:
     """Load a previously saved output for replay. Returns None if not found."""
     out_dir = _output_dir(prompt_version)
@@ -117,7 +117,7 @@ def _load_output(tc_id: str, prompt_version: str = "v1.6.1",
 # ─────────────────────────────────────────────────────────────
 # DIMENSION 1: Schema Validation
 # ─────────────────────────────────────────────────────────────
-def _run_schema_one(tc: dict, agent: PMAgent, prompt_version: str = "v1.6.1",
+def _run_schema_one(tc: dict, agent: PMAgent, prompt_version: str = "v1.6.2",
                     replay: bool = False, cost_tracker: CostTracker = None,
                     max_retries: int = 3) -> dict:
     """Run schema validation for a single test case with rate-limit retry."""
@@ -160,7 +160,7 @@ def _run_schema_one(tc: dict, agent: PMAgent, prompt_version: str = "v1.6.1",
 
 
 def run_schema_validation(test_cases: list, agent: PMAgent, workers: int = 5,
-                          prompt_version: str = "v1.6.1", replay: bool = False,
+                          prompt_version: str = "v1.6.2", replay: bool = False,
                           cost_tracker: CostTracker = None) -> dict:
     """Every output must pass schema validation. Target: 100%."""
     results = [None] * len(test_cases)
@@ -185,7 +185,7 @@ def run_schema_validation(test_cases: list, agent: PMAgent, workers: int = 5,
 # DIMENSION 2: Consistency (Determinism)
 # ─────────────────────────────────────────────────────────────
 def run_consistency_test(tc_perfect: dict, agent: PMAgent, runs: int = 5,
-                         prompt_version: str = "v1.6.1", replay: bool = False,
+                         prompt_version: str = "v1.6.2", replay: bool = False,
                          cost_tracker: CostTracker = None) -> dict:
     """Same input should produce consistent output. Target: confidence score variance < 5."""
     if replay:
@@ -518,7 +518,7 @@ EDGE_CASE_EXPECTATIONS = {
     }
 }
 
-def _run_edge_case_one(tc: dict, agent: PMAgent, prompt_version: str = "v1.6.1",
+def _run_edge_case_one(tc: dict, agent: PMAgent, prompt_version: str = "v1.6.2",
                        replay: bool = False, cost_tracker: CostTracker = None,
                        max_retries: int = 3) -> dict:
     """Run edge case checks for a single test case with rate-limit retry."""
@@ -552,7 +552,7 @@ def _run_edge_case_one(tc: dict, agent: PMAgent, prompt_version: str = "v1.6.1",
     }
 
 
-def _run_edge_case_inner(tc: dict, agent: PMAgent, prompt_version: str = "v1.6.1",
+def _run_edge_case_inner(tc: dict, agent: PMAgent, prompt_version: str = "v1.6.2",
                          cost_tracker: CostTracker = None) -> dict:
     """Core edge case logic (extracted for retry wrapper)."""
     try:
@@ -787,7 +787,7 @@ def _evaluate_edge_case(tc: dict, report: dict) -> dict:
 
 
 def run_edge_cases(test_cases: list, agent: PMAgent, workers: int = 5,
-                   prompt_version: str = "v1.6.1", replay: bool = False,
+                   prompt_version: str = "v1.6.2", replay: bool = False,
                    cost_tracker: CostTracker = None) -> dict:
     """Test edge case handling. Target: > 80% pass rate."""
     results = [None] * len(test_cases)
@@ -855,7 +855,7 @@ def main():
     parser.add_argument("--all", action="store_true", help="Run all dimensions")
     parser.add_argument("--dimension", choices=["schema", "consistency", "rubric", "edge"], help="Run one dimension")
     parser.add_argument("--tc", help="Run specific test case only (e.g. tc-01-perfect)")
-    parser.add_argument("--prompt-version", default="v1.6.1")
+    parser.add_argument("--prompt-version", default="v1.6.2")
     parser.add_argument("--model", default=MODEL_HAIKU,
                         help=f"Model to use. haiku={MODEL_HAIKU}, sonnet={MODEL_SONNET}")
     parser.add_argument("--workers", type=int, default=1,

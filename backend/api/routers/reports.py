@@ -108,7 +108,7 @@ def generate_report(
 
     composed = _compose_brief_for_agent(body.brief, body.prd_text)
 
-    agent = _agent_for_version(body.prompt_version or "v1.6.1")
+    agent = _agent_for_version(body.prompt_version or "v1.6.2")
     run = agent.run(
         composed,
         input_source=f"backend-session-{body.session_id}",
@@ -122,10 +122,11 @@ def generate_report(
         )
 
     sync_pm_confidence_metadata_mirrors(report)
-    gate = evaluate_gate(report)
     validation = _validator.validate(dict(report))
-    # Normalize may rewrite pm_confidence_score (e.g. breakdown → score); mirror again last.
+    # Normalize can resurrect an uncapped score from pm_confidence_score.breakdown — re-apply caps.
+    agent._enforce_hard_caps(report)
     sync_pm_confidence_metadata_mirrors(report)
+    gate = evaluate_gate(report)
 
     rid = f"rpt_{uuid.uuid4().hex[:12]}"
     entry = ReportEntry(

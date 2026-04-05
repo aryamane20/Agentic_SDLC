@@ -28,7 +28,7 @@ class TestHappyPath:
         original_create = agent.client.messages.create
         agent.client.messages.create = Mock(return_value=mock_response)
         
-        result = agent.run(sample_valid_input)
+        result = agent.run(sample_valid_input, use_cache=False)
         
         assert isinstance(result["report"], dict)
         assert "project_understanding" in result["report"]
@@ -111,7 +111,7 @@ class TestHappyPath:
                         "phase_number": 1,
                         "name": "Init",
                         "duration_weeks": 2,
-                        "percentage_of_total": 15,
+                        "percentage_of_total": 18,
                         "milestones": ["M1", "M2"],
                         "tasks": []
                     },
@@ -119,7 +119,7 @@ class TestHappyPath:
                         "phase_number": 2,
                         "name": "Plan",
                         "duration_weeks": 2,
-                        "percentage_of_total": 15,
+                        "percentage_of_total": 18,
                         "milestones": ["M1"],
                         "tasks": []
                     },
@@ -135,7 +135,7 @@ class TestHappyPath:
                         "phase_number": 4,
                         "name": "Test",
                         "duration_weeks": 2,
-                        "percentage_of_total": 20,
+                        "percentage_of_total": 24,
                         "milestones": ["M1"],
                         "tasks": []
                     },
@@ -143,7 +143,7 @@ class TestHappyPath:
                         "phase_number": 5,
                         "name": "Deploy",
                         "duration_weeks": 2,
-                        "percentage_of_total": 20,
+                        "percentage_of_total": 10,
                         "milestones": ["M1"],
                         "tasks": []
                     }
@@ -189,16 +189,24 @@ class TestHappyPath:
                     "role": "Backend Engineer",
                     "phase_involvement": [1, 2, 3, 4, 5],
                     "total_hours": 200,
-                    "allocation_percent": 50,
+                    "allocation_percent": 45,
                     "skills_required": ["Python", "SQL"],
                     "critical_path": True
+                },
+                {
+                    "role": "QA Engineer",
+                    "phase_involvement": [3, 4],
+                    "total_hours": 50,
+                    "allocation_percent": 12,
+                    "skills_required": ["Testing"],
+                    "critical_path": False
                 }
             ],
             "open_questions": [
                 {
                     "priority": 1,
                     "question": "What is the exact data source?",
-                    "urgency": "Before planning",
+                    "urgency": "Before build",
                     "impact_if_unanswered": "Cannot design schema"
                 }
             ],

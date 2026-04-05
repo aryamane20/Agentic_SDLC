@@ -3,8 +3,8 @@ import { cn } from "@/lib/utils"
 type Mode = "generate" | "refine"
 
 const COPY: Record<Mode, string> = {
-  generate: "Building your project plan — usually under 90 seconds.",
-  refine: "Applying your feedback — usually under a minute.",
+  generate: "Building your project plan in under 90 seconds.",
+  refine: "Applying your feedback in under a minute.",
 }
 
 /**
@@ -35,7 +35,7 @@ export function PlanWorkingLoader({
         {COPY[mode]}
       </p>
       <p className="mt-3 text-xs text-zinc-500">
-        Working — you can leave this tab open.
+        Working...you can leave this tab open.
       </p>
     </div>
   )

@@ -23,8 +23,10 @@ def mock_anthropic_client():
         input_tokens=100,
         output_tokens=200,
         cache_read_input_tokens=0,
-        cache_creation_input_tokens=0
+        cache_creation_input_tokens=0,
     )
+    # Explicit zeros required: bare Mock() would auto-create child Mocks for these attrs
+    # and Langfuse/metadata paths can compare tokens to ints.
     mock_client.messages.create.return_value = mock_response
     return mock_client
 
@@ -32,7 +34,7 @@ def mock_anthropic_client():
 @pytest.fixture
 def agent(mock_anthropic_client):
     """Create a PMAgent instance with mocked client."""
-    agent = PMAgent(prompt_version="v1.6.1")
+    agent = PMAgent(prompt_version="v1.6.2")
     agent.client = mock_anthropic_client
     return agent
 
