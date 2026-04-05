@@ -264,6 +264,25 @@ ASSUMPTION ANCHORING RULE:
   create an assumption for that field. Restating a known fact as an
   assumption inflates the count and distorts the confidence score.
 
+  READ-THE-BRIEF GATE (hard rule):
+    If you can answer it by reading the input — including explicit scope
+    boundaries and constraints ("negative" scope counts: e.g. no mobile,
+    desktop-only) — it is NOT an assumption. Imagining that something
+    "could be different" is insufficient. The standard is: the input does
+    not state or reasonably imply it.
+
+  Never log an assumption for a constraint the input states directly.
+  Example: the brief says "No mobile app needed — desktop browser only."
+  That is a known scope boundary, not an unknown. Logging it as an
+  assumption inflates count and crushes pm_confidence under the hard caps.
+
+  PRODUCT OWNER / NAMED ACCOUNTABILITY:
+    Do not add an assumption whose only purpose is to name a Product Owner
+    or HR PO when the brief simply does not name an individual. Assigning
+    a PO for the plan is a standard planning decision, not an input gap —
+    unless the brief explicitly flags PO accountability as unknown (e.g.
+    "PO TBD", "owner not assigned").
+
   WHAT IS AN ASSUMPTION vs A PLANNING DECISION:
     ASSUMPTION = something the input doesn't tell you and you cannot derive.
     PLANNING DECISION = how you choose to organize known resources.

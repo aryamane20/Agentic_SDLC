@@ -4,6 +4,7 @@ Validates agent output using Pydantic models + business rules.
 """
 
 import json
+import re
 from pathlib import Path
 from pydantic import ValidationError as PydanticValidationError
 from schemas.output_schema import PMReport
@@ -131,6 +132,41 @@ def _project_understanding_blob(report: dict) -> str:
     for q in pu.get("supporting_quotes") or []:
         parts.append(str(q))
     return " ".join(parts).lower()
+
+
+def _normalize_blurb(s: str) -> str:
+    return " ".join((s or "").lower().split())
+
+
+def _brief_segments(brief_blob: str, min_len: int = 18) -> list[str]:
+    """Clause-like slices from the brief for substring checks against assumption WHAT."""
+    t = re.sub(r"[\n\r\t]+", " ", brief_blob)
+    t = re.sub(r"\s+", " ", t)
+    parts = re.split(r"(?:[.;|]+|--+|[—–])", t)
+    segs: list[str] = []
+    for p in parts:
+        p = p.strip()
+        if len(p) >= min_len:
+            segs.append(_normalize_blurb(p))
+    return segs
+
+
+def _assumption_what_restates_brief_constraint(what: str, brief_blob: str) -> bool:
+    """
+    True when assumption WHAT echoes a constraint already stated in project_understanding
+    (inflates assumption count and triggers score caps). Uses normalized substring match.
+    """
+    w = _normalize_blurb(what)
+    b = _normalize_blurb(brief_blob)
+    if len(w) < 12 or len(b) < 12:
+        return False
+    # Entire WHAT is contained in brief → restating a known sentence/constraint
+    if len(w) >= 20 and w in b:
+        return True
+    for seg in _brief_segments(brief_blob, min_len=18):
+        if len(seg) >= 18 and seg in w:
+            return True
+    return False
 
 
 def _expansion_classes_for_role(role_l: str) -> list[str]:
@@ -397,6 +433,17 @@ class SchemaValidator:
         assumptions = report.get("assumption_log", [])
         if len(assumptions) < 1:
             warnings.append("Assumption log is empty, expected at least 1 assumption")
+
+        brief_blob = _project_understanding_blob(report)
+        for a in assumptions:
+            wid = a.get("id", "?")
+            what = str(a.get("what") or "")
+            if brief_blob and _assumption_what_restates_brief_constraint(what, brief_blob):
+                errors.append(
+                    f"Assumption {wid} WHAT restates a constraint or phrase already present "
+                    "in project_understanding — known facts must not be logged as assumptions "
+                    "(inflates count and forces hard caps)."
+                )
         
         # PM Confidence Score: 0-100
         score = report.get("pm_confidence_score", {})
@@ -485,7 +532,6 @@ class SchemaValidator:
                     warnings.append("viability_status is NOT_VIABLE but fewer than 2 scoping_options provided")
 
         # Staffing expansion: QA/UX/Security/DevOps not reflected in brief proxy → assumption rows
-        brief_blob = _project_understanding_blob(report)
         assumption_blob = " ".join(
             f"{a.get('what', '')} {a.get('why', '')} {a.get('consequence', '')}"
             for a in assumptions

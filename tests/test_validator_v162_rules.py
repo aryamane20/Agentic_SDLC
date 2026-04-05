@@ -301,6 +301,72 @@ class TestPhase5PercentageCeiling:
         assert any("Phase 5" in e and "10%" in e for e in errors)
 
 
+class TestAssumptionRestatesBriefConstraint:
+    def test_errors_when_assumption_what_is_substring_of_brief(self):
+        """WHAT must not echo a sentence already in project_understanding (known fact)."""
+        long_sentence = (
+            "the solution is desktop browser only with no mobile app in scope for version one"
+        )
+        report = {
+            "project_understanding": {
+                "primary_goal": f"HR modernization. {long_sentence}.",
+                "beneficiary": "HR",
+                "trigger": "Program initiative",
+                "success_definition": ["Launch"],
+                "supporting_quotes": [],
+            },
+            "project_plan": {"total_duration_weeks": 10, "phases": _five_phases_one_task()},
+            "staffing_plan": [],
+            "risk_register": _minimal_risks(),
+            "assumption_log": [
+                {
+                    "id": "A8",
+                    "what": long_sentence,
+                    "why": "Scope",
+                    "pmi_basis": "x",
+                    "risk_if_wrong": "LOW",
+                    "consequence": "x",
+                }
+            ],
+            "pm_confidence_score": {"score": 72, "interpretation": "x"},
+            "open_questions": [],
+        }
+        v = SchemaValidator()
+        v._normalize_field_names(report)
+        errors, _w = v._check_business_rules(report)
+        assert any("restates" in e.lower() and "A8" in e for e in errors)
+
+    def test_no_error_when_assumption_what_adds_unknown_not_in_brief(self):
+        report = {
+            "project_understanding": {
+                "primary_goal": "HR modernization for 500 internal users on desktop browser only.",
+                "beneficiary": "HR",
+                "trigger": "Program initiative",
+                "success_definition": ["Launch"],
+                "supporting_quotes": [],
+            },
+            "project_plan": {"total_duration_weeks": 10, "phases": _five_phases_one_task()},
+            "staffing_plan": [],
+            "risk_register": _minimal_risks(),
+            "assumption_log": [
+                {
+                    "id": "A1",
+                    "what": "Legacy payroll API sandbox will be available with documentation by kickoff",
+                    "why": "Integration dependency",
+                    "pmi_basis": "x",
+                    "risk_if_wrong": "HIGH",
+                    "consequence": "Slip",
+                }
+            ],
+            "pm_confidence_score": {"score": 70, "interpretation": "x"},
+            "open_questions": [],
+        }
+        v = SchemaValidator()
+        v._normalize_field_names(report)
+        errors, _w = v._check_business_rules(report)
+        assert not any("restates" in e.lower() for e in errors)
+
+
 class TestPmStaffingAssumptionCoverage:
     def test_warns_when_product_manager_not_in_brief_without_assumption_row(self):
         report = {
