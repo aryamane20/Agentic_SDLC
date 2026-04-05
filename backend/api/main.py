@@ -1,5 +1,5 @@
 """
-PM Digital Twin — FastAPI backend (Project 2).
+PLANR — FastAPI backend (Project 2).
 
 Run from repository root (so agent/, prompts/, knowledge-base/ resolve):
   pip install -r requirements.txt -r backend/requirements.txt
@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.api.routers import gates, refine, reports, sessions
 
 app = FastAPI(
-    title="PM Digital Twin API",
+    title="PLANR API",
     description="HITL approval gates + session persistence wrapping PMAgent",
     version="0.1.0",
     redirect_slashes=False,
@@ -23,8 +23,8 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
+        "http://localhost:5180",
+        "http://127.0.0.1:5180",
     ],
     allow_credentials=True,
     allow_methods=["*"],

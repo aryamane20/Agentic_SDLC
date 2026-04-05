@@ -394,7 +394,7 @@ Refinement message passes `previous_report` JSON + `feedback` string; agent upda
 **Local dev (two terminals):**
 ```bash
 uvicorn backend.api.main:app --reload --port 8000   # backend
-cd frontend && npm run dev                   # frontend → localhost:5173
+cd frontend && npm run dev                   # frontend → localhost:5180 (avoids :5173 clashes)
 ```
 
 **Unchanged from Project 1:** `agent/main.py`, `agent/validator.py`, `prompts/`, `knowledge-base/`, all eval scripts.

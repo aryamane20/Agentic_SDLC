@@ -1,4 +1,5 @@
-# PM Digital Twin — Project 1
+
+# PLANR — Project 1
 ### Course: Vibe Coding to Agent Engineering (Spring 2026)
 ### Student: Arya Mane | Role: Developer/PM
 
@@ -6,7 +7,7 @@
 
 ## What This Is
 
-An AI agent that replicates the thinking process of a senior **Internal Product Project Manager**. Given any project requirements — vague or detailed — the agent runs an 8-step reasoning process grounded in PMI/PMBOK frameworks and produces an integrated output: project plan, risk register, and staffing plan.
+**PLANR** is the product name: short, readable, works as a verb (“Let me Planr this first”). Under the hood it is an AI agent that replicates the thinking process of a senior **Internal Product Project Manager**. Given any project requirements — vague or detailed — the agent runs an 8-step reasoning process grounded in PMI/PMBOK frameworks and produces an integrated output: project plan, risk register, and staffing plan.
 
 This is **not** a form-filling tool. The agent is designed to think first, then produce — the same way a real PM does.
 
@@ -81,6 +82,10 @@ Agentic_SDLC/
 │   ├── run_eval.py                ← Runs agent on eval set, outputs scorecard
 │   └── analyze_logs.py            ← Parses logs/ for latency, failure rate
 │
+├── frontend/                      ← Project 2: Vite + React + Tailwind + shadcn-style UI
+│   ├── README.md                  ← `npm run dev` (proxies API on :8000)
+│   └── src/components/ui/        ← Registry components (e.g. particle-text-effect)
+│
 ├── backend/                       ← Project 2: backend root (deps, future shared code)
 │   ├── requirements.txt           ← fastapi, uvicorn (install with root requirements.txt)
 │   └── api/                       ← FastAPI app package
@@ -134,6 +139,12 @@ pip install -r backend/requirements.txt
 uvicorn backend.api.main:app --reload --port 8000
 ```
 Open **http://127.0.0.1:8000/docs** for OpenAPI. Typical flow: `POST /sessions` → `POST /reports/generate` with `session_id` + `brief` → optional `POST /gates/{report_id}/decision` → optional `POST /reports/{report_id}/refine`. Session JSON lives in `sessions/` (gitignored). Gate decisions append to `logs/gate_decisions.jsonl`.
+
+### Project 2 — Frontend (Vite landing; proxies API)
+```bash
+cd frontend && npm install && npm run dev
+```
+Open **http://localhost:5180** (frontend dev uses **5180** so it does not clash with other apps on Vite’s default **5173**). With the backend on port 8000, the dev server proxies `/sessions`, `/reports`, `/gates`, and `/health` to the API. See `frontend/README.md` for shadcn paths and adding components.
 
 ### Run full evaluation suite (live — calls API)
 ```bash

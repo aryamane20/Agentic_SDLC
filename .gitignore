@@ -34,3 +34,7 @@ outputs/.cache/
 
 # Project 2 local session store (regenerable)
 sessions/
+
+# Frontend (Vite)
+frontend/node_modules/
+frontend/dist/
