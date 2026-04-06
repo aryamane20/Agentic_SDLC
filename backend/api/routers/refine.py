@@ -8,9 +8,8 @@ from agent.main import PMAgent
 
 from backend.api.db import store
 from backend.api.deps import planr_user_id
-from backend.api.models.gate import RefineRequest
+from backend.api.models.gate import GateState, RefineRequest
 from backend.api.models.session import RefinementRecord
-from backend.api.services.approval_gate import evaluate_gate
 from backend.api.services.refinement import run_refinement
 
 router = APIRouter()
@@ -41,6 +40,11 @@ def refine(
     assert state is not None
     entry = state.reports[index]
 
+    # Gate is a warning signal, not a workflow lock.
+    # Refining through a fired gate is the PM's way of addressing the concerns.
+    # The gate is re-evaluated on the new report after every refinement.
+    # Approve is the only action that formally closes the gate.
+
     prior = entry.report
     if entry.refinements:
         prior = entry.refinements[-1].report
@@ -54,7 +58,8 @@ def refine(
         update_brief=body.update_brief,
     )
     new_report = out["report"]
-    gate = evaluate_gate(new_report)
+    # run_refinement already evaluated the gate — reuse it rather than calling twice.
+    gate = GateState.model_validate(out["gate"])
 
     entry.refinements.append(
         RefinementRecord(

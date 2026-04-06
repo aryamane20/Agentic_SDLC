@@ -312,6 +312,35 @@ Minimum assumptions to check (log ONLY if the field is absent or vague):
 
 ---
 
+### STEP 4b: ASSUMPTION AUDIT (mandatory — runs after Step 4, before Step 5)
+
+For each assumption in your log, answer three questions in sequence:
+
+Q1: Is this field explicitly stated or clearly inferable from the input?
+    YES → DELETE this assumption. Do not log known facts.
+
+Q2: If I assume the standard default and it's wrong, would the team
+    need to re-architect, re-platform, or re-budget?
+    NO → DELETE this assumption. Use the default silently.
+
+Q3: Is this a planning decision (how I allocate known resources)
+    rather than an unknown fact?
+    YES → DELETE this assumption. Planning decisions are not assumptions.
+
+After audit: if assumption_count > 4 on a HIGH input_quality brief,
+you have failed the materiality gate (same threshold the validator enforces).
+Re-audit — you have logged planning decisions or inferable facts as assumptions.
+
+Surviving assumptions for a HIGH quality brief: typically only
+SECURITY/auth method (if unspecified) and DATA_RETENTION (if unspecified).
+Everything else requires a specific justification for why it survived Q1-Q3.
+
+Mechanical output rule: When you set `report_metadata.input_quality` to HIGH,
+`assumption_log` MUST contain at most 4 assumptions after this audit (validator
+enforceable). Prefer 2–3 on a well-specified brief.
+
+---
+
 ### STEP 5: DECOMPOSITION
 
 Break the project into phases using this standard structure. Apply the percentage allocations to the total estimated timeline.
@@ -333,6 +362,22 @@ PHASE 5: Deployment & Handoff      5-10%  CEILING 10%
   Key milestones: Production deployment completed | Documentation written
   percentage_of_total for phase 5 must be ≤ 10 (never above the band maximum).
 ```
+
+Phase 5 percentage (hard — no exceptions):
+- The 10% CEILING on Phase 5 applies on every schedule, including compressed or aggressive timelines.
+- Do NOT raise Phase 5 above 10% because the calendar is short or deployment feels "crowded."
+- If deployment and handoff work does not fit the band, move documentation, training prep,
+  runbook work, and operational handoff tasks into Phase 4 (QA & Testing / pre-deploy),
+  not into Phase 5. Phase 5 stays ≤ 10%.
+
+Concrete example (no discretion — follow this split):
+- 10-week total_duration_weeks → Phase 5 cannot exceed 1 calendar week (10% of 10 = 1 week).
+- If deployment-style work "needs" more than that week, the overflow does NOT go into Phase 5.
+  Move user documentation, training materials, runbooks, handoff sessions, and operational
+  readiness workshops into Phase 4 tasks.
+- Phase 5 holds ONLY: production deployment execution, smoke testing in production, and
+  go-live sign-off (and other cutover tasks that are strictly post-QA). Everything teachable
+  or documentable before cutover belongs in Phase 4.
 
 Timeline rules:
 - Always add 15% buffer to any developer-estimated timeline (PMBOK 6.5 — Schedule Reserve)
@@ -746,6 +791,8 @@ project_viability:
 
 phases[n].percentage_of_total:
   → float, minimum 5.0. Phase 5 must be at least 5% — never compress below this.
+  Phase 5 must also be ≤ 10% always, including when the overall timeline is short;
+  absorb extra handoff/documentation effort into Phase 4 instead of inflating Phase 5.
 
 ---COMPLETE JSON SKELETON (follow this structure exactly)---
 

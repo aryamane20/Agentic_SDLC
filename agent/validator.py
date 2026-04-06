@@ -323,6 +323,67 @@ def sync_pm_confidence_metadata_mirrors(report: dict) -> None:
             pass
 
 
+def correct_phase5_ceiling_redistribute(report: dict) -> list[str]:
+    """
+    Enforce Phase 5 percentage_of_total <= 10% by capping Phase 5 at exactly 10%
+    and moving the excess onto Phase 4 (or the highest phase with phase_number < 5).
+
+    Mutates report in place. Returns human-readable warnings (empty if no change).
+    Total of all phase percentages is preserved.
+    """
+    warnings_out: list[str] = []
+    plan = report.get("project_plan")
+    if not isinstance(plan, dict):
+        return warnings_out
+    phases = plan.get("phases")
+    if not isinstance(phases, list) or not phases:
+        return warnings_out
+    phase_5 = next((p for p in phases if p.get("phase_number") == 5), None)
+    if phase_5 is None:
+        return warnings_out
+    try:
+        p5_raw = phase_5.get("percentage_of_total")
+        p5 = float(p5_raw if p5_raw is not None else 0)
+    except (TypeError, ValueError):
+        return warnings_out
+    if p5 <= 10.0 + 1e-6:
+        return warnings_out
+
+    excess = round(p5 - 10.0, 2)
+    old_p5 = p5
+    phase_5["percentage_of_total"] = 10.0
+
+    phase_4 = next((p for p in phases if p.get("phase_number") == 4), None)
+    if phase_4 is None:
+        numbered = [p for p in phases if isinstance(p.get("phase_number"), int)]
+        lower = [p for p in numbered if (p.get("phase_number") or 0) < 5]
+        if lower:
+            phase_4 = max(lower, key=lambda p: p.get("phase_number") or 0)
+
+    if phase_4 is None:
+        phase_5["percentage_of_total"] = old_p5
+        warnings_out.append(
+            "Phase 5 exceeded 10% but no Phase 4 (or lower phase) was found — "
+            "left percentages unchanged"
+        )
+        return warnings_out
+
+    try:
+        p4_raw = phase_4.get("percentage_of_total")
+        p4 = float(p4_raw if p4_raw is not None else 0)
+    except (TypeError, ValueError):
+        p4 = 0.0
+    phase_4["percentage_of_total"] = round(p4 + excess, 2)
+    p4n = phase_4["percentage_of_total"]
+
+    warnings_out.append(
+        f"Corrected Phase 5 percentage from {old_p5}% to 10%; "
+        f"moved {excess}% to phase {phase_4.get('phase_number')} "
+        f"(percentage_of_total now {p4n}%)."
+    )
+    return warnings_out
+
+
 class SchemaValidator:
     """
     Validates PM Digital Twin output using Pydantic models
@@ -344,10 +405,13 @@ class SchemaValidator:
         """
         # First normalize field names (flexible schema)
         self._normalize_field_names(report)
-        
-        errors = []
-        warnings = []
-        
+
+        # Cap Phase 5 at 10% and redistribute to Phase 4 before schema/business checks
+        # so _check_business_rules does not spuriously fail (and retries don't thrash).
+        errors: list[str] = []
+        warnings: list[str] = []
+        warnings.extend(correct_phase5_ceiling_redistribute(report))
+
         # 1. Pydantic validation
         try:
             validated = PMReport(**report)
@@ -358,8 +422,9 @@ class SchemaValidator:
         
         # 2. Business rules validation (only if schema valid)
         if not errors:
-            br_errors, warnings = self._check_business_rules(report)
+            br_errors, br_warnings = self._check_business_rules(report)
             errors.extend(br_errors)
+            warnings.extend(br_warnings)
         
         return {
             "valid": len(errors) == 0,
@@ -444,6 +509,15 @@ class SchemaValidator:
                     "in project_understanding — known facts must not be logged as assumptions "
                     "(inflates count and forces hard caps)."
                 )
+
+        metadata = report.get("report_metadata") or {}
+        input_quality = (metadata.get("input_quality") or "").strip().upper()
+        ac = len(assumptions)
+        if input_quality == "HIGH" and ac > 4:
+            errors.append(
+                "HIGH quality input should not produce more than 4 assumptions — "
+                "materiality gate not applied correctly."
+            )
         
         # PM Confidence Score: 0-100
         score = report.get("pm_confidence_score", {})

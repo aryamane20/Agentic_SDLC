@@ -38,6 +38,17 @@ def _five_phases_one_task():
     return phases
 
 
+def _assumption_row(aid: str):
+    return {
+        "id": aid,
+        "what": "test assumption",
+        "why": "needed",
+        "pmi_basis": "PMBOK",
+        "risk_if_wrong": "LOW",
+        "consequence": "slip",
+    }
+
+
 def _minimal_risks():
     return [
         {
@@ -71,6 +82,57 @@ def _minimal_risks():
             "mitigation": "m",
         },
     ]
+
+
+class TestHighInputQualityAssumptionCap:
+    def _report_with_assumptions(self, n: int, input_quality: str, score: int = 70):
+        return {
+            "report_metadata": {
+                "generated_at": "2026-01-01T00:00:00Z",
+                "input_quality": input_quality,
+                "project_type": "TYPE_A",
+                "sdlc_approach": "Hybrid",
+                "classification_confidence": "HIGH",
+                "sdlc_rationale": "x",
+                "pm_confidence_score": float(score),
+            },
+            "project_plan": {"total_duration_weeks": 12, "phases": _five_phases_one_task()},
+            "staffing_plan": [],
+            "risk_register": _minimal_risks(),
+            "assumption_log": [_assumption_row(f"A{i}") for i in range(1, n + 1)],
+            "pm_confidence_score": {"score": score, "interpretation": "x"},
+            "open_questions": [],
+        }
+
+    def test_errors_when_high_quality_and_more_than_four_assumptions(self):
+        report = self._report_with_assumptions(5, "HIGH")
+        v = SchemaValidator()
+        v._normalize_field_names(report)
+        errors, _ = v._check_business_rules(report)
+        assert any(
+            "more than 4 assumptions" in e and "materiality gate" in e for e in errors
+        )
+
+    def test_high_quality_case_insensitive(self):
+        report = self._report_with_assumptions(5, "high")
+        v = SchemaValidator()
+        v._normalize_field_names(report)
+        errors, _ = v._check_business_rules(report)
+        assert any("more than 4 assumptions" in e for e in errors)
+
+    def test_allows_four_assumptions_when_high_quality(self):
+        report = self._report_with_assumptions(4, "HIGH")
+        v = SchemaValidator()
+        v._normalize_field_names(report)
+        errors, _ = v._check_business_rules(report)
+        assert not any("more than 4 assumptions" in e for e in errors)
+
+    def test_rule_not_applied_when_input_quality_not_high(self):
+        report = self._report_with_assumptions(8, "MEDIUM", score=40)
+        v = SchemaValidator()
+        v._normalize_field_names(report)
+        errors, _ = v._check_business_rules(report)
+        assert not any("more than 4 assumptions" in e for e in errors)
 
 
 class TestBeforePlanningUrgencyConsistency:
@@ -279,6 +341,31 @@ class TestSignOffOpenQuestionContradiction:
         v._normalize_field_names(report)
         errors, _w = v._check_business_rules(report)
         assert any("Before build" in e and "contradiction" in e for e in errors)
+
+
+class TestPhase5CeilingCorrection:
+    def test_redistributes_excess_from_phase5_to_phase4(self):
+        from agent.validator import correct_phase5_ceiling_redistribute
+
+        phases = _five_phases_one_task()
+        for p in phases:
+            if p["phase_number"] == 5:
+                p["percentage_of_total"] = 15.0
+        p4_before = next(p["percentage_of_total"] for p in phases if p["phase_number"] == 4)
+        report = {"project_plan": {"phases": phases}}
+        warns = correct_phase5_ceiling_redistribute(report)
+        p5 = next(p["percentage_of_total"] for p in phases if p["phase_number"] == 5)
+        p4 = next(p["percentage_of_total"] for p in phases if p["phase_number"] == 4)
+        assert p5 == 10.0
+        assert p4 == round(p4_before + 5.0, 2)
+        assert any("Corrected Phase 5" in w for w in warns)
+
+    def test_no_op_when_phase5_already_at_or_below_10(self):
+        from agent.validator import correct_phase5_ceiling_redistribute
+
+        phases = _five_phases_one_task()
+        report = {"project_plan": {"phases": phases}}
+        assert correct_phase5_ceiling_redistribute(report) == []
 
 
 class TestPhase5PercentageCeiling:

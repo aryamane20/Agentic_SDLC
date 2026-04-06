@@ -1,5 +1,6 @@
 """Generate and fetch PM reports via PMAgent (Project 1 core)."""
 
+import time
 import uuid
 from functools import lru_cache
 from io import BytesIO
@@ -21,6 +22,7 @@ _validator = SchemaValidator()
 
 _MAX_DOC_BYTES = 5 * 1024 * 1024
 _MAX_EXTRACT_CHARS = 120_000
+_MAX_VALIDATION_ATTEMPTS = 3
 
 
 def _compose_brief_for_agent(brief: str, prd_text: Optional[str]) -> str:
@@ -109,23 +111,35 @@ def generate_report(
     composed = _compose_brief_for_agent(body.brief, body.prd_text)
 
     agent = _agent_for_version(body.prompt_version or "v1.6.2")
-    run = agent.run(
-        composed,
-        input_source=f"backend-session-{body.session_id}",
-        use_cache=body.use_cache,
-    )
-    report = run.get("report")
-    if not isinstance(report, dict):
-        raise HTTPException(
-            status_code=502,
-            detail="Agent returned no report dict — parse or model error",
+    run: dict | None = None
+    validation: dict | None = None
+    report: dict | None = None
+    for attempt in range(_MAX_VALIDATION_ATTEMPTS):
+        use_cache = body.use_cache if attempt == 0 else False
+        run = agent.run(
+            composed,
+            input_source=f"backend-session-{body.session_id}",
+            use_cache=use_cache,
         )
+        report = run.get("report")
+        if not isinstance(report, dict):
+            raise HTTPException(
+                status_code=502,
+                detail="Agent returned no report dict — parse or model error",
+            )
 
-    sync_pm_confidence_metadata_mirrors(report)
-    validation = _validator.validate(dict(report))
-    # Normalize can resurrect an uncapped score from pm_confidence_score.breakdown — re-apply caps.
-    agent._enforce_hard_caps(report)
-    sync_pm_confidence_metadata_mirrors(report)
+        sync_pm_confidence_metadata_mirrors(report)
+        validation = _validator.validate(dict(report))
+        # Second enforcement after validate(): Pydantic/normalize may expose breakdown fields that
+        # bump the displayed score; caps must match gate evaluation on the final dict.
+        agent._enforce_hard_caps(report)
+        sync_pm_confidence_metadata_mirrors(report)
+        if validation.get("valid"):
+            break
+        if attempt + 1 < _MAX_VALIDATION_ATTEMPTS:
+            time.sleep(1.0 * (attempt + 1))
+
+    assert run is not None and report is not None and validation is not None
     gate = evaluate_gate(report)
 
     rid = f"rpt_{uuid.uuid4().hex[:12]}"

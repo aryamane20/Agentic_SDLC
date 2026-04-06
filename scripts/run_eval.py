@@ -130,14 +130,32 @@ def _run_schema_one(tc: dict, agent: PMAgent, prompt_version: str = "v1.6.2",
                     "errors": [f"No cached output for {tc['id']} in outputs/{prompt_version}/"],
                     "warnings": []}
     else:
+        validator = SchemaValidator()
+        report = None
+        validation = None
         for attempt in range(max_retries):
             try:
-                result = agent.run(tc["input"], input_source=tc["id"])
+                result = agent.run(
+                    tc["input"],
+                    input_source=tc["id"],
+                    use_cache=(attempt == 0),
+                )
                 if cost_tracker:
                     cost_tracker.record(result)
                 report = result["report"]
-                _save_output(tc["id"], report, prompt_version)
-                break
+                validation = validator.validate(report)
+                if validation["valid"]:
+                    _save_output(tc["id"], report, prompt_version)
+                    break
+                err_preview = (validation.get("errors") or [])[:2]
+                print(
+                    f"    [Validation] {tc['id']} attempt {attempt + 1}/{max_retries} "
+                    f"failed — {err_preview}"
+                )
+                if attempt + 1 >= max_retries:
+                    _save_output(tc["id"], report, prompt_version)
+                    break
+                time.sleep(5)
             except Exception as e:
                 if "429" in str(e) or "rate_limit" in str(e).lower():
                     wait = 65 * (attempt + 1)
@@ -149,8 +167,12 @@ def _run_schema_one(tc: dict, agent: PMAgent, prompt_version: str = "v1.6.2",
             return {"test_case": tc["id"], "passed": False,
                     "errors": ["Rate limit exceeded after all retries"], "warnings": []}
 
-    validator = SchemaValidator()
-    validation = validator.validate(report)
+        if report is None or validation is None:
+            return {"test_case": tc["id"], "passed": False,
+                    "errors": ["No report produced"], "warnings": []}
+    if replay:
+        validator = SchemaValidator()
+        validation = validator.validate(report)
     return {
         "test_case": tc["id"],
         "passed": validation["valid"],

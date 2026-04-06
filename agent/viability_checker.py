@@ -232,7 +232,8 @@ class ViabilityChecker:
         if cp_summary:
             duration = cp_summary.get("total_duration_days")
             if duration:
-                return duration / 7  # Convert days to weeks
+                # Tasks are sized in working days; a week = 5 working days (not calendar /7).
+                return float(duration) / 5.0
         
         # Fall back to total_duration_weeks
         total_duration = project_plan.get("total_duration_weeks")
@@ -370,7 +371,7 @@ class ViabilityChecker:
                 {
                     "option_id": "S2",
                     "description": "Phase delivery - release MVP first",
-                    "impact": "Core features in {constraints.deadline_weeks:.0f} weeks, full scope later",
+                    "impact": f"Core features in {constraints.deadline_weeks:.0f} weeks, full scope later",
                     "tradeoffs": "Partial functionality at launch, technical debt"
                 },
                 {
