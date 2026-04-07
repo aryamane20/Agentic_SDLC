@@ -1,0 +1,15 @@
+{
+  "pm_confidence_score": { "score": 78 },
+  "risk_register": [{ "score": "MEDIUM", "description": "SAP export batch window" }],
+  "project_viability": { "viability_status": "VIABLE" },
+  "project_plan": {
+    "phases": [
+      {"name": "Discovery", "tasks": [{"id": "t1", "title": "x"}]},
+      {"name": "Build core", "tasks": [{"id": "t2", "title": "x"}]},
+      {"name": "Integrations", "tasks": [{"id": "t3", "title": "x"}]},
+      {"name": "UAT", "tasks": [{"id": "t4", "title": "x"}]},
+      {"name": "Rollout", "tasks": [{"id": "t5", "title": "x"}]}
+    ]
+  },
+  "open_questions": [{ "urgency": "Before build", "question": "Audit sampling?" }]
+}

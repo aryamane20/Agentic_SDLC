@@ -1,0 +1,8 @@
+{
+  "pm_confidence_score": {"score": 82},
+  "risk_register": [
+    {"score": "CRITICAL", "description": "PHI breach / launch coupling", "category": "Compliance"}
+  ],
+  "project_viability": {"viability_status": "VIABLE"},
+  "open_questions": []
+}

@@ -1,0 +1,9 @@
+# P2 Scenario B — Low confidence (gate likely on score)
+
+## Project request
+
+We want something better for **tracking stuff** across teams.
+
+People are using spreadsheets and it's messy. Leadership wants visibility. Maybe an app? Or we could buy something — not sure what's allowed.
+
+Timeline is "soon." Budget is flexible but not huge. Team TBD.

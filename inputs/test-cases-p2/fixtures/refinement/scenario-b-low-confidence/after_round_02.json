@@ -1,0 +1,15 @@
+{
+  "pm_confidence_score": { "score": 68 },
+  "risk_register": [{ "score": "LOW", "description": "Pilot scope limited to Sales/CS handoff" }],
+  "project_viability": { "viability_status": "VIABLE" },
+  "project_plan": {
+    "phases": [
+      {"name": "P1", "tasks": [{"id": "a", "title": "x"}]},
+      {"name": "P2", "tasks": [{"id": "b", "title": "x"}]},
+      {"name": "P3", "tasks": [{"id": "c", "title": "x"}]},
+      {"name": "P4", "tasks": [{"id": "d", "title": "x"}]},
+      {"name": "P5", "tasks": [{"id": "e", "title": "x"}]}
+    ]
+  },
+  "open_questions": []
+}

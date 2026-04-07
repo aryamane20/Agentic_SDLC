@@ -19,7 +19,7 @@ import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -834,7 +834,7 @@ def run_edge_cases(test_cases: list, agent: PMAgent, workers: int = 5,
 # MAIN EVAL RUNNER
 # ─────────────────────────────────────────────────────────────
 
-def load_test_cases(tc_dir: str = "inputs/test-cases") -> list:
+def load_test_cases(tc_dir: str = "inputs/test-cases-p1") -> list:
     """Load all test case input files."""
     tc_path = Path(tc_dir)
     test_cases = []
@@ -899,7 +899,7 @@ def main():
     print(f"Model          : {args.model}")
     print(f"Mode           : {mode_label}")
     print(f"Parallel workers: {args.workers}")
-    print(f"Timestamp      : {datetime.utcnow().isoformat()}Z")
+    print(f"Timestamp      : {datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')}")
     print(f"{'='*60}\n")
 
     cost_tracker = CostTracker(args.model)
@@ -908,7 +908,7 @@ def main():
     test_cases = load_test_cases()
 
     if not test_cases:
-        print("ERROR: No test cases found in inputs/test-cases/")
+        print("ERROR: No test cases found in inputs/test-cases-p1/")
         return
 
     if args.tc:
@@ -936,7 +936,7 @@ def main():
             return
 
     all_results = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "prompt_version": args.prompt_version,
         "mode": mode_label,
         "dimensions": {}
@@ -1040,10 +1040,10 @@ def main():
     else:
         print(cost_tracker.summary())
 
-    # Save results
-    results_dir = Path("eval/results")
+    # Save results (P1 eval scorecards — see results/p1/README.md)
+    results_dir = Path("results/p1/eval")
     results_dir.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     results_file = results_dir / f"eval_{args.prompt_version}_{timestamp}.json"
     all_results["cost"] = {
         "api_calls": cost_tracker.call_count,

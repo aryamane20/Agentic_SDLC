@@ -1,0 +1,15 @@
+{
+  "pm_confidence_score": {"score": 78},
+  "risk_register": [{"score": "MEDIUM", "description": "SAP export window"}],
+  "project_viability": {"viability_status": "VIABLE"},
+  "project_plan": {
+    "phases": [
+      {"name": "P1", "tasks": [{"id": "t1", "title": "a"}]},
+      {"name": "P2", "tasks": [{"id": "t2", "title": "b"}]},
+      {"name": "P3", "tasks": [{"id": "t3", "title": "c"}]},
+      {"name": "P4", "tasks": [{"id": "t4", "title": "d"}]},
+      {"name": "P5", "tasks": [{"id": "t5", "title": "e"}]}
+    ]
+  },
+  "open_questions": [{"urgency": "Before build", "question": "Audit sampling rate?"}]
+}

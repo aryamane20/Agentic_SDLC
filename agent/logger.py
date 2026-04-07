@@ -6,7 +6,7 @@ Logs agent outputs in structured JSON format for analysis.
 import json
 import logging
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any
 
 
@@ -22,7 +22,7 @@ class PMReportLogger:
         
         # Configure file logger
         self.file_handler = logging.FileHandler(
-            self.log_dir / f"pm_agent_{datetime.utcnow().strftime('%Y%m%d')}.jsonl"
+            self.log_dir / f"pm_agent_{datetime.now(timezone.utc).strftime('%Y%m%d')}.jsonl"
         )
         self.file_handler.setFormatter(logging.Formatter('%(message)s'))
         
@@ -45,7 +45,7 @@ class PMReportLogger:
             metadata: Optional metadata (input source, runtime, etc.)
         """
         log_entry = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "report_id": metadata.get("report_id") if metadata else None,
             "input_source": metadata.get("input_source") if metadata else None,
             "runtime_seconds": metadata.get("runtime_seconds") if metadata else None,
@@ -72,7 +72,7 @@ class PMReportLogger:
         Log an error that occurred during processing.
         """
         log_entry = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "error_type": type(error).__name__,
             "error_message": str(error),
             "context": context or {}

@@ -2,7 +2,7 @@
 Input Schema - Pydantic models for PM Digital Twin input validation.
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
 
 
@@ -21,11 +21,12 @@ class PMInput(BaseModel):
         default=None,
         description="Source identifier for the input (e.g., 'test-case-01')"
     )
-    
-    class Config:
-        json_schema_extra = {
+
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "project_requirements": "Build an internal dashboard for the data team...",
-                "input_source": "tc-01-perfect.txt"
+                "input_source": "tc-01-perfect.txt",
             }
         }
+    )

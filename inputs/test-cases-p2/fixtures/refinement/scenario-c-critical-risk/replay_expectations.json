@@ -1,0 +1,5 @@
+{
+  "initial": { "fired": true },
+  "after_round_01": { "fired": true },
+  "after_round_02": { "fired": false }
+}

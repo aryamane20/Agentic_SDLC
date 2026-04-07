@@ -19,7 +19,12 @@ import json
 import os
 import re
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
+
+
+def _utc_iso_z() -> str:
+    """UTC wall time as ISO-8601 with Z suffix (avoids deprecated datetime.utcnow())."""
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 from dotenv import load_dotenv
 
@@ -229,7 +234,7 @@ class PMAgent:
 
         if "report_metadata" not in report:
             report["report_metadata"] = {}
-        report["report_metadata"]["generated_at"] = datetime.utcnow().isoformat() + "Z"
+        report["report_metadata"]["generated_at"] = _utc_iso_z()
         report["report_metadata"]["prompt_version"] = self.prompt_version
 
         result = {
@@ -315,7 +320,7 @@ class PMAgent:
 
         if "report_metadata" not in report:
             report["report_metadata"] = {}
-        report["report_metadata"]["generated_at"] = datetime.utcnow().isoformat() + "Z"
+        report["report_metadata"]["generated_at"] = _utc_iso_z()
         report["report_metadata"]["prompt_version"] = self.prompt_version
 
         return {
@@ -443,7 +448,7 @@ Begin."""
                         parsed = json.loads(fixed)
                         if "project_understanding" in parsed or "report_metadata" in parsed:
                             return parsed
-                    except:
+                    except json.JSONDecodeError:
                         pass
                 continue
 
@@ -462,7 +467,7 @@ Begin."""
             "parse_error": True,
             "raw_output": raw_output,
             "report_metadata": {
-                "generated_at": datetime.utcnow().isoformat() + "Z",
+                "generated_at": _utc_iso_z(),
                 "parse_failed": True
             }
         }

@@ -1,0 +1,12 @@
+{
+  "pm_confidence_score": { "score": 76 },
+  "risk_register": [
+    {
+      "score": "MEDIUM",
+      "description": "HIPAA consultant + second mobile dev absorbed; residual integration risk",
+      "category": "Technical"
+    }
+  ],
+  "project_viability": { "viability_status": "VIABLE" },
+  "open_questions": []
+}

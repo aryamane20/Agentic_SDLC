@@ -1,0 +1,21 @@
+{
+  "id": "p2-scenario-a-happy-path",
+  "title": "Happy path — gate should not fire",
+  "brief_file": "brief.txt",
+  "goal": "After generation, gate.fired should be false (confidence ≥ 60, no CRITICAL risk, viability not NOT_VIABLE, no blocking Before planning questions if WBS exists). REVIEW → APPROVED without gate alert.",
+  "refinement_rounds": [
+    {
+      "label": "surgical_PM_edit",
+      "feedback": "Please shorten the executive summary bullets to three lines max and rename Phase 2 to 'Core approvals & ERP integration' — no other changes."
+    },
+    {
+      "label": "benign_clarification",
+      "feedback": "Looks good. Add one sentence under risks noting we'll use the existing Okta test tenant for UAT. Don't change dates or staffing."
+    }
+  ],
+  "expected": {
+    "initial_gate_preference": "not_fired",
+    "after_refinements_gate_preference": "not_fired",
+    "notes": "LLM variance: if gate fires once, refine should not introduce CRITICAL risk; document actual gate reasons in results."
+  }
+}

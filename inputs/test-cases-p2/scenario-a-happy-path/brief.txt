@@ -1,0 +1,32 @@
+# P2 Scenario A — Happy path (gate should stay clear)
+
+## Project request
+
+Replace our legacy internal **expense report** tool with a greenfield web app. Volume: ~3k submissions/month across 400 employees.
+
+**Goal:** Employees submit receipts and approvals online; finance exports to the existing ERP (SAP) nightly.
+
+**Success:**  
+- ≥95% of submissions need zero finance rework  
+- median approval cycle under 48h  
+- user satisfaction survey ≥ 4.2/5 after 90 days
+
+**Deadline:** 2026-09-01 (hard — aligned with fiscal calendar)
+
+**Budget:** $120k cap (finance approved)
+
+**Team:** PM (0.5), 2 backend engineers, 1 frontend engineer, 0.5 UX, 0.5 QA (shared)
+
+**Stack (mandated by IT):** React + TypeScript, Java + Spring Boot, PostgreSQL 15, deployed on existing AWS org account. SSO via Okta.
+
+**Compliance:** SOC 2 controls for expense data; no card PAN stored.
+
+**Stakeholders / sign-off:** CFO (sponsor), IT Director (architecture), Internal Audit (read-only access to logs).
+
+**Scope — must-haves:**  
+- Receipt capture (camera + PDF), policy rules engine, manager approval chain  
+- ERP export job + error dashboard for finance  
+
+**Out of scope:** corporate card issuance, international per-diem rules (phase 2).
+
+**Risks the sponsor already accepted:** SAP API rate limits managed by batch windows; OCR mistakes handled by human review queue.

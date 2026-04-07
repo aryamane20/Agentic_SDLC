@@ -1,0 +1,21 @@
+{
+  "id": "p2-scenario-b-low-confidence",
+  "title": "Low pm_confidence — gate should fire on score",
+  "brief_file": "brief.txt",
+  "goal": "Initial report should tend to gate.fired true with reason around confidence_score under 60. Exercise refine loop; after targeted feedback, gate may clear.",
+  "refinement_rounds": [
+    {
+      "label": "inject_constraints",
+      "feedback": "Lock these in: we're a 50-person SaaS company, $85k budget, 4-month deadline starting May 2026, team is 1 PM + 2 devs + 0.5 UX. Build vs buy decision must stay open but default to build a lightweight React + Node + Postgres internal tool unless buy is clearly cheaper."
+    },
+    {
+      "label": "narrow_scope",
+      "feedback": "Reduce scope to ONE pilot: track customer onboarding handoffs between Sales and CS only — success = 90% of handoffs visible in the tool within 1 week of close. Update assumptions and risks accordingly; I need confidence score at least 65."
+    }
+  ],
+  "expected": {
+    "initial_gate_preference": "fired_confidence",
+    "after_refinements_gate_preference": "not_fired_or_still_fired_document",
+    "notes": "If confidence stays under 60 after round 2, a third refine or approve-with-override is a product decision — capture gate reasons in results."
+  }
+}

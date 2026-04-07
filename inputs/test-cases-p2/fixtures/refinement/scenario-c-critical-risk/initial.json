@@ -1,0 +1,12 @@
+{
+  "pm_confidence_score": { "score": 74 },
+  "risk_register": [
+    {
+      "score": "CRITICAL",
+      "description": "PHI + EPIC connector + fixed public launch with 3 contractors",
+      "category": "Compliance"
+    }
+  ],
+  "project_viability": { "viability_status": "VIABLE" },
+  "open_questions": []
+}

@@ -1,0 +1,12 @@
+{
+  "pm_confidence_score": { "score": 72 },
+  "risk_register": [
+    {
+      "score": "CRITICAL",
+      "description": "May 15 launch unchanged; EPIC connector still unproven on prod data",
+      "category": "Schedule"
+    }
+  ],
+  "project_viability": { "viability_status": "VIABLE" },
+  "open_questions": []
+}

@@ -1,0 +1,19 @@
+# P2 Scenario C — Critical risk path (gate on CRITICAL)
+
+## Project request
+
+**Program:** National rollout of a **patient medication adherence** mobile app tied to our pharmacy chain (US). Real PHI: prescriptions, refill dates, prescriber NPI, patient phone numbers.
+
+**Hard launch date:** 2026-05-15 — Board announced publicly; **no slip** permitted.
+
+**Scope (all must ship on day one):**  
+- Patient app (iOS + Android), clinician-facing web dashboard, batch data sync from EPIC via new custom connector **we have not finished designing**  
+- Marketing push + in-store QR signup in 2,400 locations same week  
+
+**Team today:** 3 contractors (one backend, one mobile, one PM) — **no** dedicated security or compliance hire yet.
+
+**Budget:** $200k total remaining.
+
+**Note from CEO:** "We're behind EPIC cert schedule; assume we can get a 2-week variance from the hospital system — make the plan work."
+
+**Compliance:** HIPAA + state boards; any breach is existential for the brand.

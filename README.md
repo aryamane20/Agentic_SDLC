@@ -63,6 +63,7 @@ Agentic_SDLC/
 ├── tests/                          ← pytest test suite
 │   ├── __init__.py
 │   ├── conftest.py                ← pytest fixtures
+│   ├── p2/                        ← P2: pytest only; data under inputs/test-cases-p2/fixtures/
 │   ├── test_happy_path.py         ← Valid input → expected output
 │   ├── test_edge_cases.py         ← Malformed/empty/boundary inputs
 │   └── test_retry.py              ← Mock API failure → retry → success
@@ -79,7 +80,7 @@ Agentic_SDLC/
 │   └── EVALUATION_RUBRIC.md       ← 4-dimension eval results
 │
 ├── scripts/                        ← Utility scripts
-│   ├── run_eval.py                ← Runs agent on eval set, outputs scorecard
+│   ├── run_eval.py                ← Runs agent on eval set; scorecard → results/p1/eval/
 │   └── analyze_logs.py            ← Parses logs/ for latency, failure rate
 │
 ├── frontend/                      ← Project 2: Vite + React + Tailwind + shadcn-style UI
@@ -103,18 +104,16 @@ Agentic_SDLC/
 │   └── staffing/
 │       └── role-definitions.md    ← Role benchmarks and effort estimates
 │
-├── inputs/                         ← All test case inputs
-│   └── test-cases/
-│       ├── tc-01-perfect.txt      ← Complete requirements
-│       ├── tc-02-good.txt         ← Most fields, minor gaps
-│       ├── tc-03-medium.txt       ← Key fields, significant gaps
-│       ├── tc-04-vague.txt        ← Goal only, nothing else
-│       ├── tc-05-contradictory.txt ← Impossible constraints
-│       ├── tc-06-type-a.txt       ← New internal tool
-│       ├── tc-07-type-c.txt       ← Data pipeline
-│       ├── tc-08-type-d.txt      ← System integration
-│       ├── tc-09-short-timeline.txt ← 2 weeks, complex project
-│       └── tc-10-solo-team.txt   ← 1 person, large project
+├── inputs/                         ← All test-case inputs (P1 + P2)
+│   ├── test-cases-p1/             ← P1: tc-01 … tc-10 (.txt briefs for run_eval)
+│   ├── test-cases-p2/             ← P2: scenario-*/brief.txt + manifest.json
+│   │   └── fixtures/              ← P2: gates/*.json + refinement/*/ (frozen reports for pytest)
+│   └── test-cases -> test-cases-p1 ← Symlink for legacy paths
+│
+├── results/                        ← Eval scorecards & run logs (committed samples optional)
+│   ├── p1/eval/                   ← run_eval.py JSON scorecards (was eval/results/)
+│   ├── p1/README.md
+│   └── p2/e2e/                    ← P2 manual / scripted workflow logs
 │
 └── outputs/                       ← Auto-generated, gitignored except samples
     └── samples/

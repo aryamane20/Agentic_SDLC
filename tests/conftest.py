@@ -79,7 +79,7 @@ def sample_invalid_input():
 @pytest.fixture
 def sample_test_cases():
     """Load sample test cases from inputs directory."""
-    test_cases_dir = Path(__file__).parent.parent / "inputs" / "test-cases"
+    test_cases_dir = Path(__file__).parent.parent / "inputs" / "test-cases-p1"
     test_cases = {}
     
     if test_cases_dir.exists():
