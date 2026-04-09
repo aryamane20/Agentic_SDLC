@@ -3,14 +3,13 @@ Pytest configuration and fixtures for PM Digital Twin tests.
 """
 
 import pytest
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 from pathlib import Path
 
 from agent.main import PMAgent
 from agent.runner import AgentRunner
 from agent.logger import PMReportLogger
 from agent.validator import SchemaValidator
-from schemas.input_schema import PMInput
 
 
 @pytest.fixture

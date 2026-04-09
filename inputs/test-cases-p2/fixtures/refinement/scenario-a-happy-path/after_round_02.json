@@ -1,6 +1,9 @@
 {
   "pm_confidence_score": { "score": 79 },
-  "risk_register": [{ "score": "MEDIUM", "description": "SAP export batch window" }],
+  "risk_register": [
+    { "score": "MEDIUM", "description": "SAP export batch window" },
+    { "score": "LOW", "description": "Okta test tenant used for UAT" }
+  ],
   "project_viability": { "viability_status": "VIABLE" },
   "project_plan": {
     "phases": [

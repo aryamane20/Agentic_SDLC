@@ -16,12 +16,10 @@ from pathlib import Path
 import pytest
 
 from backend.api.services.approval_gate import evaluate_gate
-
-from tests.p2.conftest import P2_FIXTURES
+from tests.p2.conftest import P2_FIXTURES, load_report_fixture
 
 REFINEMENT_ROOT = P2_FIXTURES / "refinement"
 
-# Snapshot stem must match filename: initial.json, after_round_01.json, after_round_02.json
 _SNAPSHOT_KEYS = ("initial", "after_round_01", "after_round_02")
 
 
@@ -50,8 +48,11 @@ def test_refinement_replay_gate_matches_expectations(scenario_dir: Path):
             continue
         json_path = scenario_dir / f"{key}.json"
         if not json_path.is_file():
-            continue
-        report = json.loads(json_path.read_text(encoding="utf-8"))
+            pytest.fail(
+                f"Missing snapshot {key}.json in {scenario_dir.name} "
+                f"but replay_expectations.json lists it"
+            )
+        report = load_report_fixture("refinement", scenario_dir.name, f"{key}.json")
         gate = evaluate_gate(report)
         want = expectations[key]["fired"]
         assert gate.fired is want, (

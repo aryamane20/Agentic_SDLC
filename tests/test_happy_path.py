@@ -3,7 +3,6 @@ Happy path tests for PM Digital Twin agent.
 Valid input should produce expected output format.
 """
 
-import pytest
 from unittest.mock import Mock
 
 

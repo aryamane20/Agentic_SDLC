@@ -1,6 +1,6 @@
 """
 PM Digital Twin — Master Evaluation Runner
-Runs all 5 evaluation dimensions and produces a report.
+Runs all 4 evaluation dimensions and produces a report.
 
 Usage:
   python scripts/run_eval.py --all
