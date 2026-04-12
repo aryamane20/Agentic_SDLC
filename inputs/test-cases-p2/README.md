@@ -30,12 +30,24 @@ See **`fixtures/README.md`** for gate and refinement JSON snapshots used by CI.
 
 Do **not** run automatically as part of CI without mocks — these calls cost tokens.
 
+### Automated E2E against FastAPI (recommended)
+
+1. From repo root, start the API with `ANTHROPIC_API_KEY` set:  
+   `uvicorn backend.api.main:app --reload --port 8000`
+2. Run:  
+   `python scripts/run_p2_e2e.py --scenario scenario-a-happy-path --mode manifest`  
+   Or **`--mode file`** to use human-edited `e2e_feedback/round_01.json`, …  
+   Or **`--mode interactive`** to type feedback in the terminal.
+3. JSON run logs are written under **`results/p2/e2e/`**.
+
+See **`e2e_feedback/README.md`** for the feedback file shape.
+
+### Manual checklist (UI or curl)
+
 1. Generate from `brief.txt` (agent or API).
 2. Run `evaluate_gate(report)` (or observe API `gate` in response).
-3. If gate fired: POST refine with `manifest.json` — use `refinement_rounds[].feedback` in order.
+3. If gate fired: POST refine — use `refinement_rounds[].feedback` in order (or your edited `e2e_feedback/*.json`).
 4. Re-check gate after each refinement (loop until approve or policy cap).
-
-Write logs under `results/p2/e2e/` when you run (JSON or Markdown run log).
 
 ## Relation to P1
 

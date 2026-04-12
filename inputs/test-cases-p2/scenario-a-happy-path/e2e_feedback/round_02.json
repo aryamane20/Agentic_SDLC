@@ -1,0 +1,5 @@
+{
+  "label": "benign_clarification",
+  "update_brief": false,
+  "feedback": "Looks good. Add one sentence under risks noting we'll use the existing Okta test tenant for UAT. Don't change dates or staffing."
+}

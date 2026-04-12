@@ -1,0 +1,5 @@
+{
+  "label": "soft_mitigation_request",
+  "update_brief": false,
+  "feedback": "Quantify the EPIC connector delay and add mitigations — but keep the May 15 launch; we're not changing the board date. I want CRITICAL risks downgraded only if you can honestly justify residual score."
+}

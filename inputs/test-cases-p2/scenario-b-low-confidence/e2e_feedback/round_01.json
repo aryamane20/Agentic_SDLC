@@ -1,0 +1,5 @@
+{
+  "label": "inject_constraints",
+  "update_brief": false,
+  "feedback": "Lock these in: we're a 50-person SaaS company, $85k budget, 4-month deadline starting May 2026, team is 1 PM + 2 devs + 0.5 UX. Build vs buy decision must stay open but default to build a lightweight React + Node + Postgres internal tool unless buy is clearly cheaper."
+}

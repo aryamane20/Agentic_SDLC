@@ -20,7 +20,7 @@ from backend.api.models.session import ReportEntry, SessionState
 
 client = TestClient(app)
 
-HEADERS = {"x-planr-user-id": "test-user"}
+HEADERS = {"X-Planr-User": "test-user"}
 
 REPORT_ID = "rpt_aabbccddeeff"
 SESSION_ID = "ses_test123"

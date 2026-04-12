@@ -2,9 +2,9 @@
 """
 P2 workflow scenario loader — lists scenarios and prints refinement steps.
 
-Does not call the API or agent unless you pass --execute (not wired yet).
-When you say "run", use this to print the next scenario's brief path and feedback,
-then drive FastAPI / UI manually or extend --execute.
+Dry-run: lists scenarios and prints brief path + refinement text.
+Live E2E: use scripts/run_p2_e2e.py (see results/p2/e2e/README.md).
+--execute prints that pointer (this script stays read-only for inputs).
 """
 
 from __future__ import annotations
@@ -42,12 +42,17 @@ def main() -> None:
     parser.add_argument(
         "--execute",
         action="store_true",
-        help="Reserved for future: call backend/agent (not implemented — safe to omit)",
+        help="Print how to run scripts/run_p2_e2e.py (this file does not call the API)",
     )
     args = parser.parse_args()
 
     if args.execute:
-        print("ERROR: --execute is not implemented yet. Run workflows manually or wait for hook-up.", file=sys.stderr)
+        print(
+            "Use the E2E runner (starts the API separately, then):\n"
+            "  python scripts/run_p2_e2e.py --scenario <folder-or-id> --mode manifest|file|interactive\n"
+            "See results/p2/e2e/README.md and inputs/test-cases-p2/e2e_feedback/README.md",
+            file=sys.stderr,
+        )
         sys.exit(2)
 
     manifests = _load_manifests()

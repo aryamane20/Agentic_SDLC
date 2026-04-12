@@ -139,6 +139,14 @@ uvicorn backend.api.main:app --reload --port 8000
 ```
 Open **http://127.0.0.1:8000/docs** for OpenAPI. Typical flow: `POST /sessions` → `POST /reports/generate` with `session_id` + `brief` → optional `POST /gates/{report_id}/decision` → optional `POST /reports/{report_id}/refine`. Session JSON lives in `sessions/` (gitignored). Gate decisions append to `logs/gate_decisions.jsonl`.
 
+**P2 scripted E2E** (uses the same API + agent; logs under `results/p2/e2e/`):
+
+```bash
+python scripts/run_p2_e2e.py --scenario scenario-a-happy-path --mode manifest
+```
+
+Use `--mode file` with human-edited `inputs/test-cases-p2/scenario-*/e2e_feedback/round_*.json`, or `--mode interactive`. See `results/p2/e2e/README.md`.
+
 ### Project 2 — Frontend (Vite landing; proxies API)
 ```bash
 cd frontend && npm install && npm run dev
