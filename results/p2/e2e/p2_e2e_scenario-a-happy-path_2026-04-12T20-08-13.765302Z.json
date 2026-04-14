@@ -1,0 +1,71 @@
+{
+  "run_id": "p2_e2e_scenario-a-happy-path_2026-04-12T20-08-13.765302Z",
+  "started_at": "2026-04-12T20:08:13.765427Z",
+  "scenario_folder": "scenario-a-happy-path",
+  "manifest_id": "p2-scenario-a-happy-path",
+  "mode": "manifest",
+  "base_url": "http://127.0.0.1:8000",
+  "user_id": "p2-e2e-local",
+  "steps": [
+    {
+      "step": "create_session",
+      "session_id": "24adf7f0-6f1b-4faa-a129-7ed80a65d329"
+    },
+    {
+      "step": "generate",
+      "report_id": "rpt_08c47e1e9368",
+      "gate": {
+        "fired": false,
+        "reasons": [],
+        "decision": null
+      },
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "warnings": [
+          "Staffing adds expanded role class UX (UX Designer) not evidenced in project_understanding text — missing dedicated assumption_log row per v1.6.2 staffing rule.",
+          "Staffing adds expanded role class DEVOPS (DevOps Engineer) not evidenced in project_understanding text — missing dedicated assumption_log row per v1.6.2 staffing rule.",
+          "Staffing adds expanded role class SECURITY (Security Engineer) not evidenced in project_understanding text — missing dedicated assumption_log row per v1.6.2 staffing rule."
+        ]
+      },
+      "tokens_used": 12552,
+      "cache_hit": false
+    },
+    {
+      "step": "refine_1",
+      "label": "surgical_PM_edit",
+      "feedback_source": "manifest",
+      "feedback_preview": "Please shorten the executive summary bullets to three lines max and rename Phase 2 to 'Core approvals & ERP integration' — no other changes.",
+      "update_brief": false,
+      "gate": {
+        "fired": false,
+        "reasons": [],
+        "decision": null
+      },
+      "refinement_count": 1,
+      "tokens_used": 12199
+    },
+    {
+      "step": "refine_2",
+      "label": "benign_clarification",
+      "feedback_source": "manifest",
+      "feedback_preview": "Looks good. Add one sentence under risks noting we'll use the existing Okta test tenant for UAT. Don't change dates or staffing.",
+      "update_brief": false,
+      "gate": {
+        "fired": false,
+        "reasons": [],
+        "decision": null
+      },
+      "refinement_count": 2,
+      "tokens_used": 12057
+    }
+  ],
+  "session_id": "24adf7f0-6f1b-4faa-a129-7ed80a65d329",
+  "report_id": "rpt_08c47e1e9368",
+  "finished_at": "2026-04-12T20:13:06.838853Z",
+  "manifest_expected": {
+    "initial_gate_preference": "not_fired",
+    "after_refinements_gate_preference": "not_fired",
+    "notes": "LLM variance: if gate fires once, refine should not introduce CRITICAL risk; document actual gate reasons in results."
+  }
+}

@@ -1,0 +1,1 @@
+{"nodes": [{"id": "v14_system_prompt", "label": "System Prompt v1.4 (Schema Alignment / Haiku Compatibility)", "file_type": "document", "source_file": "prompts/v1.4_system.txt", "source_location": "line 1-8", "source_url": null, "captured_at": null, "author": null, "contributor": null}], "edges": [], "hyperedges": []}

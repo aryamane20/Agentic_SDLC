@@ -53,7 +53,6 @@ python scripts/run_eval.py --tc tc-01-perfect
 ```
 
 **Model note:** `MODEL_HAIKU` is the default for iteration (cheaper).
-Switch to `MODEL_SONNET` in `agent/main.py` for official eval runs and Demo Day outputs.
 
 ---
 

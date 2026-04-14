@@ -1,0 +1,77 @@
+{
+  "run_id": "p2_e2e_scenario-c-critical-risk_2026-04-12T20-20-19.909573Z",
+  "started_at": "2026-04-12T20:20:19.909741Z",
+  "scenario_folder": "scenario-c-critical-risk",
+  "manifest_id": "p2-scenario-c-critical-risk",
+  "mode": "manifest",
+  "base_url": "http://127.0.0.1:8000",
+  "user_id": "p2-e2e-local",
+  "steps": [
+    {
+      "step": "create_session",
+      "session_id": "fbbca0dd-0464-4c1c-88c4-fdaf70426414"
+    },
+    {
+      "step": "generate",
+      "report_id": "rpt_91512283f627",
+      "gate": {
+        "fired": true,
+        "reasons": [
+          "confidence_score < 60 — plan needs review",
+          "risk_register contains CRITICAL risk — PM decision required",
+          "project_viability is NOT_VIABLE — impossible constraints as stated"
+        ],
+        "decision": null
+      },
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "warnings": [
+          "Staffing adds expanded role class QA (QA Engineer) not evidenced in project_understanding text — missing dedicated assumption_log row per v1.6.2 staffing rule.",
+          "Staffing adds expanded role class DEVOPS (DevOps Engineer) not evidenced in project_understanding text — missing dedicated assumption_log row per v1.6.2 staffing rule."
+        ]
+      },
+      "tokens_used": 12793,
+      "cache_hit": false
+    },
+    {
+      "step": "refine_1",
+      "label": "soft_mitigation_request",
+      "feedback_source": "manifest",
+      "feedback_preview": "Quantify the EPIC connector delay and add mitigations — but keep the May 15 launch; we're not changing the board date. I want CRITICAL risks downgraded only if you can honestly justify residual score.",
+      "update_brief": false,
+      "gate": {
+        "fired": true,
+        "reasons": [
+          "confidence_score < 60 — plan needs review",
+          "risk_register contains CRITICAL risk — PM decision required"
+        ],
+        "decision": null
+      },
+      "refinement_count": 1,
+      "tokens_used": 15639
+    },
+    {
+      "step": "refine_2",
+      "label": "staffing_injection",
+      "feedback_source": "manifest",
+      "feedback_preview": "Assume we can add a fractional HIPAA consultant (20h/wk for 8 weeks) and a second mobile dev starting April 1. Rebalance phases and risk register; if anything remains CRITICAL, say why explicitly.",
+      "update_brief": false,
+      "gate": {
+        "fired": false,
+        "reasons": [],
+        "decision": null
+      },
+      "refinement_count": 2,
+      "tokens_used": 16116
+    }
+  ],
+  "session_id": "fbbca0dd-0464-4c1c-88c4-fdaf70426414",
+  "report_id": "rpt_91512283f627",
+  "finished_at": "2026-04-12T20:30:06.174869Z",
+  "manifest_expected": {
+    "initial_gate_preference": "fired_critical_risk",
+    "after_refinements_gate_preference": "may_clear_or_remain_critical",
+    "notes": "Gate should re-run after each refine. Document whether user chose approve-with-override or continued refinement."
+  }
+}

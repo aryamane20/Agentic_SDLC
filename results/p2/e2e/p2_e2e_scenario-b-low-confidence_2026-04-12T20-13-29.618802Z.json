@@ -1,0 +1,83 @@
+{
+  "run_id": "p2_e2e_scenario-b-low-confidence_2026-04-12T20-13-29.618802Z",
+  "started_at": "2026-04-12T20:13:29.618952Z",
+  "scenario_folder": "scenario-b-low-confidence",
+  "manifest_id": "p2-scenario-b-low-confidence",
+  "mode": "manifest",
+  "base_url": "http://127.0.0.1:8000",
+  "user_id": "p2-e2e-local",
+  "steps": [
+    {
+      "step": "create_session",
+      "session_id": "8f2da196-5e25-4031-9b8b-b634f512fbb1"
+    },
+    {
+      "step": "generate",
+      "report_id": "rpt_406e5febbfe0",
+      "gate": {
+        "fired": true,
+        "reasons": [
+          "confidence_score < 60 — plan needs review",
+          "risk_register contains CRITICAL risk — PM decision required"
+        ],
+        "decision": null
+      },
+      "validation": {
+        "valid": false,
+        "errors": [
+          "QA total_hours (100) is below 25% of implementation hours (534) — risk_register must include a CRITICAL or HIGH risk explicitly tied to QA under-allocation vs the 25% rule (not MEDIUM/LOW; gap is certain).",
+          "Open question urgency 'Before planning' is inconsistent with a populated project_plan (phases and tasks) — decomposition already occurred; use 'Before build' unless no tasks exist in any phase."
+        ],
+        "warnings": [
+          "Staffing adds expanded role class PM (Product Manager) not evidenced in project_understanding text — missing dedicated assumption_log row per v1.6.2 staffing rule.",
+          "Staffing adds expanded role class SECURITY (Security Engineer) not evidenced in project_understanding text — missing dedicated assumption_log row per v1.6.2 staffing rule.",
+          "Staffing adds expanded role class DEVOPS (DevOps Engineer) not evidenced in project_understanding text — missing dedicated assumption_log row per v1.6.2 staffing rule."
+        ]
+      },
+      "tokens_used": 10672,
+      "cache_hit": false
+    },
+    {
+      "step": "refine_1",
+      "label": "inject_constraints",
+      "feedback_source": "manifest",
+      "feedback_preview": "Lock these in: we're a 50-person SaaS company, $85k budget, 4-month deadline starting May 2026, team is 1 PM + 2 devs + 0.5 UX. Build vs buy decision must stay open but default to build a lightweight …",
+      "update_brief": false,
+      "gate": {
+        "fired": true,
+        "reasons": [
+          "confidence_score < 60 — plan needs review",
+          "risk_register contains CRITICAL risk — PM decision required"
+        ],
+        "decision": null
+      },
+      "refinement_count": 1,
+      "tokens_used": 11997
+    },
+    {
+      "step": "refine_2",
+      "label": "narrow_scope",
+      "feedback_source": "manifest",
+      "feedback_preview": "Reduce scope to ONE pilot: track customer onboarding handoffs between Sales and CS only — success = 90% of handoffs visible in the tool within 1 week of close. Update assumptions and risks accordingly…",
+      "update_brief": false,
+      "gate": {
+        "fired": true,
+        "reasons": [
+          "confidence_score < 60 — plan needs review",
+          "risk_register contains CRITICAL risk — PM decision required"
+        ],
+        "decision": null
+      },
+      "refinement_count": 2,
+      "tokens_used": 9701
+    }
+  ],
+  "session_id": "8f2da196-5e25-4031-9b8b-b634f512fbb1",
+  "report_id": "rpt_406e5febbfe0",
+  "finished_at": "2026-04-12T20:20:19.762610Z",
+  "manifest_expected": {
+    "initial_gate_preference": "fired_confidence",
+    "after_refinements_gate_preference": "not_fired_or_still_fired_document",
+    "notes": "If confidence stays under 60 after round 2, a third refine or approve-with-override is a product decision — capture gate reasons in results."
+  }
+}
