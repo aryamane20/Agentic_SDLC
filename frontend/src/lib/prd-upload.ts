@@ -39,7 +39,13 @@ export async function extractPrdText(file: File): Promise<string> {
     method: "POST",
     body: form,
   })
-  if (!res.ok) throw new Error(await readErrorBody(res))
+  if (!res.ok) {
+    if (res.status === 413) throw new Error("File is too large. Maximum is 5 MB.")
+    if (res.status === 400) throw new Error("Unsupported file type. Use .txt, .md, .pdf, or .docx.")
+    if (res.status === 422) throw new Error("The document appears to be empty or unreadable.")
+    if (res.status === 501) throw new Error("PDF support is unavailable on this server.")
+    throw new Error(await readErrorBody(res))
+  }
   const j = (await res.json()) as { text: string }
   return j.text ?? ""
 }

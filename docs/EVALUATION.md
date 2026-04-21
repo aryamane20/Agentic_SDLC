@@ -26,10 +26,10 @@ PM Digital Twin **P2 evaluation**: what we measure, how we run it, and what is i
 |-------|---------------|-------------|------|
 | **D1 — Gate fixtures** | `evaluate_gate(report)` on frozen JSON | ✅ Fully | Free |
 | **D2 — Refinement replay** | Gate state after each snapshot in a refine sequence | ✅ Fully | Free |
-| **D3 — API / HITL integration** | FastAPI routes, session persistence shape, refine allowed when gate fired | ✅ Fully (mocked agent / store paths) | Free |
+| **D3 — API / HITL integration** | FastAPI routes (including GET /reports, GET /gates), session persistence, user isolation, document upload, validation retry loop, refine allowed when gate fired, **409** on stale `expected_revision` | ✅ Fully (mocked agent / store paths) | Free |
 | **D4 — Scripted E2E** | Full generate → refine → re-gate with real LLM | 🔶 Manual trigger | Tokens + time |
 
-**Pass criteria (D1–D3):** `pytest` green on `tests/p2/`, `tests/test_hitl_flow.py`, `tests/test_api_approval_gate.py` (see commands below).
+**Pass criteria (D1–D3):** `pytest` green on `tests/p2/`, `tests/test_hitl_flow.py`, `tests/test_api_approval_gate.py`, `tests/test_p2_revision_conflict.py` (see `make test-p2-baseline` below).
 
 **Pass criteria (D4):** Subjective: gate reasons match report facts; logs under `results/p2/e2e/` archived; manifest “soft expectations” documented when LLM variance diverges.
 
@@ -42,7 +42,7 @@ Implementation: `backend/api/services/approval_gate.py` (pure function, no I/O).
 | Condition | When it fires | Why it was chosen |
 |-------------|---------------|-------------------|
 | **PM confidence &lt; 60** | Numeric `pm_confidence_score` (dict `.score` or bare number) parses and is **&lt; 60** | Epistemic “plan needs human review” before treating output as execution-ready. Aligns with rubric’s use of confidence bands for edge cases (see `EVALUATION_RUBRIC.md` Dimension 4). |
-| **CRITICAL risk** | Any `risk_register[]` entry has `score == "CRITICAL"` | Forces explicit PM awareness when the model flags existential schedule/compliance/resource failure. |
+| **CRITICAL risk** | Any `risk_register[]` entry has `score == "CRITICAL"` | Forces explicit PM awareness when the model flags existential schedule/compliance/resource failure. **All** matching entries are collected before deciding — gate now collects all triggered reasons before deciding, so multiple CRITICAL risks each appear as a separate reason string. |
 | **NOT_VIABLE** | `project_viability.viability_status == "NOT_VIABLE"` | Impossible constraints as stated — must not be silently ignored. |
 | **Open question — Before planning** | Any `open_questions[]` has `urgency == "Before planning"` **and** the plan is **not** yet decomposed | Blocking ambiguity before WBS exists. **Exception:** if `_plan_has_decomposed_tasks` (≥5 phases and ≥1 task total), this branch is **skipped** so a mis-tagged urgency does not fire the gate when a real WBS is already present (v1.6.2 rubric alignment). |
 
@@ -94,12 +94,12 @@ pytest tests/p2/test_p2_refinement_replay.py -v
 
 ## Dimension D3 — API / HITL (mocked)
 
-**What it checks:** Refine allowed when gate fired; gate decision endpoints; routing and session wiring. **Anthropic and heavy disk paths are mocked** in `tests/test_hitl_flow.py` (see module docstring).
+**What it checks:** Refine allowed when gate fired; gate decision endpoints; routing and session wiring; **409** when `expected_revision` lags `ReportEntry.report_revision`. **Anthropic and heavy disk paths are mocked** in `tests/test_hitl_flow.py` (see module docstring).
 
 **How to run:**
 
 ```bash
-pytest tests/test_hitl_flow.py tests/test_api_approval_gate.py -v
+pytest tests/test_hitl_flow.py tests/test_api_approval_gate.py tests/test_p2_revision_conflict.py -v
 ```
 
 **Pass criteria:** All tests green; no real network calls in this layer.
@@ -196,7 +196,7 @@ These are **not** failures of the current suite; they are **explicitly uncovered
 
 | Gap | Notes |
 |-----|--------|
-| **No HTTP 409 / concurrency test** | No test asserts optimistic locking, duplicate session writes, or conflict responses. If P3 adds multi-tab or collaborative editing, add contract tests here. |
+| **Multi-writer / filesystem races** | `POST .../refine` and `POST .../decision` use optional `expected_revision` vs `ReportEntry.report_revision` and return **409** `report_revision_conflict` when stale (`tests/test_p2_revision_conflict.py`). Two processes overwriting the same JSON file without read-modify-write coordination is still not solved at the store layer. |
 | **No full lifecycle integration test** | No single pytest runs **generate → gate UI → refine → approve → re-fetch session** against a **live** API without mocks. D4 is the manual/scripted substitute. |
 | **No automated “gate reason ↔ report field” prover** | D1/D2 assert `fired` boolean; they do not prove every string in `reasons[]` matches a ground-truth explanation. Could add golden `reasons` lists per fixture if needed. |
 | **No performance / SLO eval** | Gate + validate latency under load not measured. |
@@ -209,7 +209,7 @@ These are **not** failures of the current suite; they are **explicitly uncovered
 
 Use this list when designing P3 so work is **deliberate**, not accidental rediscovery:
 
-1. **Conflict and idempotency** — 409s, retries, duplicate refinements, session versioning.
+1. **Conflict and idempotency** — **409 + `expected_revision`** cover stale tabs on refine/decision; still need idempotent POST keys, store-level locking or DB, and retry policies.
 2. **Single automated “golden path” E2E** — one pytest (or CI job) that boots API + hits real generate once with recorded **VCR** or nightly flag (cost gate).
 3. **Auth / tenancy** — `X-Planr-User` is minimal; no OAuth, org boundaries, or audit trail requirements in P2 eval.
 4. **Observability contracts** — Langfuse traces not asserted in P2 tests.
@@ -220,8 +220,16 @@ Use this list when designing P3 so work is **deliberate**, not accidental redisc
 
 ## One-command regression (P2 slice)
 
+From the repo root (use a normal local venv; some Cursor sandboxes crash pytest with exit **139** — rerun outside the sandbox if that happens):
+
 ```bash
-pytest tests/p2/ tests/test_hitl_flow.py tests/test_api_approval_gate.py -v
+make test-p2-baseline
+```
+
+Equivalent:
+
+```bash
+pytest tests/p2/ tests/test_hitl_flow.py tests/test_api_approval_gate.py tests/test_p2_revision_conflict.py -v
 ```
 
 *Last aligned with gate implementation in `backend/api/services/approval_gate.py` and scripts under `scripts/run_p2_e2e.py`.*

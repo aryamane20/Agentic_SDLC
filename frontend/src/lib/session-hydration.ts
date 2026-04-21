@@ -7,6 +7,7 @@ export type PersistedReportEntry = {
   brief: string
   report: ReportRecord
   gate: GateDTO
+  report_revision?: number
   refinements?: Array<{ feedback: string }>
 }
 

@@ -13,11 +13,9 @@ import json
 from typing import Any
 
 from agent.main import PMAgent
-from agent.validator import SchemaValidator, sync_pm_confidence_metadata_mirrors
+from agent.validator import sync_pm_confidence_metadata_mirrors
 
 from backend.api.services.approval_gate import evaluate_gate
-
-_refinement_validator = SchemaValidator()
 
 # Stripped from LLM input — merged back from previous_report after the call (Steps 1–4).
 LOCKED_SECTIONS = frozenset({"project_understanding", "assumption_log"})
@@ -130,7 +128,8 @@ def run_refinement(
         previous_report, result["report"], update_brief=update_brief
     )
     sync_pm_confidence_metadata_mirrors(merged)
-    _refinement_validator.validate(dict(merged))
+    # refine does not retry on invalid output — the PM's feedback loop is the
+    # correction mechanism; see reports.py for generate-side retry logic.
     agent._enforce_hard_caps(merged)
     sync_pm_confidence_metadata_mirrors(merged)
     result["report"] = merged

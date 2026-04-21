@@ -16,6 +16,8 @@ class GateState(BaseModel):
 class GateDecisionRequest(BaseModel):
     session_id: str
     decision: Literal["approve", "reject"]
+    #: When set, must match `ReportEntry.report_revision` or the server returns 409 (concurrent edit).
+    expected_revision: Optional[int] = Field(default=None, ge=1)
 
 
 class RefineRequest(BaseModel):
@@ -23,6 +25,8 @@ class RefineRequest(BaseModel):
     feedback: str = Field(..., min_length=1)
     #: Scenario B — new constraint in feedback; only lock project_understanding; allow assumption_log to change.
     update_brief: bool = False
+    #: When set, must match `ReportEntry.report_revision` or the server returns 409 (concurrent refine).
+    expected_revision: Optional[int] = Field(default=None, ge=1)
 
 
 class GenerateReportRequest(BaseModel):

@@ -40,6 +40,16 @@ def refine(
     assert state is not None
     entry = state.reports[index]
 
+    if body.expected_revision is not None and body.expected_revision != entry.report_revision:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": "report_revision_conflict",
+                "current_revision": entry.report_revision,
+                "expected_revision": body.expected_revision,
+            },
+        )
+
     # Gate is a warning signal, not a workflow lock.
     # Refining through a fired gate is the PM's way of addressing the concerns.
     # The gate is re-evaluated on the new report after every refinement.
@@ -70,11 +80,13 @@ def refine(
     )
     entry.report = new_report
     entry.gate = gate
+    entry.report_revision += 1
     store.save_session(user_id, state)
 
     return {
         "session_id": session_id,
         "report_id": report_id,
+        "report_revision": entry.report_revision,
         "report": new_report,
         "gate": gate.model_dump(mode="json"),
         "refinement_count": len(entry.refinements),

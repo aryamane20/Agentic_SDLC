@@ -44,9 +44,8 @@ def evaluate_gate(report: dict) -> GateState:
 
     for r in report.get("risk_register") or []:
         if r.get("score") == "CRITICAL":
-            fired = True
             reasons.append("risk_register contains CRITICAL risk — PM decision required")
-            break
+    fired = bool(reasons)
 
     pv = report.get("project_viability") or {}
     if pv.get("viability_status") == "NOT_VIABLE":

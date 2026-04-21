@@ -59,6 +59,41 @@ def test_gate_fires_before_planning_question():
     assert g.fired is True
 
 
+def test_gate_fires_both_low_confidence_and_critical_risk():
+    """Both reasons must appear when confidence < 60 AND a CRITICAL risk exist simultaneously."""
+    report = {
+        "pm_confidence_score": {"score": 55},
+        "risk_register": [{"score": "CRITICAL", "title": "Unresolved integration"}],
+        "open_questions": [],
+    }
+    g = evaluate_gate(report)
+    assert g.fired is True
+    assert any("confidence" in r.lower() for r in g.reasons)
+    assert any("CRITICAL" in r for r in g.reasons)
+    assert len(g.reasons) == 2
+
+
+def test_gate_fires_at_score_59():
+    """Boundary: 59 is strictly below 60, gate must fire."""
+    report = {"pm_confidence_score": {"score": 59}, "risk_register": [], "open_questions": []}
+    g = evaluate_gate(report)
+    assert g.fired is True
+
+
+def test_gate_does_not_fire_at_score_60():
+    """Boundary: 60 is not below 60, gate must not fire on score alone."""
+    report = {"pm_confidence_score": {"score": 60}, "risk_register": [], "open_questions": []}
+    g = evaluate_gate(report)
+    assert g.fired is False
+
+
+def test_gate_does_not_fire_at_score_61():
+    """Boundary: 61 is above threshold, gate must not fire on score alone."""
+    report = {"pm_confidence_score": {"score": 61}, "risk_register": [], "open_questions": []}
+    g = evaluate_gate(report)
+    assert g.fired is False
+
+
 def test_gate_does_not_fire_before_planning_when_plan_already_decomposed():
     """Mis-tagged 'Before planning' must not block if WBS is present (v16.2 rubric alignment)."""
     phases = [{"name": f"P{i}", "tasks": [{"id": f"T{i}", "title": "x"}]} for i in range(5)]

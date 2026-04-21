@@ -29,6 +29,8 @@ async function readError(res: Response): Promise<string> {
     const j = (await res.json()) as { detail?: unknown }
     if (typeof j.detail === "string") return j.detail
     if (Array.isArray(j.detail)) return JSON.stringify(j.detail)
+    if (typeof j.detail === "object" && j.detail !== null)
+      return JSON.stringify(j.detail)
     return res.statusText || `HTTP ${res.status}`
   } catch {
     return res.statusText || `HTTP ${res.status}`
@@ -52,6 +54,7 @@ export function useReportWorkflow() {
   const [prdText, setPrdText] = useState("")
   const [prdFileLabel, setPrdFileLabel] = useState<string | null>(null)
   const [prdBusy, setPrdBusy] = useState(false)
+  const [agentFailed, setAgentFailed] = useState(false)
   const [sessionSummaries, setSessionSummaries] = useState<SessionSummary[]>(
     []
   )
@@ -59,6 +62,8 @@ export function useReportWorkflow() {
   const [planSnapshots, setPlanSnapshots] = useState<PlanVersionSnapshot[]>([])
   /** After Start over / New plan, next Generate must bypass agent disk cache (same brief would replay). */
   const skipAgentCacheOnceRef = useRef(false)
+  /** Server `report_revision` for optimistic locking on refine / gate decision (409 if stale). */
+  const reportRevisionRef = useRef(1)
 
   const refreshSessionList = useCallback(async () => {
     try {
@@ -143,14 +148,21 @@ export function useReportWorkflow() {
           use_cache: useCache,
         }),
       })
-      if (!res.ok) throw new Error(await readError(res))
+      if (!res.ok) {
+        const msg = await readError(res)
+        if (res.status === 502) setAgentFailed(true)
+        throw new Error(msg)
+      }
+      setAgentFailed(false)
       const j = (await res.json()) as {
         report_id: string
+        report_revision?: number
         report: ReportRecord
         gate: GateDTO
       }
       setPlanSnapshots([])
       setReportId(j.report_id)
+      reportRevisionRef.current = typeof j.report_revision === "number" ? j.report_revision : 1
       setReport(j.report)
       setGate(j.gate)
       setPlanVersion(1)
@@ -168,6 +180,9 @@ export function useReportWorkflow() {
       void refreshSessionList()
     } catch (e) {
       if (bypassCache) skipAgentCacheOnceRef.current = true
+      // Always bypass cache on next attempt after agent failure so the
+      // same brief doesn't replay a cached bad output.
+      skipAgentCacheOnceRef.current = true
       setError(e instanceof Error ? e.message : "Generate failed")
       setPhase("IDLE")
     }
@@ -192,13 +207,17 @@ export function useReportWorkflow() {
           session_id: sessionId,
           feedback,
           update_brief: false,
+          expected_revision: reportRevisionRef.current,
         }),
       })
       if (!res.ok) throw new Error(await readError(res))
       const j = (await res.json()) as {
+        report_revision?: number
         report: ReportRecord
         gate: GateDTO
       }
+      if (typeof j.report_revision === "number")
+        reportRevisionRef.current = j.report_revision
       const nextVersion = planVersion + 1
       if (priorReport != null && priorGate != null) {
         setPlanSnapshots((s) => [
@@ -249,10 +268,16 @@ export function useReportWorkflow() {
       const res = await planrApiFetch(`/gates/${reportId}/decision`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: sessionId, decision: "approve" }),
+        body: JSON.stringify({
+          session_id: sessionId,
+          decision: "approve",
+          expected_revision: reportRevisionRef.current,
+        }),
       })
       if (!res.ok) throw new Error(await readError(res))
-      const j = (await res.json()) as { gate: GateDTO }
+      const j = (await res.json()) as { report_revision?: number; gate: GateDTO }
+      if (typeof j.report_revision === "number")
+        reportRevisionRef.current = j.report_revision
       setGate(j.gate)
       setPhase("APPROVED")
       void refreshSessionList()
@@ -272,6 +297,7 @@ export function useReportWorkflow() {
     setError(null)
     try {
       setRefineText("")
+      reportRevisionRef.current = 1
       setReport(null)
       setGate(null)
       setLastDiff(null)
@@ -314,6 +340,7 @@ export function useReportWorkflow() {
         const reports = Array.isArray(state.reports) ? state.reports : []
         if (reports.length === 0) {
           setReportId(null)
+          reportRevisionRef.current = 1
           setReport(null)
           setGate(null)
           setPlanSnapshots([])
@@ -333,6 +360,8 @@ export function useReportWorkflow() {
         setPrdText(split.prdText)
         setPrdFileLabel(split.prdText ? "From session" : null)
         setReportId(entry.report_id)
+        reportRevisionRef.current =
+          typeof entry.report_revision === "number" ? entry.report_revision : 1
         setReport(entry.report as ReportRecord)
         setGate(entry.gate as GateDTO)
         const refinements = entry.refinements ?? []
@@ -382,6 +411,8 @@ export function useReportWorkflow() {
     setRefineText,
     error,
     setError,
+    agentFailed,
+    clearAgentFailed: () => setAgentFailed(false),
     lastDiff,
     planVersion,
     generate,

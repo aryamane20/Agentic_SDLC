@@ -264,6 +264,7 @@ def main() -> None:
     )
     assert isinstance(gen_resp, dict)
     report_id = gen_resp["report_id"]
+    report_revision = int(gen_resp.get("report_revision", 1))
     log["report_id"] = report_id
     log["steps"].append(
         {
@@ -290,10 +291,12 @@ def main() -> None:
                 "session_id": session_id,
                 "feedback": feedback,
                 "update_brief": update_brief,
+                "expected_revision": report_revision,
             },
             timeout=args.timeout_refine,
         )
         assert isinstance(ref_resp, dict)
+        report_revision = int(ref_resp.get("report_revision", report_revision + 1))
         log["steps"].append(
             {
                 "step": f"refine_{idx}",
@@ -313,7 +316,11 @@ def main() -> None:
             "POST",
             f"{base}/gates/{report_id}/decision",
             headers=headers,
-            body={"session_id": session_id, "decision": "approve"},
+            body={
+                "session_id": session_id,
+                "decision": "approve",
+                "expected_revision": report_revision,
+            },
         )
         log["steps"].append(
             {"step": "gate_decision", "decision": "approve", "response": dec_resp}

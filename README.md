@@ -137,7 +137,7 @@ pip install -r backend/requirements.txt
 ```bash
 uvicorn backend.api.main:app --reload --port 8000
 ```
-Open **http://127.0.0.1:8000/docs** for OpenAPI. Typical flow: `POST /sessions` → `POST /reports/generate` with `session_id` + `brief` → optional `POST /gates/{report_id}/decision` → optional `POST /reports/{report_id}/refine`. Session JSON lives in `sessions/` (gitignored). Gate decisions append to `logs/gate_decisions.jsonl`.
+Open **http://127.0.0.1:8000/docs** for OpenAPI. Typical flow: `POST /sessions` → `POST /reports/generate` with `session_id` + `brief` → optional `POST /gates/{report_id}/decision` → optional `POST /reports/{report_id}/refine`. Responses include `report_revision`; refine and gate decision accept optional `expected_revision` — if it does not match the server, the call returns **409** (`report_revision_conflict`) so stale tabs do not silently overwrite. Session JSON lives in `sessions/` (gitignored). Gate decisions append to `logs/gate_decisions.jsonl`.
 
 **P2 scripted E2E** (uses the same API + agent; logs under `results/p2/e2e/`):
 

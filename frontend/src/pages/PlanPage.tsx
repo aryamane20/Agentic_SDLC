@@ -111,6 +111,8 @@ export function PlanPage() {
     setRefineText,
     error,
     setError,
+    agentFailed,
+    clearAgentFailed,
     generate,
     refine,
     approve,
@@ -229,14 +231,34 @@ export function PlanPage() {
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-44 pt-6 sm:px-8 sm:pb-48 sm:pt-10">
               {error ? (
                 <div className="mb-6 shrink-0 rounded-xl border border-red-500/40 bg-red-950/35 px-3 py-2 text-sm text-red-200">
-                  {error}
-                  <button
-                    type="button"
-                    className="ml-2 underline"
-                    onClick={() => setError(null)}
-                  >
-                    Dismiss
-                  </button>
+                  {agentFailed ? (
+                    <>
+                      The AI couldn&apos;t produce a valid plan after 3 attempts. Check your brief or{" "}
+                      <button
+                        type="button"
+                        className="underline"
+                        onClick={() => {
+                          setError(null)
+                          clearAgentFailed()
+                          void generate()
+                        }}
+                      >
+                        try again
+                      </button>
+                      .
+                    </>
+                  ) : (
+                    <>
+                      {error}
+                      <button
+                        type="button"
+                        className="ml-2 underline"
+                        onClick={() => setError(null)}
+                      >
+                        Dismiss
+                      </button>
+                    </>
+                  )}
                 </div>
               ) : null}
 
@@ -250,16 +272,29 @@ export function PlanPage() {
                       />
                     </div>
                     <h1 className="text-2xl font-medium tracking-tight text-white sm:text-[1.75rem]">
-                      Let&apos;s shape your plan
+                      {!brief.trim() && !prdText.trim() && sessionSummaries.length === 0
+                        ? "Start a plan"
+                        : "Let\u2019s shape your plan"}
                     </h1>
                     <p className="mt-3 text-sm leading-relaxed text-zinc-300">
-                      Add context below or attach a PRD and we&apos;ll produce
-                      a structured PM plan you can refine, approve, or re-run
-                      from the same PRD.
+                      {!brief.trim() && !prdText.trim() && sessionSummaries.length === 0
+                        ? "Paste a brief or upload a PRD and we\u2019ll produce a structured PM plan you can refine, approve, or export."
+                        : "Add context below or attach a PRD and we\u2019ll produce a structured PM plan you can refine, approve, or re-run from the same PRD."}
                     </p>
                     <p className="mt-2 text-xs text-zinc-400">
                       (.txt, .md, .pdf, .docx · max 5 MB)
                     </p>
+                    {!brief.trim() && !prdText.trim() && sessionSummaries.length === 0 ? (
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        className="mt-6"
+                        disabled={!canSubmit}
+                        onClick={() => void generate()}
+                      >
+                        Generate
+                      </Button>
+                    ) : null}
                   </div>
                 </div>
               ) : null}
@@ -387,9 +422,42 @@ export function PlanPage() {
                         )}
 
                         {phase === "APPROVED" && (
-                          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 px-4 py-3 text-center text-sm text-emerald-100 backdrop-blur-md">
-                            Plan approved for this session.
-                          </div>
+                          <>
+                            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 px-4 py-3 text-center text-sm text-emerald-100 backdrop-blur-md">
+                              Plan approved for this session.
+                            </div>
+                            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-center">
+                              <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={() => {
+                                  void navigator.clipboard.writeText(
+                                    JSON.stringify(report, null, 2)
+                                  )
+                                }}
+                              >
+                                Copy JSON
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={() => {
+                                  const blob = new Blob(
+                                    [JSON.stringify(report, null, 2)],
+                                    { type: "application/json" }
+                                  )
+                                  const url = URL.createObjectURL(blob)
+                                  const a = document.createElement("a")
+                                  a.href = url
+                                  a.download = "plan.json"
+                                  a.click()
+                                  URL.revokeObjectURL(url)
+                                }}
+                              >
+                                Download JSON
+                              </Button>
+                            </div>
+                          </>
                         )}
                       </>
                     ) : null}

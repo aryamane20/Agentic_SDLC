@@ -158,6 +158,7 @@ def generate_report(
     return {
         "session_id": body.session_id,
         "report_id": rid,
+        "report_revision": entry.report_revision,
         "report": report,
         "gate": gate.model_dump(mode="json"),
         "validation": validation,
@@ -183,6 +184,7 @@ def get_report(
     return {
         "session_id": session_id,
         "report_id": entry.report_id,
+        "report_revision": entry.report_revision,
         "brief": entry.brief,
         "report": entry.report,
         "gate": entry.gate.model_dump(mode="json"),

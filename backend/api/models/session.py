@@ -19,6 +19,8 @@ class ReportEntry(BaseModel):
     report: dict[str, Any]
     gate: GateState
     refinements: list[RefinementRecord] = Field(default_factory=list)
+    #: Incremented on each successful refine or gate decision — clients send `expected_revision` to detect lost updates.
+    report_revision: int = Field(default=1, ge=1)
     input_tokens: Optional[int] = None
     output_tokens: Optional[int] = None
     tokens_used: Optional[int] = None

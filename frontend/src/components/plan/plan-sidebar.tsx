@@ -131,32 +131,31 @@ export function PlanSidebar({
                         className={cn(
                           "w-full rounded-lg border px-2 py-2 text-left transition disabled:opacity-45",
                           active
-                            ? "border-zinc-500/60 bg-zinc-800/50 text-zinc-100"
+                            ? "border-zinc-500/60 bg-zinc-800/50 text-zinc-100 font-medium"
                             : "border-transparent text-zinc-300 hover:bg-zinc-800/35 hover:text-zinc-100"
                         )}
                       >
-                        <span className="block truncate font-mono text-[10px] text-zinc-500">
-                          {c.session_id.slice(0, 8)}…
-                          {c.isLocalDraft ? (
-                            <span className="text-amber-500/90"> · draft</span>
-                          ) : c.report_count > 0 ? (
-                            <span className="text-zinc-600">
-                              {" "}
-                              · {c.report_count} plan
-                              {c.report_count === 1 ? "" : "s"}
-                            </span>
-                          ) : null}
-                        </span>
                         <span
-                          className="mt-0.5 block truncate text-xs text-zinc-300"
+                          className="block truncate text-xs leading-snug"
                           title={c.preview}
                         >
                           {c.preview}
                         </span>
-                        <span className="mt-0.5 block text-[10px] text-zinc-500">
-                          {c.isLocalDraft
-                            ? "Saved to disk after first generate"
-                            : formatChatWhen(c.updated_at)}
+                        <span className="mt-0.5 block font-mono text-[10px] text-zinc-500">
+                          {c.isLocalDraft ? (
+                            <span className="text-amber-500/90">draft</span>
+                          ) : (
+                            <>
+                              {formatChatWhen(c.updated_at)}
+                              {c.report_count > 0 && (
+                                <span className="text-zinc-600">
+                                  {" "}
+                                  · {c.report_count} plan
+                                  {c.report_count === 1 ? "" : "s"}
+                                </span>
+                              )}
+                            </>
+                          )}
                         </span>
                       </button>
                     </li>
