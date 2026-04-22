@@ -256,11 +256,14 @@ is informational; feedback is the PM's corrective action.
 The backend still accepts `decision: "reject"` via the API for future tooling
 (audit scripts, reporting), but the frontend does not expose it.
 
-### Gap 2 — No integration tests for full HTTP session flow
+### Gap 2 — No full lifecycle integration test (partial coverage added)
 
 `tests/test_hitl_flow.py` covers the refine endpoint with mocked store and agent.
-Missing: full session lifecycle via TestClient — create session → generate →
-gate decision → refine. Would require mocking the agent's `run()` method as well.
+`tests/p2/test_read_endpoints.py` covers GET /reports and GET /gates.
+`tests/p2/test_user_isolation.py` covers cross-user session/report isolation via real temp dir.
+Still missing: a single test that runs the full lifecycle — create session → generate →
+gate decision → refine → approve → re-fetch — against a live API without mocks. D4
+(scripted E2E) is the manual substitute.
 
 ### Gap 4 — "Before planning" gate bypass is a workaround
 

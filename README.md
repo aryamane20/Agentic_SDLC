@@ -19,8 +19,8 @@ This use case evolves across all three course projects:
 
 | Project | Mode | What Changes |
 |---------|------|-------------|
-| **Project 1** (this repo) | Doing | Single agent, embedded knowledge, deterministic output |
-| **Project 2** | In progress | FastAPI HITL API + gates + refine (React UI pending) |
+| **Project 1** (done) | Doing | Single agent, embedded knowledge, deterministic output |
+| **Project 2** (done) | In progress | FastAPI HITL backend + React/Vite frontend + approval gates + refinement loop — fully implemented, tested (100 tests), and smoke-tested across all 3 scenarios |
 | **Project 3** | Delegating | Multi-agent pipeline: **Use Case Agent** (actors, use cases, **draw.io + Kroki PNG**) → Intake → Planning → Risk → Staffing → **Synthesis**; RAG per agent; final report = BA + PM output, cross-grounded (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) §7) |
 
 ---
@@ -75,9 +75,11 @@ Agentic_SDLC/
 │       └── sample_failure.json     ← Representative failure run
 │
 ├── docs/                           ← Architecture doc, pre-mortem, design decisions
-│   ├── ARCHITECTURE.md            ← 5 Architecture Questions answered
-│   ├── PRE_MORTEM.md              ← Failure mode table (predicted)
-│   └── EVALUATION_RUBRIC.md       ← 4-dimension eval results
+│   ├── ARCHITECTURE.md            ← Full system design (P1–P3)
+│   ├── PRE_MORTEM.md              ← Failure mode table (predicted + discovered)
+│   ├── EVALUATION_RUBRIC.md       ← P1 eval dimensions and rubric scoring
+│   ├── EVALUATION.md              ← P2 test layers, gate conditions, how to run
+│   └── DEMO.md                    ← Pre-demo checklist + scenario briefs
 │
 ├── scripts/                        ← Utility scripts
 │   ├── run_eval.py                ← Runs agent on eval set; scorecard → results/p1/eval/

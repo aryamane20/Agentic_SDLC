@@ -102,5 +102,5 @@ Brief file: `inputs/test-cases-p2/scenario-c-critical-risk/brief.txt`
 # All P2 tests pass before going live
 make test-p2-baseline
 
-# Expected: ~38-42 passed, 0 failed
+# Expected: 45 passed, 0 failed
 ```

@@ -7,7 +7,7 @@ Raw requirements in → validated JSON plan out (project plan + risk register + 
 Built as a course project evolving across three stages:
 
 - **P1 (done):** Single agent, embedded knowledge, deterministic JSON output
-- **P2 (active):** FastAPI HITL backend + React/Vite frontend + approval gates
+- **P2 (done):** FastAPI HITL backend + React/Vite frontend + approval gates
 - **P3 (designed):** Multi-agent pipeline (Use Case → Intake → Planning → Risk → Staffing → Synthesis) + RAG
 
 Full design: `docs/ARCHITECTURE.md`
