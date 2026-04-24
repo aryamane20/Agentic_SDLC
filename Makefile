@@ -1,4 +1,4 @@
-.PHONY: install install-frontend test test-hitl test-p2-baseline api frontend lint help
+.PHONY: install install-frontend test test-p1 test-p2 test-hitl test-p2-baseline api frontend lint help
 
 # ── Setup ──────────────────────────────────────────────────────────────────────
 
@@ -21,14 +21,20 @@ frontend:
 test:
 	python -m pytest tests/ -v
 
+test-p1:
+	python -m pytest tests/p1/ -v
+
+test-p2:
+	python -m pytest tests/p2/ -v
+
 test-hitl:
-	python -m pytest tests/test_hitl_flow.py tests/test_api_approval_gate.py -v
+	python -m pytest tests/p2/test_hitl_flow.py tests/p2/test_api_approval_gate.py -v
 
 test-p2-baseline:
-	python -m pytest tests/p2/ tests/test_hitl_flow.py tests/test_api_approval_gate.py tests/test_p2_revision_conflict.py -v
+	python -m pytest tests/p2/ -v
 
 test-fast:
-	python -m pytest tests/ -v --ignore=tests/test_happy_path.py
+	python -m pytest tests/ -v --ignore=tests/p1/test_happy_path.py
 
 # ── Evaluation ─────────────────────────────────────────────────────────────────
 
@@ -49,10 +55,12 @@ help:
 	@echo "  make install-frontend  Install frontend npm dependencies"
 	@echo "  make api               Start FastAPI backend on :8000"
 	@echo "  make frontend          Start Vite dev server on :5180"
-	@echo "  make test              Run full test suite"
-	@echo "  make test-hitl         Run HITL-specific tests only"
-	@echo "  make test-p2-baseline  P2 regression: gates + replay + HITL + 409 concurrency"
-	@echo "  make test-fast         Run tests excluding slow eval tests"
+	@echo "  make test              Run full test suite (P1 + P2)"
+	@echo "  make test-p1           Run P1 tests only (agent, validator, viability)"
+	@echo "  make test-p2           Run P2 tests only (gates, HITL, refinement, API)"
+	@echo "  make test-hitl         Run HITL-specific tests (gate + flow)"
+	@echo "  make test-p2-baseline  P2 regression suite (alias for test-p2)"
+	@echo "  make test-fast         Run tests excluding slow happy-path tests"
 	@echo "  make eval-generate     Generate fresh eval outputs (uses API credits)"
 	@echo "  make eval-replay       Replay cached eval outputs (free)"
 	@echo "  make eval-all          Generate + replay + score"
