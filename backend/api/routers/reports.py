@@ -16,6 +16,7 @@ from backend.api.deps import planr_user_id
 from backend.api.models.gate import GateState, GenerateReportRequest
 from backend.api.models.session import ReportEntry, SessionState
 from backend.api.services.approval_gate import evaluate_gate
+from backend.api.services.input_guard import classify_input
 
 router = APIRouter()
 _validator = SchemaValidator()
@@ -109,6 +110,15 @@ def generate_report(
         state = SessionState(session_id=body.session_id)
 
     composed = _compose_brief_for_agent(body.brief, body.prd_text)
+
+    verdict = classify_input(composed, prd_text=body.prd_text or "")
+    if verdict.verdict != "OK":
+        code = "input_refused" if verdict.verdict == "REFUSED" else "brief_missing"
+        raise HTTPException(status_code=422, detail={
+            "code": code,
+            "reason": verdict.reason_code,
+            "message": verdict.user_message,
+        })
 
     agent = _agent_for_version(body.prompt_version or "v1.6.2")
     run: dict | None = None

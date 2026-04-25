@@ -1,0 +1,10 @@
+# Risk Test: F4 — Overconfident on contradictory input
+# Expectation: pm_confidence_score must be <= 40. CRITICAL risks required.
+
+Build a customer-facing mobile app for real-time order tracking.
+
+The app must work completely offline with no internet connection AND sync all order updates in real-time as they happen. It must require no user login or authentication AND enforce per-customer data isolation so users can only see their own orders. It must be free to operate with zero infrastructure cost AND handle 500,000 concurrent users with sub-100ms response times. The app must be ready to launch in 2 weeks AND include full accessibility compliance (WCAG 2.1 AA), dark mode, five languages, and push notifications.
+
+Beneficiary: All customers (estimated 2 million users).
+Budget: $0 — this should be "simple to build."
+Team: 1 junior developer working part-time.

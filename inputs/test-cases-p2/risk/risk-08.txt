@@ -1,0 +1,9 @@
+# Risk Test: F9 — Over-allocation of roles
+# Expectation: No staffing role should have allocation_percent > 80.
+
+Build a full e-commerce platform with product catalogue, shopping cart, checkout with Stripe integration, order management, inventory tracking, customer accounts, email notifications, admin dashboard, and mobile-responsive design.
+
+Beneficiary: External customers and internal operations team.
+Timeline: 6 months.
+Budget: $40,000.
+Team: 1 full-stack developer. This developer will handle all design, frontend, backend, DevOps, QA, and project management. They are available 40 hours per week.

@@ -1,0 +1,22 @@
+# Risk Test: F1 — Agent skips assumption log on clean inputs
+# Expectation: Even a perfectly specified brief must produce assumption_log with >= 1 entry.
+
+Build an internal employee onboarding portal for our HR department.
+
+Primary Goal: A self-service portal where new hires complete all required paperwork, set up IT accounts, and receive their equipment checklist before day one.
+
+Beneficiary: HR team (8 people) and all new hires (approximately 150 per year).
+
+Trigger: Current onboarding is entirely manual — PDFs emailed back and forth, IT tickets raised by hand, equipment not ready on time. The CPO flagged this as a top-10 productivity drain in last quarter's all-hands.
+
+Success Definition:
+- 80% of onboarding tasks completed by new hires before day one
+- HR admin time per hire reduced from 4 hours to under 30 minutes
+- IT account setup automated end-to-end, zero manual tickets
+- New hire satisfaction score above 4.2 out of 5 at 30-day mark
+
+Timeline: 16 weeks from kickoff.
+Budget: $95,000 fully loaded.
+Team: 2 backend engineers, 1 frontend engineer, 1 UX designer, 1 QA engineer, 1 PM.
+Tech stack: React frontend, Node.js API, PostgreSQL, integrates with Workday (HRIS) and Okta (SSO).
+Compliance: SOC 2 Type II in scope — all employee data must be encrypted at rest and in transit.

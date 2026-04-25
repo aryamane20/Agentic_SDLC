@@ -1,0 +1,11 @@
+# Risk Test: F8 — Staffing plan missing QA role
+# Expectation: staffing_plan must include a QA engineer even though the brief never mentions testing.
+
+Build an internal expense management portal for our finance team.
+
+Employees should be able to submit expenses, attach receipts, and track reimbursement status. Managers approve or reject submissions. Finance exports monthly reports to our accounting system (QuickBooks).
+
+Beneficiary: All employees (approx 300) and finance team (6 people).
+Timeline: 10 weeks.
+Budget: $60,000.
+Team: 2 developers and a designer. We don't have anyone dedicated to testing — developers will validate their own work.

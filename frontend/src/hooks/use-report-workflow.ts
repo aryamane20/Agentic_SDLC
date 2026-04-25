@@ -18,7 +18,8 @@ import type {
 } from "@/types/plan"
 
 /** Combined brief + PRD text must reach this length before send is enabled. */
-const MIN_BRIEF = 10
+const MIN_BRIEF_CHARS = 20
+const MIN_BRIEF_WORDS = 4
 
 function tid(): string {
   return crypto.randomUUID()
@@ -28,9 +29,15 @@ async function readError(res: Response): Promise<string> {
   try {
     const j = (await res.json()) as { detail?: unknown }
     if (typeof j.detail === "string") return j.detail
-    if (Array.isArray(j.detail)) return JSON.stringify(j.detail)
-    if (typeof j.detail === "object" && j.detail !== null)
-      return JSON.stringify(j.detail)
+    if (Array.isArray(j.detail)) return j.detail.map((e: unknown) => {
+      if (typeof e === "object" && e !== null && "msg" in e) return (e as { msg: string }).msg
+      return String(e)
+    }).join("; ")
+    if (typeof j.detail === "object" && j.detail !== null) {
+      const d = j.detail as Record<string, unknown>
+      if (typeof d.message === "string") return d.message
+      return JSON.stringify(d)
+    }
     return res.statusText || `HTTP ${res.status}`
   } catch {
     return res.statusText || `HTTP ${res.status}`
@@ -114,7 +121,7 @@ export function useReportWorkflow() {
     const b = brief.trim()
     const p = prdText.trim()
     const effective = `${b}\n${p}`.trim()
-    if (effective.length < MIN_BRIEF) return
+    if (effective.length < MIN_BRIEF_CHARS) return
     setError(null)
     setLastDiff(null)
     setPhase("GENERATING")
@@ -384,7 +391,10 @@ export function useReportWorkflow() {
   )
 
   const effectiveInputLength = `${brief.trim()}\n${prdText.trim()}`.trim().length
-  const canSubmit = effectiveInputLength >= MIN_BRIEF
+  const hasPrd = prdText.trim().length > 0
+  const briefWordCount = brief.trim().split(/\s+/).filter(Boolean).length
+  const briefWordsOk = hasPrd || briefWordCount >= MIN_BRIEF_WORDS
+  const canSubmit = effectiveInputLength >= MIN_BRIEF_CHARS && briefWordsOk
   const canRefine = refineText.trim().length >= 1
 
   const bootstrapSession = useCallback(async () => {
@@ -423,7 +433,7 @@ export function useReportWorkflow() {
     loadPrdFile,
     clearPrd,
     canRefine,
-    minBriefLength: MIN_BRIEF,
+    minBriefChars: MIN_BRIEF_CHARS,
     effectiveInputLength,
     bootstrapSession,
     messages,

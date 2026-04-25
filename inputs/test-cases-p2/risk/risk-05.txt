@@ -1,0 +1,11 @@
+# Risk Test: F5 — Hallucinated tasks for unknown domain
+# Expectation: input_quality LOW or MEDIUM, confidence low, assumptions flagged for domain gaps.
+
+Build a clinical trial data management system for our pharmaceutical research division.
+
+The system must handle Phase II and Phase III trial data in compliance with 21 CFR Part 11 (FDA electronic records), ICH E6(R2) GCP guidelines, and EMA Annex 11. It needs to integrate with our existing EDC system (Medidata Rave), generate CDISC SDTM and ADaM datasets for NDA submission, support blinded randomisation with IWRS integration, and provide real-time safety signal detection using Bayesian adaptive design thresholds.
+
+Beneficiary: Clinical operations team, biostatistics team, regulatory affairs.
+Timeline: 12 months.
+Budget: $2.4 million.
+Team: To be determined — we need your recommendation on roles and sizing.

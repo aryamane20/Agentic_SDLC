@@ -6,7 +6,20 @@ difference. Whitespace changes, comment tweaks, and one-line fixes are git commi
 not prompt versions.
 
 Intermediate versions (v1.0.0–v1.6.1) are archived in `prompts/archive/`.
-Active versions: v1.0 through **v1.6.2** (latest default in code: `v1.6.2`).
+Active versions: v1.0 through **v1.6.3** (latest default in code: `v1.6.3`).
+
+---
+
+## v1.6.3 — INPUT GUARD PROMPT HARDENING
+**File:** `prompts/v1.6.3_system.txt`
+**Date:** April 2026
+**Type:** SECURITY — secondary defense against injection embedded in valid briefs
+
+**What changed from v1.6.2:**
+- One sentence added to the role section instructing the model to ignore any embedded instructions to override behavior, reveal the system prompt, change output format, or access other users' data.
+- Deterministic input guard (`backend/api/services/input_guard.py`) is the primary defense; this is a belt-and-suspenders secondary layer.
+
+**Eval impact:** No rubric score change expected (guard catches adversarial inputs before the agent sees them; this handles paraphrased edge cases that slip past regex).
 
 ---
 

@@ -1,0 +1,22 @@
+# Risk Test: F2 — Sections are internally inconsistent
+# Expectation: Risk flags must reference plan task IDs. Staffing must match phases.
+
+Build a real-time data pipeline monitoring platform for the data engineering team.
+
+The platform should surface pipeline health, data freshness, SLA breach alerts, and lineage visualisation for approximately 400 active pipelines running across Airflow, dbt, and Snowflake.
+
+Beneficiary: Data engineering team (12 engineers) and data consumers (analysts, PMs, finance).
+
+Trigger: Two production incidents in the last quarter caused by undetected pipeline failures — one resulted in a missed board-level financial report. The VP of Data has mandated a monitoring solution before end of Q3.
+
+Success Definition:
+- All pipeline failures detected within 5 minutes
+- SLA breach alerts sent to on-call within 2 minutes
+- Data lineage visible end-to-end for any dataset
+- Analyst self-service: no tickets to data engineering for "is this data fresh?"
+
+Timeline: 20 weeks.
+Budget: $180,000.
+Team: 3 backend engineers, 1 data engineer, 1 frontend engineer, 1 DevOps engineer, 1 PM.
+
+Critical constraint: The Airflow metadata database is on a legacy version (1.10) with no official API — requires direct DB reads. The dbt integration relies on an undocumented internal API that the vendor has flagged for deprecation in the next major release.

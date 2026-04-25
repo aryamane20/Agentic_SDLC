@@ -1,0 +1,19 @@
+# Risk Test: F3 — Phase compression under deadline pressure
+# Expectation: QA phase must be >= 15% of total timeline even under extreme deadline.
+# This brief gives 3 weeks for a full banking integration platform.
+
+Build a complete internal payment reconciliation platform that integrates with our banking partners (Chase, Wells Fargo, Stripe), performs automated three-way matching of transactions, flags discrepancies for manual review, and generates regulatory-compliant audit reports for SOX compliance.
+
+Beneficiary: Finance team (25 people), external auditors.
+
+Trigger: Regulatory audit is scheduled for 3 weeks from today. Our current reconciliation process is entirely manual in Excel. The CFO has stated this is non-negotiable — the audit cannot proceed without an automated trail.
+
+Success Definition:
+- 100% of transactions reconciled automatically within 24 hours
+- Discrepancy rate flagged for human review: under 0.1%
+- SOX-compliant audit trail exportable as PDF and CSV
+- Integration live with all three banking partners
+
+Timeline: 3 weeks hard deadline. No extensions possible.
+Budget: $50,000.
+Team: 2 backend engineers, 1 PM. No QA engineer budgeted — "engineers will test their own code."

@@ -11,6 +11,8 @@ make test-p2
 
 | File | What it tests | Loads data from |
 |------|--------------|-----------------|
+| `test_input_guard.py` | Classify 17 intake fixtures — REFUSED / NEEDS_BRIEF / OK verdicts | `inputs/test-cases-p2/intake/` |
+| `test_generate_input_guard.py` | Guard wired into POST /reports/generate — 422 on bad input, 200 on clean | Mocked PMAgent + store |
 | `test_p2_gates_fixtures.py` | Gate fires correctly on frozen report JSON | `inputs/test-cases-p2/fixtures/gates/*.json` |
 | `test_p2_refinement_replay.py` | Gate state is correct across a multi-round refine sequence | `inputs/test-cases-p2/fixtures/refinement/*/` |
 | `test_api_approval_gate.py` | Gate trigger rules (confidence, CRITICAL risk, all reasons collected) | Inline fixtures |
@@ -25,6 +27,7 @@ make test-p2
 
 ## Data locations
 
+- **Intake guard fixtures:** `inputs/test-cases-p2/intake/*.txt` + `expectations.json`
 - **Frozen gate fixtures:** `inputs/test-cases-p2/fixtures/gates/*.json`
 - **Refinement snapshots:** `inputs/test-cases-p2/fixtures/refinement/*/`
 - **P1 eval scorecards:** `results/p1/eval/` (from `scripts/run_eval.py`)

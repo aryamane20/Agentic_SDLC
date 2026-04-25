@@ -1,0 +1,1 @@
+Fuck, just build a leave tracker for our HR team of 50 people. We need approval workflows and manager dashboards. Employees should be able to submit requests and get email notifications when approved or rejected.

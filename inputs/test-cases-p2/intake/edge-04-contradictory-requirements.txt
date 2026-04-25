@@ -1,0 +1,1 @@
+Build a system that is both fully offline and always in real-time sync with the cloud. Must require no login but also enforce per-user permissions.

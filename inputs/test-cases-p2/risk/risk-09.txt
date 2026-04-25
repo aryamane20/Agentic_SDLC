@@ -1,0 +1,13 @@
+# Risk Test: F11 — Staffing plan missing roles flagged in risk register
+# Expectation: If the risk register flags a security risk, a security engineer must appear in staffing_plan.
+
+Build an internal secrets management and credential rotation system for our engineering team.
+
+The system will store API keys, database passwords, SSH certificates, and OAuth tokens for approximately 80 microservices. It needs automated rotation for credentials that support it, audit logging for all access events, role-based access control by team, and integration with our existing CI/CD pipeline (GitHub Actions).
+
+Beneficiary: Engineering team (45 engineers across 8 squads).
+Timeline: 14 weeks.
+Budget: $110,000.
+Team: 2 backend engineers, 1 DevOps engineer, 1 PM. Security review "to be scheduled separately."
+
+Critical note: Several of the credentials being managed are production database passwords for systems handling PII under GDPR. A breach or misconfiguration would be a reportable incident.

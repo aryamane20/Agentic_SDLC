@@ -1,0 +1,7 @@
+# Risk Test: F7 — Generic risks not specific to input
+# Expectation: Each risk in risk_register must reference specific details from this brief.
+# A vague brief tests whether the agent copies generic risks or actually reads the input.
+
+Build a reporting tool.
+
+We need something for reports. The team has been asking for better reporting for a while. It should show data and let people filter it. We want charts too. Timeline is flexible, budget is whatever it costs, team size TBD.

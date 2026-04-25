@@ -119,7 +119,7 @@ export function PlanPage() {
     startNewPlan,
     canSubmit,
     canRefine,
-    minBriefLength,
+    minBriefChars,
     effectiveInputLength,
     bootstrapSession,
     messages,
@@ -142,6 +142,25 @@ export function PlanPage() {
   }, [])
 
   const gateFired = Boolean(gate?.fired)
+
+  const confidenceScore: number | null = (() => {
+    if (!report) return null
+    const cs = (report as Record<string, unknown>).pm_confidence_score
+    if (typeof cs === "number") return cs
+    if (cs && typeof cs === "object") {
+      const s = (cs as Record<string, unknown>).score
+      if (typeof s === "number") return s
+      if (typeof s === "string") { const n = parseFloat(s); return isNaN(n) ? null : n }
+    }
+    return null
+  })()
+
+  const noProjectFound =
+    confidenceScore !== null &&
+    confidenceScore < 30 &&
+    !prdText.trim() &&
+    (phase === "REVIEW" || phase === "APPROVED")
+
   const busy =
     phase === "GENERATING" ||
     phase === "REFINING" ||
@@ -339,6 +358,11 @@ export function PlanPage() {
                       {planSnapshots.length > 0 ? "Current plan" : "Plan"} · v
                       {planVersion}
                     </p>
+                    {noProjectFound && (
+                      <div className="rounded-2xl border border-amber-500/40 bg-amber-950/30 px-4 py-3 text-sm text-amber-100">
+                        Low confidence score detected. The plan may not reflect a real project — review carefully before approving.
+                      </div>
+                    )}
                     {gateFired ? (
                       <StudioShineBorder
                         tone="amber"
@@ -484,7 +508,7 @@ export function PlanPage() {
                       onPickPrd={() => prdInputRef.current?.click()}
                       onClearPrd={clearPrd}
                       showPrd
-                      footerHint={`${effectiveInputLength} / ${minBriefLength} chars (brief + PRD) · Send when ready`}
+                      footerHint={`${effectiveInputLength} / ${minBriefChars} chars (brief + PRD) · Send when ready`}
                     />
                   ) : (
                     <PlanFloatingComposer

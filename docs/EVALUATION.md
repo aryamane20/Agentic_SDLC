@@ -192,6 +192,39 @@ These are not oversights — they're explicit decisions to keep P2 focused. P3 o
 
 ---
 
+## Intake Guard
+
+`backend/api/services/input_guard.py` runs before every `POST /reports/generate` call. It returns one of three verdicts:
+
+| Verdict | HTTP | `detail.code` | Meaning |
+|---------|------|---------------|---------|
+| `OK` | — | — | Passes through to the agent |
+| `NEEDS_BRIEF` | 422 | `brief_missing` | Input is present but not a project description |
+| `REFUSED` | 422 | `input_refused` | Input contains adversarial or unethical content |
+
+**Detection order (first match wins):**
+1. `prompt_injection` — instruction override patterns
+2. `role_switch` — DAN / identity reset attempts
+3. `system_prompt_extraction` — show/reveal/repeat prompt requests
+4. `cross_session_extraction` — requests for other users' data
+5. `abuse` — profanity with no project keyword
+6. `unethical_project` — covert surveillance patterns
+7. `empty` / `too_short` / `url_only` / `no_project_signal` — quality gates (waived if PRD attached)
+
+**Known limitations:** paraphrased attacks that avoid trigger keywords, and any input that includes a project keyword alongside adversarial content (documented in Rule 5 comment).
+
+**Run the guard tests (zero API cost):**
+```bash
+make test-input-guard
+```
+
+**Run the full P2 regression suite:**
+```bash
+make test-p2-baseline
+```
+
+---
+
 ## Why the Gate Is the Key Safety Net
 
 The approval gate is P2's main protection against a bad plan reaching execution. A PM cannot act on budget or staffing recommendations without either the gate clearing naturally, or the PM explicitly choosing to override it. Every override is logged append-only in `logs/gate_decisions.jsonl`. This means there's always an audit trail when a human chose to proceed despite a CRITICAL risk or a confidence score below 60.
