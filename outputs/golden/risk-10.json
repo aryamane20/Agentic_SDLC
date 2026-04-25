@@ -1,0 +1,1092 @@
+{
+  "case_id": "risk-10",
+  "http_status": 200,
+  "body": {
+    "session_id": "a544ac49-2baa-4535-829f-f9459c799b8d",
+    "report_id": "rpt_9204985dc292",
+    "report_revision": 1,
+    "report": {
+      "report_metadata": {
+        "generated_at": "2026-04-25T21:12:15.104495Z",
+        "prompt_version": "v1.6.4",
+        "project_type": "TYPE_A",
+        "input_quality": "HIGH",
+        "classification_confidence": "HIGH",
+        "sdlc_approach": "Hybrid",
+        "sdlc_rationale": "Fixed 9-month deadline and $850k budget force predictive scheduling; evolving integration scope and plugin architecture require adaptive backlog refinement within phases.",
+        "pm_confidence_score": 62.0
+      },
+      "project_understanding": {
+        "primary_goal": "Build an internal developer platform (IDP) providing unified service discovery, self-serve infrastructure provisioning, onboarding automation, and incident management for 200-person engineering org across 12 product + 3 platform squads.",
+        "beneficiary": "Engineering organization (product + platform squads); primary users: squad leads, platform engineers, on-call engineers.",
+        "trigger": "No unified developer experience today; 140 microservices + 340 repos scattered across GitHub, AWS, PagerDuty, Jira; onboarding manual; incident response fragmented.",
+        "success_definition": [
+          "Service catalogue auto-discovers all repos with owner, SLOs, dependencies, deploy history, runbooks; search p95 < 1.5s",
+          "Self-serve provisioning (Postgres, Redis, S3, SQS, ECS) with Terraform + approval workflow + cost estimate",
+          "Onboarding checklist auto-provisions GitHub, IAM, Slack, Jira for new squads",
+          "Incident view aggregates PagerDuty alerts with service metadata (owner, deploys, deps, runbook)",
+          "Plugin system (REST + webhooks) supports security scans, DORA metrics, custom integrations",
+          "99.9% uptime; squad-level RBAC for cost/provisioning; 2-year audit log for all provision actions"
+        ],
+        "supporting_quotes": [
+          "Build an internal developer platform (IDP) for a 200-person engineering org",
+          "Service catalogue (auto-discover repos; owner, SLOs, deps, deploys, runbooks; search)",
+          "Self-serve provisioning (Postgres, Redis, S3, SQS, ECS) via Terraform + approval + cost estimate",
+          "Integrations (must support): GitHub, AWS, Terraform Cloud, PagerDuty, Jira, Confluence, Slack, Okta SSO, Datadog",
+          "9 months to first internal full launch; $850k budget"
+        ]
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "Security review and compliance audit (SOC 2 / data handling) will be completed within Phase 3 and do not require external vendor approval beyond internal security team.",
+          "why": "IDP handles IAM, cost data, and audit logs; security review is standard for internal platforms. No external compliance body mentioned (not HIPAA/PCI). Assuming internal security team capacity exists.",
+          "pmi_basis": "PMBOK 6th Ed, Section 11.2 \u2014 Risk identification before planning baseline; security is a material NFR.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If external compliance audit required (e.g., SOC 2 Type II), Phase 3 extends 4\u20136 weeks; budget impact ~$30\u201350k for audit firm.",
+          "source": "nfr",
+          "tradeoff": "Gains: allows Phase 3 to proceed without external dependency. Risks: if wrong, schedule slips and budget overruns."
+        },
+        {
+          "id": "A2",
+          "what": "Terraform Cloud API and AWS IAM/ECS/RDS/S3/SQS/CloudWatch APIs are fully documented, sandbox-accessible, and stable (no breaking changes during 9-month build).",
+          "why": "These are mature, vendor-supported APIs. Assuming no undocumented endpoints or schema drift. Sandbox access is standard for AWS and Terraform Cloud.",
+          "pmi_basis": "PMBOK 6th Ed, Section 11.2 \u2014 Integration risk identification; external API stability is a known failure mode.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If API schema changes or sandbox access delayed, Phase 2 development blocked for 2\u20134 weeks; integration testing (Phase 3) extends.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows development to proceed without API discovery delays. Risks: if wrong, critical path slips."
+        },
+        {
+          "id": "A3",
+          "what": "PagerDuty, Jira, Confluence, Slack, and Okta SSO provide REST APIs with webhook support and do not require custom authentication beyond standard OAuth/API keys.",
+          "why": "All are SaaS platforms with documented public APIs. Assuming no custom authentication or approval process beyond standard API key provisioning.",
+          "pmi_basis": "PMBOK 6th Ed, Section 11.2 \u2014 Integration risk; external SaaS API availability and stability.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If any SaaS API requires custom authentication or has undocumented rate limits, Phase 2 integration work extends 1\u20132 weeks per API.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows parallel integration development. Risks: if wrong, integration testing (Phase 3) becomes sequential bottleneck."
+        },
+        {
+          "id": "A4",
+          "what": "Plugin system (REST + webhooks) will use a standard webhook delivery model (HTTP POST with retry logic) and does not require custom message queue or event streaming infrastructure beyond what AWS SQS provides.",
+          "why": "REST + webhooks is a standard pattern for extensibility. Assuming no need for Kafka, RabbitMQ, or custom event bus. SQS is already in the provisioning scope.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.4 \u2014 Scope baseline; plugin architecture is a known design pattern.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If plugin system requires custom event streaming (Kafka), Phase 2 architecture extends 2\u20133 weeks; infrastructure cost increases ~$5\u201310k/year.",
+          "source": "scope",
+          "tradeoff": "Gains: simplifies Phase 2 architecture; uses existing AWS services. Risks: if wrong, plugin performance or reliability may require re-architecture."
+        }
+      ],
+      "project_plan": {
+        "total_duration_weeks": 39.0,
+        "buffer_applied_percent": 15.0,
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T15",
+            "T18",
+            "T22",
+            "T25",
+            "T28"
+          ],
+          "total_duration_days": 165.0,
+          "zero_slack_tasks": [
+            "T1",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T15",
+            "T18",
+            "T22",
+            "T25",
+            "T28"
+          ],
+          "highest_slack_tasks": [
+            "T2",
+            "T4",
+            "T7",
+            "T11",
+            "T14"
+          ],
+          "staffing_implication": "Backend developers (4 total) must be dedicated to critical path tasks (service catalogue, provisioning engine, integrations); FE and UX can work in parallel on UI with 2\u20133 day slack. DevOps/platform engineer is critical path for infrastructure setup and Phase 5 deployment."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 4.0,
+            "percentage_of_total": 10.0,
+            "milestones": [
+              "Architecture document approved (service catalogue, provisioning engine, incident view, plugin system)",
+              "API contracts defined for all 8 integrations (GitHub, AWS, Terraform, PagerDuty, Jira, Slack, Okta, Datadog)",
+              "Database schema designed (service metadata, audit log, RBAC, cost tracking)",
+              "Stakeholder sign-off on MVP scope and integration priority"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Conduct architecture workshop with platform + product leads; define service catalogue schema, provisioning workflow, incident aggregation model",
+                "phase": 1,
+                "effort_hours": 24.0,
+                "owner_role": "Solution Architect",
+                "dependencies": [],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Architecture document (2\u20133 pages) approved by platform lead and PM; schema diagrams for catalogue, audit log, RBAC"
+              },
+              {
+                "id": "T2",
+                "name": "Review GitHub, AWS, Terraform Cloud, PagerDuty, Jira, Slack, Okta, Datadog API documentation; document rate limits, auth, schema",
+                "phase": 1,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "API contract document (one page per integration) with endpoint list, auth method, rate limits, error codes"
+              },
+              {
+                "id": "T3",
+                "name": "Design database schema (PostgreSQL): service catalogue, audit log, RBAC, cost tracking, plugin registry",
+                "phase": 1,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Schema SQL file with tables, indexes, constraints; reviewed and approved by platform lead"
+              },
+              {
+                "id": "T4",
+                "name": "Design UI wireframes for service catalogue, provisioning form, onboarding checklist, incident view",
+                "phase": 1,
+                "effort_hours": 18.0,
+                "owner_role": "UX Designer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Figma wireframes (4 main screens) reviewed and approved by PM and 2 squad leads"
+              },
+              {
+                "id": "T5",
+                "name": "Define RBAC model (squad-level access to cost, provisioning, audit log); document permission matrix",
+                "phase": 1,
+                "effort_hours": 12.0,
+                "owner_role": "Security Engineer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "RBAC matrix document (roles, permissions, audit log scope) approved by security lead and PM"
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development",
+            "duration_weeks": 15.0,
+            "percentage_of_total": 38.0,
+            "milestones": [
+              "Service catalogue backend (auto-discovery, search, metadata) working with GitHub + AWS integration",
+              "Provisioning engine (Terraform + approval workflow) working for Postgres, Redis, S3, SQS, ECS",
+              "Onboarding automation (GitHub, IAM, Slack, Jira) end-to-end for one squad",
+              "Incident view (PagerDuty aggregation) displaying service metadata",
+              "Plugin system (REST API + webhook delivery) accepting first test plugin",
+              "Internal demo completed with platform team"
+            ],
+            "tasks": [
+              {
+                "id": "T6",
+                "name": "Set up PostgreSQL, Redis, S3 buckets, VPC, IAM roles for IDP infrastructure (dev + staging)",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T3"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Dev and staging environments fully provisioned; Terraform code in repo; access verified"
+              },
+              {
+                "id": "T7",
+                "name": "Implement service catalogue backend: GitHub API client (list repos, get metadata), database schema, search index",
+                "phase": 2,
+                "effort_hours": 36.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T3",
+                  "T6"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Catalogue API returns 340+ repos with owner, SLOs, dependencies; search p95 < 2s on staging data"
+              },
+              {
+                "id": "T8",
+                "name": "Implement AWS integration: IAM client (list roles, policies), ECS client (list clusters, services), RDS client (list instances); sync to catalogue",
+                "phase": 2,
+                "effort_hours": 32.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T3",
+                  "T6"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Catalogue displays AWS resources (ECS services, RDS instances, S3 buckets) with ownership; sync runs hourly"
+              },
+              {
+                "id": "T9",
+                "name": "Implement provisioning engine: Terraform Cloud API client, approval workflow (Slack notification + manual approval), cost estimation",
+                "phase": 2,
+                "effort_hours": 40.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T3",
+                  "T6"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Provisioning API accepts request (Postgres, Redis, S3, SQS, ECS); generates Terraform plan; sends approval to Slack; executes on approval"
+              },
+              {
+                "id": "T10",
+                "name": "Implement onboarding automation: GitHub team creation, IAM role provisioning, Slack channel creation, Jira project setup",
+                "phase": 2,
+                "effort_hours": 36.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T3",
+                  "T6"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Onboarding checklist API provisions all 4 systems for one test squad; manual verification confirms all resources created"
+              },
+              {
+                "id": "T11",
+                "name": "Implement incident view: PagerDuty API client (list incidents, services), join with catalogue metadata (owner, deploys, deps, runbook)",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T3",
+                  "T8"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Incident view API returns active incidents with service metadata; tested with 5+ sample incidents"
+              },
+              {
+                "id": "T12",
+                "name": "Implement plugin system: REST API for plugin registration, webhook delivery (HTTP POST + retry), event schema",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T3",
+                  "T6"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Plugin API accepts registration; webhook delivery tested with mock security scan plugin; retry logic verified"
+              },
+              {
+                "id": "T13",
+                "name": "Build service catalogue UI: repo list, search, detail view (owner, SLOs, deps, deploys, runbook)",
+                "phase": 2,
+                "effort_hours": 32.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T4",
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "UI displays 340+ repos; search works; detail view shows all metadata; responsive design verified"
+              },
+              {
+                "id": "T14",
+                "name": "Build provisioning UI: form (resource type, config), cost estimate display, approval status, history",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T4",
+                  "T9"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "UI form submits provisioning request; displays cost estimate; shows approval status; history view works"
+              },
+              {
+                "id": "T15",
+                "name": "Build onboarding UI: checklist (GitHub, IAM, Slack, Jira), status per item, submit button",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T4",
+                  "T10"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "UI displays checklist; submit triggers onboarding automation; status updates in real-time"
+              },
+              {
+                "id": "T16",
+                "name": "Build incident view UI: active incidents, service metadata, deploy history, runbook link",
+                "phase": 2,
+                "effort_hours": 18.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T4",
+                  "T11"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "UI displays incidents with service context; runbook link works; deploy history visible"
+              },
+              {
+                "id": "T17",
+                "name": "Implement Okta SSO integration: OAuth flow, user provisioning, squad-level RBAC enforcement",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T3",
+                  "T5"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "SSO login works; user roles mapped from Okta groups; RBAC enforced on all APIs"
+              },
+              {
+                "id": "T18",
+                "name": "Implement audit logging: log all provisioning actions (who, what, when, cost); store in PostgreSQL; 2-year retention policy",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T3",
+                  "T9"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Audit log table populated; all provisioning actions logged; retention policy enforced; query API works"
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases",
+            "duration_weeks": 9.0,
+            "percentage_of_total": 23.0,
+            "milestones": [
+              "All 8 integrations (GitHub, AWS, Terraform, PagerDuty, Jira, Slack, Okta, Datadog) tested end-to-end",
+              "Edge cases handled: API rate limiting, auth failures, schema drift, missing data",
+              "Performance testing: catalogue search p95 < 1.5s at 340 repos; provisioning < 5s response",
+              "Security review completed (RBAC, audit log, SSO, data handling)",
+              "Datadog integration (DORA metrics, custom dashboards) working"
+            ],
+            "tasks": [
+              {
+                "id": "T19",
+                "name": "Test GitHub integration: list repos, get metadata, handle rate limiting (60 req/min), test auth failure recovery",
+                "phase": 3,
+                "effort_hours": 16.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T7"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Test report: 340+ repos synced; rate limiting handled; auth failure triggers retry; no data loss"
+              },
+              {
+                "id": "T20",
+                "name": "Test AWS integration: IAM, ECS, RDS, S3, SQS; handle API errors, missing permissions, cross-account access",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Test report: all 5 AWS services synced; error handling verified; cross-account access tested"
+              },
+              {
+                "id": "T21",
+                "name": "Test Terraform Cloud integration: plan generation, cost estimation, approval workflow, apply execution",
+                "phase": 3,
+                "effort_hours": 18.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T9"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Test report: provisioning requests generate plans; cost estimates accurate; approval workflow works; apply succeeds"
+              },
+              {
+                "id": "T22",
+                "name": "Test PagerDuty, Jira, Slack, Okta integrations: incident sync, webhook delivery, SSO login, error handling",
+                "phase": 3,
+                "effort_hours": 24.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T11",
+                  "T17"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Test report: incidents sync from PagerDuty; Slack notifications sent; Okta SSO login works; error scenarios handled"
+              },
+              {
+                "id": "T23",
+                "name": "Performance testing: catalogue search p95 < 1.5s (340 repos), provisioning API p95 < 5s, incident view p95 < 2s",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T7",
+                  "T9",
+                  "T11"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Load test report: p95 latencies meet NFR; no timeouts; database indexes optimized"
+              },
+              {
+                "id": "T24",
+                "name": "Security review: RBAC enforcement, audit log completeness, SSO token handling, data encryption at rest/in transit",
+                "phase": 3,
+                "effort_hours": 16.0,
+                "owner_role": "Security Engineer",
+                "dependencies": [
+                  "T5",
+                  "T17",
+                  "T18"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Security review document: RBAC verified; audit log complete; encryption confirmed; no critical findings"
+              },
+              {
+                "id": "T25",
+                "name": "Implement Datadog integration: DORA metrics (deployment frequency, lead time, MTTR, change failure rate), custom dashboards",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "Data Engineer",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Datadog plugin registered; DORA metrics calculated; dashboard displays metrics; webhook delivery verified"
+              },
+              {
+                "id": "T26",
+                "name": "Test plugin system: register mock security scan plugin, webhook delivery, retry logic, error handling",
+                "phase": 3,
+                "effort_hours": 12.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Test report: plugin registration works; webhooks delivered; retries on failure; error scenarios handled"
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 7.0,
+            "percentage_of_total": 18.0,
+            "milestones": [
+              "All critical bugs resolved (P0/P1)",
+              "UAT completed with 3 squad leads (service catalogue, provisioning, onboarding, incident view)",
+              "Regression testing: all integrations re-tested after bug fixes",
+              "Accessibility audit (WCAG 2.1 AA) completed",
+              "Documentation written (API docs, runbooks, admin guide, user guide)"
+            ],
+            "tasks": [
+              {
+                "id": "T27",
+                "name": "UAT with 3 squad leads: service catalogue search, provisioning (Postgres + Redis), onboarding checklist, incident view",
+                "phase": 4,
+                "effort_hours": 24.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T22"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "UAT sign-off from 3 squad leads; all critical workflows tested; feedback documented"
+              },
+              {
+                "id": "T28",
+                "name": "Bug triage and fix: resolve all P0/P1 bugs from UAT and integration testing",
+                "phase": 4,
+                "effort_hours": 32.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T27"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "All P0/P1 bugs closed; regression testing passed; no new bugs introduced"
+              },
+              {
+                "id": "T29",
+                "name": "Accessibility audit: WCAG 2.1 AA compliance check (keyboard nav, screen reader, color contrast)",
+                "phase": 4,
+                "effort_hours": 12.0,
+                "owner_role": "UX Designer",
+                "dependencies": [
+                  "T13",
+                  "T14",
+                  "T15",
+                  "T16"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Accessibility audit report; all AA issues fixed; no critical violations"
+              },
+              {
+                "id": "T30",
+                "name": "Write API documentation (OpenAPI spec), admin runbook (deployment, scaling, monitoring), user guide (catalogue, provisioning, onboarding)",
+                "phase": 4,
+                "effort_hours": 20.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T28"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "API docs (OpenAPI), admin runbook, user guide published in Confluence; reviewed by platform lead"
+              },
+              {
+                "id": "T31",
+                "name": "Regression testing: re-test all 8 integrations, performance, RBAC, audit log after bug fixes",
+                "phase": 4,
+                "effort_hours": 20.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T28"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Regression test report: all integrations pass; performance targets met; no regressions"
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 3.0,
+            "percentage_of_total": 8.0,
+            "milestones": [
+              "Production infrastructure deployed (PostgreSQL, Redis, S3, monitoring, backups)",
+              "IDP deployed to production; smoke tests passed",
+              "Monitoring and alerting configured (Datadog, PagerDuty)",
+              "Operational handoff to platform team; on-call runbook ready"
+            ],
+            "tasks": [
+              {
+                "id": "T32",
+                "name": "Deploy production infrastructure: PostgreSQL (RDS), Redis (ElastiCache), S3, monitoring, backups, disaster recovery",
+                "phase": 5,
+                "effort_hours": 16.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T28"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Production infrastructure deployed; backups configured; disaster recovery tested; monitoring active"
+              },
+              {
+                "id": "T33",
+                "name": "Deploy IDP to production (ECS); run smoke tests (catalogue search, provisioning, onboarding, incident view)",
+                "phase": 5,
+                "effort_hours": 12.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T32"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "IDP running in production; all smoke tests pass; 99.9% uptime SLA confirmed"
+              },
+              {
+                "id": "T34",
+                "name": "Configure monitoring and alerting: Datadog dashboards, PagerDuty integration, alert thresholds (latency, error rate, uptime)",
+                "phase": 5,
+                "effort_hours": 12.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T33"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Datadog dashboards live; PagerDuty alerts configured; on-call engineer can respond to incidents"
+              },
+              {
+                "id": "T35",
+                "name": "Operational handoff: train platform team on deployment, scaling, incident response; on-call runbook ready",
+                "phase": 5,
+                "effort_hours": 8.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T34"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Platform team trained; on-call runbook published; first on-call rotation scheduled"
+              }
+            ]
+          }
+        ]
+      },
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Integration",
+          "description": "If AWS IAM, ECS, RDS, S3, SQS APIs have undocumented endpoints, rate limits, or schema drift during build, integration testing (Phase 3) will be blocked for 2\u20134 weeks and critical path slips.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "API documentation gaps discovered during Phase 2 development; rate limit errors in staging; schema changes from AWS",
+          "mitigation": "Confirm sandbox access and API stability with AWS account team in Phase 1; subscribe to AWS API change notifications; build rate limit handling into all AWS clients",
+          "contingency": "If API issues discovered, allocate 1 backend developer full-time to AWS integration troubleshooting; extend Phase 3 by 2 weeks if needed"
+        },
+        {
+          "id": "R2",
+          "category": "Integration",
+          "description": "If Terraform Cloud, PagerDuty, Jira, Slack, or Okta APIs require custom authentication, have undocumented rate limits, or webhook delivery is unreliable, Phase 2 integration work extends 1\u20132 weeks per API.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "API documentation gaps; webhook delivery failures in staging; rate limit errors; custom auth requirements",
+          "mitigation": "Validate API contracts with each vendor in Phase 1; test webhook delivery in sandbox before Phase 2 development; build retry logic and exponential backoff into all integrations",
+          "contingency": "If webhook delivery unreliable, implement custom polling fallback; if rate limits hit, implement request queuing (SQS)"
+        },
+        {
+          "id": "R3",
+          "category": "Technical",
+          "description": "If service catalogue search does not meet p95 < 1.5s NFR with 340 repos, database indexing or search algorithm must be re-architected in Phase 3, delaying integration testing by 1\u20132 weeks.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Performance testing in Phase 3 shows p95 > 2s; database query plans show full table scans",
+          "mitigation": "Design database indexes in Phase 1; implement search index (Elasticsearch or PostgreSQL full-text search) in Phase 2; performance test early in Phase 2 with 340 repos",
+          "contingency": "If p95 > 1.5s, implement Elasticsearch or Redis caching; re-run performance tests; adjust Phase 3 timeline"
+        },
+        {
+          "id": "R4",
+          "category": "Resource",
+          "description": "If any of the 4 backend developers are diverted to other projects or unavailable part-time, critical path tasks (AWS integration, provisioning engine, plugin system, audit logging) will slip 2\u20134 weeks.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Developer pulled to production incident; competing project priority; unplanned leave",
+          "mitigation": "Secure written commitment from engineering leadership for 4 full-time backend developers for 9 months; establish escalation path if diversion occurs; cross-train 2 developers on each critical component",
+          "contingency": "If developer unavailable, hire contractor backend developer (2\u20134 week ramp-up); extend timeline by 2 weeks per diverted developer"
+        },
+        {
+          "id": "R5",
+          "category": "Schedule",
+          "description": "If Phase 1 architecture or API contracts are not finalized by week 4, Phase 2 development will start with ambiguous requirements, causing rework and 2\u20133 week delay.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Architecture workshop delayed; stakeholder sign-off not obtained; API contracts incomplete",
+          "mitigation": "Schedule architecture workshop in week 1; require stakeholder sign-off by end of week 3; document all API contracts before Phase 2 starts",
+          "contingency": "If Phase 1 extends, compress Phase 2 by reducing edge case handling; defer non-critical integrations (Datadog) to post-launch"
+        },
+        {
+          "id": "R6",
+          "category": "Scope",
+          "description": "If stakeholders request features beyond MVP (e.g., cost chargeback, advanced RBAC, custom workflows) during Phase 2, scope creep will consume 2\u20134 weeks of development time.",
+          "probability": "HIGH",
+          "impact": "MEDIUM",
+          "score": "HIGH",
+          "trigger": "Stakeholder requests new feature; PM adds to backlog without re-planning; feature not in original MVP scope",
+          "mitigation": "Define MVP scope in Phase 1 and get written sign-off; establish change control process; defer all non-MVP features to Phase 2 (post-launch)",
+          "contingency": "If scope creep occurs, prioritize features by impact; defer lowest-priority features to post-launch; re-baseline timeline with stakeholders"
+        },
+        {
+          "id": "R7",
+          "category": "Compliance",
+          "description": "If security review in Phase 3 identifies critical findings (e.g., RBAC bypass, audit log gaps, SSO token handling), remediation will extend Phase 3 by 1\u20132 weeks.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Security review finds critical vulnerability; RBAC enforcement incomplete; audit log missing actions",
+          "mitigation": "Involve security engineer in Phase 1 architecture; implement RBAC and audit logging in Phase 2 (not Phase 3); conduct security review early in Phase 3",
+          "contingency": "If critical findings, allocate security engineer + 1 backend developer full-time to remediation; extend Phase 3 by 1\u20132 weeks"
+        },
+        {
+          "id": "R8",
+          "category": "Resource",
+          "description": "If UX designer or frontend developers are shared with other projects, UI development (Phases 2\u20134) will be delayed or incomplete, impacting user adoption.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "UX designer allocated < 60% to IDP; frontend developers pulled to other projects; UI design not completed by end of Phase 1",
+          "mitigation": "Secure written commitment for 1 full-time UX designer (Phases 1\u20132) and 2 full-time frontend developers (Phases 2\u20134); establish escalation path if diversion occurs",
+          "contingency": "If UX designer unavailable, use wireframes from Phase 1 as design spec; if frontend developers diverted, hire contractor frontend developer"
+        },
+        {
+          "id": "R9",
+          "category": "Budget",
+          "description": "If infrastructure costs (PostgreSQL, Redis, S3, ECS, monitoring) exceed $850k budget or 12-month estimate, project will be over budget by $50\u2013100k.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "AWS cost estimate > $100k/year; Datadog pricing higher than expected; infrastructure scaling required",
+          "mitigation": "Conduct detailed AWS cost estimation in Phase 1; use cost estimation tools (AWS Pricing Calculator); implement cost monitoring in Phase 2; set budget alerts",
+          "contingency": "If costs exceed budget, optimize infrastructure (smaller RDS instance, reduce Datadog retention); defer non-critical features; request budget increase"
+        },
+        {
+          "id": "R10",
+          "category": "Technical",
+          "description": "If plugin system (REST + webhooks) does not scale to 10+ concurrent plugins or webhook delivery becomes unreliable under load, Phase 3 performance testing will fail and architecture must be re-designed.",
+          "probability": "LOW",
+          "impact": "HIGH",
+          "score": "MEDIUM",
+          "trigger": "Performance testing shows webhook delivery failures; plugin registration API times out; SQS queue backs up",
+          "mitigation": "Design plugin system with SQS queue for webhook delivery in Phase 2; performance test with 10+ mock plugins in Phase 3; implement monitoring and alerting",
+          "contingency": "If webhook delivery unreliable, implement Kafka or RabbitMQ for event streaming; re-architect plugin system; extend Phase 3 by 1\u20132 weeks"
+        },
+        {
+          "id": "R11",
+          "category": "Integration",
+          "description": "If GitHub API rate limiting (60 req/min) is hit during catalogue sync, service discovery will be incomplete or delayed, impacting catalogue accuracy.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Catalogue sync fails due to rate limiting; 340 repos not synced; sync takes > 30 minutes",
+          "mitigation": "Implement exponential backoff and request queuing in Phase 2; use GitHub GraphQL API (higher rate limit); sync incrementally (only changed repos)",
+          "contingency": "If rate limiting persists, implement caching (Redis) and longer sync intervals; request GitHub API rate limit increase"
+        },
+        {
+          "id": "R12",
+          "category": "Schedule",
+          "description": "If 9-month deadline is fixed and any critical path task (AWS integration, provisioning engine, plugin system, audit logging) slips by 2+ weeks, project will miss launch date.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Critical path task delayed; developer unavailable; API integration blocked; performance testing fails",
+          "mitigation": "Track critical path weekly; identify risks early; allocate buffer (15% already applied); escalate delays immediately; have contingency plan (defer non-critical features)",
+          "contingency": "If critical path slips, defer non-critical features (Datadog, advanced RBAC) to Phase 2; compress Phase 4 (UAT) to 4 weeks; extend Phase 5 if needed"
+        }
+      ],
+      "staffing_plan": [
+        {
+          "role": "Product Manager",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 60.0,
+          "allocation_percent": 12.0,
+          "skills_required": [
+            "Internal product strategy",
+            "Stakeholder management",
+            "Developer platform experience",
+            "Roadmap planning"
+          ],
+          "critical_path": true,
+          "notes": "Leads architecture workshop (Phase 1), manages scope and stakeholder alignment (all phases), writes documentation (Phase 4), conducts operational handoff (Phase 5)"
+        },
+        {
+          "role": "Solution Architect",
+          "phase_involvement": [
+            1
+          ],
+          "total_hours": 24.0,
+          "allocation_percent": 5.0,
+          "skills_required": [
+            "Microservices architecture",
+            "API design",
+            "Database design",
+            "Integration patterns"
+          ],
+          "critical_path": false,
+          "notes": "Front-loaded to Phase 1; leads architecture workshop; defines schema and API contracts"
+        },
+        {
+          "role": "Backend Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "total_hours": 280.0,
+          "allocation_percent": 56.0,
+          "skills_required": [
+            "Go or Python",
+            "PostgreSQL",
+            "REST API design",
+            "AWS SDK",
+            "Terraform Cloud API",
+            "OAuth/SSO",
+            "Webhook patterns"
+          ],
+          "critical_path": true,
+          "notes": "4 backend developers required; split across service catalogue (T7), AWS integration (T8), provisioning engine (T9), onboarding (T10), incident view (T11), plugin system (T12), Okta SSO (T17), audit logging (T18), bug fixes (T28). Each developer owns 1\u20132 integrations; cross-training required for critical path coverage."
+        },
+        {
+          "role": "Frontend Developer",
+          "phase_involvement": [
+            2,
+            3,
+            4
+          ],
+          "total_hours": 98.0,
+          "allocation_percent": 20.0,
+          "skills_required": [
+            "React or Vue",
+            "TypeScript",
+            "REST API integration",
+            "Responsive design",
+            "Accessibility (WCAG 2.1 AA)"
+          ],
+          "critical_path": false,
+          "notes": "2 frontend developers; build catalogue UI (T13), provisioning UI (T14), onboarding UI (T15), incident view UI (T16); can work in parallel with backend; 2\u20133 day slack allows flexibility"
+        },
+        {
+          "role": "UX Designer",
+          "phase_involvement": [
+            1,
+            2,
+            4
+          ],
+          "total_hours": 50.0,
+          "allocation_percent": 10.0,
+          "skills_required": [
+            "Wireframing",
+            "User research",
+            "Accessibility (WCAG 2.1 AA)",
+            "Design systems"
+          ],
+          "critical_path": false,
+          "notes": "Front-loaded to Phase 1 (wireframes); Phase 2 (design review); Phase 4 (accessibility audit); can be shared with other projects after Phase 2"
+        },
+        {
+          "role": "QA Engineer",
+          "phase_involvement": [
+            3,
+            4
+          ],
+          "total_hours": 124.0,
+          "allocation_percent": 25.0,
+          "skills_required": [
+            "API testing",
+            "Integration testing",
+            "Performance testing",
+            "Test automation",
+            "AWS/Terraform knowledge"
+          ],
+          "critical_path": true,
+          "notes": "1 QA engineer; critical path for integration testing (Phase 3) and UAT (Phase 4); tests all 8 integrations, performance, RBAC, audit log; 25% of total dev hours (280h \u00d7 25% = 70h minimum; 124h allocated exceeds minimum)"
+        },
+        {
+          "role": "DevOps Engineer",
+          "phase_involvement": [
+            2,
+            3,
+            5
+          ],
+          "total_hours": 60.0,
+          "allocation_percent": 12.0,
+          "skills_required": [
+            "AWS (RDS, ElastiCache, S3, ECS, IAM)",
+            "Terraform",
+            "Docker",
+            "Monitoring (Datadog)",
+            "Disaster recovery"
+          ],
+          "critical_path": true,
+          "notes": "1 DevOps engineer; sets up dev/staging infrastructure (Phase 2), deploys to production (Phase 5), configures monitoring and alerting; critical path for infrastructure readiness"
+        },
+        {
+          "role": "Security Engineer",
+          "phase_involvement": [
+            1,
+            3,
+            4
+          ],
+          "total_hours": 44.0,
+          "allocation_percent": 9.0,
+          "skills_required": [
+            "RBAC design",
+            "OAuth/SSO",
+            "Audit logging",
+            "Data encryption",
+            "Security review"
+          ],
+          "critical_path": false,
+          "notes": "1 security engineer; defines RBAC model (Phase 1), conducts security review (Phase 3), verifies audit logging (Phase 4); can be shared with other projects"
+        },
+        {
+          "role": "Data Engineer",
+          "phase_involvement": [
+            3
+          ],
+          "total_hours": 20.0,
+          "allocation_percent": 4.0,
+          "skills_required": [
+            "Datadog API",
+            "DORA metrics",
+            "Data pipeline design"
+          ],
+          "critical_path": true,
+          "notes": "0.5 data engineer (shared); implements Datadog integration (T25) in Phase 3; critical path for DORA metrics feature"
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "Has written commitment been obtained from engineering leadership confirming 4 full-time backend developers, 2 full-time frontend developers, 1 full-time DevOps engineer, and 1 full-time QA engineer for the full 9-month duration with no diversion to other projects?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If developers are shared or part-time, critical path tasks (AWS integration, provisioning engine, plugin system) will slip 2\u20134 weeks; project will miss 9-month deadline."
+        },
+        {
+          "priority": 2,
+          "question": "Can AWS sandbox environment (with IAM, ECS, RDS, S3, SQS, CloudWatch access) be provisioned in Phase 1 for integration development and testing?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If sandbox access delayed, Phase 2 AWS integration development (T8) will be blocked; critical path slips 2\u20134 weeks."
+        },
+        {
+          "priority": 3,
+          "question": "Has the $850k budget been formally approved and allocated, and does it include 12 months of infrastructure costs (PostgreSQL, Redis, S3, ECS, Datadog, monitoring)?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If budget is insufficient or infrastructure costs exceed estimate, project will be over budget by $50\u2013100k; may require scope reduction or timeline extension."
+        },
+        {
+          "priority": 4,
+          "question": "Who is the Product Owner responsible for backlog prioritization and feature trade-offs during Phase 2\u20133 (Hybrid SDLC requires active PO for sprint planning)?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If PO not assigned, sprint planning will be delayed; backlog prioritization will be unclear; scope creep risk increases."
+        },
+        {
+          "priority": 5,
+          "question": "Are there any compliance or regulatory requirements (SOC 2, HIPAA, GDPR, FedRAMP) beyond the stated 2-year audit log and squad-level RBAC that must be implemented before launch?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If compliance requirements discovered post-Phase 1, security review (Phase 3) will extend 2\u20134 weeks; project may miss deadline."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 62.0,
+        "deductions": [
+          {
+            "amount": 5.0,
+            "reason": "4 assumptions logged (A1\u2013A4); each represents unvalidated risk in API stability, security scope, or plugin architecture"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Resource risk (R4): developer diversion not explicitly ruled out in writing; team composition stated but no formal commitment letter mentioned"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Scope risk (R6): HIGH probability of scope creep from stakeholders; 15 integrations + plugin system + DORA metrics create feature factory risk"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Integration complexity: 8 mandatory integrations (GitHub, AWS, Terraform, PagerDuty, Jira, Slack, Okta, Datadog) + plugin system; Phase 3 is 23% of timeline (typical for TYPE_A is 20\u201325%, but integration risk is elevated)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "SDLC is Hybrid (not Predictive): fixed deadline + evolving integration scope requires active backlog management; PO not named in input"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Performance NFR (p95 < 1.5s search) is ambitious for 340 repos; if not met in Phase 3, re-architecture required (R3: MEDIUM score)"
+          }
+        ],
+        "interpretation": "PM confidence score is 62.0 because the project has a well-defined MVP scope, experienced team composition, and fixed deadline, but is offset by 8 HIGH-scored risks (resource diversion, scope creep, integration complexity, performance targets), 4 assumptions on API stability and security scope, and Hybrid SDLC requiring active backlog management without a named Product Owner."
+      },
+      "project_viability": {
+        "viability_status": "VIABLE",
+        "gap_type": "N/A",
+        "gap_amount": "N/A",
+        "scoping_options": null
+      }
+    },
+    "gate": {
+      "fired": false,
+      "reasons": [],
+      "decision": null
+    },
+    "validation": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        "Staffing adds expanded role class PM (Product Manager) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule.",
+        "Staffing adds expanded role class UX (UX Designer) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule.",
+        "Staffing adds expanded role class QA (QA Engineer) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule."
+      ]
+    },
+    "tokens_used": 14063,
+    "input_tokens": 482,
+    "output_tokens": 13581,
+    "cache_hit": false
+  }
+}

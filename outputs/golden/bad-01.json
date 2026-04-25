@@ -1,0 +1,11 @@
+{
+  "case_id": "bad-01",
+  "http_status": 422,
+  "body": {
+    "detail": {
+      "code": "input_refused",
+      "reason": "prompt_injection",
+      "message": "This input can't be processed. Please submit a project description."
+    }
+  }
+}

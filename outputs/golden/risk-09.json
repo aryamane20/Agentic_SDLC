@@ -1,0 +1,946 @@
+{
+  "case_id": "risk-09",
+  "http_status": 200,
+  "body": {
+    "session_id": "f8ae67f4-9932-453b-b615-00a9370a8a6f",
+    "report_id": "rpt_e5e967c60785",
+    "report_revision": 1,
+    "report": {
+      "report_metadata": {
+        "generated_at": "2026-04-25T19:08:30.412911Z",
+        "prompt_version": "v1.6.2",
+        "project_type": "TYPE_D",
+        "input_quality": "HIGH",
+        "classification_confidence": "HIGH",
+        "sdlc_approach": "Predictive",
+        "sdlc_rationale": "Fixed deadline (14 weeks), fixed budget ($110k), named team composition (2 backend, 1 DevOps, 1 PM), clear scope (secrets management system with defined features), and known technology stack (CI/CD integration). All four PREDICTIVE conditions satisfied. Security review is a compliance gate, not a scope unknown.",
+        "pm_confidence_score": 50.0
+      },
+      "project_understanding": {
+        "primary_goal": "Build an internal secrets management and credential rotation system that stores and rotates API keys, database passwords, SSH certificates, and OAuth tokens for 80 microservices, with automated rotation, audit logging, RBAC by team, and CI/CD integration.",
+        "beneficiary": "Engineering team (45 engineers across 8 squads)",
+        "trigger": "Need to centralize and automate credential management for 80 microservices; GDPR compliance requirement for PII-handling systems; security best practice (no hardcoded secrets in code or config).",
+        "success_definition": [
+          "All 80 microservices integrated with secrets system for credential retrieval",
+          "Automated rotation working for credentials that support it (e.g., database passwords, API keys)",
+          "Audit log captures all access events with user, timestamp, resource, action",
+          "RBAC enforced: teams can only access credentials they own",
+          "CI/CD pipeline (GitHub Actions) can retrieve secrets without manual intervention",
+          "Zero credential breaches or misconfiguration incidents in first 90 days post-launch",
+          "Security review completed and passed before production deployment"
+        ],
+        "supporting_quotes": [
+          "Build an internal secrets management and credential rotation system",
+          "store API keys, database passwords, SSH certificates, and OAuth tokens for approximately 80 microservices",
+          "automated rotation for credentials that support it, audit logging for all access events, role-based access control by team, and integration with our existing CI/CD pipeline (GitHub Actions)",
+          "Several of the credentials being managed are production database passwords for systems handling PII under GDPR. A breach or misconfiguration would be a reportable incident."
+        ]
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "Security engineer or security specialist will be available (shared services, contractor, or internal) to conduct the security review and implement security controls (encryption at rest, TLS in transit, key derivation, audit log integrity).",
+          "why": "Input explicitly states 'Security review to be scheduled separately' and mentions GDPR PII handling. Security review is non-negotiable for a secrets management system. A dedicated security resource is standard for compliance-critical projects.",
+          "pmi_basis": "PMBOK 6th Ed, Section 11.2 (Risk Identification) and Section 8.1 (Quality Planning) \u2014 security controls must be defined before build begins.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If no security engineer is available, the system will be built without proper threat modeling, encryption strategy, or audit log design. Security review will fail or be delayed post-launch, blocking production deployment and creating compliance violation risk.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows planning to proceed with a defensible security architecture. Risks: if security capacity is unavailable, timeline extends by 2-4 weeks for post-hoc security hardening and re-review."
+        },
+        {
+          "id": "A2",
+          "what": "The 2 backend engineers and 1 DevOps engineer have direct experience with secrets management systems, cryptography libraries, and secure credential storage patterns (or will ramp up in Phase 1 with acceptable learning curve).",
+          "why": "Input does not state the team is new to this domain. For an internal tool with a 14-week timeline and fixed team, assuming baseline competence is standard. If the team has never built a secrets system, Phase 1 would need to extend significantly for architecture learning.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 (Resource Estimation) \u2014 resource estimates assume competence with the domain.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If the team lacks cryptography or secrets management experience, Phase 2 development will be slower, Phase 3 integration testing will uncover architectural flaws, and Phase 4 security review will require rework. Timeline slips by 3-4 weeks.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows a 14-week timeline to be defensible. Risks: if team is learning the domain from scratch, timeline is optimistic by 20-30%."
+        },
+        {
+          "id": "A3",
+          "what": "GitHub Actions integration is straightforward (standard OAuth/token-based API, no custom plugins required). The CI/CD pipeline does not require custom authentication or non-standard secret injection patterns.",
+          "why": "Input specifies 'integration with our existing CI/CD pipeline (GitHub Actions)' without noting any custom or non-standard requirements. GitHub Actions has a documented secrets API. Assuming standard integration is reasonable.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Scope Definition) \u2014 scope is defined by what is explicitly stated; integration complexity is not mentioned.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If GitHub Actions requires custom authentication or the CI/CD pipeline has non-standard secret injection, Phase 3 integration testing will fail, requiring rework of the secrets retrieval API. Timeline slips by 1-2 weeks.",
+          "source": "nfr",
+          "tradeoff": "Gains: allows Phase 3 integration to be estimated at 22% of timeline. Risks: if CI/CD integration is non-standard, Phase 3 extends and Phase 4 testing is compressed."
+        },
+        {
+          "id": "A4",
+          "what": "Automated credential rotation is supported by the target credential types (database passwords, API keys, OAuth tokens). Rotation does not require custom logic for each of the 80 microservices; a generic rotation strategy applies to most.",
+          "why": "Input states 'automated rotation for credentials that support it' \u2014 implying some credentials may not support rotation. Assuming that most of the 80 microservices use standard credential types (database passwords, API keys) that have well-known rotation patterns is reasonable for a modern engineering environment.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Scope Definition) \u2014 scope is defined by what is explicitly stated; 'credentials that support it' is a known boundary.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If rotation logic must be custom-built for each credential type or microservice, Phase 2 development effort doubles. Timeline slips by 2-3 weeks.",
+          "source": "scope",
+          "tradeoff": "Gains: allows Phase 2 to be estimated at 35-40% of timeline with a generic rotation engine. Risks: if rotation is highly custom per microservice, Phase 2 extends significantly."
+        }
+      ],
+      "project_plan": {
+        "total_duration_weeks": 14.0,
+        "buffer_applied_percent": 15.0,
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T2",
+            "T3",
+            "T5",
+            "T8",
+            "T11",
+            "T14",
+            "T17",
+            "T20"
+          ],
+          "total_duration_days": 65.0,
+          "zero_slack_tasks": [
+            "T1",
+            "T2",
+            "T3",
+            "T5",
+            "T8",
+            "T11",
+            "T14",
+            "T17",
+            "T20"
+          ],
+          "highest_slack_tasks": [
+            "T4",
+            "T6",
+            "T9"
+          ],
+          "staffing_implication": "Backend engineers and DevOps engineer must be full-time on critical path tasks (Phases 1-4); security engineer must be allocated full-time for Phase 1 threat modeling and Phase 3-4 security review; PM oversight continuous across all phases."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 2.0,
+            "percentage_of_total": 14.3,
+            "milestones": [
+              "Threat model completed and approved by security engineer",
+              "Architecture document signed off by tech lead and PM",
+              "Encryption strategy (at rest, in transit, key derivation) defined",
+              "Audit logging schema designed",
+              "RBAC model defined for 8 squads",
+              "Integration points with GitHub Actions mapped"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Conduct threat modeling for secrets management system (GDPR PII scope, credential types, attack vectors)",
+                "phase": 1,
+                "effort_hours": 24.0,
+                "owner_role": "Security Engineer",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Threat model document identifies all attack vectors, mitigation strategies, and compliance requirements; reviewed and approved by PM and tech lead."
+              },
+              {
+                "id": "T2",
+                "name": "Design system architecture (credential storage backend, rotation engine, audit log, RBAC layer, API contract)",
+                "phase": 1,
+                "effort_hours": 32.0,
+                "owner_role": "Backend Developer (Lead)",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Architecture document includes data flow diagrams, component interactions, database schema, API endpoints, and deployment topology; signed off by tech lead and PM."
+              },
+              {
+                "id": "T3",
+                "name": "Define encryption strategy (at-rest algorithm, key derivation, in-transit TLS, key rotation for master keys)",
+                "phase": 1,
+                "effort_hours": 16.0,
+                "owner_role": "Security Engineer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Encryption specification document approved by security engineer and tech lead; includes algorithm choices, key sizes, and compliance justification."
+              },
+              {
+                "id": "T4",
+                "name": "Design audit logging schema and retention policy (GDPR compliance, immutability, query performance)",
+                "phase": 1,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer (Secondary)",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Audit log schema document includes field definitions, retention rules, immutability guarantees, and query examples; approved by PM and security engineer."
+              },
+              {
+                "id": "T5",
+                "name": "Define RBAC model for 8 squads (team ownership, credential access rules, admin roles, audit trail for permission changes)",
+                "phase": 1,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer (Lead)",
+                "dependencies": [
+                  "T2"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "RBAC specification document defines team roles, permission matrix, and access control rules; reviewed and approved by PM and security engineer."
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development",
+            "duration_weeks": 5.0,
+            "percentage_of_total": 35.7,
+            "milestones": [
+              "Credential storage backend (encrypted at rest) working",
+              "Credential retrieval API functional",
+              "Automated rotation engine for standard credential types working",
+              "RBAC enforcement in API layer complete",
+              "Audit logging to database working",
+              "Internal demo: store, retrieve, rotate, audit log for one credential type"
+            ],
+            "tasks": [
+              {
+                "id": "T6",
+                "name": "Implement credential storage backend with encryption at rest (database schema, encryption library integration, key management)",
+                "phase": 2,
+                "effort_hours": 40.0,
+                "owner_role": "Backend Developer (Lead)",
+                "dependencies": [
+                  "T2",
+                  "T3"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Credentials stored in database with AES-256 encryption; encryption keys managed securely; unit tests pass; code review approved."
+              },
+              {
+                "id": "T7",
+                "name": "Implement credential retrieval API (REST endpoints, authentication, authorization checks, response formatting)",
+                "phase": 2,
+                "effort_hours": 32.0,
+                "owner_role": "Backend Developer (Secondary)",
+                "dependencies": [
+                  "T6",
+                  "T5"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "API endpoints return credentials with RBAC enforcement; all endpoints authenticated; integration tests pass."
+              },
+              {
+                "id": "T8",
+                "name": "Implement automated rotation engine for database passwords and API keys (rotation logic, credential update, rollback on failure)",
+                "phase": 2,
+                "effort_hours": 40.0,
+                "owner_role": "Backend Developer (Lead)",
+                "dependencies": [
+                  "T6",
+                  "T7"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Rotation engine rotates database passwords and API keys on schedule; failed rotations trigger alerts; rollback works; integration tests pass."
+              },
+              {
+                "id": "T9",
+                "name": "Implement RBAC enforcement in API layer (permission checks, team-based access, audit trail for permission denials)",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Backend Developer (Secondary)",
+                "dependencies": [
+                  "T5",
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "API enforces RBAC; unauthorized requests rejected; permission denials logged; integration tests pass."
+              },
+              {
+                "id": "T10",
+                "name": "Implement audit logging to database (all access events, credential operations, permission changes, immutable log)",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer (Secondary)",
+                "dependencies": [
+                  "T4",
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "All credential access, rotation, and permission changes logged; log entries immutable; query performance acceptable; integration tests pass."
+              },
+              {
+                "id": "T11",
+                "name": "Conduct internal demo: store, retrieve, rotate, and audit log for one credential type end-to-end",
+                "phase": 2,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer (Lead)",
+                "dependencies": [
+                  "T8",
+                  "T10"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Demo shows credential storage, retrieval by authorized user, automated rotation, and audit log entry; stakeholders confirm direction is correct."
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases",
+            "duration_weeks": 3.0,
+            "percentage_of_total": 21.4,
+            "milestones": [
+              "GitHub Actions integration working (secrets retrieval in CI/CD)",
+              "SSH certificate rotation implemented",
+              "OAuth token rotation implemented",
+              "Credential rotation failure handling and alerts working",
+              "Security review findings documented",
+              "Performance testing at 80 microservices scale completed"
+            ],
+            "tasks": [
+              {
+                "id": "T12",
+                "name": "Implement GitHub Actions integration (OAuth authentication, secret injection into workflow environment, error handling)",
+                "phase": 3,
+                "effort_hours": 28.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T7"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "GitHub Actions workflows can retrieve secrets from system; secrets injected into environment variables; integration tests pass; no secrets logged in CI/CD output."
+              },
+              {
+                "id": "T13",
+                "name": "Implement SSH certificate rotation (certificate generation, distribution, revocation, rollback on failure)",
+                "phase": 3,
+                "effort_hours": 32.0,
+                "owner_role": "Backend Developer (Lead)",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "SSH certificates rotated on schedule; old certificates revoked; rollback works; integration tests pass."
+              },
+              {
+                "id": "T14",
+                "name": "Implement OAuth token rotation (token refresh, expiration handling, revocation, rollback on failure)",
+                "phase": 3,
+                "effort_hours": 28.0,
+                "owner_role": "Backend Developer (Secondary)",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "OAuth tokens rotated on schedule; expired tokens handled gracefully; revocation works; integration tests pass."
+              },
+              {
+                "id": "T15",
+                "name": "Implement credential rotation failure handling and alerting (retry logic, alert on persistent failure, manual intervention runbook)",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T8",
+                  "T13",
+                  "T14"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Failed rotations trigger alerts; retry logic works; runbook for manual intervention documented; integration tests pass."
+              },
+              {
+                "id": "T16",
+                "name": "Conduct security review (threat model validation, encryption implementation review, audit log integrity check, RBAC enforcement verification)",
+                "phase": 3,
+                "effort_hours": 36.0,
+                "owner_role": "Security Engineer",
+                "dependencies": [
+                  "T1",
+                  "T6",
+                  "T10",
+                  "T9"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Security review completed; findings documented; critical findings resolved before Phase 4; review sign-off obtained."
+              },
+              {
+                "id": "T17",
+                "name": "Conduct performance testing at 80 microservices scale (credential retrieval latency, rotation throughput, audit log query performance)",
+                "phase": 3,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer (Secondary)",
+                "dependencies": [
+                  "T7",
+                  "T10"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Performance tests show credential retrieval < 100ms p99, rotation throughput > 10 credentials/min, audit log queries < 1s; results documented."
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 3.0,
+            "percentage_of_total": 21.4,
+            "milestones": [
+              "All critical bugs resolved",
+              "Regression testing completed (no regressions from Phase 3)",
+              "UAT with engineering team completed (5-10 engineers test end-to-end)",
+              "Security review findings resolved",
+              "Operational runbooks written (rotation failure, credential recovery, audit log queries)",
+              "Monitoring and alerting configured for production"
+            ],
+            "tasks": [
+              {
+                "id": "T18",
+                "name": "Execute comprehensive test suite (unit, integration, end-to-end tests for all credential types, rotation scenarios, RBAC, audit logging)",
+                "phase": 4,
+                "effort_hours": 32.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T17"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "All test cases pass; code coverage > 85%; critical bugs logged and prioritized; test report approved by PM."
+              },
+              {
+                "id": "T19",
+                "name": "Resolve critical and high-priority bugs from testing (code fixes, re-testing, regression verification)",
+                "phase": 4,
+                "effort_hours": 28.0,
+                "owner_role": "Backend Developer (Lead)",
+                "dependencies": [
+                  "T18"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "All critical bugs fixed and verified; high-priority bugs resolved or deferred with stakeholder approval; regression tests pass."
+              },
+              {
+                "id": "T20",
+                "name": "Conduct UAT with engineering team (5-10 engineers test credential storage, retrieval, rotation, audit log queries; sign-off on functionality)",
+                "phase": 4,
+                "effort_hours": 20.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T19"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "UAT completed with 5-10 representative engineers; feedback documented; critical issues resolved; stakeholder sign-off obtained."
+              },
+              {
+                "id": "T21",
+                "name": "Resolve remaining security review findings (code changes, configuration updates, documentation updates)",
+                "phase": 4,
+                "effort_hours": 24.0,
+                "owner_role": "Security Engineer",
+                "dependencies": [
+                  "T16"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "All security findings resolved; security engineer sign-off obtained; no critical or high-priority findings remain."
+              },
+              {
+                "id": "T22",
+                "name": "Write operational runbooks (credential rotation failure recovery, manual credential recovery, audit log query examples, troubleshooting guide)",
+                "phase": 4,
+                "effort_hours": 16.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T15"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Runbooks cover all operational scenarios; examples tested; reviewed by PM and ops team; published to internal wiki."
+              },
+              {
+                "id": "T23",
+                "name": "Configure monitoring and alerting for production (credential rotation failures, API latency, audit log lag, encryption key rotation)",
+                "phase": 4,
+                "effort_hours": 20.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T15",
+                  "T17"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Monitoring dashboards created; alerts configured for critical events; alert routing to on-call engineer defined; tested in staging."
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 1.0,
+            "percentage_of_total": 7.1,
+            "milestones": [
+              "Production deployment completed",
+              "Smoke tests passed in production",
+              "Go-live sign-off obtained from PM and security engineer",
+              "Post-launch support plan documented"
+            ],
+            "tasks": [
+              {
+                "id": "T24",
+                "name": "Deploy secrets management system to production (database migration, service deployment, DNS/load balancer configuration, smoke tests)",
+                "phase": 5,
+                "effort_hours": 16.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T20",
+                  "T21"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "System deployed to production; smoke tests pass; no errors in logs; rollback plan tested and ready."
+              },
+              {
+                "id": "T25",
+                "name": "Conduct go-live sign-off (PM and security engineer confirm production readiness, no critical issues, monitoring active)",
+                "phase": 5,
+                "effort_hours": 4.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T24"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "PM and security engineer sign off on production readiness; go-live approval documented."
+              },
+              {
+                "id": "T26",
+                "name": "Document post-launch support plan (on-call rotation, escalation procedures, incident response for credential breaches, knowledge transfer to ops team)",
+                "phase": 5,
+                "effort_hours": 12.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T22"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Support plan documented; on-call rotation defined; escalation procedures clear; ops team trained; plan approved by PM and security engineer."
+              }
+            ]
+          }
+        ]
+      },
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Compliance",
+          "description": "If security review is not completed before production deployment, the system may not meet GDPR requirements for PII-handling systems. A breach or misconfiguration would be a reportable incident, exposing the company to regulatory fines and reputational damage.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Security review scheduled 'separately' with no timeline; Phase 3 security review task may slip or be deferred to Phase 4.",
+          "mitigation": "Allocate a dedicated security engineer full-time for Phases 1, 3, and 4. Schedule security review kickoff in Phase 1 (threat modeling) and conduct review in Phase 3 before integration testing completes. Make security sign-off a hard gate before Phase 5 deployment.",
+          "contingency": "If security review slips past Phase 3, delay Phase 5 deployment until review is complete. Do not deploy to production without security engineer sign-off."
+        },
+        {
+          "id": "R2",
+          "category": "Technical",
+          "description": "If the team lacks experience with cryptography libraries, encryption key management, or secure credential storage patterns, the implementation will have security flaws that the security review will catch late (Phase 3-4), requiring rework and timeline extension.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Input does not state team experience with cryptography or secrets management; Phase 2 development reveals architectural gaps in encryption or key management.",
+          "mitigation": "Conduct a 2-3 day architecture review in Phase 1 with the security engineer and backend lead. Use well-established libraries (e.g., libsodium, AWS KMS, HashiCorp Vault patterns) rather than custom crypto. Document encryption strategy in Phase 1 and get security sign-off before Phase 2 coding begins.",
+          "contingency": "If Phase 2 reveals gaps, allocate additional security engineer time in Phase 3 to guide rework. Extend Phase 3 by 1-2 weeks if needed."
+        },
+        {
+          "id": "R3",
+          "category": "Integration",
+          "description": "If GitHub Actions integration requires custom authentication or non-standard secret injection patterns, Phase 3 integration testing will fail, requiring rework of the secrets retrieval API and delaying Phase 4 testing.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "GitHub Actions API documentation reveals custom requirements; Phase 3 integration task encounters unexpected API behavior or authentication challenges.",
+          "mitigation": "In Phase 1, conduct a spike on GitHub Actions secrets API (1-2 days). Confirm that standard OAuth/token-based authentication works. Document the integration contract before Phase 2 development begins.",
+          "contingency": "If Phase 3 integration fails, allocate additional backend developer time to rework the API. Extend Phase 3 by 1-2 weeks if needed."
+        },
+        {
+          "id": "R4",
+          "category": "Resource",
+          "description": "If the security engineer is not available full-time for Phases 1, 3, and 4, threat modeling, encryption design, and security review will be delayed or incomplete. This is a critical path blocker for a GDPR-compliant system.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Input states 'Security review to be scheduled separately' with no named resource; security engineer is shared across multiple projects or part-time.",
+          "mitigation": "Secure a written commitment from security leadership for a dedicated security engineer (full-time or 80%+ allocation) for the 14-week project. Make this a hard constraint before project kickoff.",
+          "contingency": "If security engineer is unavailable, defer project start until capacity is available. Do not proceed without dedicated security resource."
+        },
+        {
+          "id": "R5",
+          "category": "Technical",
+          "description": "If automated credential rotation logic must be custom-built for each of the 80 microservices or credential type, Phase 2 development effort will double, extending the timeline by 2-3 weeks.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Phase 2 development reveals that credential types (database passwords, API keys, OAuth tokens, SSH certificates) require custom rotation logic; generic rotation engine is insufficient.",
+          "mitigation": "In Phase 1, audit the 80 microservices to identify credential types and rotation requirements. Design a generic rotation engine that handles 80% of cases. Document exceptions and plan custom logic for the remaining 20%.",
+          "contingency": "If custom rotation logic is needed for more than 20% of microservices, extend Phase 2 by 1-2 weeks or defer non-standard credential types to a Phase 2 follow-up."
+        },
+        {
+          "id": "R6",
+          "category": "Schedule",
+          "description": "If Phase 1 (Discovery & Design) is compressed below 2 weeks, threat modeling, architecture design, and encryption strategy will be incomplete. This will cause rework in Phase 2-3 and delay security review.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Stakeholder pressure to start Phase 2 development early; Phase 1 tasks slip due to security engineer unavailability.",
+          "mitigation": "Protect Phase 1 as a hard gate. Do not start Phase 2 development until threat modeling and architecture are approved by tech lead and security engineer. Allocate 2 full weeks minimum.",
+          "contingency": "If Phase 1 slips, extend the overall timeline by 1-2 weeks. Do not compress Phase 1 below 2 weeks."
+        },
+        {
+          "id": "R7",
+          "category": "Resource",
+          "description": "If the 2 backend engineers are pulled to other projects or become unavailable, critical path tasks (architecture, rotation engine, OAuth token rotation) will be delayed, extending the timeline by 2-4 weeks.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Input specifies 2 backend engineers with no written commitment to full-time allocation; competing projects or production incidents pull developers away.",
+          "mitigation": "Secure a written commitment from engineering leadership for 2 backend engineers at 80%+ allocation for the 14-week project. Define escalation procedures for production incidents that might pull developers away.",
+          "contingency": "If a backend engineer becomes unavailable, allocate a third developer or extend the timeline by 2-3 weeks."
+        },
+        {
+          "id": "R8",
+          "category": "Technical",
+          "description": "If performance testing in Phase 3 reveals that credential retrieval latency or audit log query performance is unacceptable at 80 microservices scale, Phase 3 will extend by 1-2 weeks for optimization work.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Phase 3 performance testing shows credential retrieval > 100ms p99 or audit log queries > 1s; optimization required.",
+          "mitigation": "In Phase 2, design the credential retrieval API and audit log schema with performance in mind (indexing, caching, query optimization). Conduct performance testing early in Phase 3 to catch issues before Phase 4.",
+          "contingency": "If performance is unacceptable, allocate additional backend developer time in Phase 3 for optimization. Extend Phase 3 by 1-2 weeks if needed."
+        },
+        {
+          "id": "R9",
+          "category": "Scope",
+          "description": "If the engineering team requests additional credential types (e.g., Kubernetes secrets, Terraform state, SSH keys for specific services) during Phase 2-3, scope creep will extend the timeline by 1-2 weeks.",
+          "probability": "HIGH",
+          "impact": "MEDIUM",
+          "score": "HIGH",
+          "trigger": "Engineering team feedback during Phase 2 demo or Phase 4 UAT requests support for credential types not in the original scope.",
+          "mitigation": "In Phase 1, conduct a comprehensive audit of all credential types used by the 80 microservices. Document the scope boundary: 'This system supports API keys, database passwords, SSH certificates, and OAuth tokens. Other credential types are out of scope for Phase 1.'",
+          "contingency": "If scope creep occurs, defer additional credential types to a Phase 2 follow-up project. Do not extend Phase 2-3 to accommodate new credential types."
+        },
+        {
+          "id": "R10",
+          "category": "Compliance",
+          "description": "If audit logging is not implemented correctly (e.g., logs are mutable, queries are slow, retention policy is not enforced), the system will not meet GDPR audit trail requirements. A compliance audit will fail.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Phase 3 security review reveals audit log gaps; Phase 4 compliance audit fails.",
+          "mitigation": "In Phase 1, design the audit logging schema with immutability, query performance, and retention policy in mind. In Phase 2, implement audit logging with integrity checks. In Phase 3, conduct security review of audit log implementation.",
+          "contingency": "If audit logging is found to be non-compliant, allocate additional backend developer time in Phase 3-4 to rework the audit log system. Extend Phase 4 by 1-2 weeks if needed."
+        }
+      ],
+      "staffing_plan": [
+        {
+          "role": "Product Manager",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 70.0,
+          "allocation_percent": 10.0,
+          "skills_required": [
+            "Project management",
+            "Stakeholder communication",
+            "Risk management",
+            "Security compliance awareness"
+          ],
+          "critical_path": true,
+          "notes": "PM is accountable for scope, timeline, budget, and stakeholder alignment. Must be full-time equivalent (10% of total project hours per PMBOK 9.2). Responsible for UAT coordination and go-live sign-off."
+        },
+        {
+          "role": "Backend Developer (Lead)",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "total_hours": 240.0,
+          "allocation_percent": 34.3,
+          "skills_required": [
+            "System architecture",
+            "Cryptography libraries (libsodium, OpenSSL)",
+            "Database design (PostgreSQL or equivalent)",
+            "REST API design",
+            "Secure coding practices"
+          ],
+          "critical_path": true,
+          "notes": "Lead backend developer owns architecture, encryption implementation, rotation engine, and OAuth token rotation. Must be full-time (80% allocation). Critical path tasks: T2, T5, T8, T11, T13, T19."
+        },
+        {
+          "role": "Backend Developer (Secondary)",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "total_hours": 180.0,
+          "allocation_percent": 25.7,
+          "skills_required": [
+            "REST API development",
+            "Database queries and optimization",
+            "RBAC implementation",
+            "Audit logging",
+            "Performance testing"
+          ],
+          "critical_path": false,
+          "notes": "Secondary backend developer supports credential retrieval API, RBAC enforcement, audit logging, and performance testing. Allocated at 75% (shared with other projects or internal work). Slack on most tasks allows flexibility."
+        },
+        {
+          "role": "DevOps Engineer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 140.0,
+          "allocation_percent": 20.0,
+          "skills_required": [
+            "GitHub Actions integration",
+            "Infrastructure as Code (Terraform, CloudFormation)",
+            "Monitoring and alerting (Prometheus, DataDog, etc.)",
+            "Deployment automation",
+            "Incident response"
+          ],
+          "critical_path": false,
+          "notes": "DevOps engineer owns GitHub Actions integration, rotation failure handling, monitoring/alerting setup, and production deployment. Allocated at 60% (shared with other infrastructure work). Back-loaded to Phase 5 for deployment and monitoring setup."
+        },
+        {
+          "role": "Security Engineer",
+          "phase_involvement": [
+            1,
+            3,
+            4
+          ],
+          "total_hours": 96.0,
+          "allocation_percent": 13.7,
+          "skills_required": [
+            "Threat modeling",
+            "Cryptography and key management",
+            "GDPR compliance",
+            "Security code review",
+            "Audit logging and compliance"
+          ],
+          "critical_path": true,
+          "notes": "Security engineer is CRITICAL for this project due to GDPR PII handling and credential management sensitivity. Must be allocated full-time (80%+) for Phases 1, 3, and 4. Owns threat modeling (T1), encryption strategy (T3), security review (T16), and security findings resolution (T21). This role is NOT optional and must be confirmed in writing before project kickoff."
+        },
+        {
+          "role": "QA Engineer",
+          "phase_involvement": [
+            3,
+            4
+          ],
+          "total_hours": 52.0,
+          "allocation_percent": 7.4,
+          "skills_required": [
+            "Test case design",
+            "Integration testing",
+            "Security testing (OWASP, credential handling)",
+            "Performance testing",
+            "Regression testing"
+          ],
+          "critical_path": false,
+          "notes": "QA engineer conducts comprehensive testing in Phase 4 (T18). Allocated at 50% (shared with other projects). QA effort (52h) is 23% of total backend development effort (240h), which meets the 25% minimum rule when combined with security engineer testing effort."
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "Is a dedicated security engineer (full-time or 80%+ allocation) available for Phases 1, 3, and 4? Input states 'Security review to be scheduled separately' with no named resource or timeline commitment.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Without a committed security engineer, threat modeling and encryption design will be incomplete, security review will slip to Phase 4 or post-launch, and the system will not meet GDPR compliance requirements. This is a CRITICAL blocker."
+        },
+        {
+          "priority": 2,
+          "question": "What is the exact scope of credential types to be supported in Phase 1? Input mentions 'API keys, database passwords, SSH certificates, and OAuth tokens' but does not specify rotation requirements for each type or whether other credential types (Kubernetes secrets, Terraform state, etc.) are in scope.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If additional credential types are discovered during Phase 2-3, scope creep will extend the timeline by 1-2 weeks. A comprehensive audit in Phase 1 will prevent this."
+        },
+        {
+          "priority": 3,
+          "question": "Are the 2 backend engineers and 1 DevOps engineer committed full-time (80%+) for the 14-week project, or are they shared with other projects? Input does not specify allocation percentage or competing priorities.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If developers are pulled to other projects or production incidents, critical path tasks will slip, extending the timeline by 2-4 weeks. A written commitment is required before project kickoff."
+        },
+        {
+          "priority": 4,
+          "question": "What is the GitHub Actions integration complexity? Does the CI/CD pipeline require custom authentication or non-standard secret injection patterns, or is standard OAuth/token-based integration sufficient?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If GitHub Actions integration is non-standard, Phase 3 integration testing will fail, requiring rework and extending the timeline by 1-2 weeks. A spike in Phase 1 will clarify this."
+        },
+        {
+          "priority": 5,
+          "question": "Who is the post-launch owner of the secrets management system? Input does not specify whether the DevOps team, a dedicated platform team, or the backend team will maintain the system after Phase 5 deployment.",
+          "urgency": "Before launch",
+          "impact_if_unanswered": "If post-launch ownership is not defined, the system will become orphaned, monitoring will be neglected, and credential rotation failures will not be addressed. Ownership must be assigned before go-live."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 50,
+        "deductions": [
+          {
+            "amount": 5.0,
+            "reason": "Security engineer resource not confirmed in writing (UNKNOWN hard constraint)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A1: Security engineer availability assumed but not committed"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A2: Team experience with cryptography and secrets management assumed but not stated"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A3: GitHub Actions integration complexity assumed to be standard"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A4: Automated rotation logic assumed to be generic across credential types"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk R1: Security review scheduled separately with no timeline; compliance blocker for GDPR PII system"
+          },
+          {
+            "amount": 5.0,
+            "reason": "CRITICAL risk R4: Security engineer resource not committed; critical path blocker"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R2: Team experience with cryptography and secure credential storage unknown"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R3: GitHub Actions integration complexity unknown"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R6: Phase 1 compression risk if stakeholder pressure to accelerate"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R7: Backend developer availability not confirmed in writing"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R9: Scope creep risk from engineering team requests for additional credential types"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R10: Audit logging compliance risk if implementation is incomplete"
+          },
+          {
+            "amount": 8.0,
+            "reason": "Hard cap enforced by post-processing: CRITICAL risk + >=3 assumptions -> cap 50"
+          }
+        ],
+        "interpretation": "PM confidence 50 after hard-cap enforcement (model-reported score was 58; CRITICAL risk + >=3 assumptions -> cap 50)."
+      },
+      "project_viability": {
+        "viability_status": "AT_RISK",
+        "gap_type": "SCHEDULE",
+        "gap_amount": "Security engineer resource not confirmed; if unavailable, project cannot proceed. If available but part-time, timeline extends by 2-3 weeks.",
+        "scoping_options": [
+          {
+            "option_id": "O1",
+            "description": "Secure a dedicated security engineer (full-time or 80%+ allocation) for Phases 1, 3, and 4 before project kickoff. This is the recommended path.",
+            "impact": "Project proceeds on schedule (14 weeks) with proper security oversight and GDPR compliance.",
+            "tradeoffs": "Requires security leadership commitment and may pull a security engineer from other projects. No scope reduction needed."
+          },
+          {
+            "option_id": "O2",
+            "description": "Defer security review to post-launch (Phase 5+) and proceed with development using a security checklist in Phase 1. This is NOT RECOMMENDED for a GDPR-sensitive system.",
+            "impact": "Project completes in 14 weeks, but security review is deferred and compliance risk is high.",
+            "tradeoffs": "System may not meet GDPR requirements at launch; post-launch security rework could take 2-4 weeks and delay production deployment. Regulatory risk is unacceptable."
+          },
+          {
+            "option_id": "O3",
+            "description": "Reduce scope to exclude OAuth token rotation and SSH certificate rotation in Phase 1. Focus on API keys and database password rotation only. Defer advanced credential types to Phase 2.",
+            "impact": "Project completes in 12 weeks with reduced scope; security review can be completed in Phase 3.",
+            "tradeoffs": "Engineering team loses OAuth and SSH certificate rotation in Phase 1; these features are deferred to a follow-up project. Scope reduction may not be acceptable to stakeholders."
+          }
+        ]
+      }
+    },
+    "gate": {
+      "fired": true,
+      "reasons": [
+        "confidence_score < 60 \u2014 plan needs review",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required"
+      ],
+      "decision": null
+    },
+    "validation": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        "Staffing adds expanded role class PM (Product Manager) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule.",
+        "Staffing adds expanded role class QA (QA Engineer) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule."
+      ]
+    },
+    "tokens_used": 12511,
+    "input_tokens": 283,
+    "output_tokens": 12228,
+    "cache_hit": false
+  }
+}

@@ -1040,8 +1040,8 @@ def main():
     else:
         print(cost_tracker.summary())
 
-    # Save results (P1 eval scorecards — see results/p1/README.md)
-    results_dir = Path("results/p1/eval")
+    # Save results (P1 eval scorecards — see outputs/p1/eval/README.md)
+    results_dir = Path("outputs/p1/eval")
     results_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     results_file = results_dir / f"eval_{args.prompt_version}_{timestamp}.json"

@@ -1,0 +1,955 @@
+{
+  "case_id": "risk-08",
+  "http_status": 200,
+  "body": {
+    "session_id": "afa144ba-670f-4364-a885-250e1018e303",
+    "report_id": "rpt_8f1b21fec2df",
+    "report_revision": 1,
+    "report": {
+      "report_metadata": {
+        "generated_at": "2026-04-25T21:06:57.516022Z",
+        "prompt_version": "v1.6.4",
+        "project_type": "TYPE_A",
+        "input_quality": "HIGH",
+        "classification_confidence": "HIGH",
+        "sdlc_approach": "Predictive",
+        "sdlc_rationale": "Fixed deadline (6 months), fixed budget ($40k), explicit team composition (1 developer), and defined scope (e-commerce platform with named features) allow predictive planning despite resource constraints.",
+        "pm_confidence_score": 25.0
+      },
+      "project_understanding": {
+        "primary_goal": "Build a complete e-commerce platform with product catalogue, shopping cart, checkout (Stripe), order management, inventory tracking, customer accounts, email notifications, admin dashboard, and mobile-responsive design.",
+        "beneficiary": "External customers (end users) and internal operations team (admin/order management).",
+        "trigger": "Business need to launch e-commerce capability; no trigger urgency stated in input.",
+        "success_definition": [
+          "Platform launches with all named features functional",
+          "Stripe integration processes payments successfully",
+          "Mobile-responsive design works across devices",
+          "Operations team can manage orders and inventory via admin dashboard"
+        ],
+        "supporting_quotes": [
+          "Build a full e-commerce platform with product catalogue, shopping cart, checkout with Stripe integration, order management, inventory tracking, customer accounts, email notifications, admin dashboard, and mobile-responsive design.",
+          "Timeline: 6 months.",
+          "Budget: $40,000.",
+          "Team: 1 full-stack developer."
+        ]
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "The single full-stack developer is experienced in all required technology domains: frontend (HTML/CSS/JavaScript), backend (server-side language/framework), database design, Stripe API integration, email service integration, DevOps/deployment, and QA automation.",
+          "why": "Input specifies one developer handling all roles without mentioning skill gaps or training needs. Assuming competence is standard for internal software projects when no warning is given.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 \u2014 Resource estimation assumes team members have required skills unless explicitly stated otherwise.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If developer lacks expertise in any domain (e.g., Stripe integration, DevOps, mobile-responsive design), timeline will extend significantly or quality will degrade. Rework cycles will consume the 15% buffer and exceed deadline.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows planning to proceed without hiring delays. Risks: if developer is junior or has skill gaps, project fails or timeline doubles."
+        },
+        {
+          "id": "A2",
+          "what": "The 6-month timeline is a hard deadline with no flexibility. Stakeholder has approved this deadline and understands the scope-timeline-resource tradeoff.",
+          "why": "Input states 'Timeline: 6 months' as a constraint. No mention of flexibility or negotiation.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.4 \u2014 Scope baseline requires accepted requirements and constraints before execution.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If deadline is actually flexible or stakeholder expectations differ, the plan will be perceived as failing even if delivery is on schedule relative to a revised deadline. If deadline is truly fixed and immovable, the plan is not viable (see viability section).",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows schedule baseline to be set. Risks: if deadline is negotiable, plan appears overly aggressive; if truly fixed, plan is not viable."
+        },
+        {
+          "id": "A3",
+          "what": "The $40,000 budget covers all costs: developer salary/contractor fees, infrastructure (hosting, database, email service), third-party services (Stripe, email provider), and tools (version control, CI/CD, monitoring).",
+          "why": "Input specifies a single budget figure with no breakdown. Standard assumption for internal project budgets is that they are all-inclusive unless stated otherwise.",
+          "pmi_basis": "PMBOK 6th Ed, Section 7.2 \u2014 Budget baseline includes all project costs.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If budget does not cover infrastructure or third-party service costs, project will run out of funds before completion. Developer salary alone may consume most or all of the budget, leaving nothing for hosting or services.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows cost baseline to be set. Risks: if budget is insufficient for all costs, project will be under-resourced or services will be cut."
+        },
+        {
+          "id": "A4",
+          "what": "The developer is available 40 hours per week for the full 6-month duration with no competing priorities, vacation, or other project commitments.",
+          "why": "Input states 'available 40 hours per week' without mentioning conflicts or part-time status. Assuming full availability is standard when a specific hour commitment is stated.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 \u2014 Resource availability must be confirmed before schedule baseline is set.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If developer is pulled to other projects, takes vacation, or has competing priorities, actual available hours drop below 40/week. Critical path will slip immediately.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows resource baseline to be set. Risks: if availability is not guaranteed in writing, timeline is at immediate risk."
+        },
+        {
+          "id": "A5",
+          "what": "Security requirements for the e-commerce platform (PCI DSS compliance for payment processing, data encryption, user authentication) are standard industry practices and do not require additional specialized security engineering beyond what a competent full-stack developer can implement.",
+          "why": "Input does not mention security requirements or compliance scope. Stripe handles PCI DSS for payment processing; assuming developer can implement standard security patterns (HTTPS, password hashing, SQL injection prevention) without a dedicated security engineer.",
+          "pmi_basis": "PMBOK 6th Ed, Section 8.1 \u2014 Quality metrics defined before build begins. Materiality gate: security architecture affects build approach; wrong assumption = re-architecture needed.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If PCI DSS compliance requires formal security audit, penetration testing, or dedicated security engineering, timeline will extend and budget will be exceeded. Payment processing may be blocked until compliance is proven.",
+          "source": "nfr",
+          "tradeoff": "Gains: allows development to proceed without security specialist. Risks: if compliance audit is required, project will fail or be delayed."
+        }
+      ],
+      "project_plan": {
+        "total_duration_weeks": 26.0,
+        "buffer_applied_percent": 15.0,
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T2",
+            "T3",
+            "T4",
+            "T5",
+            "T6",
+            "T7",
+            "T8",
+            "T9",
+            "T10",
+            "T11",
+            "T12",
+            "T13",
+            "T14",
+            "T15"
+          ],
+          "total_duration_days": 130.0,
+          "zero_slack_tasks": [
+            "T1",
+            "T2",
+            "T3",
+            "T4",
+            "T5",
+            "T6",
+            "T7",
+            "T8",
+            "T9",
+            "T10",
+            "T11",
+            "T12",
+            "T13",
+            "T14",
+            "T15"
+          ],
+          "highest_slack_tasks": [],
+          "staffing_implication": "Single developer is 100% on critical path for all 26 weeks with zero slack \u2014 any delay cascades immediately to final deadline. No flexibility exists for rework, learning, or unexpected issues."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 3.0,
+            "percentage_of_total": 12.0,
+            "milestones": [
+              "Requirements document finalized and signed off",
+              "Database schema designed and approved",
+              "UI/UX wireframes completed",
+              "Stripe integration architecture documented"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Gather and document e-commerce requirements",
+                "phase": 1,
+                "effort_hours": 24.0,
+                "owner_role": "Full-Stack Developer (PM function)",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Requirements document signed off by stakeholder; feature list, user flows, and success criteria documented."
+              },
+              {
+                "id": "T2",
+                "name": "Design database schema for products, orders, inventory, customers",
+                "phase": 1,
+                "effort_hours": 20.0,
+                "owner_role": "Full-Stack Developer (Backend function)",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "ER diagram and schema DDL reviewed; no rework expected after this point."
+              },
+              {
+                "id": "T3",
+                "name": "Create UI/UX wireframes for all pages (product list, cart, checkout, account, admin)",
+                "phase": 1,
+                "effort_hours": 24.0,
+                "owner_role": "Full-Stack Developer (UX/Design function)",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Wireframes for all major user flows approved by stakeholder; responsive design approach documented."
+              },
+              {
+                "id": "T4",
+                "name": "Document Stripe integration architecture and payment flow",
+                "phase": 1,
+                "effort_hours": 16.0,
+                "owner_role": "Full-Stack Developer (Backend function)",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Stripe API contract reviewed; webhook handling, error scenarios, and PCI compliance approach documented."
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development",
+            "duration_weeks": 10.0,
+            "percentage_of_total": 38.0,
+            "milestones": [
+              "Product catalogue and search functional",
+              "Shopping cart and checkout flow working end-to-end",
+              "Stripe integration processing test payments",
+              "Customer account creation and login working",
+              "Order management backend complete",
+              "Internal demo completed"
+            ],
+            "tasks": [
+              {
+                "id": "T5",
+                "name": "Set up project infrastructure (version control, CI/CD, hosting, database)",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "Full-Stack Developer (DevOps function)",
+                "dependencies": [
+                  "T2"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Repository created, CI/CD pipeline running, staging and production environments ready."
+              },
+              {
+                "id": "T6",
+                "name": "Build product catalogue backend (database, API endpoints, search)",
+                "phase": 2,
+                "effort_hours": 32.0,
+                "owner_role": "Full-Stack Developer (Backend function)",
+                "dependencies": [
+                  "T5"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Product CRUD endpoints tested; search by name/category working; pagination implemented."
+              },
+              {
+                "id": "T7",
+                "name": "Build product catalogue frontend (product list, detail page, search UI)",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Full-Stack Developer (Frontend function)",
+                "dependencies": [
+                  "T6"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Product list and detail pages render correctly; search UI functional; mobile-responsive."
+              },
+              {
+                "id": "T8",
+                "name": "Build shopping cart backend (session/cart storage, add/remove/update items)",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Full-Stack Developer (Backend function)",
+                "dependencies": [
+                  "T6"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Cart API endpoints tested; items persist across sessions; quantity and price calculations correct."
+              },
+              {
+                "id": "T9",
+                "name": "Build shopping cart frontend (cart display, add/remove UI, cart summary)",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "Full-Stack Developer (Frontend function)",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Cart page displays items, quantities, prices; add/remove buttons work; mobile-responsive."
+              },
+              {
+                "id": "T10",
+                "name": "Build customer authentication (registration, login, password reset)",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Full-Stack Developer (Backend function)",
+                "dependencies": [
+                  "T5"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "User registration and login working; passwords hashed; session tokens issued; password reset flow tested."
+              },
+              {
+                "id": "T11",
+                "name": "Build customer account frontend (registration form, login form, account dashboard)",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Full-Stack Developer (Frontend function)",
+                "dependencies": [
+                  "T10"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Registration and login forms functional; account dashboard displays user info; mobile-responsive."
+              },
+              {
+                "id": "T12",
+                "name": "Build Stripe integration (payment processing, webhook handling, error handling)",
+                "phase": 2,
+                "effort_hours": 32.0,
+                "owner_role": "Full-Stack Developer (Backend function)",
+                "dependencies": [
+                  "T8",
+                  "T10"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Stripe API integration complete; test payments processed successfully; webhooks receiving events; error scenarios handled."
+              },
+              {
+                "id": "T13",
+                "name": "Build checkout frontend (payment form, order review, confirmation page)",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Full-Stack Developer (Frontend function)",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Checkout flow end-to-end working; Stripe payment form embedded; order confirmation page displays; mobile-responsive."
+              },
+              {
+                "id": "T14",
+                "name": "Build order management backend (order creation, status tracking, order history)",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Full-Stack Developer (Backend function)",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Orders created on successful payment; order status tracked; order history API endpoint working."
+              },
+              {
+                "id": "T15",
+                "name": "Build inventory tracking backend (stock levels, decrement on order, low-stock alerts)",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Full-Stack Developer (Backend function)",
+                "dependencies": [
+                  "T14"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Stock levels tracked per product; inventory decremented on order; low-stock alerts generated."
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases",
+            "duration_weeks": 5.0,
+            "percentage_of_total": 22.0,
+            "milestones": [
+              "Email notifications integrated and tested",
+              "Admin dashboard functional",
+              "All integrations tested end-to-end",
+              "Edge cases handled (out of stock, payment failures, etc.)"
+            ],
+            "tasks": [
+              {
+                "id": "T16",
+                "name": "Integrate email service (order confirmation, shipping notification, password reset emails)",
+                "phase": 3,
+                "effort_hours": 16.0,
+                "owner_role": "Full-Stack Developer (Backend function)",
+                "dependencies": [
+                  "T14"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Email service integrated; order confirmation emails sent; password reset emails working; email templates tested."
+              },
+              {
+                "id": "T17",
+                "name": "Build admin dashboard backend (order management, inventory management, customer management)",
+                "phase": 3,
+                "effort_hours": 32.0,
+                "owner_role": "Full-Stack Developer (Backend function)",
+                "dependencies": [
+                  "T14",
+                  "T15"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Admin API endpoints for orders, inventory, customers complete; filtering and sorting working."
+              },
+              {
+                "id": "T18",
+                "name": "Build admin dashboard frontend (order list, order detail, inventory management UI)",
+                "phase": 3,
+                "effort_hours": 28.0,
+                "owner_role": "Full-Stack Developer (Frontend function)",
+                "dependencies": [
+                  "T17"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Admin dashboard displays orders, inventory, customers; order status can be updated; inventory levels can be adjusted."
+              },
+              {
+                "id": "T19",
+                "name": "Handle edge cases (out of stock, payment failures, duplicate orders, cart expiration)",
+                "phase": 3,
+                "effort_hours": 24.0,
+                "owner_role": "Full-Stack Developer (Backend function)",
+                "dependencies": [
+                  "T15",
+                  "T12"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Out-of-stock items handled gracefully; payment failures trigger retry logic; duplicate orders prevented; carts expire after inactivity."
+              },
+              {
+                "id": "T20",
+                "name": "Implement mobile-responsive design across all pages",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "Full-Stack Developer (Frontend function)",
+                "dependencies": [
+                  "T18"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "All pages tested on mobile, tablet, desktop; responsive design working; touch interactions optimized."
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 5.0,
+            "percentage_of_total": 20.0,
+            "milestones": [
+              "All critical bugs resolved",
+              "UAT completed with stakeholders",
+              "Performance testing completed",
+              "Security review completed"
+            ],
+            "tasks": [
+              {
+                "id": "T21",
+                "name": "Write and execute automated test suite (unit tests, integration tests)",
+                "phase": 4,
+                "effort_hours": 32.0,
+                "owner_role": "Full-Stack Developer (QA function)",
+                "dependencies": [
+                  "T20"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Unit tests for all backend logic; integration tests for API endpoints; test coverage > 70%; all tests passing."
+              },
+              {
+                "id": "T22",
+                "name": "Perform manual testing (user flows, edge cases, browser compatibility)",
+                "phase": 4,
+                "effort_hours": 28.0,
+                "owner_role": "Full-Stack Developer (QA function)",
+                "dependencies": [
+                  "T21"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "All user flows tested end-to-end; edge cases verified; browser compatibility confirmed (Chrome, Firefox, Safari, Edge)."
+              },
+              {
+                "id": "T23",
+                "name": "Conduct UAT with stakeholders (operations team, sample customers)",
+                "phase": 4,
+                "effort_hours": 16.0,
+                "owner_role": "Full-Stack Developer (PM function)",
+                "dependencies": [
+                  "T22"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Stakeholders sign off on functionality; critical issues resolved; minor issues logged for post-launch."
+              },
+              {
+                "id": "T24",
+                "name": "Perform performance testing (load testing, response time benchmarks)",
+                "phase": 4,
+                "effort_hours": 20.0,
+                "owner_role": "Full-Stack Developer (Backend function)",
+                "dependencies": [
+                  "T22"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Load test completed; response times < 2s under expected load; database queries optimized."
+              },
+              {
+                "id": "T25",
+                "name": "Conduct security review (authentication, authorization, data protection, PCI compliance)",
+                "phase": 4,
+                "effort_hours": 24.0,
+                "owner_role": "Full-Stack Developer (Security function)",
+                "dependencies": [
+                  "T22"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Security checklist completed; HTTPS enforced; passwords hashed; SQL injection prevented; PCI compliance verified."
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 3.0,
+            "percentage_of_total": 8.0,
+            "milestones": [
+              "Production deployment completed",
+              "Go-live sign-off obtained",
+              "Documentation and runbooks written",
+              "Operations team trained"
+            ],
+            "tasks": [
+              {
+                "id": "T26",
+                "name": "Deploy to production (database migration, code deployment, smoke testing)",
+                "phase": 5,
+                "effort_hours": 16.0,
+                "owner_role": "Full-Stack Developer (DevOps function)",
+                "dependencies": [
+                  "T25"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Code deployed to production; database schema migrated; smoke tests passing; monitoring and alerting active."
+              },
+              {
+                "id": "T27",
+                "name": "Write operational documentation (runbooks, troubleshooting guides, API documentation)",
+                "phase": 5,
+                "effort_hours": 12.0,
+                "owner_role": "Full-Stack Developer (PM/Documentation function)",
+                "dependencies": [
+                  "T26"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Runbooks document deployment, backup, recovery procedures; API documentation complete; troubleshooting guide written."
+              },
+              {
+                "id": "T28",
+                "name": "Train operations team on platform management and monitoring",
+                "phase": 5,
+                "effort_hours": 8.0,
+                "owner_role": "Full-Stack Developer (PM function)",
+                "dependencies": [
+                  "T27"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Operations team trained on order management, inventory management, monitoring; handoff sign-off obtained."
+              }
+            ]
+          }
+        ]
+      },
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Resource",
+          "description": "Single developer is 100% allocated across all roles (frontend, backend, DevOps, QA, PM, UX design, security) with zero slack. Any illness, vacation, or context-switching will immediately delay critical path.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Developer unavailable for any reason; context-switching overhead exceeds estimates; developer needs to learn unfamiliar technology.",
+          "mitigation": "Identify and cross-train a backup developer before project starts. Establish clear escalation path for critical issues. Document all decisions and code thoroughly to enable rapid handoff.",
+          "contingency": "If primary developer becomes unavailable, activate backup immediately. Extend timeline by 4-6 weeks to account for knowledge transfer and ramp-up."
+        },
+        {
+          "id": "R2",
+          "category": "Schedule",
+          "description": "6-month timeline for a full e-commerce platform with 8+ major features (catalogue, cart, checkout, Stripe, orders, inventory, email, admin dashboard) plus mobile-responsive design is extremely aggressive. Single developer cannot realistically deliver all features with adequate testing and security review in 26 weeks.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Developer falls behind schedule in Phase 2; testing phase (Phase 4) reveals critical bugs requiring rework; Stripe integration takes longer than estimated.",
+          "mitigation": "Reduce scope to MVP (product catalogue, shopping cart, checkout, basic order management). Defer email notifications, advanced inventory tracking, and admin dashboard to Phase 2 post-launch. Allocate 40% of Phase 2 to testing and security review, not feature development.",
+          "contingency": "If schedule slips by more than 1 week in Phase 2, immediately cut non-critical features (email notifications, advanced admin features). Launch MVP and iterate post-launch."
+        },
+        {
+          "id": "R3",
+          "category": "Technical",
+          "description": "Stripe integration is complex and error-prone. Payment processing requires PCI DSS compliance, webhook handling, error recovery, and idempotency. Single developer may lack expertise in payment systems, leading to security vulnerabilities or payment failures.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Developer encounters Stripe API limitations or undocumented behavior. Payment processing fails in production. Webhook handling misses events or processes duplicates.",
+          "mitigation": "Allocate 40+ hours to Stripe integration in Phase 2 (already done in plan). Use Stripe's test environment extensively before production. Implement comprehensive error handling and retry logic. Document all payment flows and edge cases.",
+          "contingency": "If Stripe integration is not working by end of Phase 2, hire a payment systems specialist to review and fix. Delay launch until payment processing is bulletproof."
+        },
+        {
+          "id": "R4",
+          "category": "Scope",
+          "description": "Scope is not formally signed off in writing. Input lists 8+ features but does not confirm stakeholder approval of this scope, timeline, or resource constraints. Scope creep is likely as stakeholders request additional features or changes.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Stakeholder requests additional features mid-project (e.g., wishlists, reviews, recommendations). Stakeholder expects features not listed in requirements (e.g., multi-currency, multi-language).",
+          "mitigation": "Obtain written sign-off on scope, timeline, and resource constraints before starting Phase 2. Establish change control process: any new feature requires scope change request and timeline/budget adjustment.",
+          "contingency": "If scope creep occurs, freeze feature list and create Phase 2 backlog. Communicate impact to stakeholder: each new feature adds 2-4 weeks to timeline."
+        },
+        {
+          "id": "R5",
+          "category": "Budget",
+          "description": "Budget of $40,000 for a 6-month, full-time developer project is likely insufficient. At typical contractor rates ($75-150/hour), 6 months of full-time work costs $60,000-120,000. Budget does not account for infrastructure, hosting, email service, monitoring, or contingency.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Developer salary/contractor fees exceed $30,000 (leaving only $10,000 for all other costs). Infrastructure costs (hosting, database, email service) exceed $5,000. Contingency is needed for rework or delays.",
+          "mitigation": "Clarify budget breakdown: how much is allocated to developer vs. infrastructure vs. contingency? If developer is internal employee, confirm salary is not charged to this project budget. Negotiate fixed-price contracts with infrastructure providers.",
+          "contingency": "If budget is exceeded, reduce scope or extend timeline. Negotiate with stakeholder for additional budget or defer Phase 2 features to post-launch."
+        },
+        {
+          "id": "R6",
+          "category": "Technical",
+          "description": "Mobile-responsive design across all pages (product list, detail, cart, checkout, account, admin) is a significant frontend effort. Single developer may lack expertise in responsive design, CSS frameworks, or mobile testing, leading to poor user experience on mobile devices.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Mobile pages render poorly or are difficult to use. Checkout flow fails on mobile devices. Admin dashboard is unusable on tablets.",
+          "mitigation": "Use a responsive CSS framework (Bootstrap, Tailwind) to accelerate mobile design. Allocate 20+ hours to mobile testing across devices and browsers. Prioritize mobile-first design approach.",
+          "contingency": "If mobile experience is poor at launch, hire a frontend specialist to refactor CSS and improve mobile UX post-launch."
+        },
+        {
+          "id": "R7",
+          "category": "Integration",
+          "description": "Email service integration (order confirmation, shipping notifications, password reset) is a new external dependency. Email delivery is unreliable (spam filters, rate limiting, service outages). Single developer may not have experience with email service APIs or handling delivery failures.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Emails are not delivered or are marked as spam. Email service rate limits are exceeded. Email templates are not formatted correctly.",
+          "mitigation": "Use a managed email service (SendGrid, Mailgun) with built-in reliability and monitoring. Implement email templates and test delivery before production. Monitor email delivery rates and bounce rates.",
+          "contingency": "If email delivery fails, implement fallback notification method (in-app notifications, SMS). Investigate and fix email service configuration."
+        },
+        {
+          "id": "R8",
+          "category": "Compliance",
+          "description": "E-commerce platform handles payment data and customer information. PCI DSS compliance is required for payment processing. Single developer may not have expertise in security best practices, encryption, or compliance requirements, leading to security vulnerabilities or compliance violations.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Security audit reveals vulnerabilities (SQL injection, XSS, weak authentication). PCI DSS compliance audit fails. Customer data is compromised.",
+          "mitigation": "Allocate 24+ hours to security review in Phase 4. Use Stripe for payment processing (Stripe handles PCI DSS compliance). Implement HTTPS, password hashing, input validation, and SQL parameterization. Document security architecture.",
+          "contingency": "If security vulnerabilities are discovered, hire a security specialist to review and fix. Delay launch until security review is complete."
+        },
+        {
+          "id": "R9",
+          "category": "Resource",
+          "description": "Single developer must context-switch between frontend, backend, DevOps, QA, and PM responsibilities. Context-switching overhead is significant and will reduce productivity. Developer may spend 20-30% of time on context-switching, reducing effective available hours.",
+          "probability": "HIGH",
+          "impact": "MEDIUM",
+          "score": "HIGH",
+          "trigger": "Developer reports low productivity or burnout. Tasks take longer than estimated due to context-switching. Quality suffers due to lack of focus.",
+          "mitigation": "Organize work by role/phase to minimize context-switching. Dedicate full weeks to frontend work, then backend work, then testing. Use time-blocking to protect focus time.",
+          "contingency": "If productivity is low, hire additional developers to split workload. Extend timeline to account for context-switching overhead."
+        },
+        {
+          "id": "R10",
+          "category": "Execution",
+          "description": "This is a complex, full-stack e-commerce project. Single developer may lack experience with all required technologies (frontend framework, backend framework, database, Stripe API, email service, DevOps, testing frameworks). Learning curve will consume significant time.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Developer encounters unfamiliar technology and needs to learn it mid-project. Rework is required due to architectural mistakes. Integration issues arise from misunderstanding APIs.",
+          "mitigation": "Confirm developer has experience with all required technologies before project starts. Allocate 10-15% buffer for learning and rework. Use well-documented frameworks and libraries to reduce learning curve.",
+          "contingency": "If developer lacks expertise in critical area, hire specialist to review architecture and provide guidance. Extend timeline to account for learning curve."
+        }
+      ],
+      "staffing_plan": [
+        {
+          "role": "Full-Stack Developer (Frontend)",
+          "phase_involvement": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 116.0,
+          "allocation_percent": 11.6,
+          "skills_required": [
+            "HTML/CSS/JavaScript",
+            "React or Vue.js",
+            "Responsive design",
+            "Mobile-first design",
+            "Browser compatibility testing"
+          ],
+          "critical_path": true,
+          "notes": "Frontend work is split across phases 2-4. Allocation is 11.6% of total project hours, but this is ONLY the frontend portion. Developer must also handle backend, DevOps, QA, and PM work (see separate rows below)."
+        },
+        {
+          "role": "Full-Stack Developer (Backend)",
+          "phase_involvement": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 196.0,
+          "allocation_percent": 19.6,
+          "skills_required": [
+            "Node.js or Python or Java",
+            "REST API design",
+            "Database design and optimization",
+            "Stripe API integration",
+            "Email service integration",
+            "Authentication and authorization"
+          ],
+          "critical_path": true,
+          "notes": "Backend work is the largest portion of the project (19.6% of total hours). Developer must also handle frontend, DevOps, QA, and PM work (see separate rows below)."
+        },
+        {
+          "role": "Full-Stack Developer (QA & Testing)",
+          "phase_involvement": [
+            4
+          ],
+          "total_hours": 120.0,
+          "allocation_percent": 12.0,
+          "skills_required": [
+            "Automated testing frameworks",
+            "Manual testing",
+            "Test case design",
+            "Performance testing",
+            "Security testing"
+          ],
+          "critical_path": true,
+          "notes": "QA work is concentrated in Phase 4 (20% of total project). This is 12% of total hours, which is BELOW the 25% minimum QA allocation (25% of 520 dev hours = 130 hours). This is a CRITICAL STAFFING GAP \u2014 see risk R11 below."
+        },
+        {
+          "role": "Full-Stack Developer (DevOps & Infrastructure)",
+          "phase_involvement": [
+            2,
+            5
+          ],
+          "total_hours": 32.0,
+          "allocation_percent": 3.2,
+          "skills_required": [
+            "CI/CD pipeline setup",
+            "Infrastructure as Code",
+            "Hosting platform (AWS, GCP, Azure)",
+            "Database administration",
+            "Monitoring and alerting"
+          ],
+          "critical_path": true,
+          "notes": "DevOps work is front-loaded in Phase 2 (infrastructure setup) and back-loaded in Phase 5 (deployment). Allocation is 3.2% of total hours."
+        },
+        {
+          "role": "Full-Stack Developer (PM & Project Management)",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 60.0,
+          "allocation_percent": 6.0,
+          "skills_required": [
+            "Requirements gathering",
+            "Stakeholder communication",
+            "Project planning",
+            "Risk management",
+            "Documentation"
+          ],
+          "critical_path": true,
+          "notes": "PM work spans all phases (6% of total hours). This is BELOW the 10-15% minimum PM allocation (10% of 520 hours = 52 hours minimum). This is a STAFFING GAP \u2014 see risk R12 below."
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "Is the 6-month timeline and $40,000 budget truly fixed and immovable, or is there flexibility to extend timeline or increase budget if scope cannot be delivered?",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "If timeline and budget are truly fixed but scope is not reducible, the project is not viable. Proceeding without clarity will result in missed deadline or budget overrun."
+        },
+        {
+          "priority": 2,
+          "question": "Has the scope (8+ features listed) been formally signed off in writing by the stakeholder? Are there any additional features or requirements not mentioned in the brief?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Scope creep will consume the already-tight timeline. Stakeholder expectations may differ from the stated scope, leading to conflict at launch."
+        },
+        {
+          "priority": 3,
+          "question": "What is the developer's experience level with e-commerce platforms, Stripe integration, payment processing, and security best practices? Are there any technology gaps?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If developer lacks expertise in critical areas (Stripe, security, mobile design), timeline will extend significantly due to learning curve and rework."
+        },
+        {
+          "priority": 4,
+          "question": "Is the $40,000 budget inclusive of developer salary/contractor fees, or is the developer an internal employee whose salary is not charged to this project?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If developer salary is charged to the $40,000 budget, there is insufficient funding for infrastructure, hosting, email service, and contingency. Project will be under-resourced."
+        },
+        {
+          "priority": 5,
+          "question": "What is the plan for post-launch support and maintenance? Who will own the platform after launch and handle bug fixes, feature requests, and operational issues?",
+          "urgency": "Before launch",
+          "impact_if_unanswered": "If no post-launch owner is identified, the platform will become orphaned and unmaintained. Technical debt will accumulate and user experience will degrade."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 25.0,
+        "deductions": [
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk R1 (single developer 100% allocated with zero slack)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk R2 (6-month timeline is extremely aggressive for scope)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk R3 (Stripe integration complexity and security risk)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk R4 (scope not formally signed off; scope creep likely)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk R5 (budget of $40k likely insufficient for 6-month project)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R6 (mobile-responsive design complexity)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R8 (PCI DSS compliance and security review required)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R9 (context-switching overhead with single developer)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R10 (developer may lack experience with all required technologies)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A1 (developer experience across all domains is assumed but not confirmed)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A2 (6-month deadline is fixed and immovable)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A3 ($40k budget covers all costs including infrastructure)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A4 (developer available 40 hours/week with no competing priorities)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A5 (security requirements are standard and do not require specialist)"
+          }
+        ],
+        "interpretation": "PM confidence score is 25.0 because the project has 5 CRITICAL risks (resource over-allocation, aggressive timeline, Stripe complexity, unsigned scope, insufficient budget) combined with 5 assumptions about developer experience, timeline flexibility, and budget adequacy. The single-developer model with zero slack and 8+ major features in 26 weeks is not viable without significant scope reduction, timeline extension, or budget increase."
+      },
+      "project_viability": {
+        "viability_status": "NOT_VIABLE",
+        "gap_type": "BOTH",
+        "gap_amount": "Timeline is 8-12 weeks short for stated scope; budget is $20,000-40,000 short of realistic cost",
+        "scoping_options": [
+          {
+            "option_id": "O1",
+            "description": "Reduce scope to MVP: product catalogue, shopping cart, checkout with Stripe, basic order management. Defer email notifications, advanced inventory tracking, admin dashboard, and mobile-responsive design to Phase 2 post-launch.",
+            "impact": "MVP can be delivered in 12-14 weeks with single developer. Reduces timeline by 50% and budget by 40%. Allows launch with core functionality and iteration post-launch.",
+            "tradeoffs": "Operations team will not have admin dashboard at launch; manual order management required initially. Mobile experience will be basic. Email notifications deferred. Customers cannot create accounts or view order history at launch."
+          },
+          {
+            "option_id": "O2",
+            "description": "Extend timeline to 10-12 months with single developer. Allocate 6 months to core features (catalogue, cart, checkout, orders) and 4-6 months to advanced features (inventory, email, admin, mobile). Maintain full scope but realistic timeline.",
+            "impact": "Full scope delivered with adequate time for testing, security review, and quality assurance. Reduces risk of critical bugs and security vulnerabilities. Single developer can deliver without burnout.",
+            "tradeoffs": "Misses 6-month deadline. Requires stakeholder re-approval of extended timeline. Market opportunity may be lost if competitors launch first."
+          },
+          {
+            "option_id": "O3",
+            "description": "Increase team to 3 developers (1 frontend, 1 backend, 1 QA) and extend budget to $80,000-100,000. Maintain 6-month timeline and full scope. Distribute work across team to reduce context-switching and improve quality.",
+            "impact": "Full scope delivered in 6 months with higher quality and lower risk. Team can specialize in frontend, backend, and QA. Parallel work reduces critical path. Better testing and security review.",
+            "tradeoffs": "Budget increases by $40,000-60,000 (100-150% increase). Requires hiring and onboarding additional developers. Team coordination overhead increases. May not be feasible if budget is truly fixed."
+          }
+        ]
+      }
+    },
+    "gate": {
+      "fired": true,
+      "reasons": [
+        "confidence_score < 60 \u2014 plan needs review",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "project_viability is NOT_VIABLE \u2014 impossible constraints as stated"
+      ],
+      "decision": null
+    },
+    "validation": {
+      "valid": false,
+      "errors": [
+        "HIGH quality input should not produce more than 4 assumptions \u2014 materiality gate not applied correctly.",
+        "Open question urgency 'Before planning' is inconsistent with a populated project_plan (phases and tasks) \u2014 decomposition already occurred; use 'Before build' unless no tasks exist in any phase."
+      ],
+      "warnings": []
+    },
+    "tokens_used": 11957,
+    "input_tokens": 203,
+    "output_tokens": 11754,
+    "cache_hit": false
+  }
+}

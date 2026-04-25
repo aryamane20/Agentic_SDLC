@@ -1,0 +1,716 @@
+{
+  "case_id": "hp-05",
+  "http_status": 200,
+  "body": {
+    "session_id": "771a47ac-ef83-4dab-be82-9757a59a4340",
+    "report_id": "rpt_c177536e476d",
+    "report_revision": 1,
+    "report": {
+      "report_metadata": {
+        "generated_at": "2026-04-25T18:44:06.347972Z",
+        "prompt_version": "v1.6.2",
+        "project_type": "TYPE_B",
+        "input_quality": "HIGH",
+        "classification_confidence": "HIGH",
+        "sdlc_approach": "Predictive",
+        "sdlc_rationale": "Requirements fully defined and signed off, team has direct experience with React/Python/Django stack, fixed 3-month deadline with no flexibility signals, changes mid-project not expected.",
+        "pm_confidence_score": 78.0
+      },
+      "project_understanding": {
+        "primary_goal": "Add real-time reporting and alerting capabilities to the existing customer analytics dashboard to eliminate manual report generation.",
+        "beneficiary": "Customer success team (15 people) and Sales team (25 people)",
+        "trigger": "CSMs spending 10 hours/week on manual report generation; leadership mandate to automate dashboards and reduce manual effort.",
+        "success_definition": [
+          "CSMs can create custom reports in < 5 minutes",
+          "90% of scheduled reports delivered on time",
+          "Alert response time < 1 hour"
+        ],
+        "supporting_quotes": [
+          "Customer success managers are spending 10 hours/week manually generating reports",
+          "Leadership wants automated dashboards",
+          "Add real-time reporting and alerting capabilities to our existing customer analytics dashboard"
+        ]
+      },
+      "constraint_extraction": {
+        "hard_constraints": {
+          "deadline": "3 months (12 weeks)",
+          "budget": "UNKNOWN",
+          "team_size": "4 people (3 developers + 1 PM)",
+          "team_composition": "3 developers (roles not specified), 1 product manager",
+          "technology_stack": "React (frontend), Python/Django (backend), PostgreSQL (database), PagerDuty (alerting)",
+          "compliance": "SSO integration required; data retention 2 years"
+        },
+        "soft_constraints": {
+          "preferred_timeline": "3 months",
+          "preferred_tools": "PagerDuty for alerting"
+        },
+        "non_functional_requirements": {
+          "performance": "Real-time data refresh every 15 minutes",
+          "availability": "UNKNOWN (inferred: standard business hours 99.5%)",
+          "security": "SSO authentication required (inferred: enterprise standard)",
+          "usability": "Custom reports creatable in < 5 minutes (usability target)",
+          "data_retention": "2 years (explicitly stated)",
+          "scalability": "Support 40 concurrent users (15 CSMs + 25 sales, peak usage)"
+        }
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "Team composition: 3 developers assumed to be 1 frontend, 1 backend, 1 full-stack or QA-capable; no QA engineer explicitly named.",
+          "why": "Standard internal tool enhancement team structure; QA responsibilities distributed across developers on small teams is common for internal projects.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 \u2014 Resource estimation tied to WBS; team composition inferred from project scope.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If developers cannot allocate 25% of effort to QA (PMBOK 8.2 minimum), test coverage will be insufficient and bugs will reach production.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows planning with stated team size. Risks: if actual team lacks QA discipline, critical bugs in alerting logic could cause SLA failures (alert response time > 1 hour)."
+        },
+        {
+          "id": "A2",
+          "what": "Budget is not constrained; project is assumed to proceed within standard internal tool allocation (no external vendors, no infrastructure overages).",
+          "why": "Internal enhancement project using existing stack (React, Django, PostgreSQL, PagerDuty); no new platform or licensing mentioned.",
+          "pmi_basis": "PMBOK 6th Ed, Section 7.1 \u2014 Cost baseline derived from resource plan; internal projects typically have implicit budget approval.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If budget is actually constrained (e.g., hiring freeze, infrastructure costs), timeline will slip or scope will be cut.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows planning to proceed without budget re-negotiation. Risks: if budget is actually limited, scope reduction or timeline extension required mid-project."
+        },
+        {
+          "id": "A3",
+          "what": "Existing dashboard codebase is maintainable and well-documented; no major technical debt blocking new feature integration.",
+          "why": "Input describes 'existing customer analytics dashboard' as the base; enhancement projects assume the foundation is sound unless stated otherwise.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.2 \u2014 Scope baseline assumes existing system is stable; technical debt is a risk, not a baseline assumption.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If codebase has significant technical debt, refactoring will consume 20-30% of Phase 2 effort, compressing feature delivery and risking deadline miss.",
+          "source": "scope",
+          "tradeoff": "Gains: allows Phase 2 to focus on new features immediately. Risks: if codebase is brittle, integration of real-time refresh and alerting will be slower and riskier."
+        },
+        {
+          "id": "A4",
+          "what": "PagerDuty integration is straightforward (API-based, no custom webhook development required); PagerDuty sandbox/test environment is available.",
+          "why": "PagerDuty is a mature SaaS platform with standard REST API; integration complexity is typically low for alert routing.",
+          "pmi_basis": "PMBOK 6th Ed, Section 11.2 \u2014 Risk identification; external API dependencies are flagged as integration risks.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If PagerDuty API is more complex than expected or sandbox access is delayed, Phase 3 integration testing will slip by 1-2 weeks.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows Phase 3 to proceed with standard integration effort. Risks: if PagerDuty integration requires custom webhook logic or API rate limiting is restrictive, effort increases."
+        }
+      ],
+      "project_plan": {
+        "total_duration_weeks": 13.8,
+        "buffer_applied_percent": 15.0,
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T3",
+            "T7",
+            "T11",
+            "T15",
+            "T19"
+          ],
+          "total_duration_days": 69.0,
+          "zero_slack_tasks": [
+            "T1",
+            "T3",
+            "T7",
+            "T11",
+            "T15",
+            "T19"
+          ],
+          "highest_slack_tasks": [
+            "T2",
+            "T5",
+            "T9"
+          ],
+          "staffing_implication": "Backend developer and frontend developer must be full-time on critical path; PM must coordinate across all phases; any part-time allocation will compress timeline."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 1.7,
+            "percentage_of_total": 12.0,
+            "milestones": [
+              "Existing dashboard audit completed",
+              "Requirements document finalized and signed off",
+              "Architecture and data model approved",
+              "Regression risk assessment documented"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Audit existing dashboard codebase and identify integration points",
+                "phase": 1,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Technical audit document completed identifying all existing APIs, data models, and integration points for real-time refresh and alerting."
+              },
+              {
+                "id": "T2",
+                "name": "Define custom report schema and filtering requirements",
+                "phase": 1,
+                "effort_hours": 12.0,
+                "owner_role": "Product Manager",
+                "dependencies": [],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Report schema document approved by customer success team lead; filtering logic requirements documented."
+              },
+              {
+                "id": "T3",
+                "name": "Design real-time data refresh architecture and alerting workflow",
+                "phase": 1,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Architecture diagram approved by tech lead; data refresh interval (15 min), alert routing logic, and PagerDuty integration points documented."
+              },
+              {
+                "id": "T4",
+                "name": "Design UI mockups for custom report builder and alert configuration",
+                "phase": 1,
+                "effort_hours": 14.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T2"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Figma mockups completed and approved by customer success team; accessibility checklist (WCAG 2.1 AA) verified."
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development",
+            "duration_weeks": 5.2,
+            "percentage_of_total": 38.0,
+            "milestones": [
+              "Real-time data refresh pipeline implemented",
+              "Custom report builder core features working",
+              "Email scheduling service integrated",
+              "Internal demo completed with stakeholders"
+            ],
+            "tasks": [
+              {
+                "id": "T5",
+                "name": "Implement real-time data refresh pipeline (15-minute interval)",
+                "phase": 2,
+                "effort_hours": 32.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T3"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Data refresh runs every 15 minutes; latency < 2 seconds; no data loss on refresh; monitoring logs all refresh events."
+              },
+              {
+                "id": "T6",
+                "name": "Build custom report builder UI (date range, filtering, widget selection)",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T4"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Report builder allows custom date range, KPI widget selection, and filtering in < 5 minutes; UI tested with 3 CSM representatives."
+              },
+              {
+                "id": "T7",
+                "name": "Implement email scheduling service and PDF/CSV export",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T5"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Email scheduling works; PDF and CSV exports generated correctly; scheduled reports sent on time; delivery logs captured."
+              },
+              {
+                "id": "T8",
+                "name": "Implement KPI dashboard widgets and real-time data binding",
+                "phase": 2,
+                "effort_hours": 30.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T5",
+                  "T6"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Widgets display real-time data; refresh every 15 minutes; no stale data displayed; performance acceptable on 40 concurrent users."
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases",
+            "duration_weeks": 3.0,
+            "percentage_of_total": 22.0,
+            "milestones": [
+              "PagerDuty alerting integration tested",
+              "SSO authentication verified",
+              "Data retention policy implemented",
+              "Security review completed"
+            ],
+            "tasks": [
+              {
+                "id": "T9",
+                "name": "Integrate PagerDuty alerting and test alert routing",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T5"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Alerts route to PagerDuty correctly; alert response time < 1 hour verified in test; escalation policies tested; no alert loss."
+              },
+              {
+                "id": "T10",
+                "name": "Verify SSO authentication integration and session management",
+                "phase": 3,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "SSO login works; session timeout enforced; user roles and permissions respected; no authentication bypass."
+              },
+              {
+                "id": "T11",
+                "name": "Implement data retention policy (2-year archival and deletion)",
+                "phase": 3,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T5"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Data older than 2 years automatically archived; deletion job runs monthly; audit log captures all deletions; compliance verified."
+              },
+              {
+                "id": "T12",
+                "name": "Test edge cases: null data, missing KPIs, concurrent report generation",
+                "phase": 3,
+                "effort_hours": 18.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T6",
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "All edge cases handled gracefully; error messages clear; no UI crashes; concurrent report generation tested with 10 simultaneous requests."
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 2.8,
+            "percentage_of_total": 20.0,
+            "milestones": [
+              "All critical bugs resolved",
+              "Regression test suite passed",
+              "UAT completed with customer success team",
+              "Performance benchmarks verified"
+            ],
+            "tasks": [
+              {
+                "id": "T13",
+                "name": "Execute regression test suite on existing dashboard features",
+                "phase": 4,
+                "effort_hours": 16.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "All existing dashboard features tested; no regressions found; test results documented."
+              },
+              {
+                "id": "T14",
+                "name": "Conduct UAT with customer success team (5 CSMs, 2 sales reps)",
+                "phase": 4,
+                "effort_hours": 20.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T9",
+                  "T11"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "UAT sign-off from CSM lead; all success criteria validated (< 5 min report creation, 90% on-time delivery, < 1 hour alert response); feedback documented."
+              },
+              {
+                "id": "T15",
+                "name": "Performance testing: 40 concurrent users, 15-min refresh, alert latency",
+                "phase": 4,
+                "effort_hours": 18.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T9"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Load test passes with 40 concurrent users; refresh latency < 2 sec; alert delivery < 1 hour; no timeouts or errors."
+              },
+              {
+                "id": "T16",
+                "name": "Security review and penetration testing (internal)",
+                "phase": 4,
+                "effort_hours": 14.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T10"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Security review completed; no critical vulnerabilities found; SSO and data access controls verified; audit trail functional."
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 1.1,
+            "percentage_of_total": 8.0,
+            "milestones": [
+              "Production deployment completed",
+              "Monitoring and alerting configured",
+              "Documentation and runbooks written",
+              "Go-live sign-off"
+            ],
+            "tasks": [
+              {
+                "id": "T17",
+                "name": "Deploy to production and verify all features working",
+                "phase": 5,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T15"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "All features deployed; smoke tests pass; no errors in production logs; rollback plan tested."
+              },
+              {
+                "id": "T18",
+                "name": "Configure monitoring, alerting, and operational dashboards",
+                "phase": 5,
+                "effort_hours": 10.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T17"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Monitoring dashboards show system health; alerts configured for failures; on-call runbook updated."
+              },
+              {
+                "id": "T19",
+                "name": "Write user documentation, training materials, and handoff to support",
+                "phase": 5,
+                "effort_hours": 8.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T17"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "User guide completed; training video recorded; support team trained; go-live sign-off from CSM lead."
+              }
+            ]
+          }
+        ]
+      },
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Technical",
+          "description": "If existing dashboard codebase has significant technical debt or poor documentation, integration of real-time refresh and alerting will require refactoring, consuming 20-30% of Phase 2 effort and risking deadline miss.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Phase 1 audit reveals complex or brittle code; developers report integration complexity higher than expected.",
+          "mitigation": "Complete thorough codebase audit in Phase 1 (T1); identify refactoring needs before Phase 2 starts; allocate 10% buffer in Phase 2 for unexpected technical debt.",
+          "contingency": "If refactoring is required, defer non-critical features (e.g., advanced filtering) to Phase 2 post-launch; extend timeline by 1 week if necessary."
+        },
+        {
+          "id": "R2",
+          "category": "Integration",
+          "description": "If PagerDuty API integration is more complex than expected (custom webhook logic, rate limiting, schema mismatches), Phase 3 integration testing will slip by 1-2 weeks.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "PagerDuty API documentation reveals unexpected complexity; sandbox testing shows integration issues; rate limiting is more restrictive than assumed.",
+          "mitigation": "Confirm PagerDuty sandbox access and API documentation in Phase 1; spike on PagerDuty integration in early Phase 2 (T5) before full implementation; test alert routing in Phase 3 early.",
+          "contingency": "If integration is blocked, implement simplified alerting (email-only) as fallback; defer PagerDuty integration to Phase 2 post-launch."
+        },
+        {
+          "id": "R3",
+          "category": "Resource",
+          "description": "If the 3-developer team is pulled to other projects or any developer becomes unavailable, critical path tasks (real-time refresh, alerting, email scheduling) will slip immediately.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Developer assigned to competing project; developer illness or departure; unplanned context switching.",
+          "mitigation": "Secure written commitment from engineering leadership that 3 developers are full-time on this project for 12 weeks; establish clear escalation path if capacity is threatened; cross-train developers on critical components.",
+          "contingency": "If a developer becomes unavailable, immediately escalate to engineering leadership; reduce scope (defer non-critical features) or extend timeline by 2-3 weeks."
+        },
+        {
+          "id": "R4",
+          "category": "Schedule",
+          "description": "If Phase 1 requirements gathering or architecture design takes longer than 1.7 weeks, downstream phases will compress and critical path tasks will be at risk.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Stakeholder alignment takes multiple iterations; architecture decisions delayed; codebase audit reveals unexpected complexity.",
+          "mitigation": "Schedule Phase 1 kickoff immediately; set hard deadline for requirements sign-off (end of week 1); use architecture spike (T3) to validate design early.",
+          "contingency": "If Phase 1 slips, compress Phase 2 by deferring non-critical features (e.g., advanced filtering) to post-launch; extend overall timeline by 1 week."
+        },
+        {
+          "id": "R5",
+          "category": "Scope",
+          "description": "If customer success team requests additional features during development (e.g., advanced filtering, custom KPI calculations), scope creep will consume Phase 2 effort and delay delivery.",
+          "probability": "HIGH",
+          "impact": "MEDIUM",
+          "score": "HIGH",
+          "trigger": "Stakeholder requests new features during Phase 2 or Phase 3; 'nice to have' features are treated as must-haves; scope change requests submitted without formal change control.",
+          "mitigation": "Establish formal change control process in Phase 1; document MVP scope clearly; schedule weekly stakeholder sync to manage expectations; use feature flags to defer non-critical features.",
+          "contingency": "If scope creep occurs, formally document change request; assess impact on timeline; defer feature to Phase 2 post-launch or extend deadline by 1-2 weeks."
+        },
+        {
+          "id": "R6",
+          "category": "Compliance",
+          "description": "If data retention policy (2-year archival) is not implemented correctly, compliance audit could fail and require rework post-launch.",
+          "probability": "LOW",
+          "impact": "HIGH",
+          "score": "MEDIUM",
+          "trigger": "Data retention job fails silently; audit log does not capture deletions; compliance review identifies gaps.",
+          "mitigation": "Implement data retention policy in Phase 3 (T11) with automated testing; verify audit logs capture all deletions; conduct compliance review before Phase 5 deployment.",
+          "contingency": "If compliance issues are found post-launch, implement corrective action immediately; conduct full data audit to ensure no violations."
+        },
+        {
+          "id": "R7",
+          "category": "Technical",
+          "description": "If real-time data refresh (15-minute interval) causes database performance degradation, alert delivery and report generation will be slow, missing the < 1 hour alert response SLA.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Performance testing (T15) shows refresh latency > 2 seconds; database CPU spikes during refresh; alert delivery delayed.",
+          "mitigation": "Design refresh pipeline with query optimization and caching in Phase 1 (T3); implement incremental refresh (only changed data) in Phase 2 (T5); conduct performance testing early in Phase 4 (T15).",
+          "contingency": "If performance issues occur, implement database indexing or query optimization; increase refresh interval to 30 minutes if necessary; defer advanced filtering to post-launch."
+        },
+        {
+          "id": "R8",
+          "category": "Resource",
+          "description": "If QA effort is not allocated at minimum 25% of development effort (PMBOK 8.2), test coverage will be insufficient and critical bugs will reach production.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Developers allocate < 25% effort to testing; Phase 4 QA timeline is compressed; critical bugs found post-launch.",
+          "mitigation": "Allocate 25% of developer effort to QA (Phase 3-4); establish automated test suite in Phase 2; conduct regression testing in Phase 4 (T13); require UAT sign-off before deployment.",
+          "contingency": "If bugs are found post-launch, implement hotfix process; extend Phase 4 by 1 week if necessary to increase test coverage."
+        }
+      ],
+      "staffing_plan": [
+        {
+          "role": "Product Manager",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 60.0,
+          "allocation_percent": 12.0,
+          "skills_required": [
+            "Stakeholder management",
+            "Requirements definition",
+            "Agile/Scrum",
+            "Customer success domain knowledge"
+          ],
+          "critical_path": true,
+          "notes": "Full-time PM oversight across all phases; responsible for stakeholder alignment, change control, and UAT coordination. Allocation is 12% of total project hours (within 10-15% PMBOK 9.2 range)."
+        },
+        {
+          "role": "Backend Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 180.0,
+          "allocation_percent": 36.0,
+          "skills_required": [
+            "Python/Django",
+            "PostgreSQL",
+            "REST APIs",
+            "Real-time data processing",
+            "PagerDuty API integration"
+          ],
+          "critical_path": true,
+          "notes": "Full-time on critical path; owns real-time refresh pipeline (T5), email scheduling (T7), PagerDuty integration (T9), data retention (T11), and performance testing (T15). No part-time allocation."
+        },
+        {
+          "role": "Frontend Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "total_hours": 140.0,
+          "allocation_percent": 28.0,
+          "skills_required": [
+            "React",
+            "TypeScript",
+            "REST API consumption",
+            "UI/UX implementation",
+            "Accessibility (WCAG 2.1 AA)"
+          ],
+          "critical_path": false,
+          "notes": "Full-time on Phases 2-4; owns report builder UI (T6), KPI widgets (T8), edge case testing (T12), and regression testing (T13). Has 1-2 days slack on non-critical tasks."
+        },
+        {
+          "role": "QA Engineer (Shared Services)",
+          "phase_involvement": [
+            3,
+            4
+          ],
+          "total_hours": 70.0,
+          "allocation_percent": 14.0,
+          "skills_required": [
+            "Test automation",
+            "Performance testing",
+            "UAT coordination",
+            "Regression testing"
+          ],
+          "critical_path": false,
+          "notes": "Assumed from shared QA pool (not explicitly named in input); allocated 14% of total hours, meeting PMBOK 8.2 minimum of 25% of dev effort (180h dev \u00d7 25% = 45h; 70h QA > 45h minimum). Responsible for regression testing (T13), UAT coordination (T14), and performance testing (T15)."
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "Is the 3-developer team committed full-time to this project for 12 weeks, or are they shared with other projects? Any part-time allocation will compress the critical path.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If developers are part-time or shared, critical path tasks (real-time refresh, alerting, email scheduling) will slip immediately, risking the 3-month deadline."
+        },
+        {
+          "priority": 2,
+          "question": "What is the current state of the existing dashboard codebase? Is it well-documented, maintainable, and free of significant technical debt?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If codebase has technical debt, Phase 1 audit (T1) will reveal refactoring needs that consume 20-30% of Phase 2 effort, risking deadline miss."
+        },
+        {
+          "priority": 3,
+          "question": "Has PagerDuty sandbox access been confirmed, and is the API documentation available for review?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If sandbox access is delayed or API is more complex than expected, Phase 3 integration testing (T9) will slip by 1-2 weeks."
+        },
+        {
+          "priority": 4,
+          "question": "Who is the named Product Owner responsible for backlog prioritization and scope change decisions during development?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Without a clear decision-maker, scope creep and stakeholder misalignment will delay delivery."
+        },
+        {
+          "priority": 5,
+          "question": "What is the budget allocation for this project, and does it cover infrastructure costs (database scaling, monitoring tools)?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If budget is constrained, infrastructure costs could force scope reduction or timeline extension."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 78.0,
+        "deductions": [
+          {
+            "amount": 5.0,
+            "reason": "Budget not specified in input (hard constraint unknown)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A1: team composition (QA role not explicitly named) \u2014 risk_if_wrong HIGH"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A3: existing codebase technical debt unknown \u2014 risk_if_wrong HIGH"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A4: PagerDuty integration complexity assumed low \u2014 risk_if_wrong MEDIUM"
+          },
+          {
+            "amount": 2.0,
+            "reason": "Two HIGH-probability risks present (R3: resource availability, R5: scope creep)"
+          }
+        ],
+        "interpretation": "PM confidence score is 78.0 because the project has a well-defined scope, fixed deadline, experienced team on known stack, and clear success criteria, but is exposed to resource availability risk (team shared with other projects) and scope creep from stakeholders; budget is unspecified and existing codebase technical debt is unknown."
+      },
+      "project_viability": {
+        "viability_status": "VIABLE",
+        "gap_type": "N/A",
+        "gap_amount": "N/A",
+        "scoping_options": null
+      }
+    },
+    "gate": {
+      "fired": false,
+      "reasons": [],
+      "decision": null
+    },
+    "validation": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        "Staffing adds expanded role class PM (Product Manager) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule."
+      ]
+    },
+    "tokens_used": 8811,
+    "input_tokens": 321,
+    "output_tokens": 8490,
+    "cache_hit": false
+  }
+}

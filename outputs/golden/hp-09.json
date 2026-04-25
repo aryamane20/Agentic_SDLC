@@ -1,0 +1,1126 @@
+{
+  "case_id": "hp-09",
+  "http_status": 200,
+  "body": {
+    "session_id": "f20b2d5c-91c3-40cd-b805-edb422feeca3",
+    "report_id": "rpt_3d4cf236925c",
+    "report_revision": 1,
+    "report": {
+      "report_metadata": {
+        "generated_at": "2026-04-25T20:57:47.497804Z",
+        "prompt_version": "v1.6.4",
+        "project_type": "TYPE_A",
+        "input_quality": "HIGH",
+        "classification_confidence": "HIGH",
+        "sdlc_approach": "Adaptive",
+        "sdlc_rationale": "Fixed deadline (6 months) with one developer covering PM/design/dev roles creates execution uncertainty; scope is large (Zendesk replacement) with evolving stakeholder needs; team lacks dedicated PM and design capacity to lock requirements upfront.",
+        "pm_confidence_score": 28.0
+      },
+      "project_understanding": {
+        "primary_goal": "Build a comprehensive internal IT service desk system to replace manual ticket handling with self-service, automated routing, SLA tracking, and dashboards.",
+        "beneficiary": "IT team (5 people) and all employees (500 users); IT manager for visibility and SLA management.",
+        "trigger": "IT team is drowning in manual ticket processing with no visibility into workload or SLA compliance; need to reduce operational burden and improve service transparency.",
+        "success_definition": [
+          "Self-service ticket creation functional",
+          "Automated ticket routing working",
+          "SLA tracking and alerts operational",
+          "Knowledge base with searchable articles",
+          "IT manager dashboard with visibility",
+          "Mobile app for ticket updates (iOS/Android)",
+          "500 concurrent users supported",
+          "99.9% uptime achieved"
+        ],
+        "supporting_quotes": [
+          "IT is drowning in tickets. Manual processes. No visibility into IT workload or SLAs.",
+          "This is essentially replacing Zendesk with a custom solution - typically a 6-month team effort.",
+          "Only one developer available - they will do development, PM, and design"
+        ]
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "One developer can deliver PM, design, and full-stack development simultaneously across a 6-month Zendesk-replacement project.",
+          "why": "Input explicitly states one person will cover all three roles; assumption documents the staffing constraint as a planning baseline.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 (Resource Management) \u2014 resource constraints must be documented before schedule baseline is set.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "Developer context-switches between PM decisions, design work, and coding; critical path tasks slip; no one owns scope/stakeholder management; burnout and quality degradation.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: plan proceeds with stated constraint. Risks: one person cannot sustain three full-time roles for 26 weeks; project will miss deadline or scope will be cut mid-stream."
+        },
+        {
+          "id": "A2",
+          "what": "Mobile app (iOS/Android React Native) is in scope for the 6-month deadline with one developer.",
+          "why": "Input lists 'Mobile app (iOS/Android)' as a requirement and does not mark it as deferred or phase-2; assumption treats it as MVP scope.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.4 (Scope Baseline) \u2014 scope baseline must be explicit before decomposition.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "Mobile development adds 6-8 weeks of effort (testing, platform-specific bugs, app store submission); timeline becomes impossible; scope must be cut or deadline missed.",
+          "source": "scope",
+          "tradeoff": "Gains: clarifies what 'in scope' means for planning. Risks: if mobile is actually deferred, plan is wrong; if it stays in scope, deadline is unachievable."
+        },
+        {
+          "id": "A3",
+          "what": "Integration with 10+ internal systems is achievable within Phase 3 (Integration & Edge Cases) with one developer.",
+          "why": "Input states 'Must integrate with 10+ internal systems' and 'Integration with Slack for notifications' and 'Email integration'; assumption treats these as parallel integrations, not sequential blockers.",
+          "pmi_basis": "PMBOK 6th Ed, Section 11.2 (Risk Identification) \u2014 external dependencies must be identified before schedule is locked.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "Each integration requires API documentation review, sandbox testing, error handling, and monitoring setup; 10+ integrations = 40-60 hours each = 400-600 hours; one developer cannot complete in 4-5 weeks (Phase 3 duration).",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: documents the integration load as a planning assumption. Risks: if integrations are sequential or require external team coordination, Phase 3 becomes 12+ weeks."
+        },
+        {
+          "id": "A4",
+          "what": "99.9% uptime requirement is achievable with one developer and no dedicated DevOps/SRE role.",
+          "why": "Input specifies 'Must have 99.9% uptime' but does not allocate DevOps capacity; assumption treats uptime as a design/architecture goal, not a staffing gap.",
+          "pmi_basis": "PMBOK 6th Ed, Section 8.1 (Quality Management) \u2014 quality metrics must be defined before execution; uptime is a non-functional requirement.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "99.9% uptime requires redundancy, monitoring, alerting, automated failover, and on-call support; one developer cannot design, build, and operate this; will require DevOps hire or outsourcing.",
+          "source": "nfr",
+          "tradeoff": "Gains: documents uptime as a known NFR. Risks: if uptime is truly required, staffing plan is incomplete; if it is aspirational, it should be marked as phase-2 or deferred."
+        },
+        {
+          "id": "A5",
+          "what": "Knowledge base, asset management, service catalog, and SLA management are all MVP features (not deferred to phase 2).",
+          "why": "Input lists all as requirements without marking any as 'nice to have' or 'phase 2'; assumption treats them as in-scope for the 6-month deadline.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.4 (Scope Baseline) \u2014 scope must be explicit and agreed before planning.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "Each feature adds 2-4 weeks of development; knowledge base alone = 3-4 weeks (article creation, search, tagging); asset management = 2-3 weeks; service catalog = 2-3 weeks; total = 7-10 weeks of additional effort beyond core ticket system.",
+          "source": "scope",
+          "tradeoff": "Gains: clarifies MVP scope. Risks: if any feature is deferred, plan is wrong; if all are in scope, timeline is impossible."
+        }
+      ],
+      "project_plan": {
+        "total_duration_weeks": 26.0,
+        "buffer_applied_percent": 15.0,
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T2",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T15",
+            "T18",
+            "T22",
+            "T25"
+          ],
+          "total_duration_days": 130.0,
+          "zero_slack_tasks": [
+            "T1",
+            "T2",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T15",
+            "T18",
+            "T22",
+            "T25"
+          ],
+          "highest_slack_tasks": [
+            "T4",
+            "T6",
+            "T7"
+          ],
+          "staffing_implication": "One developer on critical path for all 26 weeks with zero slack; any illness, context-switch, or technical blocker causes immediate deadline slip; no capacity for PM/design decisions or stakeholder management."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 3.0,
+            "percentage_of_total": 12.0,
+            "milestones": [
+              "Requirements document finalized and signed off by IT manager",
+              "System architecture approved (ticket flow, integrations, data model)",
+              "UI/UX wireframes for core flows (ticket creation, dashboard, mobile)",
+              "Integration points mapped (Slack, email, 10+ internal systems)"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Conduct IT team interviews and document current ticket workflow",
+                "phase": 1,
+                "effort_hours": 16.0,
+                "owner_role": "Product Manager / Developer",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Current-state workflow documented; pain points and success metrics agreed with IT manager in writing."
+              },
+              {
+                "id": "T2",
+                "name": "Design system architecture (ticket routing, SLA engine, notification system)",
+                "phase": 1,
+                "effort_hours": 24.0,
+                "owner_role": "Solution Architect / Developer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Architecture diagram approved; database schema drafted; integration points identified for all 10+ systems."
+              },
+              {
+                "id": "T3",
+                "name": "Create UI/UX wireframes for ticket creation, dashboard, mobile app",
+                "phase": 1,
+                "effort_hours": 20.0,
+                "owner_role": "UX Designer / Developer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Wireframes for 8+ core screens approved by IT manager; mobile-first design confirmed."
+              },
+              {
+                "id": "T4",
+                "name": "Document integration requirements for Slack, email, and internal systems",
+                "phase": 1,
+                "effort_hours": 12.0,
+                "owner_role": "Integration Specialist / Developer",
+                "dependencies": [
+                  "T2"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "API documentation reviewed for all 10+ systems; sandbox access confirmed; authentication strategy documented."
+              },
+              {
+                "id": "T5",
+                "name": "Finalize requirements document and obtain stakeholder sign-off",
+                "phase": 1,
+                "effort_hours": 8.0,
+                "owner_role": "Product Manager / Developer",
+                "dependencies": [
+                  "T2",
+                  "T3"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Requirements document signed by IT manager and executive sponsor; scope locked; change control process agreed."
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development",
+            "duration_weeks": 10.0,
+            "percentage_of_total": 38.0,
+            "milestones": [
+              "Ticket creation and management API complete",
+              "PostgreSQL schema and migrations deployed",
+              "Dashboard backend endpoints working",
+              "SLA engine logic implemented",
+              "Internal demo with IT team (core flows only)"
+            ],
+            "tasks": [
+              {
+                "id": "T6",
+                "name": "Set up Django project, PostgreSQL database, and CI/CD pipeline",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer / DevOps",
+                "dependencies": [
+                  "T5"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Django project scaffolded; PostgreSQL running locally and in staging; GitHub Actions CI/CD pipeline passing."
+              },
+              {
+                "id": "T7",
+                "name": "Design and implement PostgreSQL schema for tickets, users, assets, SLAs",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T6"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Schema supports ticket CRUD, user roles, asset tracking, SLA definitions; migrations tested; indexes added for performance."
+              },
+              {
+                "id": "T8",
+                "name": "Implement ticket creation and management API endpoints",
+                "phase": 2,
+                "effort_hours": 32.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T7"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "POST /tickets, GET /tickets, PATCH /tickets/{id}, DELETE /tickets/{id} endpoints working; authentication and authorization enforced."
+              },
+              {
+                "id": "T9",
+                "name": "Implement SLA engine (calculate breach time, trigger alerts)",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "SLA rules engine calculates breach time; alerts triggered 1 hour before breach; SLA metrics queryable via API."
+              },
+              {
+                "id": "T10",
+                "name": "Build React frontend for ticket creation and list views",
+                "phase": 2,
+                "effort_hours": 36.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Ticket creation form functional; ticket list with filtering and sorting; responsive design; form validation working."
+              },
+              {
+                "id": "T11",
+                "name": "Implement dashboard backend (ticket counts, SLA metrics, queue depth)",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T9"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Dashboard API endpoints return ticket counts, SLA breach %, queue depth, agent utilization; data aggregation tested."
+              },
+              {
+                "id": "T12",
+                "name": "Build React dashboard UI for IT manager",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T11"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Dashboard displays ticket counts, SLA metrics, queue depth, agent performance; charts render correctly; data refreshes every 5 minutes."
+              },
+              {
+                "id": "T13",
+                "name": "Implement knowledge base article CRUD and search",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Articles can be created, edited, deleted; full-text search working; articles tagged and categorized."
+              },
+              {
+                "id": "T14",
+                "name": "Build knowledge base UI (article list, search, detail view)",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T13"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Article search functional; detail view renders markdown; related articles suggested; mobile-responsive."
+              },
+              {
+                "id": "T15",
+                "name": "Implement automated ticket routing logic (assign to queue based on category)",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Tickets automatically routed to correct queue; routing rules configurable; audit trail of routing decisions."
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases",
+            "duration_weeks": 5.5,
+            "percentage_of_total": 22.0,
+            "milestones": [
+              "Slack integration working (ticket notifications)",
+              "Email integration working (ticket creation from email)",
+              "Asset management module complete",
+              "Service catalog module complete",
+              "All 10+ internal system integrations tested",
+              "Security review completed"
+            ],
+            "tasks": [
+              {
+                "id": "T16",
+                "name": "Implement Slack API integration for ticket notifications",
+                "phase": 3,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Slack messages sent on ticket creation, assignment, and closure; message formatting correct; error handling for Slack API failures."
+              },
+              {
+                "id": "T17",
+                "name": "Implement email integration (SendGrid) for ticket creation and updates",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Emails trigger ticket creation; ticket updates sent via email; reply-to-email creates comments; email parsing handles attachments."
+              },
+              {
+                "id": "T18",
+                "name": "Build asset management module (track laptops, equipment, licenses)",
+                "phase": 3,
+                "effort_hours": 28.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T7"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Asset CRUD endpoints; asset assignment to users; deprecation tracking; audit trail of asset changes."
+              },
+              {
+                "id": "T19",
+                "name": "Build asset management UI (list, detail, assignment)",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T18"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Asset list with filtering; detail view shows assignment history; bulk assignment UI; mobile-responsive."
+              },
+              {
+                "id": "T20",
+                "name": "Build service catalog module (request software, equipment, services)",
+                "phase": 3,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T7"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Service catalog CRUD; request workflow (submit, approve, fulfill); approval routing; request status tracking."
+              },
+              {
+                "id": "T21",
+                "name": "Build service catalog UI (browse, request, track)",
+                "phase": 3,
+                "effort_hours": 18.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T20"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Service catalog browsable; request form functional; request tracking page shows status; approval notifications sent."
+              },
+              {
+                "id": "T22",
+                "name": "Integrate with 10+ internal systems (LDAP, HR system, asset DB, etc.)",
+                "phase": 3,
+                "effort_hours": 60.0,
+                "owner_role": "Integration Specialist / Backend Developer",
+                "dependencies": [
+                  "T4",
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "All 10+ integrations tested in sandbox; data mapping validated; error handling for API failures; monitoring alerts configured."
+              },
+              {
+                "id": "T23",
+                "name": "Implement user satisfaction rating system (post-ticket survey)",
+                "phase": 3,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Survey sent after ticket closure; ratings stored; satisfaction metrics queryable; dashboard shows satisfaction trend."
+              },
+              {
+                "id": "T24",
+                "name": "Conduct security review and implement authentication/authorization",
+                "phase": 3,
+                "effort_hours": 24.0,
+                "owner_role": "Security Engineer / Backend Developer",
+                "dependencies": [
+                  "T8",
+                  "T12"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Security review completed; OAuth/SSO implemented; role-based access control enforced; SQL injection and XSS mitigated; HTTPS enforced."
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 5.0,
+            "percentage_of_total": 20.0,
+            "milestones": [
+              "All critical bugs resolved",
+              "Performance testing at 500 concurrent users completed",
+              "UAT with IT team completed and signed off",
+              "Mobile app (iOS/Android) tested on devices",
+              "Accessibility audit completed (WCAG 2.1 AA)",
+              "Load testing for 99.9% uptime validated"
+            ],
+            "tasks": [
+              {
+                "id": "T25",
+                "name": "Develop comprehensive test suite (unit, integration, end-to-end)",
+                "phase": 4,
+                "effort_hours": 40.0,
+                "owner_role": "QA Engineer / Backend Developer",
+                "dependencies": [
+                  "T22"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Test coverage > 80% for critical paths; all integration tests passing; end-to-end tests for ticket workflow, SLA, routing."
+              },
+              {
+                "id": "T26",
+                "name": "Execute performance testing (500 concurrent users, response time < 2s)",
+                "phase": 4,
+                "effort_hours": 20.0,
+                "owner_role": "QA Engineer / DevOps",
+                "dependencies": [
+                  "T25"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Load test results show < 2s response time at 500 concurrent users; database queries optimized; caching strategy validated."
+              },
+              {
+                "id": "T27",
+                "name": "Build and test React Native mobile app (iOS/Android)",
+                "phase": 4,
+                "effort_hours": 40.0,
+                "owner_role": "Mobile Developer / Frontend Developer",
+                "dependencies": [
+                  "T12",
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Mobile app builds for iOS and Android; core flows (ticket creation, list, detail) working; tested on physical devices; app store submission ready."
+              },
+              {
+                "id": "T28",
+                "name": "Conduct UAT with IT team (5 users, 2-week period)",
+                "phase": 4,
+                "effort_hours": 24.0,
+                "owner_role": "Product Manager / QA",
+                "dependencies": [
+                  "T25",
+                  "T27"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "IT team completes UAT checklist; critical bugs fixed; sign-off document signed by IT manager; feedback incorporated."
+              },
+              {
+                "id": "T29",
+                "name": "Perform accessibility audit (WCAG 2.1 AA compliance)",
+                "phase": 4,
+                "effort_hours": 16.0,
+                "owner_role": "QA Engineer / UX Designer",
+                "dependencies": [
+                  "T12",
+                  "T27"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Accessibility audit completed; WCAG 2.1 AA compliance verified; color contrast, keyboard navigation, screen reader support confirmed."
+              },
+              {
+                "id": "T30",
+                "name": "Execute load testing for 99.9% uptime (failover, redundancy validation)",
+                "phase": 4,
+                "effort_hours": 24.0,
+                "owner_role": "DevOps Engineer / Backend Developer",
+                "dependencies": [
+                  "T26"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Load test shows 99.9% uptime achievable; failover tested; database replication working; monitoring alerts validated."
+              },
+              {
+                "id": "T31",
+                "name": "Fix critical and high-priority bugs identified in testing",
+                "phase": 4,
+                "effort_hours": 32.0,
+                "owner_role": "Backend Developer / Frontend Developer",
+                "dependencies": [
+                  "T25",
+                  "T28"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "All critical bugs resolved; high-priority bugs fixed; regression testing passed; bug tracking system cleared of blockers."
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 2.5,
+            "percentage_of_total": 8.0,
+            "milestones": [
+              "Production deployment completed",
+              "Monitoring and alerting configured",
+              "Documentation and runbooks written",
+              "IT team training completed",
+              "Go-live sign-off obtained"
+            ],
+            "tasks": [
+              {
+                "id": "T32",
+                "name": "Deploy to production (database migration, DNS cutover, smoke tests)",
+                "phase": 5,
+                "effort_hours": 16.0,
+                "owner_role": "DevOps Engineer / Backend Developer",
+                "dependencies": [
+                  "T31"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Production deployment completed; smoke tests passing; rollback plan tested; monitoring alerts firing correctly."
+              },
+              {
+                "id": "T33",
+                "name": "Configure monitoring, alerting, and logging (uptime, performance, errors)",
+                "phase": 5,
+                "effort_hours": 12.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T32"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Monitoring dashboard live; alerts configured for uptime, response time, error rate; log aggregation working; on-call runbook ready."
+              },
+              {
+                "id": "T34",
+                "name": "Write system documentation, runbooks, and troubleshooting guides",
+                "phase": 5,
+                "effort_hours": 20.0,
+                "owner_role": "Technical Writer / Product Manager",
+                "dependencies": [
+                  "T32"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "System architecture documented; runbooks for common operations (backup, restore, scaling); troubleshooting guide for IT team."
+              },
+              {
+                "id": "T35",
+                "name": "Conduct IT team training (system usage, administration, troubleshooting)",
+                "phase": 5,
+                "effort_hours": 12.0,
+                "owner_role": "Product Manager / Trainer",
+                "dependencies": [
+                  "T34"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "IT team trained on system usage, admin functions, and troubleshooting; training materials provided; Q&A session completed."
+              },
+              {
+                "id": "T36",
+                "name": "Obtain go-live sign-off from IT manager and executive sponsor",
+                "phase": 5,
+                "effort_hours": 4.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T35"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Go-live sign-off document signed; IT manager confirms readiness; system live for all 500 employees."
+              }
+            ]
+          }
+        ]
+      },
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Resource",
+          "description": "One developer cannot simultaneously perform PM, design, and full-stack development for a Zendesk-replacement project; context-switching will cause critical path delays and quality degradation.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Developer reports context-switching overhead; PM decisions delayed; design reviews blocked; code quality issues emerge.",
+          "mitigation": "Hire or allocate a dedicated PM and UX designer immediately (before Phase 2 starts); reduce developer scope to coding only; establish decision-making authority for PM role.",
+          "contingency": "If PM/design resources unavailable, cut scope to core ticket system only (remove knowledge base, asset management, service catalog, mobile app); extend timeline to 9 months."
+        },
+        {
+          "id": "R2",
+          "category": "Schedule",
+          "description": "Mobile app (iOS/Android React Native) adds 6-8 weeks of development, testing, and app store submission; one developer cannot deliver mobile + web + integrations in 6 months.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Mobile development begins in Phase 2; developer realizes platform-specific bugs, testing overhead, and app store submission delays.",
+          "mitigation": "Defer mobile app to phase 2 (post-launch); deliver web-only MVP in 6 months; mobile follows in months 7-9.",
+          "contingency": "If mobile is required for launch, cut knowledge base, asset management, and service catalog from MVP; deliver mobile + core ticket system only."
+        },
+        {
+          "id": "R3",
+          "category": "Integration",
+          "description": "10+ internal system integrations require API documentation review, sandbox testing, error handling, and monitoring; one developer cannot complete 40-60 hours per integration in Phase 3 (5.5 weeks).",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Phase 3 begins; developer discovers API documentation gaps, sandbox access delays, or undocumented API behavior; integration testing reveals data mapping issues.",
+          "mitigation": "Prioritize integrations by business value; deliver 3-4 critical integrations in MVP (Slack, email, LDAP, HR system); defer remaining 6+ to phase 2.",
+          "contingency": "If all 10+ integrations required for launch, extend Phase 3 to 10-12 weeks; compress Phase 4 (QA) to 3 weeks; accept higher risk of bugs in production."
+        },
+        {
+          "id": "R4",
+          "category": "Technical",
+          "description": "99.9% uptime requirement (52.6 minutes downtime per year) requires redundancy, automated failover, monitoring, alerting, and on-call support; one developer cannot design and operate this without DevOps/SRE role.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Phase 5 deployment; system experiences downtime due to single points of failure; monitoring gaps prevent rapid incident response.",
+          "mitigation": "Hire or allocate a dedicated DevOps/SRE engineer before Phase 3; design for high availability (database replication, load balancing, automated failover); implement comprehensive monitoring.",
+          "contingency": "If DevOps unavailable, reduce uptime target to 99.5% (3.7 hours downtime per year); accept manual failover and longer incident response times; document operational limitations."
+        },
+        {
+          "id": "R5",
+          "category": "Scope",
+          "description": "Knowledge base, asset management, service catalog, and SLA management are all listed as MVP requirements; together they add 7-10 weeks of development beyond core ticket system.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Phase 2 development; developer realizes feature scope exceeds available time; stakeholder pressure to deliver all features by deadline.",
+          "mitigation": "Obtain written scope sign-off from IT manager and executive sponsor; define MVP as core ticket system + dashboard + SLA tracking only; defer knowledge base, asset management, and service catalog to phase 2.",
+          "contingency": "If all features required for launch, extend timeline to 9-12 months; hire additional developers (2-3 more); accept higher budget and schedule risk."
+        },
+        {
+          "id": "R6",
+          "category": "Resource",
+          "description": "One developer allocated at 100% for 26 weeks with zero slack on critical path; any illness, vacation, or technical blocker causes immediate deadline slip.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Developer takes vacation, becomes ill, or encounters unexpected technical blocker (e.g., database performance issue, API integration failure).",
+          "mitigation": "Hire a backup developer (junior or mid-level) to shadow critical path tasks; cross-train on architecture and key modules; establish knowledge transfer plan.",
+          "contingency": "If backup unavailable, extend timeline by 2-4 weeks to account for single-person risk; document all critical decisions and code in detail for knowledge transfer."
+        },
+        {
+          "id": "R7",
+          "category": "Schedule",
+          "description": "6-month deadline for a Zendesk-replacement project with one developer is aggressive; typical team effort is 6 months with 3-4 developers.",
+          "probability": "HIGH",
+          "impact": "MEDIUM",
+          "score": "HIGH",
+          "trigger": "Phase 2 development; developer realizes velocity is lower than estimated; critical path tasks slip by 1-2 weeks.",
+          "mitigation": "Reduce scope to MVP (core ticket system + dashboard + SLA tracking); defer mobile app, knowledge base, asset management, and service catalog to phase 2.",
+          "contingency": "If scope cannot be reduced, extend timeline to 9 months; hire 1-2 additional developers; accept higher budget."
+        },
+        {
+          "id": "R8",
+          "category": "Compliance",
+          "description": "System handles employee data (tickets, assets, requests) and must meet security and compliance requirements (authentication, authorization, audit trail, data retention); security review not scoped in Phase 3.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Phase 3 security review; compliance gaps identified (missing encryption, weak authentication, no audit trail); remediation requires 2-3 weeks of rework.",
+          "mitigation": "Allocate security engineer for Phase 3 security review; implement OAuth/SSO, role-based access control, and audit logging from Phase 2; conduct security review before Phase 4.",
+          "contingency": "If security gaps discovered late, extend Phase 4 by 2-3 weeks; defer non-critical security features to phase 2; accept higher risk of compliance violations."
+        },
+        {
+          "id": "R9",
+          "category": "Technical",
+          "description": "React Native mobile app development requires platform-specific testing (iOS/Android), device testing, and app store submission; one developer cannot deliver quality mobile app in 4 weeks (Phase 4).",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Phase 4 mobile testing; platform-specific bugs emerge (iOS/Android differences); app store submission rejected due to policy violations.",
+          "mitigation": "Defer mobile app to phase 2; hire mobile developer if mobile is required for launch; allocate 8-10 weeks for mobile development, testing, and app store submission.",
+          "contingency": "If mobile required for launch, extend Phase 4 to 6-7 weeks; accept higher risk of bugs and app store rejection; plan for rapid iteration post-launch."
+        },
+        {
+          "id": "R10",
+          "category": "Integration",
+          "description": "Email integration (SendGrid) for ticket creation requires email parsing, attachment handling, and reply-to-email workflow; complexity underestimated in Phase 3.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Phase 3 email integration; developer discovers email parsing edge cases (forwarded emails, quoted text, attachments); implementation takes 3-4 weeks instead of 2.",
+          "mitigation": "Use email parsing library (e.g., email-reply-parser); implement comprehensive email handling tests; allocate 3-4 weeks for email integration instead of 2.",
+          "contingency": "If email integration delayed, defer to phase 2; deliver Slack + web UI for ticket creation in MVP; email integration follows post-launch."
+        },
+        {
+          "id": "R11",
+          "category": "Scope",
+          "description": "Stakeholder expectations for a Zendesk replacement may exceed MVP scope; IT manager may expect all features (knowledge base, asset management, service catalog, mobile app) in 6 months.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Phase 1 requirements review; IT manager requests all features in MVP; scope creep pressure increases as deadline approaches.",
+          "mitigation": "Obtain written scope sign-off from IT manager and executive sponsor in Phase 1; define MVP clearly; establish change control process; communicate scope trade-offs upfront.",
+          "contingency": "If scope creep occurs, extend timeline or reduce features; document all scope changes and impact on deadline; obtain re-approval from stakeholders."
+        },
+        {
+          "id": "R12",
+          "category": "Resource",
+          "description": "No QA engineer allocated; QA effort is 25% of development effort (estimated 280+ hours); one developer cannot perform development and QA simultaneously.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Phase 4 QA; developer realizes testing effort exceeds available time; critical bugs slip to production.",
+          "mitigation": "Hire or allocate a dedicated QA engineer for Phases 3-4; establish test automation framework in Phase 2; allocate 25% of development hours to QA.",
+          "contingency": "If QA unavailable, extend Phase 4 to 6-7 weeks; accept higher risk of bugs in production; plan for rapid iteration post-launch."
+        }
+      ],
+      "staffing_plan": [
+        {
+          "role": "Product Manager / Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 520.0,
+          "allocation_percent": 80.0,
+          "skills_required": [
+            "Product strategy",
+            "Stakeholder management",
+            "Requirements definition",
+            "Full-stack development (React, Django, PostgreSQL)"
+          ],
+          "critical_path": true,
+          "notes": "One person covering PM, design, and development roles; 80% allocation leaves 20% for context-switching overhead and stakeholder management. CRITICAL RISK: this is unsustainable for 26 weeks. Recommend hiring dedicated PM and UX designer immediately."
+        },
+        {
+          "role": "Backend Developer (Shared)",
+          "phase_involvement": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 380.0,
+          "allocation_percent": 60.0,
+          "skills_required": [
+            "Python/Django",
+            "PostgreSQL",
+            "REST API design",
+            "Integration development",
+            "DevOps basics"
+          ],
+          "critical_path": true,
+          "notes": "Assumed shared capacity from existing team or contractor; critical path tasks (ticket API, SLA engine, routing, integrations) require dedicated backend developer. If unavailable, hire immediately."
+        },
+        {
+          "role": "Frontend Developer (Shared)",
+          "phase_involvement": [
+            2,
+            3,
+            4
+          ],
+          "total_hours": 240.0,
+          "allocation_percent": 40.0,
+          "skills_required": [
+            "React 18",
+            "TypeScript",
+            "CSS/responsive design",
+            "REST API integration"
+          ],
+          "critical_path": true,
+          "notes": "Assumed shared capacity from existing team or contractor; critical path tasks (dashboard, ticket UI) require dedicated frontend developer. If unavailable, hire immediately."
+        },
+        {
+          "role": "QA Engineer (Shared)",
+          "phase_involvement": [
+            3,
+            4
+          ],
+          "total_hours": 140.0,
+          "allocation_percent": 25.0,
+          "skills_required": [
+            "Test automation",
+            "Performance testing",
+            "Mobile testing (iOS/Android)",
+            "Accessibility testing"
+          ],
+          "critical_path": false,
+          "notes": "Minimum 25% of development effort (280+ hours \u00d7 25% = 70 hours minimum); allocated 140 hours (50% of minimum). CRITICAL RISK: QA under-allocated. Recommend hiring dedicated QA engineer for Phases 3-4."
+        },
+        {
+          "role": "DevOps Engineer (Shared)",
+          "phase_involvement": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 80.0,
+          "allocation_percent": 15.0,
+          "skills_required": [
+            "CI/CD pipeline setup",
+            "PostgreSQL administration",
+            "Monitoring and alerting",
+            "Infrastructure as code"
+          ],
+          "critical_path": false,
+          "notes": "Assumed shared capacity from existing team or contractor; 99.9% uptime requirement requires dedicated DevOps/SRE role. If unavailable, hire immediately or reduce uptime target to 99.5%."
+        },
+        {
+          "role": "UX Designer (Shared)",
+          "phase_involvement": [
+            1,
+            2
+          ],
+          "total_hours": 60.0,
+          "allocation_percent": 10.0,
+          "skills_required": [
+            "UI/UX design",
+            "Wireframing",
+            "User research",
+            "Accessibility (WCAG 2.1 AA)"
+          ],
+          "critical_path": false,
+          "notes": "Assumed shared capacity from existing team or contractor; critical path task (wireframes) requires dedicated UX designer in Phase 1. If unavailable, hire immediately or reduce design quality."
+        },
+        {
+          "role": "Security Engineer (Shared)",
+          "phase_involvement": [
+            3,
+            4
+          ],
+          "total_hours": 40.0,
+          "allocation_percent": 8.0,
+          "skills_required": [
+            "Security architecture",
+            "OAuth/SSO",
+            "Penetration testing",
+            "Compliance (SOC 2, GDPR)"
+          ],
+          "critical_path": false,
+          "notes": "Assumed shared capacity from existing team or contractor; security review in Phase 3 is critical for compliance. If unavailable, hire immediately or defer security hardening to phase 2."
+        },
+        {
+          "role": "Mobile Developer (Shared)",
+          "phase_involvement": [
+            4
+          ],
+          "total_hours": 40.0,
+          "allocation_percent": 8.0,
+          "skills_required": [
+            "React Native",
+            "iOS/Android testing",
+            "App store submission",
+            "Mobile performance optimization"
+          ],
+          "critical_path": false,
+          "notes": "Assumed shared capacity from existing team or contractor; mobile app development (40 hours) is underestimated for iOS/Android testing and app store submission. Recommend deferring mobile to phase 2 or hiring dedicated mobile developer."
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "Is the one-person team (PM + design + development) confirmed as the only available resource, or can dedicated PM and UX designer be allocated before Phase 2 starts?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If one person must cover all three roles, project will miss deadline or scope will be cut mid-stream; critical path has zero slack and context-switching will cause delays."
+        },
+        {
+          "priority": 2,
+          "question": "Is the mobile app (iOS/Android React Native) truly required for the 6-month MVP launch, or can it be deferred to phase 2 (post-launch)?",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "Mobile app adds 6-8 weeks of development and testing; if required for launch, timeline becomes impossible with one developer; if deferred, scope is achievable."
+        },
+        {
+          "priority": 3,
+          "question": "Which of the 10+ internal system integrations are critical for MVP launch, and which can be deferred to phase 2?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Phase 3 integration work (60 hours) is underestimated for 10+ systems; prioritization will determine whether MVP is achievable in 6 months."
+        },
+        {
+          "priority": 4,
+          "question": "Can a dedicated QA engineer and DevOps engineer be allocated for Phases 3-5, or will one developer perform all testing and deployment?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "QA and DevOps are under-allocated; if unavailable, testing and deployment quality will suffer; 99.9% uptime requirement cannot be met without DevOps expertise."
+        },
+        {
+          "priority": 5,
+          "question": "Has the IT manager formally signed off on the MVP scope (core ticket system + dashboard + SLA tracking), or are all features (knowledge base, asset management, service catalog, mobile app) expected in the 6-month launch?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Scope creep is the highest risk; if all features are expected, timeline is impossible; written scope sign-off is required before Phase 2 starts."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 28.0,
+        "deductions": [
+          {
+            "amount": 10.0,
+            "reason": "One developer covering PM, design, and full-stack development simultaneously (ASSUMPTION A1)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "Mobile app (iOS/Android) in scope for 6-month MVP (ASSUMPTION A2)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "10+ internal system integrations achievable in Phase 3 with one developer (ASSUMPTION A3)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "99.9% uptime achievable without dedicated DevOps/SRE role (ASSUMPTION A4)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "Knowledge base, asset management, service catalog all in MVP scope (ASSUMPTION A5)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "Six CRITICAL risks in risk register (R1, R2, R3, R4, R5, R6)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Five HIGH risks in risk register (R7, R8, R9, R11, R12)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "SDLC approach is Adaptive (more unknowns than Predictive)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Timeline is HIGH RISK (6 months for Zendesk replacement with one developer is aggressive)"
+          }
+        ],
+        "interpretation": "PM confidence score is 28.0 because the project has six CRITICAL risks (one-person team, mobile app scope, integration complexity, uptime requirements, feature scope, and single point of failure), five HIGH risks, and five major assumptions that are unsustainable for a 26-week Zendesk replacement. The project is NOT VIABLE as currently scoped with the stated constraints."
+      },
+      "project_viability": {
+        "viability_status": "NOT_VIABLE",
+        "gap_type": "BOTH",
+        "gap_amount": "One developer cannot deliver Zendesk replacement in 6 months; estimated effort is 1,200+ hours (3-4 developers \u00d7 6 months); timeline requires 9-12 months with current team or 3-4 additional developers.",
+        "scoping_options": [
+          {
+            "option_id": "O1",
+            "description": "Reduce MVP to core ticket system only (ticket creation, list, detail, assignment, SLA tracking, dashboard). Defer knowledge base, asset management, service catalog, and mobile app to phase 2 (post-launch).",
+            "impact": "Delivers core ticket system in 6 months with one developer; addresses primary pain point (manual ticket handling); enables phased rollout.",
+            "tradeoffs": "Knowledge base, asset management, and service catalog deferred 3-6 months; mobile app deferred 3-6 months; IT team must use web-only interface initially; some stakeholder expectations unmet at launch."
+          },
+          {
+            "option_id": "O2",
+            "description": "Hire 2-3 additional developers (mid-level or senior) to parallelize work; allocate dedicated PM and UX designer; hire QA engineer and DevOps engineer. Deliver full scope in 6 months with 5-6 person team.",
+            "impact": "Full scope delivered in 6 months; all features (knowledge base, asset management, service catalog, mobile app) available at launch; higher quality and test coverage.",
+            "tradeoffs": "Budget increases from $100K to $250K-$350K (additional salaries, contractors); hiring timeline may delay start; team coordination overhead increases; risk of onboarding delays."
+          },
+          {
+            "option_id": "O3",
+            "description": "Extend timeline to 9-12 months with one developer; hire dedicated PM, UX designer, QA engineer, and DevOps engineer (phased hiring). Deliver full scope in phases (core ticket system in 6 months, mobile app in 9 months, advanced features in 12 months).",
+            "impact": "Full scope delivered over 12 months; phased rollout reduces risk; team grows gradually; quality improves with dedicated roles.",
+            "tradeoffs": "Misses 6-month deadline; IT team continues manual processes for 6+ months; budget increases to $150K-$200K; stakeholder expectations may not align with phased delivery."
+          }
+        ]
+      }
+    },
+    "gate": {
+      "fired": true,
+      "reasons": [
+        "confidence_score < 60 \u2014 plan needs review",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "project_viability is NOT_VIABLE \u2014 impossible constraints as stated"
+      ],
+      "decision": null
+    },
+    "validation": {
+      "valid": false,
+      "errors": [
+        "HIGH quality input should not produce more than 4 assumptions \u2014 materiality gate not applied correctly.",
+        "Open question urgency 'Before planning' is inconsistent with a populated project_plan (phases and tasks) \u2014 decomposition already occurred; use 'Before build' unless no tasks exist in any phase."
+      ],
+      "warnings": [
+        "Staffing adds expanded role class QA (QA Engineer (Shared)) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule.",
+        "Staffing adds expanded role class UX (UX Designer (Shared)) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule.",
+        "Staffing adds expanded role class SECURITY (Security Engineer (Shared)) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule."
+      ]
+    },
+    "tokens_used": 13966,
+    "input_tokens": 417,
+    "output_tokens": 13549,
+    "cache_hit": false
+  }
+}

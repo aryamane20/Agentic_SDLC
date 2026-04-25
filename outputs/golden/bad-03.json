@@ -1,0 +1,11 @@
+{
+  "case_id": "bad-03",
+  "http_status": 422,
+  "body": {
+    "detail": {
+      "code": "input_refused",
+      "reason": "system_prompt_extraction",
+      "message": "This input can't be processed. Please submit a project description."
+    }
+  }
+}

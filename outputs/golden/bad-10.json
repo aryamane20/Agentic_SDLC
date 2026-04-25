@@ -1,0 +1,11 @@
+{
+  "case_id": "bad-10",
+  "http_status": 422,
+  "body": {
+    "detail": {
+      "code": "brief_missing",
+      "reason": "empty",
+      "message": "Describe what you want to build, for whom, and why \u2014 then try again."
+    }
+  }
+}

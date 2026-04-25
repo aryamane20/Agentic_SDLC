@@ -38,7 +38,7 @@ Do **not** run automatically as part of CI without mocks — these calls cost to
    `python scripts/run_p2_e2e.py --scenario scenario-a-happy-path --mode manifest`  
    Or **`--mode file`** to use human-edited `e2e_feedback/round_01.json`, …  
    Or **`--mode interactive`** to type feedback in the terminal.
-3. JSON run logs are written under **`results/p2/e2e/`**.
+3. JSON run logs are written under **`outputs/p2/e2e/`**.
 
 See **`e2e_feedback/README.md`** for the feedback file shape.
 
@@ -51,5 +51,5 @@ See **`e2e_feedback/README.md`** for the feedback file shape.
 
 ## Relation to P1
 
-- **P1:** `inputs/test-cases-p1/tc-*.txt` + `scripts/run_eval.py` — report cache `outputs/{prompt_version}/`, scorecards **`results/p1/eval/`**.
-- **P2:** this directory (`briefs` + **`fixtures/`** JSON) + `tests/p2/` — manual logs optional under **`results/p2/e2e/`**.
+- **P1:** `inputs/test-cases-p1/tc-*.txt` + `scripts/run_eval.py` — report cache `outputs/{prompt_version}/`, scorecards **`outputs/p1/eval/`**.
+- **P2:** this directory (`briefs` + **`fixtures/`** JSON) + `tests/p2/` — manual E2E logs optional under **`outputs/p2/e2e/`**.

@@ -82,7 +82,7 @@ Agentic_SDLC/
 │   └── DEMO.md                    ← Pre-demo checklist + scenario briefs
 │
 ├── scripts/                        ← Utility scripts
-│   ├── run_eval.py                ← Runs agent on eval set; scorecard → results/p1/eval/
+│   ├── run_eval.py                ← Runs agent on eval set; scorecard → outputs/p1/eval/
 │   └── analyze_logs.py            ← Parses logs/ for latency, failure rate
 │
 ├── frontend/                      ← Project 2: Vite + React + Tailwind + shadcn-style UI
@@ -112,14 +112,13 @@ Agentic_SDLC/
 │   │   └── fixtures/              ← P2: gates/*.json + refinement/*/ (frozen reports for pytest)
 │   └── test-cases -> test-cases-p1 ← Symlink for legacy paths
 │
-├── results/                        ← Eval scorecards & run logs (committed samples optional)
-│   ├── p1/eval/                   ← run_eval.py JSON scorecards (was eval/results/)
-│   ├── p1/README.md
-│   └── p2/e2e/                    ← P2 manual / scripted workflow logs
-│
-└── outputs/                       ← Auto-generated, gitignored except samples
-    └── samples/
-        └── tc-01-sample_output.json ← Reference output for TC-01
+└── outputs/                       ← Generated artifacts (partially gitignored; see .gitignore)
+    ├── golden/                    ← 30-case JSON + golden_replay.xlsx (scripts/run_golden.py)
+    ├── p1/eval/                   ← run_eval.py scorecard JSON (optional local history)
+    ├── p2/e2e/                    ← run_p2_e2e.py JSON logs (optional)
+    ├── samples/                   ← Committed reference outputs
+    │   └── tc-01-sample_output.json
+    └── v*/                        ← P1 per-prompt cache for eval replay (gitignored)
 ```
 
 ---
@@ -141,13 +140,13 @@ uvicorn backend.api.main:app --reload --port 8000
 ```
 Open **http://127.0.0.1:8000/docs** for OpenAPI. Typical flow: `POST /sessions` → `POST /reports/generate` with `session_id` + `brief` → optional `POST /gates/{report_id}/decision` → optional `POST /reports/{report_id}/refine`. Responses include `report_revision`; refine and gate decision accept optional `expected_revision` — if it does not match the server, the call returns **409** (`report_revision_conflict`) so stale tabs do not silently overwrite. Session JSON lives in `sessions/` (gitignored). Gate decisions append to `logs/gate_decisions.jsonl`.
 
-**P2 scripted E2E** (uses the same API + agent; logs under `results/p2/e2e/`):
+**P2 scripted E2E** (uses the same API + agent; logs under `outputs/p2/e2e/`):
 
 ```bash
 python scripts/run_p2_e2e.py --scenario scenario-a-happy-path --mode manifest
 ```
 
-Use `--mode file` with human-edited `inputs/test-cases-p2/scenario-*/e2e_feedback/round_*.json`, or `--mode interactive`. See `results/p2/e2e/README.md`.
+Use `--mode file` with human-edited `inputs/test-cases-p2/scenario-*/e2e_feedback/round_*.json`, or `--mode interactive`. See `outputs/p2/e2e/README.md`.
 
 ### Project 2 — Frontend (Vite landing; proxies API)
 ```bash

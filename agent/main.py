@@ -59,7 +59,7 @@ class PMAgent:
     the 8-step PM reasoning process on raw requirements input.
     """
 
-    def __init__(self, prompt_version: str = "v1.6.3", model: str = MODEL_HAIKU):
+    def __init__(self, prompt_version: str = "v1.6.4", model: str = MODEL_HAIKU):
         self.prompt_version = prompt_version
         self.client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
         self.langfuse = Langfuse()  # reads LANGFUSE_* from env; no-ops if keys missing

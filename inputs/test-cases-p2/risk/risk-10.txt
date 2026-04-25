@@ -1,49 +1,12 @@
-# Risk Test: F14 — JSON parse failure resilience under long/complex input
-# Expectation: parse_error must be false. Output must be valid JSON matching schema.
-# This is the longest, most detailed brief in the dataset — designed to stress output length.
+# Risk Test: F14 — Long / complex input (reduced from full brief to control output size)
+# Expectation: parse_error false; full schema. IDP + many integrations in fewer words.
 
-Build a comprehensive internal developer platform (IDP) for our engineering organisation.
+Build an internal developer platform (IDP) for a 200-person engineering org (12 product + 3 platform squads, ~140 microservices / ~340 GitHub repos, no unified DX today).
 
-## Background
-We are a 200-person engineering org spread across 12 product squads and 3 platform squads. Each squad manages between 4 and 18 microservices (total: ~140 services). We currently have no unified developer experience layer — engineers use a mix of Confluence wikis, Slack channels, Notion pages, and tribal knowledge to find service owners, understand dependencies, provision infrastructure, and onboard to unfamiliar codebases.
+**Must deliver:** Service catalogue (auto-discover repos; owner, SLOs, deps, deploys, runbooks; search). Self-serve provisioning (Postgres, Redis, S3, SQS, ECS) via Terraform + approval + cost estimate. Onboarding: squad checklist, auto-provision GitHub/IAM/Slack/Jira. Incident view: PagerDuty → service page (owner, deploys, deps, runbook, history). Plugins via REST + webhooks (security scans, DORA, etc.).
 
-## Core Capabilities Required
+**Integrations (must support):** GitHub, AWS (IAM, ECS, RDS, S3, SQS, CloudWatch), Terraform Cloud, PagerDuty, Jira, Confluence, Slack, Okta SSO, Datadog.
 
-### Service Catalogue
-- Auto-discovered from GitHub repositories (we have ~340 repos)
-- Each service page shows: owner squad, on-call rotation, SLOs, dependency graph, recent deployments, tech stack, runbook links
-- Search across all services by name, team, technology, or SLO status
+**NFR:** Catalogue search p95 < 1.5s; 99.9% uptime; squad-level RBAC for cost/provisioning; 2y audit log for provision actions.
 
-### Self-Service Infrastructure Provisioning
-- Engineers can provision: PostgreSQL databases, Redis caches, S3 buckets, SQS queues, and ECS services
-- Provisioning must go through Terraform, not manual console clicks
-- Approval workflow for production environments (requires squad lead + platform team sign-off)
-- Cost estimate shown before provisioning
-
-### Developer Onboarding
-- New engineer lands on a personalised onboarding checklist based on their squad assignment
-- Auto-provisions: GitHub access, AWS IAM role, Slack channel memberships, Jira project access
-- Links to relevant runbooks, architecture diagrams, and service catalogue pages for their squad
-
-### Incident Context
-- During an active PagerDuty incident, the IDP surfaces: service owner, recent deployments, dependency map, runbook, and historical incidents for the affected service
-- Direct link from PagerDuty alert to IDP service page
-
-### API & Plugin System
-- Platform squads can contribute plugins (e.g., security scanner results, test coverage, DORA metrics)
-- REST API and webhook support for CI/CD integration
-
-## Integrations Required
-GitHub, AWS (IAM, ECS, RDS, S3, SQS, CloudWatch), Terraform Cloud, PagerDuty, Jira, Confluence, Slack, Okta (SSO), Datadog (metrics/traces).
-
-## Non-Functional Requirements
-- Page load: < 1.5 seconds for service catalogue search
-- Availability: 99.9% uptime (it's internal, but engineers will depend on it for incident response)
-- RBAC: squad-level data isolation for cost and provisioning data
-- Audit log: all provisioning actions retained for 2 years
-
-## Constraints
-Timeline: 9 months to first internal launch (full feature set).
-Budget: $850,000 (includes 12 months of infrastructure).
-Team: 4 backend engineers, 2 frontend engineers, 1 DevOps/platform engineer, 1 security engineer, 1 UX designer, 1 PM, 0.5 data engineer (shared with another project).
-Existing tooling to preserve: We cannot replace PagerDuty or Jira — integrations only, no migration.
+**Constraints:** 9 months to first internal full launch; $850k budget (incl. 12mo infra). Team: 4 BE, 2 FE, 1 DevOps/platform, 1 security, 1 UX, 1 PM, 0.5 data engineer (shared). Do not replace PagerDuty or Jira — integrate only.

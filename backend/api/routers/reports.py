@@ -120,7 +120,7 @@ def generate_report(
             "message": verdict.user_message,
         })
 
-    agent = _agent_for_version(body.prompt_version or "v1.6.2")
+    agent = _agent_for_version(body.prompt_version or "v1.6.4")
     run: dict | None = None
     validation: dict | None = None
     report: dict | None = None

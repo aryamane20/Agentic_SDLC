@@ -1,0 +1,894 @@
+{
+  "case_id": "hp-08",
+  "http_status": 200,
+  "body": {
+    "session_id": "e8c502b6-53d4-4d29-b518-17f252a80e8f",
+    "report_id": "rpt_f0a0ce5c5335",
+    "report_revision": 1,
+    "report": {
+      "report_metadata": {
+        "generated_at": "2026-04-25T20:22:13.042725Z",
+        "prompt_version": "v1.6.3",
+        "project_type": "TYPE_A",
+        "input_quality": "HIGH",
+        "classification_confidence": "HIGH",
+        "sdlc_approach": "Predictive",
+        "sdlc_rationale": "Fixed deadline (2 weeks, no flexibility), fully defined requirements, mandated technology stack, and explicit team composition all present \u2014 meets all four PREDICTIVE conditions despite high complexity and tight timeline.",
+        "pm_confidence_score": 18.0
+      },
+      "project_understanding": {
+        "primary_goal": "Build a new customer-facing e-commerce website with product catalog, shopping cart, checkout, and order management to replace an 8-year-old non-mobile platform.",
+        "beneficiary": "End customers (B2C) and internal e-commerce team",
+        "trigger": "Current website is 8 years old, not mobile-friendly, checkout conversion is low; CEO mandate to launch before Q4 holiday season.",
+        "success_definition": [
+          "Launch within 2 weeks (hard deadline, no flexibility)",
+          "Mobile-responsive design",
+          "Checkout conversion rate > 3%",
+          "Support 1000 concurrent users"
+        ],
+        "supporting_quotes": [
+          "Launch within 2 weeks",
+          "Must launch in 2 weeks - NO FLEXIBILITY",
+          "This is the highest priority project in the company right now"
+        ]
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "Existing product catalog data (5000+ products) is clean, structured, and ready for migration into the new database without transformation or deduplication work.",
+          "why": "Input specifies 5000+ products as a requirement but does not mention data migration effort, data quality issues, or ETL complexity. For a 2-week timeline, assuming data is ready-to-load is the only way to proceed; if data prep is needed, the timeline is impossible.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.2 \u2014 Scope baseline requires clear understanding of what is in scope. Data migration complexity is a scope element.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If product data requires cleaning, deduplication, or transformation, 3-5 days of effort is consumed before any development can begin. This consumes 21-36% of the 2-week timeline and pushes launch past the hard deadline.",
+          "source": "scope",
+          "tradeoff": "Gains: allows development to start immediately on catalog display and checkout. Risks: if data is dirty or incomplete, team discovers this in week 1 and has no time to remediate."
+        },
+        {
+          "id": "A2",
+          "what": "Warehouse API for inventory sync is fully documented, has a sandbox environment available, and the team has read/write access confirmed before development begins.",
+          "why": "Input lists 'Inventory sync with warehouse system' as a requirement but does not mention API documentation status, sandbox access, or authentication setup. On a 2-week timeline, any delay in external API access blocks the integration track entirely.",
+          "pmi_basis": "PMBOK 6th Ed, Section 11.2 \u2014 Risk identification before planning baseline. External dependency confirmation is a prerequisite for schedule feasibility.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If API documentation is incomplete, sandbox is not available, or access approval takes 3-5 days, the integration cannot be tested until week 2, leaving no time for bug fixes or fallback logic. Inventory sync will launch broken or incomplete.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows inventory integration to be built in parallel with checkout. Risks: if API access is delayed, inventory feature must be cut or launched non-functional."
+        },
+        {
+          "id": "A3",
+          "what": "Stripe payment integration is a straightforward API call with no custom PCI compliance work required beyond standard Stripe SDK implementation (Stripe handles PCI scope reduction).",
+          "why": "Input specifies 'Payment: Stripe API' and 'Must process credit card payments (PCI compliance)' but does not detail PCI compliance scope. Stripe's standard integration reduces PCI scope significantly; assuming the team uses Stripe's pre-built components (not custom card handling) is the only way a 2-week timeline is feasible.",
+          "pmi_basis": "PMBOK 6th Ed, Section 8.1 \u2014 Quality metrics defined before build begins. PCI compliance scope is a quality requirement.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If custom PCI compliance work is required (e.g., custom card validation, encryption, audit logging beyond Stripe's scope), 5-10 days of security engineering is needed. This consumes 36-71% of the timeline and likely requires a security audit before launch, which cannot be completed in 2 weeks.",
+          "source": "nfr",
+          "tradeoff": "Gains: allows checkout to be built using Stripe's pre-built components without custom security work. Risks: if PCI compliance scope is broader than Stripe's standard integration, the project cannot launch on time."
+        },
+        {
+          "id": "A4",
+          "what": "The 3-developer team has direct, recent experience with Next.js, Node.js, PostgreSQL, and Stripe integration \u2014 no ramp-up time required.",
+          "why": "Input specifies technology stack but does not mention team experience level. On a 2-week timeline, any learning curve (new framework, new database, new payment API) consumes 3-5 days of the 10 working days available. Assuming the team is already proficient is the only way the timeline is defensible.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 \u2014 Resource estimation tied to WBS. Team experience directly affects velocity.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If any developer is new to Next.js, Node.js, or PostgreSQL, the first 3-5 days are spent learning, not building. This reduces effective development time to 5-7 days for a project that requires 10+ days of work. Critical features will be incomplete or broken.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows full velocity from day 1. Risks: if team lacks experience with any part of the stack, velocity drops 30-50% and the timeline becomes impossible."
+        },
+        {
+          "id": "A5",
+          "what": "The 1 designer can deliver all UI/UX work (wireframes, mockups, design system, responsive design) in parallel with development, with no blocking dependencies or design review cycles that delay development.",
+          "why": "Input specifies '1 designer' but does not detail design process, review cycles, or handoff timing. On a 2-week timeline, design and development must run in parallel with zero wait time. Any design review cycle or rework consumes days that are not available.",
+          "pmi_basis": "PMBOK 6th Ed, Section 6.3 \u2014 Schedule development with parallel activities where possible. Design-dev handoff must be seamless.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If design review takes 2-3 days, or if developers wait for design mockups before starting frontend work, the critical path extends by 2-3 days. With only 10 working days available, this pushes launch past the deadline.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows design and development to run in parallel without blocking. Risks: if design review or rework is needed, the timeline breaks."
+        }
+      ],
+      "project_plan": {
+        "total_duration_weeks": 2.0,
+        "buffer_applied_percent": 0.0,
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T15",
+            "T18",
+            "T21"
+          ],
+          "total_duration_days": 10.0,
+          "zero_slack_tasks": [
+            "T1",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T15",
+            "T18",
+            "T21"
+          ],
+          "highest_slack_tasks": [
+            "T2",
+            "T4",
+            "T6"
+          ],
+          "staffing_implication": "Every developer and the designer must be 100% allocated with zero context switching; any interruption or pull to another project breaks the critical path immediately. No buffer exists."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 0.4,
+            "percentage_of_total": 20.0,
+            "milestones": [
+              "Product catalog data validated and ready for import",
+              "Warehouse API access confirmed and documented",
+              "UI/UX design system and key page mockups approved",
+              "Stripe integration approach confirmed"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Validate product catalog data structure and prepare import script",
+                "phase": 1,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Import script tested on sample data; 5000+ products can be loaded into PostgreSQL in < 5 minutes with zero errors."
+              },
+              {
+                "id": "T2",
+                "name": "Confirm warehouse API access and document endpoints",
+                "phase": 1,
+                "effort_hours": 8.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "API documentation reviewed; sandbox credentials confirmed; test call to inventory endpoint succeeds."
+              },
+              {
+                "id": "T3",
+                "name": "Design product catalog, checkout, and account pages (wireframes + high-fidelity mockups)",
+                "phase": 1,
+                "effort_hours": 16.0,
+                "owner_role": "UX Designer",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Mockups for product listing, product detail, cart, checkout (3 steps), and account dashboard approved by e-commerce team lead; responsive design confirmed for mobile and desktop."
+              },
+              {
+                "id": "T4",
+                "name": "Create design system and component library (colors, typography, buttons, forms)",
+                "phase": 1,
+                "effort_hours": 8.0,
+                "owner_role": "UX Designer",
+                "dependencies": [],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Design system documented in Figma; all components used in mockups are defined and reusable."
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development",
+            "duration_weeks": 0.8,
+            "percentage_of_total": 40.0,
+            "milestones": [
+              "Product catalog API and frontend display working",
+              "Shopping cart functionality complete",
+              "Checkout flow (3 steps) functional with Stripe integration",
+              "Customer account creation and login working",
+              "Internal demo: full happy path (browse \u2192 add to cart \u2192 checkout \u2192 order confirmation)"
+            ],
+            "tasks": [
+              {
+                "id": "T5",
+                "name": "Set up Next.js project, PostgreSQL database, and environment configuration",
+                "phase": 2,
+                "effort_hours": 8.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Next.js project initialized; PostgreSQL connection tested; environment variables configured for dev/staging/prod; CI/CD pipeline (GitHub Actions or similar) set up for automated testing and deployment."
+              },
+              {
+                "id": "T6",
+                "name": "Build product catalog API endpoints (list, search, filter, detail)",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "GET /products (paginated, filterable), GET /products/:id, GET /products/search endpoints return correct data; response time < 200ms for 5000-product catalog."
+              },
+              {
+                "id": "T7",
+                "name": "Build product listing and detail pages (Next.js frontend)",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T3",
+                  "T5",
+                  "T6"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Product listing page displays 20 products per page with search/filter; product detail page shows images, description, price, inventory status; both pages are mobile-responsive and match design mockups."
+              },
+              {
+                "id": "T8",
+                "name": "Build shopping cart (add, remove, update quantity, persist to localStorage/session)",
+                "phase": 2,
+                "effort_hours": 12.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T5",
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Cart persists across page reloads; add/remove/update quantity works; cart total and item count update in real-time; cart displays on all pages."
+              },
+              {
+                "id": "T9",
+                "name": "Build customer authentication (sign up, login, password reset)",
+                "phase": 2,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T5"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "User registration and login working; JWT tokens issued and validated; password reset email sent; user session persists across page reloads."
+              },
+              {
+                "id": "T10",
+                "name": "Build customer account dashboard (order history, saved addresses, profile)",
+                "phase": 2,
+                "effort_hours": 12.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T3",
+                  "T9"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Account page displays user profile, order history, and saved addresses; user can edit profile and add/remove addresses; page is mobile-responsive."
+              },
+              {
+                "id": "T11",
+                "name": "Integrate Stripe payment API (tokenization, charge creation, webhook handling)",
+                "phase": 2,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T5"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Stripe test charges succeed; webhook for payment confirmation received and processed; no custom card handling (Stripe Elements used); PCI compliance scope verified with Stripe documentation."
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases",
+            "duration_weeks": 0.4,
+            "percentage_of_total": 20.0,
+            "milestones": [
+              "Warehouse inventory sync working",
+              "Checkout flow integrated with Stripe",
+              "Order creation and confirmation email working",
+              "All critical integrations tested end-to-end"
+            ],
+            "tasks": [
+              {
+                "id": "T12",
+                "name": "Build checkout flow (shipping address, billing address, order review, payment)",
+                "phase": 3,
+                "effort_hours": 16.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T8",
+                  "T11"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "3-step checkout flow (address \u2192 review \u2192 payment) complete; form validation working; Stripe payment form renders; order submission succeeds; order confirmation page displays order number and summary."
+              },
+              {
+                "id": "T13",
+                "name": "Build order creation API and order confirmation email",
+                "phase": 3,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T11"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "POST /orders endpoint creates order record; confirmation email sent to customer with order number, items, and total; order appears in customer account dashboard."
+              },
+              {
+                "id": "T14",
+                "name": "Integrate warehouse inventory API (real-time stock check, sync on order)",
+                "phase": 3,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T2",
+                  "T13"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Product detail page shows real-time inventory from warehouse API; checkout prevents purchase of out-of-stock items; order creation triggers inventory decrement in warehouse system; sync succeeds 99% of the time."
+              },
+              {
+                "id": "T15",
+                "name": "Build order management dashboard (admin view of all orders, status updates)",
+                "phase": 3,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T13"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Admin dashboard displays all orders with status (pending, processing, shipped); admin can update order status; status changes trigger customer notification email."
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 0.3,
+            "percentage_of_total": 15.0,
+            "milestones": [
+              "All critical bugs resolved",
+              "Checkout conversion test passed (test orders succeed)",
+              "Load test passed (1000 concurrent users)",
+              "Mobile responsiveness verified",
+              "SEO optimization verified"
+            ],
+            "tasks": [
+              {
+                "id": "T16",
+                "name": "Manual testing of full checkout flow (10 test orders, multiple payment methods)",
+                "phase": 4,
+                "effort_hours": 12.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T12",
+                  "T13"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "10 test orders completed successfully; Stripe charges appear in test account; confirmation emails received; orders appear in admin dashboard and customer account."
+              },
+              {
+                "id": "T17",
+                "name": "Load testing (simulate 1000 concurrent users, measure response time and error rate)",
+                "phase": 4,
+                "effort_hours": 8.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Load test with 1000 concurrent users completes; response time < 2s for 95th percentile; error rate < 1%; database and API scale without crashing."
+              },
+              {
+                "id": "T18",
+                "name": "Mobile responsiveness testing (iOS Safari, Android Chrome, tablet)",
+                "phase": 4,
+                "effort_hours": 8.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "All pages render correctly on iPhone 12, iPhone 14 Pro, Samsung Galaxy S21, iPad; checkout flow works on mobile; no horizontal scrolling; touch targets are 44px minimum."
+              },
+              {
+                "id": "T19",
+                "name": "SEO optimization (meta tags, structured data, sitemap, robots.txt)",
+                "phase": 4,
+                "effort_hours": 8.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "All product pages have unique meta titles and descriptions; JSON-LD structured data added for products; sitemap.xml generated; robots.txt configured; Google Search Console verification tag added."
+              },
+              {
+                "id": "T20",
+                "name": "Analytics tracking setup (Google Analytics, conversion tracking, event logging)",
+                "phase": 4,
+                "effort_hours": 8.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Google Analytics installed and tracking page views; conversion events logged for add-to-cart and purchase; UTM parameters tracked; dashboard shows conversion rate."
+              },
+              {
+                "id": "T21",
+                "name": "Bug fixes and final QA sign-off",
+                "phase": 4,
+                "effort_hours": 12.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T16",
+                  "T17",
+                  "T18",
+                  "T19",
+                  "T20"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "All critical bugs fixed; all high-priority bugs fixed; QA sign-off document signed; no known blockers for launch."
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 0.1,
+            "percentage_of_total": 5.0,
+            "milestones": [
+              "Production deployment completed",
+              "DNS cutover completed",
+              "Go-live sign-off"
+            ],
+            "tasks": [
+              {
+                "id": "T22",
+                "name": "Deploy to production (database migration, code deployment, smoke test)",
+                "phase": 5,
+                "effort_hours": 8.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T21"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Code deployed to production; database migrations applied; smoke test (browse product, add to cart, checkout) succeeds; no errors in production logs."
+              },
+              {
+                "id": "T23",
+                "name": "DNS cutover and monitoring setup",
+                "phase": 5,
+                "effort_hours": 4.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T22"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "DNS updated to point to new site; old site backed up; monitoring alerts configured for errors, latency, and downtime; on-call rotation established."
+              }
+            ]
+          }
+        ]
+      },
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Schedule",
+          "description": "If the 2-week deadline is fixed and any critical path task (product data validation, design, checkout integration, QA) takes longer than estimated, the project will miss the launch date with no time to recover.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Any critical path task exceeds estimated hours by > 20%; any external dependency (Stripe, warehouse API) is delayed; any team member becomes unavailable.",
+          "mitigation": "Identify and lock down all external dependencies (Stripe sandbox, warehouse API access, product data) in the first 4 hours of the project. Run a 2-hour kickoff meeting to confirm team availability and stack experience. Establish daily standup to catch delays immediately.",
+          "contingency": "If any critical path task is delayed by > 1 day by day 3, immediately cut non-critical features (analytics, advanced SEO, order management dashboard) and launch MVP (catalog + cart + checkout only). Defer order management and analytics to post-launch phase 2."
+        },
+        {
+          "id": "R2",
+          "category": "Resource",
+          "description": "If any of the 3 developers or 1 designer is pulled to another project, becomes unavailable, or lacks experience with the required stack (Next.js, Node.js, PostgreSQL, Stripe), the team velocity drops 25-50% and the timeline becomes impossible.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Any team member reports < 100% availability; any team member is new to Next.js, Node.js, or PostgreSQL; any team member is pulled to support another project.",
+          "mitigation": "Secure written commitment from each team member's manager that they are 100% allocated to this project for 2 weeks with zero interruptions. Confirm stack experience in the first 2 hours. Identify a backup developer for each critical role (frontend, backend) in case of emergency.",
+          "contingency": "If a developer becomes unavailable, immediately cut non-critical features and focus on MVP. If a backup is not available, negotiate a 1-week extension with the CEO or cut scope to match available capacity."
+        },
+        {
+          "id": "R3",
+          "category": "Integration",
+          "description": "If the warehouse API is not documented, sandbox access is not available, or the API has unexpected behavior (rate limiting, schema issues, latency), the inventory sync feature will not work and the project will launch without real-time inventory.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Warehouse API documentation is incomplete; sandbox credentials are not provided by day 1; API test call fails; API response time > 500ms.",
+          "mitigation": "Contact the warehouse team on day 0 (before project starts) to confirm API documentation, sandbox access, and authentication. Schedule a 30-minute API walkthrough with the warehouse team. Test the API with a sample call before development begins.",
+          "contingency": "If warehouse API is not available by day 3, launch without real-time inventory sync. Display a static 'In Stock' label on all products and sync inventory asynchronously (batch job every 4 hours) instead of real-time. Defer real-time inventory to post-launch phase 2."
+        },
+        {
+          "id": "R4",
+          "category": "Technical",
+          "description": "If the product catalog data (5000+ products) is not clean, requires transformation, or has missing fields (images, descriptions, prices), the import will fail or products will display incorrectly, consuming 3-5 days of development time.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Product data has missing fields; product images are not accessible; product descriptions are incomplete; data import script fails on > 1% of records.",
+          "mitigation": "Audit the product data on day 0 before development begins. Identify missing fields, broken image links, and data quality issues. Create a data cleaning script if needed. Test the import script on the full 5000-product dataset before development begins.",
+          "contingency": "If product data is not ready by day 1, launch with a subset of products (top 500 best-sellers) and add the remaining products in a post-launch batch. Defer full catalog to phase 2."
+        },
+        {
+          "id": "R5",
+          "category": "Compliance",
+          "description": "If PCI compliance scope is broader than Stripe's standard integration (e.g., custom card validation, encryption, audit logging required), the project will require a security audit and compliance review that cannot be completed in 2 weeks.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Security team requires custom PCI compliance work; Stripe integration requires custom card handling; compliance audit is required before launch.",
+          "mitigation": "Confirm with the security team on day 0 that Stripe's standard integration (Stripe Elements, no custom card handling) is sufficient for PCI compliance. Get written sign-off that no additional security work is required. Use Stripe's pre-built components only.",
+          "contingency": "If custom PCI work is required, launch with a manual payment process (customer calls to provide card details, processed offline) and defer Stripe integration to phase 2. This is not ideal but allows launch on time."
+        },
+        {
+          "id": "R6",
+          "category": "Technical",
+          "description": "If the site cannot handle 1000 concurrent users (load test fails), the site will crash during the Q4 holiday traffic spike, resulting in lost revenue and reputational damage.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Load test with 1000 concurrent users shows response time > 2s or error rate > 1%; database connection pool exhausted; API rate limiting triggered.",
+          "mitigation": "Run load testing on day 8 (before final QA). Identify bottlenecks early. Optimize database queries, add caching (Redis), and scale infrastructure (CDN, load balancer) if needed. Use Cloudflare as specified to handle traffic spikes.",
+          "contingency": "If load test fails, implement aggressive caching (product catalog cached for 1 hour, cart cached in browser), defer real-time inventory to asynchronous sync, and scale database read replicas. If still insufficient, launch with a traffic cap (queue users if > 1000 concurrent) and scale infrastructure post-launch."
+        },
+        {
+          "id": "R7",
+          "category": "Scope",
+          "description": "If stakeholders request scope changes or additional features during the 2-week sprint (e.g., gift cards, wishlists, reviews), the team will not have time to implement them and will miss the deadline.",
+          "probability": "HIGH",
+          "impact": "MEDIUM",
+          "score": "HIGH",
+          "trigger": "Stakeholder requests a new feature; CEO asks for an additional requirement; e-commerce team suggests a 'nice to have' feature.",
+          "mitigation": "Lock the scope on day 0. Create a written scope document signed by the CEO and e-commerce team lead. Establish a change control process: any scope change requires a 1-week timeline extension or a feature cut. Communicate the MVP scope clearly to all stakeholders.",
+          "contingency": "If a scope change is requested, immediately present the tradeoff: implement the new feature OR cut an existing feature of equal effort. Do not add scope without cutting scope. Escalate to the CEO for final decision."
+        },
+        {
+          "id": "R8",
+          "category": "Technical",
+          "description": "If the design-to-development handoff is not seamless (design mockups are incomplete, design review takes multiple iterations, developers wait for design), the critical path extends and the timeline breaks.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Design mockups are not ready by end of day 1; design review requires > 1 iteration; developers are blocked waiting for design.",
+          "mitigation": "Designer starts on day 0 (before development). Establish a design-dev sync meeting every morning to ensure mockups are ready before developers need them. Use a shared Figma file for real-time collaboration. Designer delivers mockups in priority order (checkout first, then product pages, then account dashboard).",
+          "contingency": "If design is delayed, developers start building with placeholder UI and swap in the final design later. Use a component library (Tailwind CSS) to make design swaps fast."
+        },
+        {
+          "id": "R9",
+          "category": "Schedule",
+          "description": "If the team does not have a backup DevOps engineer or deployment process, the final deployment (day 10) could fail, leaving no time to fix issues before the hard deadline.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "DevOps engineer is unavailable on day 10; deployment script fails; database migration fails; DNS cutover fails.",
+          "mitigation": "Prepare the deployment process on day 5 (before final QA). Test the deployment script on a staging environment. Document the rollback procedure. Identify a backup DevOps engineer who can deploy if the primary is unavailable.",
+          "contingency": "If deployment fails on day 10, immediately roll back to the old site and debug the issue. If the issue cannot be fixed in < 2 hours, launch the old site and defer the new site to the following week."
+        },
+        {
+          "id": "R10",
+          "category": "Technical",
+          "description": "If the checkout conversion rate does not meet the 3% target (success metric), the project will be considered a failure even if it launches on time.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Conversion rate test shows < 3% conversion; checkout flow has high abandonment rate; payment failures > 2%.",
+          "mitigation": "Run conversion rate testing on day 8 with 100 test users. Identify friction points in the checkout flow (form fields, payment errors, unclear CTAs). Optimize the flow based on test results. Ensure checkout is mobile-optimized (mobile users are 60% of traffic).",
+          "contingency": "If conversion rate is < 3%, defer the conversion optimization to post-launch phase 2. Launch with the current flow and iterate based on real user data."
+        }
+      ],
+      "staffing_plan": [
+        {
+          "role": "Product Manager",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 60.0,
+          "allocation_percent": 15.0,
+          "skills_required": [
+            "E-commerce domain knowledge",
+            "Stakeholder management",
+            "Agile/Scrum",
+            "Risk management"
+          ],
+          "critical_path": true,
+          "notes": "Must be 100% allocated and available for daily standups, stakeholder communication, and scope management. Cannot be shared with other projects. Responsible for blocking scope creep and managing the hard deadline."
+        },
+        {
+          "role": "Frontend Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 120.0,
+          "allocation_percent": 30.0,
+          "skills_required": [
+            "Next.js 13+",
+            "React 18",
+            "TypeScript",
+            "Tailwind CSS",
+            "Responsive design",
+            "Mobile-first development"
+          ],
+          "critical_path": true,
+          "notes": "Must be 100% allocated. Responsible for product pages, shopping cart, checkout UI, and mobile responsiveness. Must have direct experience with Next.js and React \u2014 no ramp-up time available."
+        },
+        {
+          "role": "Backend Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 120.0,
+          "allocation_percent": 30.0,
+          "skills_required": [
+            "Node.js",
+            "Express or similar framework",
+            "PostgreSQL",
+            "REST API design",
+            "Stripe API integration",
+            "Authentication (JWT)"
+          ],
+          "critical_path": true,
+          "notes": "Must be 100% allocated. Responsible for product catalog API, checkout API, order management, authentication, and Stripe integration. Must have direct experience with Node.js and PostgreSQL \u2014 no ramp-up time available."
+        },
+        {
+          "role": "UX Designer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "total_hours": 48.0,
+          "allocation_percent": 12.0,
+          "skills_required": [
+            "Figma",
+            "Mobile-first design",
+            "E-commerce UX",
+            "Responsive design",
+            "Accessibility (WCAG 2.1 AA)"
+          ],
+          "critical_path": true,
+          "notes": "Must be 100% allocated. Responsible for all UI/UX design, design system, and mockups. Must deliver mockups in priority order (checkout first) to unblock frontend development. No design review cycles \u2014 one iteration only."
+        },
+        {
+          "role": "QA Engineer",
+          "phase_involvement": [
+            3,
+            4,
+            5
+          ],
+          "total_hours": 40.0,
+          "allocation_percent": 10.0,
+          "skills_required": [
+            "Manual testing",
+            "Test case design",
+            "Mobile testing",
+            "Load testing tools",
+            "Stripe testing"
+          ],
+          "critical_path": true,
+          "notes": "Must be 100% allocated starting day 6. Responsible for checkout testing, load testing, mobile testing, and final QA sign-off. QA effort (40h) is 33% of development effort (120h), exceeding the 25% minimum."
+        },
+        {
+          "role": "DevOps Engineer",
+          "phase_involvement": [
+            1,
+            5
+          ],
+          "total_hours": 20.0,
+          "allocation_percent": 5.0,
+          "skills_required": [
+            "AWS or similar cloud platform",
+            "Docker",
+            "CI/CD (GitHub Actions)",
+            "PostgreSQL administration",
+            "Cloudflare configuration",
+            "DNS management"
+          ],
+          "critical_path": false,
+          "notes": "Front-loaded in Phase 1 (4h for environment setup) and back-loaded in Phase 5 (16h for deployment and monitoring). Must be available on day 10 for final deployment. Responsible for infrastructure, CI/CD, and go-live."
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "Is the product catalog data (5000+ products) currently clean, complete, and ready for import into PostgreSQL, or does it require data cleaning, deduplication, and transformation? If transformation is needed, how many days of effort is required?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If data is not ready, the import script cannot be tested and the critical path extends by 3-5 days, pushing launch past the hard deadline."
+        },
+        {
+          "priority": 2,
+          "question": "Has the warehouse API team confirmed that sandbox access, full API documentation, and authentication credentials will be available by day 1 of the project? Is there a dedicated contact for API support during the 2-week sprint?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If API access is delayed, the inventory sync feature cannot be built and tested, and will launch broken or incomplete."
+        },
+        {
+          "priority": 3,
+          "question": "Has the security team confirmed in writing that Stripe's standard integration (Stripe Elements, no custom card handling) is sufficient for PCI compliance, or is additional custom security work required?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If custom PCI compliance work is required, the project will need a security audit that cannot be completed in 2 weeks, blocking launch."
+        },
+        {
+          "priority": 4,
+          "question": "Can each of the 3 developers and 1 designer commit to 100% allocation for the full 2 weeks with zero interruptions or pulls to other projects? Is there written sign-off from their managers?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If any team member is part-time or shared with another project, the team velocity drops 25-50% and the timeline becomes impossible."
+        },
+        {
+          "priority": 5,
+          "question": "Is there a backup DevOps engineer or deployment process documented in case the primary DevOps engineer becomes unavailable on day 10 (deployment day)?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If deployment fails and there is no backup, the project will miss the hard deadline."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 18.0,
+        "deductions": [
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R1: Schedule \u2014 fixed deadline with high complexity)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R2: Resource \u2014 team availability and stack experience unconfirmed)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R3: Integration \u2014 warehouse API access and documentation unconfirmed)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R4: Technical \u2014 product data quality and import readiness unconfirmed)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R5: Compliance \u2014 PCI compliance scope unconfirmed)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk present (R6: Technical \u2014 load testing and scalability)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk present (R7: Scope \u2014 scope creep and stakeholder changes)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk present (R8: Technical \u2014 design-to-dev handoff)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk present (R9: Schedule \u2014 deployment and rollback risk)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "5 assumptions logged (A1-A5) \u2014 each represents an unvalidated risk"
+          },
+          {
+            "amount": 5.0,
+            "reason": "SDLC approach is Predictive but timeline is extremely aggressive (2 weeks for e-commerce platform with 8 major features)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "Timeline flagged as HIGH RISK \u2014 2 weeks is not defensible for a full e-commerce platform with product catalog, checkout, payment, inventory sync, and order management"
+          }
+        ],
+        "interpretation": "PM confidence score is 18.0 because the project has 5 CRITICAL risks (schedule, resource, integration, technical, compliance) that are unmitigated and unresolved, combined with 5 unvalidated assumptions and an objectively impossible timeline (2 weeks for a full e-commerce platform with 8 major features, payment processing, and 1000 concurrent user load). The project is not viable as specified."
+      },
+      "project_viability": {
+        "viability_status": "NOT_VIABLE",
+        "gap_type": "SCHEDULE",
+        "gap_amount": "8-10 weeks past deadline (realistic timeline is 10-12 weeks; deadline is 2 weeks)",
+        "scoping_options": [
+          {
+            "option_id": "O1",
+            "description": "Launch MVP in 2 weeks with core features only: product catalog (read-only, no real-time inventory), shopping cart, checkout with Stripe, and order confirmation. Defer inventory sync, order management dashboard, customer accounts, and analytics to post-launch phase 2 (weeks 3-6).",
+            "impact": "Launches on time with 80% of revenue-generating features. Customers can browse and purchase. Inventory sync deferred but not critical for launch.",
+            "tradeoffs": "Customers cannot create accounts or view order history until phase 2. Inventory is static (updated manually or via batch job). Order management is manual. Analytics are not available. Post-launch phase 2 requires 4 additional weeks and 2-3 developers."
+          },
+          {
+            "option_id": "O2",
+            "description": "Extend deadline to 10 weeks (mid-November, before Black Friday) and deliver the full scope with all 8 features, load testing, and post-launch support. Allocate 3 developers + 1 designer full-time for 10 weeks.",
+            "impact": "Full e-commerce platform launches with all features, tested for 1000 concurrent users, ready for holiday traffic. No technical debt or deferred work.",
+            "tradeoffs": "Misses the 2-week CEO deadline by 8 weeks. Requires stakeholder re-approval and timeline negotiation. May miss early holiday shopping (Thanksgiving) but captures Black Friday and Cyber Monday traffic."
+          },
+          {
+            "option_id": "O3",
+            "description": "Allocate 6 developers (instead of 3) and 2 designers to compress the timeline to 4-5 weeks. Run two parallel development tracks (frontend + backend) with daily integration. Hire contractors or pull developers from other projects.",
+            "impact": "Launches in 4-5 weeks (early November) with full scope. Captures early holiday shopping and Black Friday.",
+            "tradeoffs": "Budget increases from $25,000 to $60,000-$80,000 (2.4-3.2x). Requires hiring contractors or pulling developers from other projects (creates risk elsewhere). Coordination overhead increases with larger team. Quality risk increases due to compressed timeline and larger team."
+          }
+        ]
+      }
+    },
+    "gate": {
+      "fired": true,
+      "reasons": [
+        "confidence_score < 60 \u2014 plan needs review",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "project_viability is NOT_VIABLE \u2014 impossible constraints as stated"
+      ],
+      "decision": null
+    },
+    "validation": {
+      "valid": false,
+      "errors": [
+        "HIGH quality input should not produce more than 4 assumptions \u2014 materiality gate not applied correctly."
+      ],
+      "warnings": [
+        "Staffing adds expanded role class PM (Product Manager) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule.",
+        "Staffing adds expanded role class QA (QA Engineer) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule.",
+        "Staffing adds expanded role class DEVOPS (DevOps Engineer) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule."
+      ]
+    },
+    "tokens_used": 12167,
+    "input_tokens": 376,
+    "output_tokens": 11791,
+    "cache_hit": false
+  }
+}

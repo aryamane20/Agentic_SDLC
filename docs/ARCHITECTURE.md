@@ -58,7 +58,7 @@
 
 ### Layer 1: System Prompt (The Thinking Layer)
 **What it encodes:** WHO the agent is and HOW it thinks.
-**Lives in:** `prompts/v1.6.2_system.txt` (current active version; `v1.6.1_system.txt` retained for replay)
+**Lives in:** `prompts/v1.6.4_system.txt` (current active version; prior versions retained for replay)
 **Changes when:** Reasoning quality improves through prompt iteration.
 **Version controlled:** Yes — every change committed with rubric scores.
 

@@ -20,7 +20,7 @@ The system prompt is split into two separate layers compiled at runtime by `_bui
 
 | Layer | What it encodes | Lives in |
 |-------|----------------|----------|
-| **Role** | WHO the agent is and HOW it reasons (8-step process, PMI heuristics, output contract) | `prompts/v1.6.2_system.txt` |
+| **Role** | WHO the agent is and HOW it reasons (8-step process, PMI heuristics, output contract) | `prompts/v1.6.4_system.txt` |
 | **Knowledge Base** | WHAT domain knowledge it draws on (templates, risks, staffing) | `knowledge-base/` |
 
 These are kept separate so reasoning changes and domain knowledge changes can be tracked and evaluated independently in git.
@@ -110,7 +110,7 @@ Load the relevant skill at the start of any session:
 
 | Layer | Version |
 |-------|---------|
-| System prompt | `v1.6.2` → `prompts/v1.6.2_system.txt` |
+| System prompt | `v1.6.4` → `prompts/v1.6.4_system.txt` |
 | Output schema | `schemas/output_schema.py` |
 | Backend API | `0.1.0` |
 | Frontend | `0.1.0` |

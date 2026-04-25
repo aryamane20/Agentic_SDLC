@@ -1,0 +1,733 @@
+{
+  "case_id": "hp-10",
+  "http_status": 200,
+  "body": {
+    "session_id": "7b59ed76-ebab-44f6-9eae-979f2843eced",
+    "report_id": "rpt_511a0ee61ef2",
+    "report_revision": 1,
+    "report": {
+      "report_metadata": {
+        "generated_at": "2026-04-25T18:50:19.980798Z",
+        "prompt_version": "v1.6.2",
+        "project_type": "TYPE_C",
+        "input_quality": "HIGH",
+        "classification_confidence": "HIGH",
+        "sdlc_approach": "Predictive",
+        "sdlc_rationale": "Requirements are fully defined with explicit data sources, success metrics, deadline, budget, and team composition. Technology stack is mandated (Snowflake, Looker). Team has direct experience with data pipelines (1 data engineer, 1 analyst). Changes mid-project are not expected given the structured nature of ETL work.",
+        "pm_confidence_score": 62.0
+      },
+      "project_understanding": {
+        "primary_goal": "Build an ETL data pipeline consolidating marketing analytics from 5 sources into a single Snowflake warehouse with Looker BI dashboard and automated daily refresh.",
+        "beneficiary": "Marketing team (20 people) \u2014 currently spending 2 days per week manually compiling reports from scattered tools.",
+        "trigger": "Marketing data fragmented across Google Analytics, HubSpot, Facebook Ads, Mailchimp, and Stripe; manual reporting is unsustainable and delays decision-making.",
+        "success_definition": [
+          "All 5 marketing data sources consolidated into single dashboard",
+          "Automated daily refresh at 6 AM with zero manual intervention",
+          "15 pre-built reports available in Looker covering standard marketing KPIs",
+          "Marketing team can create custom reports without IT/engineering support",
+          "GDPR compliance for PII handling verified",
+          "2-year historical data loaded and validated",
+          "Pipeline auto-recovery from transient failures (API rate limits, network timeouts)"
+        ],
+        "supporting_quotes": [
+          "Marketing data is scattered across 5 different tools. Reports take 2 days to compile manually.",
+          "All marketing data in one dashboard",
+          "Data refresh daily at 6 AM",
+          "Marketing team can create custom reports without IT help",
+          "PII must be handled per GDPR",
+          "Pipeline must recover from failures automatically"
+        ]
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "Data engineer and analyst are both full-time (100% allocation) for the full 8-week duration and have prior experience with Snowflake, Looker, and Python/SQL-based ETL.",
+          "why": "Input specifies team composition but does not state allocation percentage or prior stack experience. For a TYPE_C project with 5 external data sources and 2-year historical load, full-time experienced staff is the standard baseline. Part-time or junior staff would extend timeline significantly.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 \u2014 Resource estimation tied to WBS and task complexity. Schedule baseline assumes resource availability.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If either team member is part-time or lacks Snowflake/Looker experience, critical path tasks (data source integration, schema design, transformation logic) will slip by 2-4 weeks, pushing past the 2-month deadline.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows 8-week timeline to be defensible with 2 data engineers. Risks: if actual allocation is 50-60% or team is junior, timeline becomes 12-14 weeks and project becomes NOT_VIABLE against deadline."
+        },
+        {
+          "id": "A2",
+          "what": "All 5 external data sources (Google Analytics, HubSpot, Facebook Ads, Mailchimp, Stripe) have documented APIs, sandbox environments available for testing, and no additional authentication/approval delays beyond standard API key provisioning.",
+          "why": "Input lists data sources but does not confirm API access, sandbox availability, or authentication complexity. These are standard for SaaS marketing tools, but access delays are a known failure mode in TYPE_C projects.",
+          "pmi_basis": "PMBOK 6th Ed, Section 11.2 \u2014 Risk identification. External dependency availability is a material assumption for integration-heavy projects.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If any data source requires legal/compliance approval for API access (e.g., Stripe PCI compliance, HubSpot data sharing agreement), Phase 1 will extend by 2-4 weeks. If sandbox is unavailable, development cannot proceed in parallel with production access negotiation.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows Phase 1 to complete in 1-1.5 weeks and Phase 2 development to start immediately. Risks: if access approval takes 3+ weeks, critical path slips and deadline becomes unachievable."
+        },
+        {
+          "id": "A3",
+          "what": "GDPR PII handling scope is limited to masking/hashing email addresses and phone numbers in HubSpot and Mailchimp data; no additional data residency, encryption-at-rest, or audit trail requirements beyond Snowflake's native GDPR compliance features.",
+          "why": "Input states 'PII must be handled per GDPR' but does not specify which fields are PII, what transformation is required, or whether additional compliance controls (encryption, audit logging, data residency) are mandated. GDPR compliance for internal analytics typically requires field-level masking, not full re-architecture.",
+          "pmi_basis": "PMBOK 6th Ed, Section 8.1 \u2014 Quality metrics defined before build. Compliance scope must be explicit to avoid mid-project re-architecture.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If GDPR scope includes data residency (EU-only storage), encryption-at-rest, or advanced audit trails, Snowflake configuration and pipeline architecture will require security review and re-design. Phase 3 (Integration & Edge Cases) will expand by 2-3 weeks.",
+          "source": "nfr",
+          "tradeoff": "Gains: allows Phase 2-3 to proceed with standard Snowflake masking and transformation logic. Risks: if compliance scope is broader, project requires security architect involvement and timeline extends."
+        },
+        {
+          "id": "A4",
+          "what": "Marketing team has at least one power user (analyst or manager) available for 4-6 hours per week during Phase 4 (QA & Testing) and Phase 5 (Deployment & Handoff) for UAT, custom report validation, and Looker training.",
+          "why": "Input specifies marketing team is the beneficiary and success criteria include 'marketing team can create custom reports without IT help,' implying hands-on UAT and training. Input does not confirm stakeholder availability for testing.",
+          "pmi_basis": "PMBOK 6th Ed, Section 13.2 \u2014 Stakeholder engagement. UAT requires end-user participation; absence of stakeholder availability is a known schedule risk.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If marketing team is unavailable for UAT, Phase 4 testing will be limited to IT validation only. Custom report functionality and Looker usability will not be validated before go-live, increasing post-launch support burden and adoption risk.",
+          "source": "scope",
+          "tradeoff": "Gains: allows Phase 4 to include real-world UAT and Looker training, reducing post-launch issues. Risks: if stakeholder is unavailable, UAT is skipped and go-live risk increases."
+        }
+      ],
+      "project_plan": {
+        "total_duration_weeks": 9.2,
+        "buffer_applied_percent": 15.0,
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T2",
+            "T3",
+            "T4",
+            "T5",
+            "T6",
+            "T7",
+            "T8",
+            "T9",
+            "T10",
+            "T11"
+          ],
+          "total_duration_days": 46.0,
+          "zero_slack_tasks": [
+            "T1",
+            "T2",
+            "T3",
+            "T4",
+            "T5",
+            "T6",
+            "T7",
+            "T8",
+            "T9",
+            "T10",
+            "T11"
+          ],
+          "highest_slack_tasks": [
+            "T12",
+            "T13",
+            "T14"
+          ],
+          "staffing_implication": "Both data engineer and analyst must be full-time on critical path tasks (data source integration, schema design, transformation, validation). No part-time allocation or project sharing is possible without extending timeline past deadline."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 1.2,
+            "percentage_of_total": 13.0,
+            "milestones": [
+              "Data source audit completed \u2014 all 5 APIs documented and sandbox access confirmed",
+              "Snowflake schema design approved by data engineer and marketing stakeholder",
+              "Data lineage and transformation logic documented",
+              "GDPR compliance scope signed off (PII fields, masking rules, audit requirements)"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Audit all 5 data sources and confirm API access, sandbox availability, and authentication requirements",
+                "phase": 1,
+                "effort_hours": 16.0,
+                "owner_role": "Data Engineer",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "API documentation reviewed, sandbox credentials obtained, rate limits and schema documented in shared wiki"
+              },
+              {
+                "id": "T2",
+                "name": "Design Snowflake schema for consolidated marketing data warehouse (staging, transformation, and reporting layers)",
+                "phase": 1,
+                "effort_hours": 20.0,
+                "owner_role": "Data Engineer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Schema diagram approved by data engineer and marketing stakeholder; table definitions, column names, and data types documented"
+              },
+              {
+                "id": "T3",
+                "name": "Define GDPR compliance scope: identify PII fields, masking/hashing rules, and audit trail requirements",
+                "phase": 1,
+                "effort_hours": 12.0,
+                "owner_role": "Data Analyst",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "GDPR scope document signed off by data engineer, analyst, and marketing stakeholder; PII field list and transformation rules finalized"
+              },
+              {
+                "id": "T4",
+                "name": "Document data lineage and transformation logic for each source system",
+                "phase": 1,
+                "effort_hours": 14.0,
+                "owner_role": "Data Analyst",
+                "dependencies": [
+                  "T2",
+                  "T3"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Lineage diagram and transformation rules document completed; each data point traceable to source system"
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development",
+            "duration_weeks": 3.5,
+            "percentage_of_total": 38.0,
+            "milestones": [
+              "Data ingestion from all 5 sources working in sandbox",
+              "Transformation logic implemented for core marketing metrics",
+              "2-year historical data load completed and validated",
+              "Daily refresh scheduler configured and tested"
+            ],
+            "tasks": [
+              {
+                "id": "T5",
+                "name": "Build ETL connectors for Google Analytics, HubSpot, Facebook Ads, Mailchimp, and Stripe APIs",
+                "phase": 2,
+                "effort_hours": 40.0,
+                "owner_role": "Data Engineer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "All 5 connectors extract data successfully in sandbox; data volumes and latency benchmarked; error handling for rate limits and timeouts implemented"
+              },
+              {
+                "id": "T6",
+                "name": "Implement data transformation logic: PII masking, field mapping, aggregations for core marketing KPIs",
+                "phase": 2,
+                "effort_hours": 36.0,
+                "owner_role": "Data Engineer",
+                "dependencies": [
+                  "T4",
+                  "T5"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Transformation SQL/Python code written, tested in sandbox, and documented; PII masking verified; sample output validated against source data"
+              },
+              {
+                "id": "T7",
+                "name": "Load 2-year historical data from all sources into Snowflake staging layer",
+                "phase": 2,
+                "effort_hours": 32.0,
+                "owner_role": "Data Engineer",
+                "dependencies": [
+                  "T5",
+                  "T6"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "2-year historical data loaded into Snowflake; record counts validated against source systems; data quality checks passed"
+              },
+              {
+                "id": "T8",
+                "name": "Configure automated daily refresh scheduler (6 AM UTC) with failure recovery and retry logic",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Data Engineer",
+                "dependencies": [
+                  "T6",
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Scheduler configured in Snowflake or Airflow; test runs at 6 AM completed; failure recovery tested (API timeout, rate limit, network error scenarios)"
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases",
+            "duration_weeks": 2.0,
+            "percentage_of_total": 22.0,
+            "milestones": [
+              "All 5 data sources integrated end-to-end in production Snowflake",
+              "Data quality validation rules implemented and passing",
+              "Edge case handling tested (schema drift, missing fields, duplicate records)",
+              "Looker BI layer connected to Snowflake and 15 pre-built reports created"
+            ],
+            "tasks": [
+              {
+                "id": "T9",
+                "name": "Implement data quality validation rules: null checks, duplicate detection, schema drift detection, and anomaly alerts",
+                "phase": 3,
+                "effort_hours": 24.0,
+                "owner_role": "Data Analyst",
+                "dependencies": [
+                  "T6",
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Validation rules written in SQL; automated checks run on each refresh; alerts configured for data quality failures; sample failures tested and logged"
+              },
+              {
+                "id": "T10",
+                "name": "Test edge cases: schema changes in source systems, missing fields, duplicate records, API rate limiting, network timeouts",
+                "phase": 3,
+                "effort_hours": 28.0,
+                "owner_role": "Data Engineer",
+                "dependencies": [
+                  "T8",
+                  "T9"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "All edge case scenarios tested; pipeline recovers gracefully from each failure; retry logic verified; logs document each failure and recovery"
+              },
+              {
+                "id": "T11",
+                "name": "Build 15 pre-built Looker reports covering core marketing KPIs (traffic, leads, spend, revenue, email performance, etc.)",
+                "phase": 3,
+                "effort_hours": 32.0,
+                "owner_role": "Data Analyst",
+                "dependencies": [
+                  "T6",
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "15 reports created in Looker; each report validated against source data; reports cover all major marketing channels and KPIs; marketing stakeholder reviews and approves"
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 1.8,
+            "percentage_of_total": 20.0,
+            "milestones": [
+              "End-to-end data flow validated from all 5 sources through Snowflake to Looker",
+              "Data accuracy audit completed (sample records compared to source systems)",
+              "UAT completed with marketing team \u2014 custom report creation tested",
+              "Monitoring and alerting configured for pipeline failures"
+            ],
+            "tasks": [
+              {
+                "id": "T12",
+                "name": "Conduct end-to-end data flow testing: verify data from all 5 sources flows correctly through pipeline to Looker",
+                "phase": 4,
+                "effort_hours": 20.0,
+                "owner_role": "Data Analyst",
+                "dependencies": [
+                  "T10",
+                  "T11"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Full data flow tested; sample records from each source verified in Looker; data latency measured and documented"
+              },
+              {
+                "id": "T13",
+                "name": "Perform data accuracy audit: compare 100+ sample records from Looker against source systems to verify transformation correctness",
+                "phase": 4,
+                "effort_hours": 16.0,
+                "owner_role": "Data Analyst",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Audit report completed; all sample records match source data; any discrepancies documented and resolved"
+              },
+              {
+                "id": "T14",
+                "name": "Conduct UAT with marketing team: test custom report creation in Looker, validate pre-built reports, gather feedback on usability",
+                "phase": 4,
+                "effort_hours": 12.0,
+                "owner_role": "Data Analyst",
+                "dependencies": [
+                  "T11",
+                  "T12"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "UAT session completed with marketing stakeholder; custom report creation tested; feedback documented; any usability issues logged and prioritized"
+              },
+              {
+                "id": "T15",
+                "name": "Configure monitoring and alerting for pipeline failures: email alerts for failed refreshes, data quality violations, and performance degradation",
+                "phase": 4,
+                "effort_hours": 14.0,
+                "owner_role": "Data Engineer",
+                "dependencies": [
+                  "T9",
+                  "T10"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Monitoring dashboard created; alerts configured and tested; runbook for common failure scenarios documented"
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 0.7,
+            "percentage_of_total": 7.0,
+            "milestones": [
+              "Production deployment completed \u2014 daily refresh running at 6 AM",
+              "Marketing team trained on Looker and custom report creation",
+              "Operational runbook and support documentation handed off"
+            ],
+            "tasks": [
+              {
+                "id": "T16",
+                "name": "Deploy pipeline to production Snowflake environment and verify first automated refresh at 6 AM",
+                "phase": 5,
+                "effort_hours": 8.0,
+                "owner_role": "Data Engineer",
+                "dependencies": [
+                  "T14",
+                  "T15"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Pipeline deployed to production; first automated refresh completed successfully at 6 AM; data in Looker matches expectations; monitoring alerts active"
+              },
+              {
+                "id": "T17",
+                "name": "Conduct Looker training with marketing team: custom report creation, filtering, scheduling, and dashboard best practices",
+                "phase": 5,
+                "effort_hours": 6.0,
+                "owner_role": "Data Analyst",
+                "dependencies": [
+                  "T16"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Training session completed; marketing team can create custom reports without IT help; training materials documented"
+              },
+              {
+                "id": "T18",
+                "name": "Write operational runbook: pipeline architecture, failure recovery procedures, common issues and resolutions, escalation contacts",
+                "phase": 5,
+                "effort_hours": 10.0,
+                "owner_role": "Data Engineer",
+                "dependencies": [
+                  "T16"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Runbook completed and reviewed; covers all failure scenarios, recovery procedures, and escalation paths; shared with marketing and IT teams"
+              }
+            ]
+          }
+        ]
+      },
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Integration",
+          "description": "If any of the 5 external data sources (Google Analytics, HubSpot, Facebook Ads, Mailchimp, Stripe) requires legal/compliance approval for API access or data sharing agreement, then Phase 1 will extend by 2-4 weeks, pushing past the 2-month deadline.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Data source API access request rejected or delayed pending legal review; data sharing agreement required but not yet signed",
+          "mitigation": "In Phase 1, immediately request API access and sandbox credentials for all 5 sources in parallel. Identify any legal/compliance blockers within first 3 days. Escalate to marketing leadership if approval is required.",
+          "contingency": "If any source requires legal approval, negotiate expedited review (target 1 week). Prioritize sources by data importance: HubSpot and Stripe first, then Google Analytics, then Facebook Ads and Mailchimp."
+        },
+        {
+          "id": "R2",
+          "category": "Technical",
+          "description": "If any external data source API schema changes mid-project (new fields, deprecated endpoints, rate limit changes), then transformation logic and data validation rules will require rework, extending Phase 2-3 by 1-2 weeks.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "API documentation update; unexpected API response structure; rate limit exceeded during testing",
+          "mitigation": "Document current API schema for all 5 sources in Phase 1. Build schema drift detection into data quality validation (T9). Monitor API changelogs weekly during development.",
+          "contingency": "If schema change detected, update transformation logic and re-test affected data flow. Use feature flags to toggle between old and new schema during transition period."
+        },
+        {
+          "id": "R3",
+          "category": "Resource",
+          "description": "If data engineer or analyst is pulled to another project or becomes unavailable (illness, departure), critical path tasks (data source integration, schema design, transformation) will stall, extending timeline by 3-4 weeks and making deadline unachievable.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Team member assigned to competing project; team member illness or departure; allocation reduced below 80%",
+          "mitigation": "Secure written commitment from both data engineer and analyst for full-time (100%) allocation for 8 weeks. Document this in project charter. Identify backup data engineer or contractor who can step in within 1 week if needed.",
+          "contingency": "If team member becomes unavailable, immediately escalate to data engineering leadership. Bring in backup contractor or senior data engineer to maintain critical path velocity. Extend timeline by 2-3 weeks if replacement is not available within 1 week."
+        },
+        {
+          "id": "R4",
+          "category": "Compliance",
+          "description": "If GDPR compliance scope is broader than assumed (e.g., data residency requirements, encryption-at-rest, advanced audit trails), Snowflake configuration and pipeline architecture will require security review and re-design, extending Phase 3 by 2-3 weeks.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Security review identifies additional GDPR requirements; legal team mandates data residency or encryption; audit trail requirements discovered late",
+          "mitigation": "In Phase 1 (T3), explicitly define GDPR scope with legal and security teams. Document which PII fields require masking, whether data residency is required, and what audit trail level is needed. Get written sign-off before Phase 2 starts.",
+          "contingency": "If additional compliance requirements discovered, engage security architect immediately. Assess impact on Snowflake configuration and pipeline design. Extend Phase 3 timeline if re-architecture is needed."
+        },
+        {
+          "id": "R5",
+          "category": "Schedule",
+          "description": "If 2-year historical data load (T7) takes longer than estimated due to large data volumes, API rate limiting, or data quality issues, Phase 2 will extend by 1-2 weeks, compressing Phase 3 and increasing risk of incomplete edge case testing.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Historical data load exceeds 40 hours; API rate limits hit during bulk load; data quality issues discovered in historical data requiring rework",
+          "mitigation": "In Phase 2 (T7), load data in batches (e.g., 3-month chunks) to identify issues early. Monitor API rate limits and adjust batch size accordingly. Run data quality checks on each batch before proceeding.",
+          "contingency": "If historical load is delayed, prioritize most recent 6-12 months of data for initial launch. Defer older historical data to post-launch backfill. Adjust Phase 2 timeline accordingly."
+        },
+        {
+          "id": "R6",
+          "category": "Scope",
+          "description": "If marketing team requests additional pre-built reports beyond the 15 specified (scope creep), Phase 3 will extend by 1-2 weeks, compressing QA and testing time.",
+          "probability": "HIGH",
+          "impact": "MEDIUM",
+          "score": "HIGH",
+          "trigger": "Marketing stakeholder requests additional reports during Phase 3; scope change request submitted; UAT reveals missing reports",
+          "mitigation": "In Phase 1, lock down the 15 pre-built reports with marketing stakeholder. Document which reports are in scope and which are deferred to phase 2. Establish change control process: any new reports require timeline extension or scope reduction elsewhere.",
+          "contingency": "If additional reports requested, evaluate impact on timeline. If < 1 week effort, add to Phase 3. If > 1 week, defer to post-launch phase 2 or reduce scope of existing reports."
+        },
+        {
+          "id": "R7",
+          "category": "Resource",
+          "description": "If marketing team is unavailable for UAT during Phase 4 (T14), custom report functionality and Looker usability will not be validated before go-live, increasing post-launch support burden and adoption risk.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Marketing stakeholder unavailable during Phase 4; UAT session cancelled or rescheduled; no end-user feedback on Looker usability",
+          "mitigation": "Schedule UAT session in Phase 4 at least 2 weeks in advance. Identify primary and backup marketing stakeholder for UAT. Confirm availability in writing before Phase 3 starts.",
+          "contingency": "If marketing team unavailable, conduct UAT with IT/analyst only. Document findings and schedule follow-up UAT with marketing team post-launch. Increase post-launch support hours to address usability issues."
+        },
+        {
+          "id": "R8",
+          "category": "Technical",
+          "description": "If daily refresh scheduler fails silently (e.g., Snowflake task fails but does not trigger alert), marketing team will not notice stale data, leading to incorrect business decisions and loss of trust in the pipeline.",
+          "probability": "LOW",
+          "impact": "HIGH",
+          "score": "MEDIUM",
+          "trigger": "Scheduler fails without alert; monitoring alert not triggered; stale data in Looker undetected for > 1 day",
+          "mitigation": "In Phase 2 (T8), implement robust failure recovery with retry logic. In Phase 4 (T15), configure email alerts for failed refreshes and data quality violations. Test alerts by simulating failures.",
+          "contingency": "If silent failure occurs, immediately investigate root cause. Implement additional monitoring (e.g., data freshness check in Looker). Add manual refresh verification step until root cause is resolved."
+        },
+        {
+          "id": "R9",
+          "category": "Technical",
+          "description": "If Looker custom report creation is too complex for marketing team (e.g., requires SQL knowledge, non-intuitive UI), marketing team will not be able to create custom reports without IT help, failing the success criteria.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "UAT reveals marketing team cannot create custom reports; Looker training insufficient; marketing team requests IT help for every custom report",
+          "mitigation": "In Phase 3 (T11), design pre-built reports with filters and parameters that allow marketing team to customize without SQL. In Phase 5 (T17), conduct hands-on Looker training with marketing team. Provide templates and best practices documentation.",
+          "contingency": "If marketing team struggles with custom reports, create additional pre-built report templates covering common use cases. Provide Looker support hotline for first 30 days post-launch. Consider Looker admin role for one marketing team member."
+        }
+      ],
+      "staffing_plan": [
+        {
+          "role": "Data Engineer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 208.0,
+          "allocation_percent": 65.0,
+          "skills_required": [
+            "Snowflake SQL",
+            "Python or Scala for ETL",
+            "API integration (REST, OAuth)",
+            "Data pipeline orchestration (Airflow, Snowflake Tasks)",
+            "Git version control",
+            "Linux/shell scripting"
+          ],
+          "critical_path": true,
+          "notes": "Full-time on critical path. Owns data source integration (T5), transformation logic (T6), historical load (T7), scheduler configuration (T8), edge case testing (T10), and production deployment (T16). Must have prior Snowflake experience."
+        },
+        {
+          "role": "Data Analyst",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 172.0,
+          "allocation_percent": 54.0,
+          "skills_required": [
+            "SQL (intermediate to advanced)",
+            "Looker (or similar BI tool)",
+            "Data quality and validation",
+            "Marketing analytics (Google Analytics, HubSpot, Facebook Ads)",
+            "Excel/Python for data analysis"
+          ],
+          "critical_path": true,
+          "notes": "Full-time on critical path. Owns GDPR compliance scope (T3), data lineage documentation (T4), transformation logic (T6), data quality validation (T9), pre-built report creation (T11), end-to-end testing (T12), data accuracy audit (T13), UAT (T14), and Looker training (T17). Must have prior Looker experience and marketing analytics knowledge."
+        },
+        {
+          "role": "Product Manager",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 40.0,
+          "allocation_percent": 12.5,
+          "skills_required": [
+            "Project management",
+            "Stakeholder communication",
+            "Data pipeline fundamentals",
+            "Risk management"
+          ],
+          "critical_path": false,
+          "notes": "Part-time oversight. Manages stakeholder alignment, scope control, risk tracking, and timeline management. Facilitates UAT and training sessions. Escalates blockers (API access delays, compliance issues, resource conflicts)."
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "Have API access and sandbox credentials been confirmed for all 5 data sources (Google Analytics, HubSpot, Facebook Ads, Mailchimp, Stripe)? Are there any legal/compliance approvals required for data access?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If API access is delayed or requires legal approval, Phase 1 will extend by 2-4 weeks, pushing past the 2-month deadline. Development cannot proceed without confirmed sandbox access."
+        },
+        {
+          "priority": 2,
+          "question": "What is the exact scope of GDPR compliance required? Which fields are considered PII? Are data residency, encryption-at-rest, or advanced audit trails required, or is field-level masking sufficient?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If GDPR scope is broader than assumed (data residency, encryption, audit trails), Snowflake configuration and pipeline architecture will require security review and re-design, extending Phase 3 by 2-3 weeks."
+        },
+        {
+          "priority": 3,
+          "question": "Can the data engineer and analyst commit to 100% full-time allocation for the full 8-week duration? Are there any competing projects or shared resource constraints?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If either team member is part-time or pulled to another project, critical path tasks will slip by 2-4 weeks, making the 2-month deadline unachievable."
+        },
+        {
+          "priority": 4,
+          "question": "Which 15 pre-built reports are in scope? Can marketing stakeholder confirm the final list before Phase 2 starts to prevent scope creep?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If marketing team requests additional reports during Phase 3, Phase 3 will extend by 1-2 weeks, compressing QA and testing time."
+        },
+        {
+          "priority": 5,
+          "question": "Is a marketing team member available for 4-6 hours per week during Phase 4 (UAT) and Phase 5 (training) to validate custom report creation and Looker usability?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If marketing team is unavailable for UAT, custom report functionality will not be validated before go-live, increasing post-launch support burden and adoption risk."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 62.0,
+        "deductions": [
+          {
+            "amount": 5.0,
+            "reason": "Assumption A1: Data engineer and analyst full-time allocation and Snowflake/Looker experience not explicitly confirmed in input"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A2: All 5 external data sources have documented APIs and sandbox access available \u2014 not confirmed in input"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A3: GDPR compliance scope limited to field-level masking; broader requirements (data residency, encryption) not ruled out"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A4: Marketing team available for UAT and training \u2014 not confirmed in input"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Risk R3 (Resource): Data engineer or analyst unavailable \u2014 MEDIUM probability, HIGH impact = HIGH score"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Risk R4 (Compliance): GDPR scope broader than assumed \u2014 MEDIUM probability, HIGH impact = HIGH score"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Risk R6 (Scope): Marketing team requests additional reports beyond 15 \u2014 HIGH probability, MEDIUM impact = HIGH score"
+          },
+          {
+            "amount": 5.0,
+            "reason": "SDLC approach is Predictive (lower risk than Adaptive/Hybrid), but 4 HIGH risks and 4 assumptions reduce confidence"
+          }
+        ],
+        "interpretation": "PM confidence score is 62.0 because the project has a well-defined scope, explicit deadline, and clear success criteria, but 4 HIGH-probability risks (resource availability, GDPR scope, scope creep, external API access) and 4 material assumptions (team allocation, API access, compliance scope, stakeholder availability) create execution uncertainty. Immediate mitigation of R3, R4, and R6 in Phase 1 is critical to protect the 2-month deadline."
+      },
+      "project_viability": {
+        "viability_status": "AT_RISK",
+        "gap_type": "SCHEDULE",
+        "gap_amount": "0.2 weeks past deadline (9.2 weeks estimated vs 8 weeks deadline, within 15% buffer but no margin for error)",
+        "scoping_options": [
+          {
+            "option_id": "O1",
+            "description": "Reduce pre-built reports from 15 to 10 core reports (traffic, leads, spend, revenue, email performance). Defer 5 advanced reports to post-launch phase 2.",
+            "impact": "Reduces Phase 3 effort by ~8 hours. Brings total timeline to 8.8 weeks, well within deadline.",
+            "tradeoffs": "Marketing team has fewer out-of-the-box reports at launch. Custom report creation capability mitigates this gap. Advanced reports (cohort analysis, attribution modeling) deferred to phase 2."
+          },
+          {
+            "option_id": "O2",
+            "description": "Defer 2-year historical data load to post-launch. Load only 6 months of historical data for launch; backfill remaining 18 months in phase 2 (week 9-12).",
+            "impact": "Reduces Phase 2 effort by ~12 hours. Brings total timeline to 8.6 weeks, within deadline.",
+            "tradeoffs": "Marketing team has limited historical context at launch. Backfill process must be automated and non-disruptive. Requires stakeholder acceptance of phased data availability."
+          },
+          {
+            "option_id": "O3",
+            "description": "Add a second data engineer (contractor or internal) for Phases 2-3 only. Parallelize data source integration and transformation logic.",
+            "impact": "Reduces critical path duration by ~1 week. Brings total timeline to 8.2 weeks, within deadline.",
+            "tradeoffs": "Increases budget by ~$8,000-12,000 (contractor cost). Requires onboarding time (2-3 days). Coordination overhead between two engineers."
+          }
+        ]
+      }
+    },
+    "gate": {
+      "fired": false,
+      "reasons": [],
+      "decision": null
+    },
+    "validation": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        "Staffing adds expanded role class PM (Product Manager) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule."
+      ]
+    },
+    "tokens_used": 10533,
+    "input_tokens": 351,
+    "output_tokens": 10182,
+    "cache_hit": false
+  }
+}

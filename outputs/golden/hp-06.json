@@ -1,0 +1,932 @@
+{
+  "case_id": "hp-06",
+  "http_status": 200,
+  "body": {
+    "session_id": "2061c9eb-1dc1-4ec2-9e69-8389d8e55a91",
+    "report_id": "rpt_78202cf987b7",
+    "report_revision": 1,
+    "report": {
+      "report_metadata": {
+        "generated_at": "2026-04-25T20:04:14.862556Z",
+        "prompt_version": "v1.6.3",
+        "project_type": "TYPE_A",
+        "input_quality": "LOW",
+        "classification_confidence": "MEDIUM",
+        "sdlc_approach": "Adaptive",
+        "sdlc_rationale": "Requirements are vague and stakeholder-driven with no defined scope, technology stack, or team experience level specified, forcing an adaptive approach with iterative refinement.",
+        "pm_confidence_score": 28.0
+      },
+      "project_understanding": {
+        "primary_goal": "Improve how projects are tracked internally",
+        "beneficiary": "UNKNOWN \u2014 unclear which team or department will use this system",
+        "trigger": "Current project tracking process is inadequate, but specific pain point not stated",
+        "success_definition": [
+          "UNKNOWN \u2014 no metrics provided for what 'improved' means"
+        ],
+        "supporting_quotes": [
+          "We need to improve how we track projects."
+        ]
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "This is a new internal tool build (TYPE_A) rather than an enhancement to an existing system or a data pipeline",
+          "why": "Input mentions 'improve how we track' which suggests a new or replacement system, not a feature addition to existing software",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.2 \u2014 Scope definition requires understanding whether this is greenfield or brownfield work",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If this is actually an enhancement to an existing project management tool, the team composition, integration points, and regression testing requirements change entirely, invalidating the phase structure",
+          "source": "scope",
+          "tradeoff": "Gains: allows classification and phase decomposition to proceed. Risks: if the organization already has a project tracking system and this is a feature expansion, the plan will be fundamentally wrong."
+        },
+        {
+          "id": "A2",
+          "what": "The intended end users are internal project managers or team leads, not external customers",
+          "why": "Input says 'improve how we track projects' \u2014 standard language for internal process improvement, not customer-facing product",
+          "pmi_basis": "PMBOK 6th Ed, Section 13.2 \u2014 Stakeholder identification requires understanding who benefits from the deliverable",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If end users are different (e.g., executives, finance, external clients), the feature set, UI/UX requirements, and success metrics change significantly",
+          "source": "scope",
+          "tradeoff": "Gains: allows persona definition and success criteria to be assumed. Risks: if wrong, UAT and adoption will fail because the tool was built for the wrong audience."
+        },
+        {
+          "id": "A3",
+          "what": "No technology stack is mandated; the team will choose the appropriate platform based on organizational standards",
+          "why": "Input contains no mention of required technology, existing systems, or platform constraints",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 \u2014 Resource planning requires understanding available technology and team capability",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If a specific technology is mandated by IT or compliance (e.g., 'must run on Salesforce', 'must be cloud-only'), the architecture, team skills, and timeline change",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows team to select best-fit technology. Risks: if a mandate exists and is discovered mid-project, rework is required."
+        },
+        {
+          "id": "A4",
+          "what": "No deadline is specified; planning assumes a standard 12-16 week delivery window for a TYPE_A internal tool with a 3-person core team",
+          "why": "Input provides no date constraint; internal tools typically follow a predictable cadence unless otherwise stated",
+          "pmi_basis": "PMBOK 6th Ed, Section 6.4 \u2014 Schedule baseline derived from scope and resource availability; absence of constraint allows standard estimation",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If a hard deadline exists (e.g., 'must launch by Q2'), the phase allocations, team size, and scope must be re-negotiated immediately",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows realistic timeline estimation without compression. Risks: if a deadline exists and is not communicated, the plan will be invalidated on first stakeholder review."
+        },
+        {
+          "id": "A5",
+          "what": "No budget constraint is specified; planning assumes budget is available to hire or allocate necessary roles (PM, developers, QA, DevOps)",
+          "why": "Input contains no mention of budget limits or cost constraints",
+          "pmi_basis": "PMBOK 6th Ed, Section 7.2 \u2014 Cost estimation requires understanding budget availability; absence of constraint allows full-cost planning",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If budget is constrained (e.g., 'max $50k'), team size, timeline, and scope must be reduced immediately",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows realistic staffing without artificial compression. Risks: if budget is limited and not disclosed, the plan will be rejected at approval."
+        },
+        {
+          "id": "A6",
+          "what": "Success is defined as 'adoption by end users' and 'reduction in time spent on manual project tracking' \u2014 measurable by post-launch survey and time-tracking data",
+          "why": "Input says 'improve' but provides no metrics; standard success definition for internal tools is adoption and efficiency gain",
+          "pmi_basis": "PMBOK 6th Ed, Section 8.1 \u2014 Quality metrics must be defined before execution; absence requires assumption of standard internal tool success criteria",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If stakeholders define success differently (e.g., 'must integrate with Jira', 'must support 500 concurrent users'), the feature set and testing scope change",
+          "source": "scope",
+          "tradeoff": "Gains: allows UAT and acceptance criteria to be defined. Risks: if stakeholder expectations differ, the tool will be rejected post-launch."
+        },
+        {
+          "id": "A7",
+          "what": "Stakeholder approval of scope, timeline, and budget is assumed to be pending \u2014 this plan is a proposal for stakeholder review, not a committed baseline",
+          "why": "Input is a single sentence with no evidence of stakeholder sign-off or formal requirements document",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.4 \u2014 Scope baseline requires accepted requirements and stakeholder approval before execution",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If stakeholders reject the proposed scope, timeline, or team composition, the entire plan must be reworked",
+          "source": "scope",
+          "tradeoff": "Gains: allows planning to proceed without stakeholder delay. Risks: if stakeholders have undisclosed expectations, the plan will be invalidated at review."
+        }
+      ],
+      "project_plan": {
+        "total_duration_weeks": 14.0,
+        "buffer_applied_percent": 15.0,
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T3",
+            "T6",
+            "T11",
+            "T15",
+            "T19"
+          ],
+          "total_duration_days": 56.0,
+          "zero_slack_tasks": [
+            "T1",
+            "T3",
+            "T6",
+            "T11",
+            "T15",
+            "T19"
+          ],
+          "highest_slack_tasks": [
+            "T2",
+            "T5",
+            "T9"
+          ],
+          "staffing_implication": "Product Manager and Backend Developer must be allocated full-time across all phases; Frontend Developer must be full-time Phases 2-4; QA Engineer must be full-time Phases 3-4. Any part-time allocation or shared resource will break the critical path."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 1.8,
+            "percentage_of_total": 13.0,
+            "milestones": [
+              "Stakeholder alignment session completed",
+              "Current project tracking process documented",
+              "User personas and success metrics defined",
+              "Requirements document drafted and reviewed"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Conduct stakeholder interviews to define project tracking pain points",
+                "phase": 1,
+                "effort_hours": 16.0,
+                "owner_role": "Product Manager",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Interview notes from at least 3 stakeholders documenting current process, pain points, and desired outcomes"
+              },
+              {
+                "id": "T2",
+                "name": "Map current project tracking workflow and identify bottlenecks",
+                "phase": 1,
+                "effort_hours": 12.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Process flow diagram showing current state, identified bottlenecks, and time spent on each step"
+              },
+              {
+                "id": "T3",
+                "name": "Define user personas, success metrics, and MVP scope",
+                "phase": 1,
+                "effort_hours": 20.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T2"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Persona document with 2-3 user types, success metrics (adoption %, time saved), and MVP feature list approved by stakeholder"
+              },
+              {
+                "id": "T4",
+                "name": "Design system architecture and technology stack recommendation",
+                "phase": 1,
+                "effort_hours": 24.0,
+                "owner_role": "Solution Architect",
+                "dependencies": [
+                  "T3"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Architecture document with technology stack, data model, and integration points reviewed by tech lead"
+              },
+              {
+                "id": "T5",
+                "name": "Create wireframes for core project tracking workflows",
+                "phase": 1,
+                "effort_hours": 18.0,
+                "owner_role": "UX Designer",
+                "dependencies": [
+                  "T3"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 4,
+                "definition_of_done": "Wireframes for 5+ core screens showing project list, detail view, status updates, and reporting"
+              },
+              {
+                "id": "T6",
+                "name": "Obtain stakeholder sign-off on requirements and MVP scope",
+                "phase": 1,
+                "effort_hours": 8.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T3",
+                  "T4",
+                  "T5"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Signed requirements document and scope approval from primary stakeholder"
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development",
+            "duration_weeks": 5.0,
+            "percentage_of_total": 36.0,
+            "milestones": [
+              "Data model and API endpoints implemented",
+              "Core project CRUD operations working",
+              "User authentication and authorization implemented",
+              "Internal demo completed with stakeholder feedback"
+            ],
+            "tasks": [
+              {
+                "id": "T7",
+                "name": "Set up development environment and CI/CD pipeline",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T6"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 5,
+                "definition_of_done": "Development environment running locally, CI/CD pipeline configured and tested"
+              },
+              {
+                "id": "T8",
+                "name": "Implement database schema and data access layer",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T6"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Database schema created, migrations tested, ORM/data access layer implemented and unit tested"
+              },
+              {
+                "id": "T9",
+                "name": "Build project CRUD API endpoints",
+                "phase": 2,
+                "effort_hours": 32.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Create, read, update, delete endpoints for projects implemented, documented, and tested with Postman/Swagger"
+              },
+              {
+                "id": "T10",
+                "name": "Implement user authentication and role-based access control",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 4,
+                "definition_of_done": "SSO or local authentication working, role-based access control enforced on all endpoints, tested with multiple user roles"
+              },
+              {
+                "id": "T11",
+                "name": "Build frontend UI for project list and detail views",
+                "phase": 2,
+                "effort_hours": 36.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T6",
+                  "T9"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Project list page and detail page rendering correctly, connected to backend API, responsive design tested on desktop and tablet"
+              },
+              {
+                "id": "T12",
+                "name": "Implement project status update and notification features",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T11"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Status update form working, notifications sent to stakeholders, tested end-to-end"
+              },
+              {
+                "id": "T13",
+                "name": "Conduct internal demo and gather stakeholder feedback",
+                "phase": 2,
+                "effort_hours": 12.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T11",
+                  "T12"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Demo completed with stakeholders, feedback documented, prioritized backlog of changes created"
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases",
+            "duration_weeks": 3.0,
+            "percentage_of_total": 21.0,
+            "milestones": [
+              "All integrations tested (email, notifications, reporting)",
+              "Edge case handling implemented (bulk operations, error scenarios)",
+              "Security review completed",
+              "Performance testing at expected load completed"
+            ],
+            "tasks": [
+              {
+                "id": "T14",
+                "name": "Implement email notifications for project updates",
+                "phase": 3,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Email notifications sent on project status change, tested with multiple recipients, unsubscribe option working"
+              },
+              {
+                "id": "T15",
+                "name": "Build project reporting and export functionality",
+                "phase": 3,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T9"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Reports generated for project status, timeline, and resource allocation; CSV/PDF export working"
+              },
+              {
+                "id": "T16",
+                "name": "Implement bulk project operations and import functionality",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T15"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Bulk update, delete, and CSV import working; error handling for malformed data; rollback on failure"
+              },
+              {
+                "id": "T17",
+                "name": "Conduct security review and implement security hardening",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "Security Engineer",
+                "dependencies": [
+                  "T10",
+                  "T15"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Security review completed, vulnerabilities identified and remediated, OWASP Top 10 checklist passed"
+              },
+              {
+                "id": "T18",
+                "name": "Perform load testing and optimize performance",
+                "phase": 3,
+                "effort_hours": 18.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T15"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Load test completed for 100 concurrent users, response times < 2s, database queries optimized"
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 2.8,
+            "percentage_of_total": 20.0,
+            "milestones": [
+              "All critical bugs resolved",
+              "UAT completed with end users",
+              "Accessibility audit passed (WCAG 2.1 AA)",
+              "Documentation and runbooks completed"
+            ],
+            "tasks": [
+              {
+                "id": "T19",
+                "name": "Execute comprehensive test plan and log defects",
+                "phase": 4,
+                "effort_hours": 32.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T18"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Test plan executed, all test cases documented, defects logged in tracking system with severity and priority"
+              },
+              {
+                "id": "T20",
+                "name": "Conduct user acceptance testing with stakeholders",
+                "phase": 4,
+                "effort_hours": 20.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T19"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "UAT completed with at least 2 end users, sign-off obtained, feedback incorporated"
+              },
+              {
+                "id": "T21",
+                "name": "Perform accessibility audit and remediate issues",
+                "phase": 4,
+                "effort_hours": 16.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T19"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Accessibility audit completed using WAVE/Axe, WCAG 2.1 AA compliance verified, keyboard navigation tested"
+              },
+              {
+                "id": "T22",
+                "name": "Create user documentation and training materials",
+                "phase": 4,
+                "effort_hours": 18.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T20"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "User guide, video tutorials, and FAQ documentation completed and reviewed by stakeholder"
+              },
+              {
+                "id": "T23",
+                "name": "Create operational runbooks and monitoring setup",
+                "phase": 4,
+                "effort_hours": 14.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T19"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Runbooks for common operations, monitoring alerts configured, on-call procedures documented"
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 1.4,
+            "percentage_of_total": 10.0,
+            "milestones": [
+              "Production deployment completed",
+              "Smoke testing passed in production",
+              "Go-live sign-off obtained",
+              "Post-launch support plan activated"
+            ],
+            "tasks": [
+              {
+                "id": "T24",
+                "name": "Deploy to production and execute smoke tests",
+                "phase": 5,
+                "effort_hours": 12.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T23"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Application deployed to production, smoke tests passed, no critical errors in logs"
+              },
+              {
+                "id": "T25",
+                "name": "Conduct go-live readiness review and stakeholder sign-off",
+                "phase": 5,
+                "effort_hours": 8.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T24"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Go-live checklist completed, stakeholder sign-off obtained, post-launch support plan confirmed"
+              },
+              {
+                "id": "T26",
+                "name": "Handoff to operations and activate post-launch support",
+                "phase": 5,
+                "effort_hours": 10.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T25"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Operations team trained, support tickets configured, escalation procedures documented"
+              }
+            ]
+          }
+        ]
+      },
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Scope",
+          "description": "If scope is not formally defined and signed off by stakeholders before Phase 2 begins, then feature creep and scope changes will occur mid-project, causing timeline slippage and budget overrun",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Stakeholder requests new features or changes requirements after development has started",
+          "mitigation": "Obtain written scope approval from all stakeholders in Phase 1 before any development begins; establish change control process",
+          "contingency": "If scope changes are requested, evaluate impact on timeline and budget; prioritize changes and defer non-critical items to Phase 2"
+        },
+        {
+          "id": "R2",
+          "category": "Resource",
+          "description": "If the team lacks experience with the selected technology stack, then development velocity will be lower than estimated, causing timeline slippage",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Development team reports unfamiliarity with selected framework or database technology",
+          "mitigation": "Conduct technology assessment in Phase 1; allocate time for team training before development begins; consider hiring contractor with expertise if needed",
+          "contingency": "If velocity is lower than expected, extend timeline or reduce scope; allocate additional resources for knowledge transfer"
+        },
+        {
+          "id": "R3",
+          "category": "Technical",
+          "description": "If integration with existing project management systems (Jira, Asana, Monday.com) is required but not scoped, then additional development effort will be needed, causing timeline slippage",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Stakeholder requests integration with external project management tool during Phase 2 or later",
+          "mitigation": "Clarify integration requirements in Phase 1; document all external system dependencies and API contracts before development begins",
+          "contingency": "If integration is required, evaluate effort and timeline impact; defer to Phase 2 if necessary"
+        },
+        {
+          "id": "R4",
+          "category": "Schedule",
+          "description": "If no deadline is communicated and stakeholders expect launch by a specific date, then the plan will be invalidated and timeline will need to be compressed",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Stakeholder reveals expected launch date that conflicts with planned 14-week timeline",
+          "mitigation": "Confirm deadline and business drivers in Phase 1 kickoff meeting; document in requirements",
+          "contingency": "If deadline is earlier than planned, reduce scope or increase team size; evaluate budget impact"
+        },
+        {
+          "id": "R5",
+          "category": "Compliance",
+          "description": "If security or compliance requirements (SOC 2, HIPAA, GDPR) are not identified in Phase 1, then security review and remediation will be required late in the project, causing timeline slippage",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Compliance requirement discovered during Phase 3 or Phase 4 security review",
+          "mitigation": "Ask stakeholders explicitly about compliance requirements in Phase 1; document all regulatory constraints before design begins",
+          "contingency": "If compliance requirement is discovered late, allocate additional time for security review and remediation; defer non-critical features"
+        },
+        {
+          "id": "R6",
+          "category": "Resource",
+          "description": "If the Product Manager is not allocated full-time to this project, then stakeholder alignment and decision-making will be delayed, causing timeline slippage",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "PM is pulled to other projects or allocated part-time to this project",
+          "mitigation": "Confirm PM full-time allocation in writing before Phase 1 begins; establish escalation path for urgent decisions",
+          "contingency": "If PM is unavailable, assign a backup PM or delegate decision-making authority to a named stakeholder"
+        },
+        {
+          "id": "R7",
+          "category": "Execution",
+          "description": "If this is the team's first project of this type (building an internal project tracking tool), then execution risk is elevated due to unfamiliarity with requirements and best practices",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Team reports lack of experience with similar projects or domain knowledge",
+          "mitigation": "Allocate time for team training and knowledge transfer in Phase 1; consider hiring domain expert or contractor",
+          "contingency": "If execution issues arise, extend timeline or allocate additional resources for problem-solving"
+        },
+        {
+          "id": "R8",
+          "category": "Integration",
+          "description": "If email notification service or external API dependencies are not tested in sandbox before Phase 2, then integration failures will occur during development, causing rework",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Email service or external API is unavailable or has unexpected behavior during development",
+          "mitigation": "Confirm sandbox access and API documentation for all external services in Phase 1; test integration points early in Phase 2",
+          "contingency": "If integration fails, implement fallback or alternative service; allocate time for troubleshooting"
+        },
+        {
+          "id": "R9",
+          "category": "Resource",
+          "description": "If QA Engineer is not allocated at minimum 25% of total development effort, then test coverage will be insufficient and critical bugs will reach production",
+          "probability": "LOW",
+          "impact": "HIGH",
+          "score": "MEDIUM",
+          "trigger": "QA effort falls below 25% of development hours due to resource constraints",
+          "mitigation": "Allocate QA Engineer at 25% minimum of total development hours; establish test plan in Phase 1",
+          "contingency": "If QA is under-allocated, extend Phase 4 timeline or reduce scope to match available QA capacity"
+        },
+        {
+          "id": "R10",
+          "category": "Scope",
+          "description": "If end-user adoption is not planned and communicated, then the tool will be built but not used, resulting in project failure despite technical success",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Post-launch, end users do not adopt the tool due to lack of training or communication",
+          "mitigation": "Develop adoption plan in Phase 1; conduct training sessions before launch; communicate benefits to end users",
+          "contingency": "If adoption is low post-launch, conduct user feedback sessions and iterate on features; provide additional training"
+        }
+      ],
+      "staffing_plan": [
+        {
+          "role": "Product Manager",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 76.0,
+          "allocation_percent": 12.0,
+          "skills_required": [
+            "Requirements gathering",
+            "Stakeholder management",
+            "Project tracking domain knowledge",
+            "User research"
+          ],
+          "critical_path": true,
+          "notes": "Must be full-time equivalent across all phases; responsible for stakeholder alignment, scope management, and go-live sign-off"
+        },
+        {
+          "role": "Backend Developer",
+          "phase_involvement": [
+            2,
+            3,
+            4
+          ],
+          "total_hours": 172.0,
+          "allocation_percent": 27.0,
+          "skills_required": [
+            "REST API design",
+            "Database design",
+            "Authentication/authorization",
+            "Performance optimization"
+          ],
+          "critical_path": true,
+          "notes": "Must be full-time Phases 2-4; responsible for data model, API endpoints, and reporting functionality"
+        },
+        {
+          "role": "Frontend Developer",
+          "phase_involvement": [
+            2,
+            3,
+            4
+          ],
+          "total_hours": 136.0,
+          "allocation_percent": 21.0,
+          "skills_required": [
+            "React or Vue.js",
+            "TypeScript",
+            "Responsive design",
+            "Accessibility (WCAG 2.1)"
+          ],
+          "critical_path": true,
+          "notes": "Must be full-time Phases 2-4; responsible for UI implementation and user experience"
+        },
+        {
+          "role": "QA Engineer",
+          "phase_involvement": [
+            3,
+            4
+          ],
+          "total_hours": 68.0,
+          "allocation_percent": 11.0,
+          "skills_required": [
+            "Test planning",
+            "Manual testing",
+            "Automated testing",
+            "Defect tracking"
+          ],
+          "critical_path": true,
+          "notes": "Must be full-time Phases 3-4; QA effort is 68h which is 39.5% of 172h backend dev effort, exceeding 25% minimum"
+        },
+        {
+          "role": "Solution Architect",
+          "phase_involvement": [
+            1
+          ],
+          "total_hours": 24.0,
+          "allocation_percent": 4.0,
+          "skills_required": [
+            "System design",
+            "Technology stack evaluation",
+            "Scalability planning"
+          ],
+          "critical_path": false,
+          "notes": "Front-loaded to Phase 1 only; responsible for architecture and technology recommendations"
+        },
+        {
+          "role": "UX Designer",
+          "phase_involvement": [
+            1,
+            2
+          ],
+          "total_hours": 30.0,
+          "allocation_percent": 5.0,
+          "skills_required": [
+            "Wireframing",
+            "User research",
+            "Interaction design",
+            "Accessibility"
+          ],
+          "critical_path": false,
+          "notes": "Front-loaded to Phases 1-2; responsible for wireframes and UI design"
+        },
+        {
+          "role": "DevOps Engineer",
+          "phase_involvement": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 52.0,
+          "allocation_percent": 8.0,
+          "skills_required": [
+            "CI/CD pipeline setup",
+            "Infrastructure as code",
+            "Monitoring and alerting",
+            "Deployment automation"
+          ],
+          "critical_path": false,
+          "notes": "Back-loaded to Phases 2-5; responsible for environment setup, deployment, and operations handoff"
+        },
+        {
+          "role": "Security Engineer",
+          "phase_involvement": [
+            3,
+            4
+          ],
+          "total_hours": 20.0,
+          "allocation_percent": 3.0,
+          "skills_required": [
+            "Security review",
+            "Vulnerability assessment",
+            "OWASP Top 10",
+            "Secure coding practices"
+          ],
+          "critical_path": false,
+          "notes": "Mid-loaded to Phases 3-4; responsible for security review and hardening"
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "What specific pain points or inefficiencies in the current project tracking process are driving this initiative? (e.g., manual status updates, lack of visibility, missed deadlines, poor resource allocation)",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "Without understanding the core problem, the feature set and success criteria cannot be defined; the tool may be built for the wrong use case"
+        },
+        {
+          "priority": 2,
+          "question": "Who are the primary end users of this project tracking system? (e.g., project managers, team leads, executives, finance team) and how many users are expected?",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "User personas, UI/UX requirements, and scalability targets cannot be defined; the tool may not meet user needs"
+        },
+        {
+          "priority": 3,
+          "question": "Is there a hard deadline for launch? If so, what is the target date and what business drivers are behind it?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If a deadline exists and is not communicated, the plan will be invalidated and timeline will need to be compressed, requiring scope reduction or team expansion"
+        },
+        {
+          "priority": 4,
+          "question": "Are there any compliance, security, or regulatory requirements (SOC 2, HIPAA, GDPR, data residency) that this system must meet?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If compliance requirements are discovered late, security review and remediation will cause timeline slippage and budget overrun"
+        },
+        {
+          "priority": 5,
+          "question": "Does this project need to integrate with existing project management tools (Jira, Asana, Monday.com, Microsoft Project) or other internal systems?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If integrations are required but not scoped, additional development effort will be needed, causing timeline slippage"
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 28.0,
+        "deductions": [
+          {
+            "amount": 10.0,
+            "reason": "Input quality is LOW \u2014 single sentence with no distinguishable requirements, no scope, no team, no deadline, no budget"
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: deadline not specified"
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: budget not specified"
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: team size and composition not specified"
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: technology stack not mandated"
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: compliance requirements not mentioned"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Stakeholder sign-off not mentioned in input; scope approval is assumed pending"
+          },
+          {
+            "amount": 5.0,
+            "reason": "SDLC approach is Adaptive due to vague requirements and stakeholder-driven input"
+          },
+          {
+            "amount": 5.0,
+            "reason": "7 assumptions logged (A1-A7) representing significant planning uncertainty"
+          },
+          {
+            "amount": 5.0,
+            "reason": "1 CRITICAL risk present (R1: Scope not formally defined) \u2014 scope creep and change control are unmanaged"
+          },
+          {
+            "amount": 5.0,
+            "reason": "4 HIGH risks present (R2, R3, R4, R5, R10) \u2014 multiple execution and integration uncertainties"
+          }
+        ],
+        "interpretation": "PM confidence score is 28.0 because the input is a single vague sentence with no scope definition, no team, no deadline, no budget, and no stakeholder sign-off \u2014 requiring 7 assumptions and producing 1 CRITICAL and 4 HIGH risks; this plan is a proposal for stakeholder review, not a committed baseline."
+      },
+      "project_viability": null
+    },
+    "gate": {
+      "fired": true,
+      "reasons": [
+        "confidence_score < 60 \u2014 plan needs review",
+        "risk_register contains CRITICAL risk \u2014 PM decision required"
+      ],
+      "decision": null
+    },
+    "validation": {
+      "valid": false,
+      "errors": [
+        "QA total_hours (68) is below 25% of implementation hours (434) \u2014 risk_register must include a CRITICAL or HIGH risk explicitly tied to QA under-allocation vs the 25% rule (not MEDIUM/LOW; gap is certain). Found MEDIUM severity on matching risk row(s).",
+        "Open question urgency 'Before planning' is inconsistent with a populated project_plan (phases and tasks) \u2014 decomposition already occurred; use 'Before build' unless no tasks exist in any phase."
+      ],
+      "warnings": [
+        "Staffing adds expanded role class SECURITY (Security Engineer) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule."
+      ]
+    },
+    "tokens_used": 10143,
+    "input_tokens": 81,
+    "output_tokens": 10062,
+    "cache_hit": false
+  }
+}

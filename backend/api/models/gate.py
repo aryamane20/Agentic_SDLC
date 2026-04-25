@@ -2,7 +2,7 @@
 
 from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field
 
 
 class GateState(BaseModel):
@@ -37,11 +37,7 @@ class GenerateReportRequest(BaseModel):
     prd_text: Optional[str] = None
     use_cache: bool = True
     prompt_version: Optional[str] = None
-
-    @model_validator(mode="after")
-    def brief_or_prd(self) -> "GenerateReportRequest":
-        b = (self.brief or "").strip()
-        p = (self.prd_text or "").strip()
-        if not b and not p:
-            raise ValueError("Provide a brief and/or PRD content")
-        return self
+    # Note: empty brief + empty prd_text validation lives in
+    # backend/api/services/input_guard.py (Rule 7: empty) so the API
+    # returns a structured `brief_missing` envelope instead of a Pydantic
+    # 422 ValueError. Do not re-add a model_validator here.

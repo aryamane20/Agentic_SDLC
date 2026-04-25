@@ -6,7 +6,23 @@ difference. Whitespace changes, comment tweaks, and one-line fixes are git commi
 not prompt versions.
 
 Intermediate versions (v1.0.0–v1.6.1) are archived in `prompts/archive/`.
-Active versions: v1.0 through **v1.6.3** (latest default in code: `v1.6.3`).
+Active versions: v1.0 through **v1.6.4** (latest default in code: `v1.6.4`).
+
+---
+
+## v1.6.4 — INTEGRATION CRITICAL + STAFFING 80% NUMERIC + BREVITY
+**File:** `prompts/v1.6.4_system.txt`  
+**Date:** April 2026  
+**Type:** FUNCTIONAL — golden alignment + output completion
+
+**What changed from v1.6.3:**
+- **Step 7:** Mandatory `CRITICAL` risk when the input names legacy/deprecated/unsupported APIs (e.g. direct DB to legacy metadata, vendor deprecated API, undocumented production integration). Names specific systems; overrides generic down-calibration for those signals.
+- **Step 6→8 / Step 8:** Clarifies that `allocation_percent` must **never** exceed **80.0** (including no **100** for “solo full-time”); split rows or 80% + notes.
+- **Output contract:** Verbosity rule for long briefs — shorter field strings so JSON completes within the token limit.
+
+**F14 fixture:** `inputs/test-cases-p2/risk/risk-10.txt` shortened (same IDP stress, less prose) to match brevity guidance.
+
+**Eval impact:** Regenerate `hp-09`, `risk-02`, `risk-08`, `risk-10` for golden; P1 `tc-10` edge case was already pass on NOT_VIABLE — golden adds stricter allocation assert.
 
 ---
 

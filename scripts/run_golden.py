@@ -6,7 +6,8 @@ Golden dataset runner — two modes:
               Skips cases where output already exists and golden_verified=true.
 
   --replay    Read saved outputs, check against assertions in golden_dataset.json,
-              print a pass/fail table. No API calls.
+              print a pass/fail table, and write outputs/golden/golden_replay.xlsx.
+              No API calls.
 
   --case ID   Run a single case only (works with both modes).
 
@@ -21,13 +22,20 @@ import json
 import re
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
+
+REQUEST_TIMEOUT_S = 480  # generate is slow; Haiku w/ 16k max_tokens + 8-step reasoning
+                          # can exceed 240s on vague briefs (hp-02, hp-06). 480s = 8min ceiling.
+
+# Keep golden `--generate` aligned with the active system prompt in agent/main + API default.
+GOLDEN_GENERATE_PROMPT_VERSION = "v1.6.4"
 
 try:
     import httpx as _http
 
     def _request(method: str, url: str, **kwargs):
-        return _http.request(method, url, timeout=120, **kwargs)
+        return _http.request(method, url, timeout=REQUEST_TIMEOUT_S, **kwargs)
 except ImportError:
     import urllib.request
     import urllib.error
@@ -45,7 +53,7 @@ except ImportError:
         h = {**(headers or {}), "Content-Type": "application/json"}
         req = urllib.request.Request(url, data=data, headers=h, method=method.upper())
         try:
-            with urllib.request.urlopen(req, timeout=120) as r:
+            with urllib.request.urlopen(req, timeout=REQUEST_TIMEOUT_S) as r:
                 return _FakeResp(r.status, r.read())
         except urllib.error.HTTPError as e:
             return _FakeResp(e.code, e.read())
@@ -115,7 +123,12 @@ def generate(cases: list[dict], only_id: str | None = None) -> None:
             r = _request(
                 "POST",
                 f"{API_BASE}/reports/generate",
-                json={"session_id": sid, "brief": text, "use_cache": False},
+                json={
+                    "session_id": sid,
+                    "brief": text,
+                    "use_cache": False,
+                    "prompt_version": GOLDEN_GENERATE_PROMPT_VERSION,
+                },
                 headers=HEADERS,
             )
             result = {
@@ -294,6 +307,247 @@ def check_case(case: dict, saved: dict) -> list[tuple[str, bool, str]]:
     return checks
 
 
+def _summarize_expected(a: dict) -> str:
+    """Human-readable one-line summary of what a case's assertions require."""
+    parts = []
+    status = a.get("http_status", 200)
+    parts.append(f"HTTP {status}")
+    if status == 422:
+        if a.get("error_code"):
+            parts.append(f"error={a['error_code']}")
+        if a.get("reason_code"):
+            parts.append(f"reason={a['reason_code']}")
+    else:
+        if a.get("gate_fires") is not None:
+            parts.append(f"gate={'fires' if a['gate_fires'] else 'silent'}")
+        if a.get("confidence_min") is not None:
+            parts.append(f"confidence=[{a['confidence_min']},{a['confidence_max']}]")
+        if a.get("viability_status"):
+            parts.append(f"viability={a['viability_status']}")
+        if a.get("has_critical_risk") is not None:
+            parts.append(f"critical_risk={a['has_critical_risk']}")
+        if a.get("staffing_includes_qa"):
+            parts.append("qa_in_staffing")
+        if a.get("staffing_includes_security"):
+            parts.append("security_in_staffing")
+        if a.get("max_allocation_pct") is not None:
+            parts.append(f"max_alloc≤{a['max_allocation_pct']}%")
+        if a.get("assumption_log_min_items") is not None:
+            parts.append(f"assumptions≥{a['assumption_log_min_items']}")
+        if a.get("system_prompt_not_revealed"):
+            parts.append("no_prompt_leak")
+        if a.get("injection_strings_absent"):
+            parts.append(f"no_injection({len(a['injection_strings_absent'])})")
+        if a.get("required_fields"):
+            parts.append(f"fields:{','.join(a['required_fields'])}")
+    return " | ".join(parts)
+
+
+def export_xlsx(
+    cases: list[dict],
+    rows: list[tuple[str, bool, list[tuple[str, bool, str]]]],
+    skipped: list[str],
+    out_path: Path,
+) -> None:
+    """Write replay results to an xlsx file."""
+    try:
+        from openpyxl import Workbook
+        from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+        from openpyxl.utils import get_column_letter
+    except ImportError:
+        print("  ⚠  openpyxl not installed — skipping xlsx export (pip install openpyxl --break-system-packages)")
+        return
+
+    cases_by_id = {c["id"]: c for c in cases}
+    run_ts = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    wb = Workbook()
+
+    # ── Results sheet ──────────────────────────────────────────────────────────
+    ws = wb.active
+    ws.title = "Results"
+
+    # Colors
+    NAV   = "0F1F3D"   # header bg — PLANR navy
+    WHITE = "FFFFFF"
+    PASS_BG  = "D4EDDA"   # soft green
+    FAIL_BG  = "F8D7DA"   # soft red
+    SKIP_BG  = "E8E8E8"   # gray
+    CAT_BG   = "EEF2FF"   # light lavender for category dividers
+    FONT     = "Arial"
+
+    thin = Side(style="thin", color="D0D0D0")
+    border = Border(left=thin, right=thin, top=thin, bottom=thin)
+
+    def hfont(bold=False, color=WHITE, sz=10):
+        return Font(name=FONT, bold=bold, color=color, size=sz)
+
+    def fill(hex_color):
+        return PatternFill("solid", start_color=hex_color, fgColor=hex_color)
+
+    def center():
+        return Alignment(horizontal="center", vertical="center", wrap_text=False)
+
+    def left():
+        return Alignment(horizontal="left", vertical="center", wrap_text=True)
+
+    # Header row
+    headers = ["Test Case", "Category", "Description", "Time Run",
+               "Expected Output", "Result", "Checks", "Failed Checks"]
+    ws.append(headers)
+    for col, _ in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col)
+        cell.font = hfont(bold=True, color=WHITE)
+        cell.fill = fill(NAV)
+        cell.alignment = center()
+        cell.border = border
+
+    # Build rows — group by category
+    CATEGORY_ORDER = ["happy_path", "bad_input", "premortem_risk"]
+    CATEGORY_LABELS = {
+        "happy_path":      "Happy Path",
+        "bad_input":       "Bad Input",
+        "premortem_risk":  "Pre-mortem Risk",
+    }
+
+    rows_by_id = {r[0]: r for r in rows}
+    current_row = 2
+
+    for cat in CATEGORY_ORDER:
+        cat_cases = [c for c in cases if c.get("category") == cat]
+        if not cat_cases:
+            continue
+
+        # Category divider row
+        ws.append([CATEGORY_LABELS[cat]])
+        cat_cell = ws.cell(row=current_row, column=1)
+        cat_cell.font = hfont(bold=True, color="1A1A2E", sz=10)
+        cat_cell.fill = fill(CAT_BG)
+        cat_cell.alignment = left()
+        ws.merge_cells(start_row=current_row, start_column=1,
+                       end_row=current_row, end_column=len(headers))
+        for col in range(1, len(headers) + 1):
+            ws.cell(row=current_row, column=col).border = border
+        current_row += 1
+
+        for case in cat_cases:
+            cid = case["id"]
+            expected_str = _summarize_expected(case["assertions"])
+            out_file = OUT_DIR / f"{cid}.json"
+
+            if cid in skipped or cid not in rows_by_id:
+                time_str = "—"
+                result_str = "SKIP"
+                checks_str = "—"
+                failed_str = "No saved output — run --generate first"
+                row_bg = SKIP_BG
+            else:
+                _, all_pass, checks = rows_by_id[cid]
+                # Time from file mtime
+                if out_file.exists():
+                    mtime = datetime.fromtimestamp(out_file.stat().st_mtime)
+                    time_str = mtime.strftime("%Y-%m-%d %H:%M")
+                else:
+                    time_str = run_ts
+                n_ok = sum(1 for c in checks if c[1])
+                result_str = "PASS" if all_pass else "FAIL"
+                checks_str = f"{n_ok}/{len(checks)}"
+                failed_checks = [f"{name}: {detail}" for name, passed, detail in checks if not passed]
+                failed_str = "; ".join(failed_checks) if failed_checks else ""
+                row_bg = PASS_BG if all_pass else FAIL_BG
+
+            ws.append([cid, cat, case.get("description", ""), time_str,
+                       expected_str, result_str, checks_str, failed_str])
+
+            row_fill = fill(row_bg)
+            for col in range(1, len(headers) + 1):
+                cell = ws.cell(row=current_row, column=col)
+                cell.fill = row_fill
+                cell.border = border
+                cell.font = Font(name=FONT, size=10,
+                                 bold=(col == 6),   # bold the PASS/FAIL cell
+                                 color=("276534" if result_str == "PASS"
+                                        else "8B0000" if result_str == "FAIL"
+                                        else "555555") if col == 6 else "1A1A2E")
+                cell.alignment = center() if col in (1, 2, 4, 6, 7) else left()
+            current_row += 1
+
+    # Summary row
+    total = len(rows)
+    passed = sum(1 for _, ok, _ in rows if ok)
+    failed = total - passed
+    ws.append([])
+    current_row += 1
+    ws.append([f"Run: {run_ts}", "", "",
+               f"Total: {total}",
+               f"Passed: {passed}",
+               f"Failed: {failed}",
+               f"Skipped: {len(skipped)}", ""])
+    for col in range(1, len(headers) + 1):
+        cell = ws.cell(row=current_row, column=col)
+        cell.font = Font(name=FONT, bold=True, size=10, color="1A1A2E")
+        cell.fill = fill("F0F0F0")
+        cell.border = border
+        cell.alignment = center()
+
+    # Column widths
+    col_widths = [14, 16, 42, 18, 60, 9, 9, 55]
+    for i, w in enumerate(col_widths, 1):
+        ws.column_dimensions[get_column_letter(i)].width = w
+
+    # Freeze header + category rows
+    ws.freeze_panes = "A2"
+
+    # ── Summary sheet ──────────────────────────────────────────────────────────
+    ws2 = wb.create_sheet("Summary")
+    ws2.append(["PLANR Golden Dataset — Run Summary"])
+    ws2["A1"].font = Font(name=FONT, bold=True, size=13, color=NAV)
+    ws2.append(["Run timestamp", run_ts])
+    ws2.append([])
+    ws2.append(["Category", "Total", "Passed", "Failed", "Pass Rate"])
+
+    # Header style for summary
+    for col in range(1, 6):
+        cell = ws2.cell(row=4, column=col)
+        cell.font = hfont(bold=True, color=WHITE)
+        cell.fill = fill(NAV)
+        cell.alignment = center()
+        cell.border = border
+
+    cat_row = 5
+    for cat in CATEGORY_ORDER:
+        cat_cases_ids = {c["id"] for c in cases if c.get("category") == cat}
+        cat_rows = [(cid, ok, chks) for cid, ok, chks in rows if cid in cat_cases_ids]
+        cat_total = len(cat_rows)
+        cat_pass = sum(1 for _, ok, _ in cat_rows if ok)
+        cat_fail = cat_total - cat_pass
+        rate = f"{(cat_pass/cat_total*100):.0f}%" if cat_total else "—"
+        ws2.append([CATEGORY_LABELS[cat], cat_total, cat_pass, cat_fail, rate])
+        for col in range(1, 6):
+            cell = ws2.cell(row=cat_row, column=col)
+            cell.font = Font(name=FONT, size=10)
+            cell.border = border
+            cell.alignment = center()
+        cat_row += 1
+
+    # Totals row
+    ws2.append(["Total", total, passed, failed,
+                f"{(passed/total*100):.0f}%" if total else "—"])
+    for col in range(1, 6):
+        cell = ws2.cell(row=cat_row, column=col)
+        cell.font = Font(name=FONT, bold=True, size=10)
+        cell.fill = fill("F0F0F0")
+        cell.border = border
+        cell.alignment = center()
+
+    for col, w in enumerate([28, 10, 10, 10, 12], 1):
+        ws2.column_dimensions[get_column_letter(col)].width = w
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    wb.save(str(out_path))
+    print(f"  📊  Results saved → {out_path}")
+
+
 def replay(cases: list[dict], only_id: str | None = None) -> None:
     rows: list[tuple[str, bool, list[tuple[str, bool, str]]]] = []
     skipped: list[str] = []
@@ -330,6 +584,12 @@ def replay(cases: list[dict], only_id: str | None = None) -> None:
         failed_ids = [cid for cid, ok, _ in rows if not ok]
         print(f"  FAILED: {failed_ids}")
     print()
+
+    # Always export xlsx after replay (unless single --case run)
+    if not only_id:
+        xlsx_path = OUT_DIR / "golden_replay.xlsx"
+        export_xlsx(cases, rows, skipped, xlsx_path)
+
     sys.exit(0 if passed == total else 1)
 
 
@@ -338,7 +598,7 @@ def replay(cases: list[dict], only_id: str | None = None) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="PLANR golden dataset runner")
     parser.add_argument("--generate", action="store_true", help="Call API, save outputs")
-    parser.add_argument("--replay", action="store_true", help="Score saved outputs (free)")
+    parser.add_argument("--replay", action="store_true", help="Score saved outputs + export xlsx (free)")
     parser.add_argument("--case", metavar="ID", help="Single case only")
     args = parser.parse_args()
 

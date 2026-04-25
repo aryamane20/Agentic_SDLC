@@ -2,9 +2,10 @@
 HTTP-level tests for the input guard wired into POST /reports/generate.
 Agent is mocked throughout — no API keys needed.
 
-Note: truly empty brief (brief="" + no prd_text) is caught by the Pydantic
-model validator (brief_or_prd) before our guard runs. These tests cover inputs
-that pass Pydantic but are caught by classify_input.
+Note: empty brief (brief="" + no prd_text) is now caught by classify_input
+(Rule 7: empty), not by a Pydantic model validator. This keeps the error
+envelope shape consistent (`code: brief_missing, reason: empty`) instead of
+the generic Pydantic 422 ValueError shape.
 """
 
 from unittest.mock import MagicMock, patch
@@ -83,3 +84,13 @@ def test_clean_brief_returns_200_and_calls_agent() -> None:
     resp, agent_instance = _post(_CLEAN_BRIEF)
     assert resp.status_code == 200, resp.json()
     agent_instance.run.assert_called_once()
+
+
+def test_empty_brief_returns_422_brief_missing_empty() -> None:
+    """Empty brief is owned by input_guard (Rule 7), not Pydantic."""
+    resp, agent_instance = _post("")
+    assert resp.status_code == 422
+    detail = resp.json()["detail"]
+    assert detail["code"] == "brief_missing"
+    assert detail["reason"] == "empty"
+    agent_instance.run.assert_not_called()

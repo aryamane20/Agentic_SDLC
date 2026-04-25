@@ -1,0 +1,762 @@
+{
+  "case_id": "risk-04",
+  "http_status": 200,
+  "body": {
+    "session_id": "1b0a0796-5506-4008-8666-4381754fc398",
+    "report_id": "rpt_2235fb89d593",
+    "report_revision": 1,
+    "report": {
+      "report_metadata": {
+        "generated_at": "2026-04-25T20:33:23.305585Z",
+        "prompt_version": "v1.6.3",
+        "project_type": "TYPE_A",
+        "input_quality": "LOW",
+        "classification_confidence": "MEDIUM",
+        "sdlc_approach": "Adaptive",
+        "sdlc_rationale": "Requirements are contradictory and evolving; stakeholder expectations are misaligned with constraints; team lacks experience signal; high uncertainty in scope and feasibility.",
+        "pm_confidence_score": 18.0
+      },
+      "project_understanding": {
+        "primary_goal": "Build a customer-facing mobile app for real-time order tracking with offline capability and real-time sync.",
+        "beneficiary": "All customers (estimated 2 million users).",
+        "trigger": "Customer need for real-time order visibility.",
+        "success_definition": [
+          "App works completely offline with no internet connection",
+          "All order updates sync in real-time as they happen",
+          "No user login or authentication required",
+          "Per-customer data isolation enforced",
+          "Zero infrastructure cost",
+          "Handle 500,000 concurrent users with sub-100ms response times",
+          "Launch in 2 weeks",
+          "Full WCAG 2.1 AA accessibility compliance",
+          "Dark mode support",
+          "Five language support",
+          "Push notifications"
+        ],
+        "supporting_quotes": [
+          "Build a customer-facing mobile app for real-time order tracking",
+          "The app must work completely offline with no internet connection AND sync all order updates in real-time",
+          "It must require no user login or authentication AND enforce per-customer data isolation",
+          "It must be free to operate with zero infrastructure cost AND handle 500,000 concurrent users with sub-100ms response times",
+          "The app must be ready to launch in 2 weeks"
+        ]
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "The contradictory requirements (offline + real-time sync, no auth + data isolation, zero cost + 500k concurrent users) represent a fundamental misunderstanding of technical feasibility, not a genuine project scope.",
+          "why": "These constraints are mutually exclusive in software engineering. Offline-first + real-time sync requires bidirectional sync infrastructure. No authentication + per-customer isolation is cryptographically impossible. Zero infrastructure cost + 500k concurrent users at sub-100ms latency is economically impossible. This input appears to be a test of whether the PM will flag contradictions or proceed with a fictional plan.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.2 \u2014 Scope baseline requires internally consistent, achievable requirements. Contradictory requirements indicate scope is not defined.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If treated as a genuine project, the plan will be invalidated the moment stakeholders attempt to prioritize conflicting requirements. The project cannot proceed without resolving these contradictions.",
+          "source": "scope",
+          "tradeoff": "Gains: honest assessment of input quality and feasibility. Risks: stakeholder may interpret this as PM refusing to plan; however, planning a project with mutually exclusive requirements is professional malpractice."
+        },
+        {
+          "id": "A2",
+          "what": "Team composition is 1 junior developer at part-time allocation. This is assumed to mean <50% FTE, likely 20-30 hours per week.",
+          "why": "Input states 'part-time' without specifying hours. For a junior developer, part-time typically means 20-30 hours/week in internal software contexts.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 \u2014 Resource allocation must be explicit. Ambiguous allocation creates scheduling risk.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If actual allocation is lower (10 hours/week), timeline extends by 2-3x. If higher (40 hours/week), assumption is wrong but timeline improves slightly. Either way, the 2-week deadline is impossible.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows resource calculation to proceed. Risks: actual availability may differ; no backup for any role."
+        },
+        {
+          "id": "A3",
+          "what": "Budget of $0 is assumed to mean no cloud infrastructure, no third-party services, no licensing costs \u2014 the app must run on free-tier or self-hosted infrastructure only.",
+          "why": "Input explicitly states '$0 \u2014 this should be simple to build.' This is a hard constraint, not a negotiable target.",
+          "pmi_basis": "PMBOK 6th Ed, Section 13.2 \u2014 Stakeholder requirements documented before execution. Budget is a hard constraint.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If any infrastructure cost is incurred (cloud hosting, CDN, push notification service, database), budget is exceeded. The project cannot proceed without either finding free alternatives or re-negotiating budget.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: clarifies the constraint. Risks: zero-cost infrastructure at scale is not viable; this constraint makes the project infeasible."
+        },
+        {
+          "id": "A4",
+          "what": "The 2-week deadline is a hard constraint and cannot be extended.",
+          "why": "Input states 'The app must be ready to launch in 2 weeks' with no flexibility language.",
+          "pmi_basis": "PMBOK 6th Ed, Section 6.4 \u2014 Schedule baseline derived from scope definition. Fixed deadline is a hard constraint.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If deadline cannot be met, project fails. No scope reduction or timeline extension is possible.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: clear deadline. Risks: 2 weeks is impossible for the stated scope with 1 part-time junior developer."
+        },
+        {
+          "id": "A5",
+          "what": "The junior developer is assumed to have no prior experience with mobile app development, real-time sync architecture, offline-first patterns, or multi-language/accessibility implementation.",
+          "why": "Input does not state the developer's experience level. 'Junior' typically means < 2 years experience. Mobile app architecture, real-time sync, and accessibility are advanced topics.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 \u2014 Resource estimation tied to skill level. Inexperienced team on complex work increases risk.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If the developer has relevant experience, timeline improves slightly. If not, every technical task will require learning, mentoring, or external help \u2014 none of which are available (no budget, no team).",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: conservative estimate. Risks: may underestimate if developer is more experienced than 'junior' implies."
+        },
+        {
+          "id": "A6",
+          "what": "No Product Owner, architect, QA engineer, UX designer, or DevOps engineer is available. The 1 junior developer must perform all roles.",
+          "why": "Input specifies only '1 junior developer.' No other roles are mentioned. Budget is $0, so no contractors or external help.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 \u2014 Resource planning requires all necessary roles. Missing roles create execution risk.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If additional roles become available, timeline improves. If not, the developer must design, code, test, deploy, and support the app alone \u2014 impossible for a mobile app at scale.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: honest assessment of available resources. Risks: project is staffed below minimum viable team."
+        },
+        {
+          "id": "A7",
+          "what": "Stakeholder approval of the contradictory requirements is assumed to be informal or not yet obtained in writing.",
+          "why": "Input does not mention formal sign-off or stakeholder alignment. The contradictions suggest requirements were not reviewed by a technical architect.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.4 \u2014 Scope baseline requires accepted requirements. Contradictory requirements cannot be accepted.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If stakeholder has formally approved these contradictions, the project is still infeasible but the approval is invalid. If not approved, the project cannot start without resolving contradictions.",
+          "source": "scope",
+          "tradeoff": "Gains: flags the need for stakeholder alignment. Risks: may delay project start."
+        }
+      ],
+      "project_plan": {
+        "total_duration_weeks": 2.0,
+        "buffer_applied_percent": 0.0,
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T2",
+            "T3",
+            "T4",
+            "T5",
+            "T6",
+            "T7",
+            "T8",
+            "T9",
+            "T10"
+          ],
+          "total_duration_days": 10.0,
+          "zero_slack_tasks": [
+            "T1",
+            "T2",
+            "T3",
+            "T4",
+            "T5",
+            "T6",
+            "T7",
+            "T8",
+            "T9",
+            "T10"
+          ],
+          "highest_slack_tasks": [],
+          "staffing_implication": "Every task is on the critical path with zero slack. A single day of delay cascades to project failure. The 1 part-time junior developer cannot execute this sequence in 10 working days."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 0.3,
+            "percentage_of_total": 15.0,
+            "milestones": [
+              "Requirements contradictions identified and escalated",
+              "Scope prioritization decision from stakeholder"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Document contradictory requirements and technical infeasibility",
+                "phase": 1,
+                "effort_hours": 6.0,
+                "owner_role": "Junior Developer",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Written document identifying each contradiction (offline + real-time sync, no auth + data isolation, zero cost + 500k users) and explaining why each pair is mutually exclusive."
+              },
+              {
+                "id": "T2",
+                "name": "Escalate to stakeholder for scope prioritization",
+                "phase": 1,
+                "effort_hours": 2.0,
+                "owner_role": "Junior Developer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Stakeholder meeting held; decision documented on which requirements are mandatory vs. negotiable."
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development",
+            "duration_weeks": 0.6,
+            "percentage_of_total": 38.0,
+            "milestones": [
+              "Mobile app project initialized",
+              "Core order tracking feature skeleton in place"
+            ],
+            "tasks": [
+              {
+                "id": "T3",
+                "name": "Set up mobile development environment (iOS/Android or cross-platform)",
+                "phase": 2,
+                "effort_hours": 8.0,
+                "owner_role": "Junior Developer",
+                "dependencies": [
+                  "T2"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Development environment configured; first 'Hello World' app builds and runs on simulator/device."
+              },
+              {
+                "id": "T4",
+                "name": "Implement offline-first data storage (SQLite or equivalent)",
+                "phase": 2,
+                "effort_hours": 12.0,
+                "owner_role": "Junior Developer",
+                "dependencies": [
+                  "T3"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Local database schema designed and implemented; sample order data persists offline."
+              },
+              {
+                "id": "T5",
+                "name": "Implement real-time sync mechanism (if feasible after scope prioritization)",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "Junior Developer",
+                "dependencies": [
+                  "T4"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Bidirectional sync between local storage and backend working for order updates; conflict resolution strategy implemented."
+              },
+              {
+                "id": "T6",
+                "name": "Implement data isolation without authentication (cryptographic approach or token-based)",
+                "phase": 2,
+                "effort_hours": 10.0,
+                "owner_role": "Junior Developer",
+                "dependencies": [
+                  "T5"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Customer data isolation enforced; one customer cannot view another's orders without authentication credentials."
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases",
+            "duration_weeks": 0.4,
+            "percentage_of_total": 22.0,
+            "milestones": [
+              "Push notifications integrated",
+              "Multi-language support added"
+            ],
+            "tasks": [
+              {
+                "id": "T7",
+                "name": "Integrate push notifications (Firebase Cloud Messaging or equivalent free service)",
+                "phase": 3,
+                "effort_hours": 8.0,
+                "owner_role": "Junior Developer",
+                "dependencies": [
+                  "T6"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Push notifications sent and received on test device; order update triggers notification."
+              },
+              {
+                "id": "T8",
+                "name": "Implement multi-language support (5 languages: English, Spanish, French, German, Mandarin)",
+                "phase": 3,
+                "effort_hours": 12.0,
+                "owner_role": "Junior Developer",
+                "dependencies": [
+                  "T7"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "App UI displays correctly in all 5 languages; language selection persists across sessions."
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 0.4,
+            "percentage_of_total": 20.0,
+            "milestones": [
+              "Accessibility compliance verified (WCAG 2.1 AA)",
+              "Dark mode implemented and tested"
+            ],
+            "tasks": [
+              {
+                "id": "T9",
+                "name": "Implement dark mode and accessibility compliance (WCAG 2.1 AA)",
+                "phase": 4,
+                "effort_hours": 14.0,
+                "owner_role": "Junior Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Dark mode toggle works; app passes WCAG 2.1 AA automated accessibility audit; screen reader navigation functional."
+              },
+              {
+                "id": "T10",
+                "name": "Manual testing and bug fixes",
+                "phase": 4,
+                "effort_hours": 6.0,
+                "owner_role": "Junior Developer",
+                "dependencies": [
+                  "T9"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Critical bugs resolved; app is stable enough for launch."
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 0.3,
+            "percentage_of_total": 5.0,
+            "milestones": [
+              "App submitted to app stores",
+              "Launch documentation written"
+            ],
+            "tasks": [
+              {
+                "id": "T11",
+                "name": "Submit app to iOS App Store and Google Play Store",
+                "phase": 5,
+                "effort_hours": 4.0,
+                "owner_role": "Junior Developer",
+                "dependencies": [
+                  "T10"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "App submitted; awaiting app store review and approval."
+              },
+              {
+                "id": "T12",
+                "name": "Write launch documentation and handoff notes",
+                "phase": 5,
+                "effort_hours": 2.0,
+                "owner_role": "Junior Developer",
+                "dependencies": [
+                  "T11"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "README, deployment guide, and post-launch support runbook written."
+              }
+            ]
+          }
+        ]
+      },
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Scope",
+          "description": "Requirements contain mutually exclusive constraints: offline-first + real-time sync, no authentication + per-customer data isolation, zero infrastructure cost + 500k concurrent users at sub-100ms latency. If stakeholder insists on all constraints, project is technically infeasible and will fail.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Stakeholder approval of contradictory requirements without prioritization or trade-off decisions.",
+          "mitigation": "Escalate contradictions to stakeholder immediately (Phase 1, Task T1-T2). Require written prioritization of conflicting requirements before development begins. Do not proceed without resolving at least one constraint from each contradictory pair.",
+          "contingency": "If stakeholder insists on all constraints, formally document the infeasibility in writing and recommend project cancellation or complete scope redefinition."
+        },
+        {
+          "id": "R2",
+          "category": "Schedule",
+          "description": "2-week deadline is impossible for stated scope with 1 part-time junior developer. Minimum viable scope (order tracking + offline + real-time sync) requires 8-12 weeks with a full-time team of 3-4 developers. Adding accessibility, dark mode, 5 languages, and push notifications extends timeline to 12-16 weeks.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Week 1 ends with <20% of scope complete; developer realizes timeline is impossible.",
+          "mitigation": "Immediately reduce scope to MVP: order tracking + offline storage only. Defer real-time sync, multi-language, accessibility, and dark mode to Phase 2. Negotiate deadline extension to 8 weeks minimum.",
+          "contingency": "If deadline cannot be extended, cancel project or accept a severely limited MVP (read-only order list, English only, no accessibility)."
+        },
+        {
+          "id": "R3",
+          "category": "Resource",
+          "description": "1 part-time junior developer is insufficient for a customer-facing mobile app. Minimum team: 1 full-time senior developer + 1 full-time QA engineer + 0.5 UX designer. Junior developer alone cannot design, code, test, deploy, and support a production app at scale.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Developer becomes overwhelmed by scope; quality suffers; bugs accumulate; no one available to review code or test.",
+          "mitigation": "Hire or allocate: 1 senior mobile developer (full-time), 1 QA engineer (full-time), 1 UX designer (part-time). If budget is truly $0, this is impossible \u2014 project cannot proceed.",
+          "contingency": "If no additional resources available, reduce scope to a single-platform prototype (iOS or Android only) with minimal features."
+        },
+        {
+          "id": "R4",
+          "category": "Budget",
+          "description": "Zero infrastructure cost is infeasible for a customer-facing app serving 2 million users with 500k concurrent users. Required infrastructure: cloud hosting (AWS, GCP, Azure), CDN, push notification service, database, monitoring, and logging. Minimum cost: $5,000-$20,000/month at scale.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "App launches; traffic exceeds free-tier limits; service becomes unavailable; users cannot access orders.",
+          "mitigation": "Negotiate budget increase to $50,000-$100,000 for infrastructure and development. If budget is truly $0, limit app to internal use only (< 1,000 concurrent users) or defer to Phase 2.",
+          "contingency": "If budget cannot be increased, app will fail under load. Plan for service degradation or shutdown after launch."
+        },
+        {
+          "id": "R5",
+          "category": "Technical",
+          "description": "Offline-first + real-time sync is a complex architectural pattern. Requires bidirectional sync, conflict resolution, and eventual consistency. Junior developer likely has no experience with this pattern. Implementation will take 3-4 weeks minimum, not 1 week.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Developer attempts to implement sync; discovers conflicts between offline changes and server updates; architecture collapses.",
+          "mitigation": "Hire a senior architect to design sync strategy before development. Use a proven library (e.g., Firebase Realtime Database, Realm Sync, or WatermelonDB) rather than building from scratch.",
+          "contingency": "If no architect available, implement read-only offline mode (no sync) and defer real-time sync to Phase 2."
+        },
+        {
+          "id": "R6",
+          "category": "Technical",
+          "description": "Data isolation without authentication is cryptographically complex. Requires either: (a) token-based access control (requires backend), (b) client-side encryption with per-customer keys (requires key management), or (c) device-level isolation (not scalable). Junior developer likely cannot implement this securely.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Security audit reveals data isolation is broken; customers can view each other's orders.",
+          "mitigation": "Implement authentication (OAuth, SSO, or simple login). If 'no authentication' is a hard requirement, hire a security engineer to design a cryptographically sound approach.",
+          "contingency": "If no security engineer available, implement basic authentication (email + password) and defer to Phase 2 if stakeholder objects."
+        },
+        {
+          "id": "R7",
+          "category": "Technical",
+          "description": "Sub-100ms response time for 500k concurrent users requires sophisticated caching, load balancing, and database optimization. Typical latency for a mobile app is 200-500ms. Achieving sub-100ms at scale requires a dedicated DevOps engineer and infrastructure investment.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "App launches; response times are 500-1000ms; users complain about slowness.",
+          "mitigation": "Reduce performance target to 500ms (realistic for mobile). Implement caching and CDN. Hire a DevOps engineer for infrastructure optimization.",
+          "contingency": "If performance target cannot be relaxed, project is infeasible with current resources."
+        },
+        {
+          "id": "R8",
+          "category": "Compliance",
+          "description": "WCAG 2.1 AA accessibility compliance requires specialized knowledge and testing. Junior developer likely has no experience with accessibility. Implementing accessibility correctly takes 2-3 weeks minimum.",
+          "probability": "HIGH",
+          "impact": "MEDIUM",
+          "score": "HIGH",
+          "trigger": "App launches; accessibility audit fails; app is not compliant; legal liability.",
+          "mitigation": "Hire an accessibility specialist or defer accessibility to Phase 2. Use automated testing tools (axe, Lighthouse) to catch obvious issues.",
+          "contingency": "If accessibility cannot be deferred, reduce scope to basic accessibility (screen reader support, color contrast) and defer advanced features to Phase 2."
+        },
+        {
+          "id": "R9",
+          "category": "Technical",
+          "description": "Multi-language support (5 languages) requires translation, localization, and testing. Junior developer can implement the technical framework, but translations must be done by native speakers. Estimated cost: $2,000-$5,000 for professional translation.",
+          "probability": "HIGH",
+          "impact": "MEDIUM",
+          "score": "HIGH",
+          "trigger": "App launches with machine-translated text; users complain about poor quality; brand damage.",
+          "mitigation": "Use professional translation service or defer multi-language support to Phase 2. Start with English only.",
+          "contingency": "If multi-language is mandatory, allocate budget for professional translation and extend timeline by 1 week."
+        },
+        {
+          "id": "R10",
+          "category": "Resource",
+          "description": "No Product Owner, architect, QA engineer, or DevOps engineer assigned. Junior developer must perform all roles. This creates a single point of failure and guarantees quality issues.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Developer becomes ill or leaves; project stops. Code quality is poor; bugs accumulate; no one to review or test.",
+          "mitigation": "Assign a Product Owner (to prioritize scope), a QA engineer (to test), and a senior developer (to review code). If budget is $0, this is impossible.",
+          "contingency": "If no additional resources available, reduce scope to a prototype and plan for significant rework in Phase 2."
+        },
+        {
+          "id": "R11",
+          "category": "Schedule",
+          "description": "App store review process takes 1-3 days for iOS and 1-2 hours for Android. If app is rejected (common for first submissions), resubmission adds another 1-3 days. 2-week deadline does not account for review delays.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "App submitted on day 14; rejected by app store; resubmission required; deadline missed.",
+          "mitigation": "Submit app to app stores by day 12 to allow time for review and resubmission. Plan for at least one rejection and resubmission cycle.",
+          "contingency": "If app is rejected, extend deadline by 1 week minimum."
+        },
+        {
+          "id": "R12",
+          "category": "Scope",
+          "description": "Input does not mention stakeholder sign-off or formal approval of requirements. Contradictory requirements suggest scope was not reviewed by a technical architect. Project may start without stakeholder alignment.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Development begins; stakeholder realizes requirements are contradictory; scope is rejected; project restarts.",
+          "mitigation": "Obtain written stakeholder approval of requirements before development begins. Require stakeholder to prioritize conflicting constraints.",
+          "contingency": "If stakeholder approval cannot be obtained, formally document the lack of approval and recommend project delay until alignment is achieved."
+        }
+      ],
+      "staffing_plan": [
+        {
+          "role": "Junior Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 80.0,
+          "allocation_percent": 100.0,
+          "skills_required": [
+            "Mobile app development (iOS/Android or cross-platform)",
+            "Offline-first architecture",
+            "Real-time sync patterns",
+            "Data isolation and security",
+            "Accessibility (WCAG 2.1 AA)",
+            "Multi-language localization",
+            "Push notifications",
+            "App store deployment"
+          ],
+          "critical_path": true,
+          "notes": "CRITICAL STAFFING GAP: 1 part-time junior developer is insufficient for this scope. Minimum viable team requires: 1 senior mobile developer (full-time), 1 QA engineer (full-time), 1 UX designer (part-time), 1 DevOps engineer (part-time). Current staffing is 20% of minimum viable team. Allocation shown as 100% because developer is the only resource, but input specifies 'part-time' \u2014 actual allocation likely 25-50% of full-time, making the project even more infeasible."
+        },
+        {
+          "role": "Product Owner (MISSING)",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 40.0,
+          "allocation_percent": 10.0,
+          "skills_required": [
+            "Requirements prioritization",
+            "Stakeholder management",
+            "Scope trade-off decisions"
+          ],
+          "critical_path": true,
+          "notes": "REQUIRED BUT NOT ALLOCATED. Product Owner must resolve contradictory requirements and prioritize scope. Without a PO, project will stall on scope decisions."
+        },
+        {
+          "role": "QA Engineer (MISSING)",
+          "phase_involvement": [
+            3,
+            4
+          ],
+          "total_hours": 60.0,
+          "allocation_percent": 15.0,
+          "skills_required": [
+            "Mobile app testing",
+            "Accessibility testing (WCAG 2.1 AA)",
+            "Performance testing",
+            "Offline-first testing",
+            "Real-time sync testing"
+          ],
+          "critical_path": true,
+          "notes": "REQUIRED BUT NOT ALLOCATED. QA effort must be minimum 25% of development effort (PMBOK 8.2). Current plan has 0% QA allocation. This violates the 25% rule and guarantees quality issues."
+        },
+        {
+          "role": "Senior Mobile Developer (MISSING)",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "total_hours": 160.0,
+          "allocation_percent": 40.0,
+          "skills_required": [
+            "Mobile app architecture",
+            "Offline-first patterns",
+            "Real-time sync design",
+            "Security and data isolation",
+            "Performance optimization"
+          ],
+          "critical_path": true,
+          "notes": "REQUIRED BUT NOT ALLOCATED. Junior developer cannot design and implement complex patterns (offline-first, real-time sync, data isolation) without senior guidance. Senior developer required for code review and architecture decisions."
+        },
+        {
+          "role": "UX Designer (MISSING)",
+          "phase_involvement": [
+            1,
+            2
+          ],
+          "total_hours": 40.0,
+          "allocation_percent": 10.0,
+          "skills_required": [
+            "Mobile UX design",
+            "Accessibility design (WCAG 2.1 AA)",
+            "Dark mode design",
+            "Multi-language UX"
+          ],
+          "critical_path": false,
+          "notes": "REQUIRED BUT NOT ALLOCATED. UX design is critical for user adoption. Junior developer cannot design a professional mobile app UI without UX guidance."
+        },
+        {
+          "role": "DevOps Engineer (MISSING)",
+          "phase_involvement": [
+            3,
+            4,
+            5
+          ],
+          "total_hours": 40.0,
+          "allocation_percent": 10.0,
+          "skills_required": [
+            "Cloud infrastructure (AWS, GCP, Azure)",
+            "Performance optimization",
+            "Monitoring and logging",
+            "App store deployment"
+          ],
+          "critical_path": false,
+          "notes": "REQUIRED BUT NOT ALLOCATED. DevOps engineer needed for infrastructure setup, performance optimization, and deployment. Junior developer cannot manage cloud infrastructure and achieve sub-100ms latency targets."
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "Which of the contradictory requirements are truly mandatory, and which can be deferred or removed? Specifically: (a) Can the app operate in read-only offline mode without real-time sync? (b) Can authentication be implemented instead of no-auth data isolation? (c) Can the performance target be relaxed from sub-100ms to 500ms? (d) Can the user base be limited to < 500k concurrent users for Phase 1?",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "Project cannot proceed without resolving at least one constraint from each contradictory pair. Proceeding without stakeholder prioritization will result in project failure mid-development."
+        },
+        {
+          "priority": 2,
+          "question": "Is the $0 budget a hard constraint, or can it be negotiated? If hard, how will infrastructure costs (cloud hosting, CDN, push notifications, database) be covered?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "App will exceed free-tier limits within days of launch; service will become unavailable; users cannot access orders; project fails."
+        },
+        {
+          "priority": 3,
+          "question": "Can the 2-week deadline be extended to 8-12 weeks? If not, what scope can be deferred to Phase 2 (e.g., real-time sync, multi-language, accessibility, dark mode)?",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "Deadline is impossible with current resources and scope. Project will fail to launch on time."
+        },
+        {
+          "priority": 4,
+          "question": "Can additional team members be allocated? Minimum viable team: 1 senior mobile developer (full-time), 1 QA engineer (full-time), 1 UX designer (part-time). Current team of 1 part-time junior developer is insufficient.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Project will suffer from poor code quality, inadequate testing, and lack of architectural guidance. Single point of failure if junior developer becomes unavailable."
+        },
+        {
+          "priority": 5,
+          "question": "Has stakeholder formally approved these requirements in writing, or are they preliminary? If preliminary, when will formal sign-off occur?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Project may start without stakeholder alignment; scope may be rejected mid-development; project may restart."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 18.0,
+        "deductions": [
+          {
+            "amount": 10.0,
+            "reason": "Input quality is LOW: contradictory requirements, no clear success criteria, no stakeholder sign-off, no realistic constraints."
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: deadline is fixed (2 weeks) but scope is contradictory and infeasible."
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: budget is $0 but infrastructure costs are unavoidable at scale."
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: team composition is 1 part-time junior developer; no other roles allocated."
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: stakeholder approval not mentioned; requirements are contradictory and likely not formally approved."
+          },
+          {
+            "amount": 35.0,
+            "reason": "CRITICAL risks present: 7 CRITICAL risks (R1, R2, R3, R4, R5, R6, R7, R12) indicate project is technically infeasible and will fail."
+          },
+          {
+            "amount": 10.0,
+            "reason": "Assumption count: 7 assumptions logged (A1-A7); each represents an unvalidated risk or contradictory constraint."
+          },
+          {
+            "amount": 5.0,
+            "reason": "SDLC approach is Adaptive: requirements are contradictory and evolving; stakeholder expectations are misaligned; high uncertainty in scope and feasibility."
+          },
+          {
+            "amount": 10.0,
+            "reason": "Timeline is HIGH RISK: 2-week deadline is impossible for stated scope with 1 part-time junior developer. Minimum viable timeline is 8-12 weeks with a full team."
+          },
+          {
+            "amount": 5.0,
+            "reason": "Stakeholder sign-off not mentioned: no evidence of formal approval of contradictory requirements."
+          }
+        ],
+        "interpretation": "PM confidence score is 18.0 because the project contains 7 CRITICAL risks, contradictory requirements that are mutually exclusive, a 2-week deadline that is impossible with 1 part-time junior developer, zero budget for unavoidable infrastructure costs, and no stakeholder sign-off. The project is technically infeasible and will fail unless scope is dramatically reduced, deadline is extended to 8-12 weeks, budget is increased to $50,000+, and team is expanded to include senior developers, QA, and UX design. Proceeding with current constraints will result in project failure."
+      },
+      "project_viability": {
+        "viability_status": "NOT_VIABLE",
+        "gap_type": "BOTH",
+        "gap_amount": "Timeline gap: 2 weeks vs. 8-12 weeks minimum (6-10 weeks over deadline). Budget gap: $0 vs. $50,000-$100,000 minimum for infrastructure and team (50k-100k over budget). Resource gap: 1 part-time junior developer vs. 3-4 full-time developers minimum (2-3 FTE short).",
+        "scoping_options": [
+          {
+            "option_id": "O1",
+            "description": "Reduce scope to MVP Phase 1: Order tracking (read-only) + offline storage only. Defer real-time sync, multi-language, accessibility, dark mode, and push notifications to Phase 2. Extend timeline to 6 weeks. Allocate 1 full-time senior developer + 1 QA engineer. Negotiate budget to $20,000 for infrastructure.",
+            "impact": "Delivers a minimal but functional order tracking app in 6 weeks. Allows Phase 2 to add advanced features.",
+            "tradeoffs": "Loses real-time sync, multi-language, accessibility, and dark mode in Phase 1. Requires timeline extension and budget increase. Requires senior developer instead of junior."
+          },
+          {
+            "option_id": "O2",
+            "description": "Resolve contradictory requirements: Choose ONE of the following: (a) Offline-first without real-time sync (read-only), OR (b) Real-time sync with internet requirement (no offline), OR (c) Reduce user base to < 100k concurrent users (not 500k). Extend timeline to 8 weeks. Allocate 2 full-time developers + 1 QA engineer. Negotiate budget to $30,000.",
+            "impact": "Removes technical contradictions; project becomes feasible. Allows realistic planning and execution.",
+            "tradeoffs": "Requires stakeholder to prioritize conflicting requirements. Requires timeline extension and budget increase. Requires larger team."
+          },
+          {
+            "option_id": "O3",
+            "description": "Cancel project and restart with proper planning. Conduct requirements workshop with stakeholders to resolve contradictions. Allocate 2-3 weeks for discovery and architecture. Plan for 12-16 week delivery with full team (3-4 developers, 1 QA, 1 UX, 1 DevOps). Negotiate budget to $75,000-$100,000.",
+            "impact": "Ensures project is properly scoped, architected, and resourced before development begins. Reduces risk of failure.",
+            "tradeoffs": "Delays project start by 2-3 weeks. Requires significant budget and team allocation. Requires stakeholder commitment to proper planning process."
+          }
+        ]
+      }
+    },
+    "gate": {
+      "fired": true,
+      "reasons": [
+        "confidence_score < 60 \u2014 plan needs review",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "project_viability is NOT_VIABLE \u2014 impossible constraints as stated"
+      ],
+      "decision": null
+    },
+    "validation": {
+      "valid": false,
+      "errors": [
+        "Open question urgency 'Before planning' is inconsistent with a populated project_plan (phases and tasks) \u2014 decomposition already occurred; use 'Before build' unless no tasks exist in any phase."
+      ],
+      "warnings": []
+    },
+    "tokens_used": 10503,
+    "input_tokens": 268,
+    "output_tokens": 10235,
+    "cache_hit": false
+  }
+}

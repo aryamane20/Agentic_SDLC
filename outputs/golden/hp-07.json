@@ -1,0 +1,486 @@
+{
+  "case_id": "hp-07",
+  "http_status": 200,
+  "body": {
+    "session_id": "41188464-adfc-4c8a-8a0a-4a6675eae71b",
+    "report_id": "rpt_4e2524b1f624",
+    "report_revision": 1,
+    "report": {
+      "report_metadata": {
+        "generated_at": "2026-04-25T18:45:24.728569Z",
+        "prompt_version": "v1.6.2",
+        "project_type": "TYPE_A",
+        "input_quality": "LOW",
+        "classification_confidence": "MEDIUM",
+        "sdlc_approach": "Predictive",
+        "sdlc_rationale": "Fixed deadline and budget provided, but scope is massively over-defined relative to constraints; classification forced to Predictive due to explicit deadline, but this is a viability failure, not a planning success.",
+        "pm_confidence_score": 15.0
+      },
+      "project_understanding": {
+        "primary_goal": "Build native iOS and Android mobile apps with real-time video streaming, offline sync, AI recommendations, social sharing, and in-app payments.",
+        "beneficiary": "External customers (not internal team)",
+        "trigger": "CEO directive to create a flagship market-disrupting product",
+        "success_definition": [
+          "Native iOS and Android apps deployed",
+          "Real-time video streaming functional",
+          "Offline mode with sync working",
+          "AI recommendations operational",
+          "Social sharing features present",
+          "In-app payments integrated",
+          "Support 1 million concurrent users",
+          "Zero downtime requirement met"
+        ],
+        "supporting_quotes": [
+          "Build a mobile app for customers",
+          "Full-featured native iOS and Android apps",
+          "Real-time video streaming capability",
+          "Offline mode with sync",
+          "AI-powered recommendations",
+          "Social sharing features",
+          "In-app payments",
+          "Must support 1 million concurrent users",
+          "Zero downtime allowed",
+          "Must be completed in 2 weeks",
+          "The CEO wants this to be a flagship product that disrupts the market"
+        ]
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "Assuming the 2-week deadline is a hard constraint that cannot be extended, and the project must proceed under this timeline regardless of scope feasibility.",
+          "why": "The input explicitly states 'must be done by March 15' and 'Must be completed in 2 weeks' with no flexibility language. In internal project planning, explicit dates are treated as fixed unless stakeholder re-approval is obtained.",
+          "pmi_basis": "PMBOK 6th Ed, Section 6.4 \u2014 Schedule baseline derived from stated constraints; Section 4.2 \u2014 Project constraints are binding until formally changed.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If deadline is actually flexible, the entire viability assessment and risk profile changes. Project becomes feasible under extended timeline (8-12 weeks minimum). Proceeding under false deadline assumption will guarantee delivery failure and stakeholder conflict.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows analysis to proceed with stated constraints as-is. Risks: if deadline is actually negotiable, plan is unnecessarily pessimistic and may trigger false escalation."
+        },
+        {
+          "id": "A2",
+          "what": "Assuming the $5,000 budget is a hard constraint and must cover all development, infrastructure, third-party services, and deployment costs.",
+          "why": "Input states 'Budget: $5,000 (very limited)' with no indication of additional funding sources or phased budget allocation. For internal projects, stated budget is treated as total available unless explicitly noted otherwise.",
+          "pmi_basis": "PMBOK 6th Ed, Section 7.2 \u2014 Cost baseline established from stated budget constraint.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If additional budget is available (e.g., from different cost center, phased funding, or infrastructure already paid), cost viability changes dramatically. Proceeding under $5,000 assumption will force scope cuts that may not be necessary.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows cost analysis with stated constraint. Risks: if budget is actually higher or flexible, plan is unnecessarily constrained."
+        },
+        {
+          "id": "A3",
+          "what": "Assuming the 1 junior developer is the sole development resource available for the entire 2-week period at 100% allocation.",
+          "why": "Input states 'Team: 1 junior developer' with no mention of additional resources, contractors, or support staff. No indication of part-time vs. full-time status.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 \u2014 Resource estimation tied to stated team composition.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If additional developers become available or the junior developer is part-time, capacity changes. If the developer is actually unavailable for portions of the 2 weeks, timeline becomes impossible. If this is a shared resource, project cannot proceed.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows staffing plan with stated resource. Risks: if team size is actually larger or smaller, entire schedule becomes invalid."
+        },
+        {
+          "id": "A4",
+          "what": "Assuming the VB6 backend is a non-negotiable technical constraint that cannot be replaced, modernized, or bypassed.",
+          "why": "Input explicitly states 'Must use legacy VB6 backend (cannot be changed)' \u2014 this is a hard technical constraint with no flexibility language.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.2 \u2014 Technology constraints are binding project parameters.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If VB6 backend can actually be replaced or if a modern API layer can be built on top of it, technical architecture changes completely. VB6 has no native mobile integration libraries, no real-time capabilities, and no modern authentication patterns \u2014 this constraint alone makes the project technically infeasible.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows technical planning with stated constraint. Risks: if constraint is actually negotiable, entire architecture is unnecessarily constrained and infeasible."
+        },
+        {
+          "id": "A5",
+          "what": "Assuming 'zero downtime allowed' means the system must maintain 99.99% uptime (four nines) with no planned or unplanned maintenance windows during the 2-week build period and beyond.",
+          "why": "Input states 'Zero downtime allowed' without qualification. For a system supporting 1 million concurrent users, this is an extreme non-functional requirement.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.3 \u2014 Non-functional requirements define quality baselines.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If 'zero downtime' actually means 'minimize downtime' or 'plan for maintenance windows,' availability architecture changes. If it means 'no downtime during business hours only,' infrastructure requirements drop significantly. Proceeding under strict 99.99% assumption requires multi-region failover, load balancing, and database replication \u2014 none of which is feasible in 2 weeks with 1 developer and $5,000.",
+          "source": "nfr",
+          "tradeoff": "Gains: allows planning with stated requirement. Risks: if requirement is actually less strict, plan is over-engineered and infeasible."
+        },
+        {
+          "id": "A6",
+          "what": "Assuming the 1 million concurrent user requirement is a hard scalability target that must be met at launch, not a future growth target.",
+          "why": "Input states 'Must support 1 million concurrent users' without distinguishing between launch day and future capacity. For a new product, this is an unusual requirement.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.3 \u2014 Scalability requirements define infrastructure baseline.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If 1 million concurrent users is actually a 12-month growth target (not day-one requirement), infrastructure can be built incrementally. If it is a day-one requirement, infrastructure cost alone exceeds $5,000 budget by orders of magnitude (cloud hosting, CDN, database replication, load balancing).",
+          "source": "nfr",
+          "tradeoff": "Gains: allows capacity planning with stated requirement. Risks: if requirement is actually phased, plan is unnecessarily expensive and infeasible."
+        }
+      ],
+      "project_plan": {
+        "total_duration_weeks": 2.0,
+        "buffer_applied_percent": 0.0,
+        "critical_path_summary": {
+          "sequence": [
+            "DECOMPOSITION_IMPOSSIBLE"
+          ],
+          "total_duration_days": null,
+          "zero_slack_tasks": [],
+          "highest_slack_tasks": [],
+          "staffing_implication": "Project cannot be decomposed into a valid task list given the stated constraints. No critical path can be calculated."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 0.2,
+            "percentage_of_total": 10.0,
+            "milestones": [
+              "Requirements clarification (BLOCKED \u2014 contradictions must be resolved)",
+              "Architecture decision (BLOCKED \u2014 VB6 backend incompatible with mobile apps)"
+            ],
+            "tasks": []
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development",
+            "duration_weeks": 0.8,
+            "percentage_of_total": 40.0,
+            "milestones": [
+              "iOS app skeleton (INFEASIBLE \u2014 1 developer cannot build iOS + Android simultaneously)",
+              "Android app skeleton (INFEASIBLE \u2014 1 developer cannot build iOS + Android simultaneously)",
+              "Backend integration (INFEASIBLE \u2014 VB6 has no mobile API libraries)"
+            ],
+            "tasks": []
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases",
+            "duration_weeks": 0.5,
+            "percentage_of_total": 25.0,
+            "milestones": [
+              "Video streaming integration (INFEASIBLE \u2014 requires specialized infrastructure)",
+              "Offline sync implementation (INFEASIBLE \u2014 requires complex state management)",
+              "AI recommendations (INFEASIBLE \u2014 requires ML infrastructure and training data)"
+            ],
+            "tasks": []
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 0.3,
+            "percentage_of_total": 15.0,
+            "milestones": [
+              "Testing across iOS and Android (INFEASIBLE \u2014 1 developer cannot test both platforms adequately)",
+              "Load testing for 1M concurrent users (INFEASIBLE \u2014 requires load testing infrastructure)"
+            ],
+            "tasks": []
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 0.2,
+            "percentage_of_total": 10.0,
+            "milestones": [
+              "App Store and Google Play submission (INFEASIBLE \u2014 review process alone takes 1-2 weeks)",
+              "Production infrastructure deployment (INFEASIBLE \u2014 zero-downtime requirement requires multi-region setup)"
+            ],
+            "tasks": []
+          }
+        ]
+      },
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Schedule",
+          "description": "If 2-week deadline is fixed and scope includes full-featured native iOS + Android apps with video streaming, offline sync, AI, and social features, then project will miss deadline by 10-14 weeks minimum. Realistic timeline for this scope is 16-20 weeks with a 3-person team on a modern stack.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Deadline is explicitly stated as 'must be done by March 15' and scope is fully enumerated with no MVP definition.",
+          "mitigation": "BEFORE PLANNING: Stakeholder must choose between (a) extending deadline to 16-20 weeks, (b) reducing scope to MVP (single platform, no video, no AI), or (c) accepting delivery failure. Do not proceed with planning until one of these is selected.",
+          "contingency": "If deadline cannot move, immediately escalate to executive sponsor with three scoping options and request written decision within 24 hours."
+        },
+        {
+          "id": "R2",
+          "category": "Budget",
+          "description": "If budget is $5,000 and scope includes native iOS + Android development, real-time video infrastructure, AI/ML services, and cloud hosting for 1M concurrent users, then project will exceed budget by $50,000-$200,000+. Realistic budget for this scope is $55,000-$250,000 depending on outsourcing vs. in-house.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Budget is explicitly stated as '$5,000 (very limited)' and scope includes expensive infrastructure (video streaming, AI, 1M user scalability).",
+          "mitigation": "BEFORE PLANNING: Stakeholder must confirm whether $5,000 is the actual total budget or if additional funding is available. If $5,000 is firm, scope must be reduced to match (e.g., web app instead of native mobile, no video, no AI).",
+          "contingency": "If budget cannot increase, immediately escalate with cost breakdown showing why scope is unaffordable at stated budget."
+        },
+        {
+          "id": "R3",
+          "category": "Resource",
+          "description": "If team is 1 junior developer and scope requires native iOS development, native Android development, backend integration, video streaming, offline sync, AI recommendations, and social features, then developer will be unable to deliver any feature completely. A single junior developer cannot master iOS, Android, backend, DevOps, and ML simultaneously.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Team size is explicitly stated as '1 junior developer' and scope requires expertise across 5+ distinct technical domains.",
+          "mitigation": "BEFORE PLANNING: Stakeholder must confirm whether additional developers can be hired or contracted. If team remains 1 junior developer, scope must be reduced to a single feature (e.g., basic iOS app only, no Android, no video, no AI).",
+          "contingency": "If team size cannot increase, immediately escalate with skill gap analysis showing why 1 junior developer cannot deliver this scope."
+        },
+        {
+          "id": "R4",
+          "category": "Technical",
+          "description": "If backend must use legacy VB6 (cannot be changed) and frontend must be native iOS + Android apps, then integration is technically infeasible. VB6 has no native mobile SDKs, no REST API frameworks, no modern authentication libraries, and no real-time communication patterns. Building a mobile app on top of VB6 requires writing a custom API layer from scratch \u2014 a 4-6 week effort for an experienced team.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Input explicitly states 'Must use legacy VB6 backend (cannot be changed)' AND requires native mobile apps with real-time features.",
+          "mitigation": "BEFORE PLANNING: Stakeholder must confirm whether VB6 constraint is truly non-negotiable. If yes, a modern API layer (Node.js, Python, Go) must be built as an intermediary \u2014 this adds 4-6 weeks to timeline. If VB6 cannot be changed and no API layer is acceptable, mobile app development is not feasible.",
+          "contingency": "If VB6 is truly immovable, recommend building a web app instead of native mobile apps \u2014 web apps can integrate with VB6 via HTTP/REST more easily than native mobile."
+        },
+        {
+          "id": "R5",
+          "category": "Scope",
+          "description": "If scope includes 'full-featured' apps with video streaming, offline sync, AI recommendations, social sharing, and in-app payments, then scope is not defined \u2014 'full-featured' is subjective. Without a prioritized feature list and MVP definition, scope will expand during development, consuming the 2-week timeline immediately.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Requirements use vague language ('full-featured', 'flagship product that disrupts the market') without prioritization or MVP definition.",
+          "mitigation": "BEFORE PLANNING: Stakeholder must define MVP (minimum viable product) with prioritized features. Example: 'MVP is iOS app only, with user authentication, basic video playback (no streaming), and social sharing. AI recommendations and offline sync are Phase 2.'",
+          "contingency": "If scope cannot be prioritized, implement a strict change control process and reserve 20% of timeline for scope clarification meetings."
+        },
+        {
+          "id": "R6",
+          "category": "Integration",
+          "description": "If real-time video streaming is required and must be built in 2 weeks with $5,000 budget and 1 developer, then video infrastructure is infeasible. Real-time video streaming requires: (a) video encoding/transcoding infrastructure (AWS MediaConvert, Wowza, or similar), (b) CDN for distribution, (c) WebRTC or HLS streaming protocol implementation, (d) client-side video player libraries. This is a 6-8 week effort for an experienced team and costs $2,000-$10,000/month in infrastructure alone.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Scope includes 'Real-time video streaming capability' with 2-week deadline, $5,000 budget, and 1 junior developer.",
+          "mitigation": "BEFORE PLANNING: Stakeholder must clarify whether 'real-time video streaming' means (a) live streaming (broadcast), (b) video-on-demand playback, or (c) peer-to-peer video calls. Each has different complexity. If live streaming is required, recommend using a third-party service (Twitch, YouTube Live, Mux) instead of building custom infrastructure.",
+          "contingency": "If custom video streaming must be built, extend timeline to 8-10 weeks and increase budget to $15,000-$25,000 for infrastructure and third-party services."
+        },
+        {
+          "id": "R7",
+          "category": "Technical",
+          "description": "If offline mode with sync is required and must work with a legacy VB6 backend, then sync logic is complex and error-prone. Offline-first architecture requires: (a) local database on mobile device (SQLite, Realm), (b) conflict resolution logic (last-write-wins, operational transformation, or CRDT), (c) network state detection, (d) retry logic with exponential backoff. This is a 3-4 week effort for an experienced mobile developer and is a common source of data loss bugs.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Scope includes 'Offline mode with sync' with 2-week deadline and 1 junior developer.",
+          "mitigation": "BEFORE PLANNING: Stakeholder must clarify whether offline mode is required at launch or can be deferred to Phase 2. If required at launch, allocate 40% of development time to offline sync logic and add a QA engineer to test edge cases (network flakiness, device crashes during sync, etc.).",
+          "contingency": "If offline sync fails in production, implement a 'force refresh' button that clears local cache and re-syncs from server \u2014 this is a temporary workaround while sync logic is debugged."
+        },
+        {
+          "id": "R8",
+          "category": "Technical",
+          "description": "If AI-powered recommendations are required and must be built in 2 weeks with $5,000 budget, then custom ML model development is infeasible. Building a recommendation engine requires: (a) training data collection and labeling, (b) feature engineering, (c) model selection and training, (d) model evaluation and tuning, (e) inference infrastructure. This is a 8-12 week effort for a data scientist + ML engineer. Alternatively, using a third-party ML service (AWS Personalize, Google Recommendations AI) costs $1,000-$5,000/month.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Scope includes 'AI-powered recommendations' with 2-week deadline, $5,000 budget, and 1 junior developer (no ML expertise mentioned).",
+          "mitigation": "BEFORE PLANNING: Stakeholder must clarify whether 'AI recommendations' means (a) custom ML model, (b) third-party ML service, or (c) simple rule-based recommendations (e.g., 'popular items', 'trending now'). If custom ML is required, defer to Phase 2 and use rule-based recommendations in MVP.",
+          "contingency": "If AI recommendations must be in MVP, use a third-party service (AWS Personalize, Google Recommendations AI) and allocate $500-$1,000 of budget to service costs."
+        },
+        {
+          "id": "R9",
+          "category": "Compliance",
+          "description": "If in-app payments are required and app will be distributed via App Store and Google Play, then payment processing, PCI compliance, and app store review are mandatory. App Store review process takes 1-2 weeks alone. PCI compliance requires secure payment handling, which adds complexity. In-app payment integration (Apple In-App Purchase, Google Play Billing) requires 1-2 weeks of development and testing.",
+          "probability": "HIGH",
+          "impact": "MEDIUM",
+          "score": "HIGH",
+          "trigger": "Scope includes 'In-app payments' and apps must be submitted to App Store and Google Play within 2-week deadline.",
+          "mitigation": "BEFORE PLANNING: Stakeholder must understand that App Store review alone takes 1-2 weeks, leaving only 0-1 weeks for development. Recommend deferring in-app payments to Phase 2 and using a simple payment method (web checkout) in MVP if payment is required at launch.",
+          "contingency": "If in-app payments must be in MVP, submit to App Store and Google Play immediately after basic app functionality is complete, and plan for 2-3 review cycles (rejections are common for payment-related apps)."
+        },
+        {
+          "id": "R10",
+          "category": "Scalability",
+          "description": "If system must support 1 million concurrent users with zero downtime, then infrastructure must include: (a) multi-region deployment (AWS, GCP, Azure), (b) load balancing across regions, (c) database replication and failover, (d) CDN for static assets, (e) auto-scaling policies, (f) monitoring and alerting. This infrastructure costs $10,000-$50,000/month and requires 4-6 weeks to design and implement. A 1 million concurrent user system is enterprise-grade infrastructure \u2014 not feasible for a 2-week project with $5,000 budget.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Scope includes 'Must support 1 million concurrent users' and 'Zero downtime allowed' with 2-week deadline and $5,000 budget.",
+          "mitigation": "BEFORE PLANNING: Stakeholder must clarify whether 1 million concurrent users is a day-one requirement or a 12-month growth target. If day-one, project is not feasible at stated budget and timeline. If 12-month target, infrastructure can be built incrementally (start with 10,000 users, scale to 1M over time).",
+          "contingency": "If 1M concurrent users is day-one requirement, recommend using a managed service (Firebase, AWS Amplify, Heroku) that auto-scales, rather than building custom infrastructure."
+        },
+        {
+          "id": "R11",
+          "category": "Execution",
+          "description": "If team is 1 junior developer with no mention of mentorship, code review, or QA support, then code quality and testing will suffer. A junior developer working alone on a complex project (mobile + backend + DevOps) will produce code with high defect density, poor architecture, and inadequate test coverage. This is a common failure mode for understaffed projects.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Team is explicitly stated as '1 junior developer' with no senior oversight, code review process, or QA support mentioned.",
+          "mitigation": "BEFORE PLANNING: Stakeholder must confirm whether a senior developer or architect can be assigned to mentor and code review the junior developer's work. If not, scope must be reduced to a single feature that a junior developer can deliver with high quality.",
+          "contingency": "If no senior support is available, implement daily code reviews with an external contractor (1-2 hours/day, ~$500-$1,000 total) to catch architectural and quality issues early."
+        },
+        {
+          "id": "R12",
+          "category": "Scope",
+          "description": "If CEO expects this to be a 'flagship product that disrupts the market' but timeline is 2 weeks and team is 1 junior developer, then stakeholder expectations are misaligned with reality. A flagship product requires 6-12 months of development, a team of 5-10 people, and significant investment. A 2-week project with 1 junior developer will produce a prototype or MVP at best, not a market-disrupting product.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Input states 'The CEO wants this to be a flagship product that disrupts the market' while also stating '2 weeks' deadline and '1 junior developer' team.",
+          "mitigation": "BEFORE PLANNING: Stakeholder (CEO) must be educated on the gap between expectations and reality. Recommend reframing the 2-week project as a 'proof of concept' or 'prototype' that demonstrates the core idea, with a full product launch planned for 6-12 months later.",
+          "contingency": "If CEO insists on flagship product in 2 weeks, escalate to executive leadership and document the decision in writing (email) so accountability is clear when the project fails."
+        }
+      ],
+      "staffing_plan": [
+        {
+          "role": "Junior Developer (Full Stack)",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 80.0,
+          "allocation_percent": 100.0,
+          "skills_required": [
+            "iOS development (Swift or Objective-C)",
+            "Android development (Kotlin or Java)",
+            "Backend integration (VB6 or REST APIs)",
+            "Video streaming",
+            "Offline sync",
+            "AI/ML integration",
+            "In-app payments",
+            "DevOps and deployment"
+          ],
+          "critical_path": true,
+          "notes": "CRITICAL STAFFING GAP: Single junior developer is assigned 100% allocation across 8+ distinct technical domains. This violates PMBOK 9.2 resource leveling (max 80%) and is a single point of failure. Developer will be unable to deliver any feature to production quality. Recommend adding: (1) Senior architect for design review, (2) QA engineer for testing, (3) DevOps engineer for deployment. Minimum viable team: 3 people (1 senior, 1 junior, 1 QA)."
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "Is the 2-week deadline (March 15) a hard constraint that cannot be extended, or is it a target that can be negotiated with stakeholders?",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "If deadline is truly fixed, project is not feasible under stated scope. If deadline is flexible, timeline can be extended to 16-20 weeks, making project viable. This is the primary blocker for proceeding with planning."
+        },
+        {
+          "priority": 2,
+          "question": "Is the $5,000 budget the total available funding, or is additional budget available from other cost centers or phased allocation?",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "If $5,000 is firm, scope must be reduced by 90% (e.g., web app instead of native mobile, no video, no AI). If additional budget is available, infrastructure and third-party services become feasible. This determines whether project can proceed at all."
+        },
+        {
+          "priority": 3,
+          "question": "Can the VB6 backend constraint be relaxed to allow building a modern API layer (Node.js, Python, Go) as an intermediary between mobile apps and legacy VB6 system?",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "If VB6 is truly immovable and no API layer is acceptable, native mobile app development is technically infeasible. If an API layer is acceptable, timeline extends by 4-6 weeks but project becomes viable. This determines the technical architecture."
+        },
+        {
+          "priority": 4,
+          "question": "What is the actual MVP (minimum viable product) for this project? Which features are required at launch, and which can be deferred to Phase 2?",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "Current scope includes 6 major features (iOS, Android, video, offline sync, AI, payments) plus 1M user scalability. Without MVP definition, scope will expand during development and consume the 2-week timeline. Recommend: MVP = iOS app only, with user authentication and basic content display. Defer Android, video, offline sync, AI, and payments to Phase 2."
+        },
+        {
+          "priority": 5,
+          "question": "Can additional developers (senior architect, QA engineer, DevOps engineer) be hired or contracted to support the 1 junior developer?",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "A single junior developer cannot deliver this scope to production quality. Minimum viable team is 3 people (1 senior, 1 junior, 1 QA). If additional resources are not available, scope must be reduced to a single feature (e.g., iOS app only, no Android, no video, no AI)."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 15.0,
+        "deductions": [
+          {
+            "amount": 10.0,
+            "reason": "Input quality is LOW \u2014 contradictory constraints (2 weeks + 1 developer + 1M users + full-featured apps + $5,000 budget) make project scope incoherent"
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: deadline flexibility (stated as fixed but may be negotiable)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: budget flexibility (stated as $5,000 but may have additional funding)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: team size (stated as 1 junior developer but may have additional resources available)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: VB6 backend flexibility (stated as immovable but may allow API layer)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present: Schedule (2-week deadline vs. 16-20 week realistic timeline)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present: Budget ($5,000 vs. $55,000-$250,000 realistic cost)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present: Resource (1 junior developer vs. 3-5 person team required)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present: Technical (VB6 backend incompatible with native mobile apps)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present: Scope (undefined MVP, vague 'full-featured' requirements)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present: Scalability (1M concurrent users + zero downtime infeasible at stated budget and timeline)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Stakeholder sign-off not mentioned \u2014 no written approval of scope, timeline, or budget"
+          },
+          {
+            "amount": 5.0,
+            "reason": "6 assumptions logged (A1-A6) \u2014 each represents an unvalidated risk"
+          }
+        ],
+        "interpretation": "PM confidence score is 15.0 because the project contains 12 CRITICAL risks, contradictory constraints (2-week deadline + 1M user scalability + $5,000 budget + 1 junior developer), and undefined scope. The project is not viable as stated and cannot proceed to planning without stakeholder resolution of deadline, budget, team size, and MVP definition. Recommend immediate escalation to executive sponsor with three scoping options: (1) extend timeline to 16-20 weeks with 3-5 person team, (2) reduce scope to single-platform MVP with deferred features, or (3) accept delivery failure and replan."
+      },
+      "project_viability": {
+        "viability_status": "NOT_VIABLE",
+        "gap_type": "BOTH",
+        "gap_amount": "$50,000-$245,000 over budget (realistic cost $55,000-$250,000 vs. stated $5,000) AND 14-18 weeks past deadline (realistic timeline 16-20 weeks vs. stated 2 weeks)",
+        "scoping_options": [
+          {
+            "option_id": "O1",
+            "description": "Extend timeline to 16-20 weeks, increase budget to $75,000-$150,000, and expand team to 3-5 people (1 senior architect, 2 developers, 1 QA engineer, 1 DevOps engineer). Deliver full-featured iOS + Android apps with video streaming, offline sync, AI recommendations, and in-app payments. Support 1M concurrent users with zero downtime.",
+            "impact": "Full scope delivered to production quality with adequate team and timeline. Project becomes viable and can meet CEO's 'flagship product' vision.",
+            "tradeoffs": "Requires significant budget increase ($75,000-$150,000 vs. $5,000) and timeline extension (16-20 weeks vs. 2 weeks). Stakeholder must approve new deadline and budget."
+          },
+          {
+            "option_id": "O2",
+            "description": "Keep 2-week deadline and $5,000 budget. Reduce scope to MVP: iOS app only (no Android), with user authentication, basic content display, and social sharing. Defer video streaming, offline sync, AI recommendations, in-app payments, and 1M user scalability to Phase 2 (planned for 8-12 weeks later). Deliver prototype that demonstrates core idea, not production-ready product.",
+            "impact": "Delivers a working iOS prototype in 2 weeks that can be used for user feedback and investor pitches. Allows phased development with Phase 2 adding advanced features.",
+            "tradeoffs": "Does not meet CEO's 'flagship product' vision. Android users cannot use app. Video streaming, offline sync, and AI recommendations are missing. Scalability is limited to ~10,000 concurrent users. Phase 2 will require additional budget and timeline."
+          },
+          {
+            "option_id": "O3",
+            "description": "Keep 2-week deadline and $5,000 budget. Reduce scope to web app instead of native mobile apps. Build a single-page web application (React, Vue, or Angular) with user authentication, basic content display, and social sharing. Use third-party services for video (YouTube, Vimeo), AI recommendations (AWS Personalize), and payments (Stripe). Deploy to AWS or Heroku for auto-scaling to 1M users.",
+            "impact": "Delivers a working web app in 2 weeks that can be accessed from any device (iOS, Android, desktop). Reduces development complexity by using third-party services instead of building custom infrastructure. Supports 1M concurrent users via managed services.",
+            "tradeoffs": "Does not deliver native iOS and Android apps (CEO may reject this option). Web app has different UX than native apps. Requires $500-$1,000/month for third-party services (video, AI, payments, hosting). Does not meet 'native mobile app' requirement if that is a hard constraint."
+          }
+        ]
+      }
+    },
+    "gate": {
+      "fired": true,
+      "reasons": [
+        "confidence_score < 60 \u2014 plan needs review",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "project_viability is NOT_VIABLE \u2014 impossible constraints as stated",
+        "open_questions include urgency Before planning \u2014 resolve before trusting plan"
+      ],
+      "decision": null
+    },
+    "validation": {
+      "valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "tokens_used": 9292,
+    "input_tokens": 235,
+    "output_tokens": 9057,
+    "cache_hit": false
+  }
+}

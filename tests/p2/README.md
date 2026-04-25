@@ -30,5 +30,5 @@ make test-p2
 - **Intake guard fixtures:** `inputs/test-cases-p2/intake/*.txt` + `expectations.json`
 - **Frozen gate fixtures:** `inputs/test-cases-p2/fixtures/gates/*.json`
 - **Refinement snapshots:** `inputs/test-cases-p2/fixtures/refinement/*/`
-- **P1 eval scorecards:** `results/p1/eval/` (from `scripts/run_eval.py`)
-- **P2 live E2E logs:** `results/p2/e2e/`
+- **P1 eval scorecards:** `outputs/p1/eval/` (from `scripts/run_eval.py`)
+- **P2 live E2E logs:** `outputs/p2/e2e/`

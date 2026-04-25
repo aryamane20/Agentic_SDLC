@@ -1,0 +1,932 @@
+{
+  "case_id": "bad-07",
+  "http_status": 200,
+  "body": {
+    "session_id": "478226cd-8b12-4d75-9f2e-713e336e9634",
+    "report_id": "rpt_57360910e711",
+    "report_revision": 1,
+    "report": {
+      "report_metadata": {
+        "generated_at": "2026-04-25T20:08:37.639040Z",
+        "prompt_version": "v1.6.3",
+        "project_type": "TYPE_A",
+        "input_quality": "LOW",
+        "classification_confidence": "HIGH",
+        "sdlc_approach": "Hybrid",
+        "sdlc_rationale": "Requirements are partially defined (core features named) but success criteria, team composition, timeline, and stakeholder sign-off are absent; Hybrid approach allows structured phases with sprint-based execution in Phases 2-3 to accommodate evolving details.",
+        "pm_confidence_score": 42.0
+      },
+      "project_understanding": {
+        "primary_goal": "Build an internal leave request tracking system enabling employees to submit leave requests, managers to approve/reject via workflow, and automated email notifications on decision.",
+        "beneficiary": "HR team (50 people) and all employees submitting leave requests",
+        "trigger": "HR team needs a leave management system; current process implied to be manual or absent",
+        "success_definition": [
+          "Employees can submit leave requests",
+          "Managers can approve or reject requests via dashboard",
+          "Email notifications sent on approval/rejection",
+          "HR team can view all leave requests"
+        ],
+        "supporting_quotes": [
+          "build a leave tracker for our HR team",
+          "approval workflows and manager dashboards",
+          "Employees should be able to submit requests",
+          "get email notifications when approved or rejected"
+        ]
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "Project deadline is 12 weeks from project start; no deadline provided in input.",
+          "why": "Internal software projects without explicit deadlines typically follow a standard 10-14 week delivery cycle for TYPE_A tools of this scope (PMBOK 6.4 \u2014 Schedule baseline derived from scope definition).",
+          "pmi_basis": "PMBOK 6th Ed, Section 6.4 \u2014 Schedule baseline requires scope definition and resource availability",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If actual deadline is shorter (e.g., 6 weeks), critical path tasks will not fit; if longer (e.g., 20 weeks), resource allocation and team motivation may suffer from extended timeline.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows decomposition and staffing plan to proceed without stakeholder delay. Risks: if actual deadline is materially different, phases and task sequencing must be re-baselined."
+        },
+        {
+          "id": "A2",
+          "what": "Core team composition: 1 Product Manager, 2 Backend Developers, 1 Frontend Developer, 1 QA Engineer; no team specified in input.",
+          "why": "TYPE_A internal tool with approval workflows and dashboards typically requires backend (workflow engine, database), frontend (UI), and QA; PM is mandatory for scope ownership (PMBOK 9.2 \u2014 Resource estimation tied to WBS).",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 \u2014 Resource estimation and team composition derived from WBS and project complexity",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If actual team is smaller (e.g., 1 developer), timeline doubles or scope must be cut. If team is larger, budget and coordination overhead increase.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows task decomposition and critical path analysis. Risks: if actual team differs, staffing plan and timeline become invalid."
+        },
+        {
+          "id": "A3",
+          "what": "Technology stack: Node.js/Express backend, React frontend, PostgreSQL database, SendGrid for email; no stack specified in input.",
+          "why": "Standard modern stack for internal web applications; widely available expertise in mid-to-large tech companies; reduces technical risk (PMBOK 11.2 \u2014 Risk identification before planning baseline).",
+          "pmi_basis": "PMBOK 6th Ed, Section 11.2 \u2014 Technical risk assessment tied to team experience with chosen stack",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If team lacks experience with chosen stack, Phase 2 duration increases 30-50%; if mandated stack is different, architecture and task list must be re-designed.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows technical task decomposition without re-architecture. Risks: if stack is mandated differently, entire Phase 2 task list becomes invalid."
+        },
+        {
+          "id": "A4",
+          "what": "Stakeholder approval of scope is assumed documented or will be obtained before Phase 2 begins; no sign-off mentioned in input.",
+          "why": "PMBOK 5.4 requires scope baseline to be formally accepted before execution begins; internal projects typically have implicit stakeholder alignment but lack written sign-off (PMBOK 13.2 \u2014 Stakeholder requirements documented before execution).",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.4 \u2014 Scope baseline requires accepted requirements; Section 13.2 \u2014 Stakeholder engagement before execution",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If scope is not signed off, Phase 1 will extend or Phase 2 will be blocked by scope disputes; rework will consume 20-30% of development effort.",
+          "source": "scope",
+          "tradeoff": "Gains: allows planning to proceed with defined scope. Risks: if stakeholder approval is not obtained, project will stall mid-Phase 1."
+        },
+        {
+          "id": "A5",
+          "what": "Leave request approval workflow is a simple two-step process: employee submits \u2192 manager approves/rejects; no workflow complexity specified in input.",
+          "why": "Input mentions 'approval workflows' but does not describe escalation, delegation, or multi-level approval; two-step is the simplest defensible workflow for a leave tracker (PMBOK 5.3 \u2014 Scope definition).",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.3 \u2014 Scope definition requires explicit boundaries; absence of complexity signals simple workflow",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If actual workflow requires escalation (e.g., manager \u2192 director \u2192 HR), Phase 2 backend complexity increases 40-60%; if delegation is required, UI and database schema must be redesigned.",
+          "source": "scope",
+          "tradeoff": "Gains: allows backend task decomposition without re-architecture. Risks: if workflow is more complex, Phase 2 effort estimate becomes invalid."
+        },
+        {
+          "id": "A6",
+          "what": "Email notifications are sent via third-party service (e.g., SendGrid); no email infrastructure specified in input.",
+          "why": "Internal projects typically use managed email services rather than building SMTP infrastructure; reduces operational burden and compliance risk (PMBOK 11.2 \u2014 Integration risk assessment).",
+          "pmi_basis": "PMBOK 6th Ed, Section 11.2 \u2014 Integration risk tied to external dependencies; managed services reduce risk vs. custom infrastructure",
+          "risk_if_wrong": "LOW",
+          "consequence": "If email must be sent via internal SMTP, Phase 2 backend task increases 10-15 hours; if email service is mandated, integration testing in Phase 3 may require additional setup.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: reduces operational complexity and Phase 5 handoff burden. Risks: if internal email is mandated, task estimates and Phase 3 integration testing must be adjusted."
+        }
+      ],
+      "project_plan": {
+        "total_duration_weeks": 12.0,
+        "buffer_applied_percent": 15.0,
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T15",
+            "T18",
+            "T21"
+          ],
+          "total_duration_days": 50.0,
+          "zero_slack_tasks": [
+            "T1",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T15",
+            "T18",
+            "T21"
+          ],
+          "highest_slack_tasks": [
+            "T2",
+            "T4",
+            "T7"
+          ],
+          "staffing_implication": "Backend Developer and Frontend Developer must be allocated full-time across Phases 2-4; PM must maintain continuous oversight; QA Engineer must be full-time in Phases 3-4 to meet 25% QA effort minimum."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 1.5,
+            "percentage_of_total": 12.5,
+            "milestones": [
+              "Requirements document finalized and signed off by HR stakeholder",
+              "Database schema and API contract approved by tech lead",
+              "Approval workflow logic documented",
+              "UI wireframes approved by HR team"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Conduct stakeholder requirements workshop with HR team lead",
+                "phase": 1,
+                "effort_hours": 8.0,
+                "owner_role": "Product Manager",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Requirements document signed off by HR stakeholder; scope boundaries (e.g., leave types, approval levels, reporting) explicitly documented."
+              },
+              {
+                "id": "T2",
+                "name": "Design database schema for leave requests, approvals, and audit trail",
+                "phase": 1,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "ER diagram and schema SQL reviewed and approved by tech lead; supports all leave types and approval states identified in T1."
+              },
+              {
+                "id": "T3",
+                "name": "Define API endpoints and request/response contracts for leave submission and approval",
+                "phase": 1,
+                "effort_hours": 10.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T2"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "OpenAPI/Swagger spec document approved by tech lead; all endpoints (submit, approve, reject, list, get) defined with schemas."
+              },
+              {
+                "id": "T4",
+                "name": "Create UI wireframes for employee request form, manager dashboard, and notification settings",
+                "phase": 1,
+                "effort_hours": 14.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Wireframes approved by HR team; all user flows (submit, view status, approve, reject) represented; accessibility considerations noted."
+              },
+              {
+                "id": "T5",
+                "name": "Document approval workflow logic and state transitions",
+                "phase": 1,
+                "effort_hours": 6.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "State diagram and decision rules documented; edge cases (e.g., overlapping requests, manager absence) explicitly handled or deferred."
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development",
+            "duration_weeks": 4.5,
+            "percentage_of_total": 37.5,
+            "milestones": [
+              "Database and API endpoints implemented",
+              "Employee request submission working end-to-end",
+              "Manager approval/rejection workflow functional",
+              "Email notification service integrated",
+              "Internal demo completed with HR team"
+            ],
+            "tasks": [
+              {
+                "id": "T6",
+                "name": "Set up project infrastructure: Git repo, CI/CD pipeline, staging environment",
+                "phase": 2,
+                "effort_hours": 8.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Developers can push code and see automated tests run; staging environment accessible to QA team."
+              },
+              {
+                "id": "T7",
+                "name": "Implement database schema and migrations",
+                "phase": 2,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T6"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "All tables created; migrations tested on fresh database; schema matches approved design from T2."
+              },
+              {
+                "id": "T8",
+                "name": "Implement leave request submission API endpoint and validation",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T7",
+                  "T3"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "POST /leave-requests endpoint accepts employee ID, start date, end date, reason; validates date ranges and conflicts; returns 201 with request ID."
+              },
+              {
+                "id": "T9",
+                "name": "Implement approval/rejection API endpoints and workflow state machine",
+                "phase": 2,
+                "effort_hours": 18.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T8",
+                  "T5"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "PUT /leave-requests/{id}/approve and PUT /leave-requests/{id}/reject endpoints implemented; state transitions enforced; audit log recorded."
+              },
+              {
+                "id": "T10",
+                "name": "Implement email notification service integration (SendGrid or equivalent)",
+                "phase": 2,
+                "effort_hours": 10.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T8",
+                  "T9"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Email sent on request submission (to manager), approval (to employee), and rejection (to employee); email templates configurable; SendGrid API key secured."
+              },
+              {
+                "id": "T11",
+                "name": "Build employee request submission form (React component)",
+                "phase": 2,
+                "effort_hours": 14.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T4",
+                  "T8"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Form accepts start date, end date, reason; calls POST /leave-requests; displays success/error message; form validation matches backend."
+              },
+              {
+                "id": "T12",
+                "name": "Build manager approval dashboard (React component)",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T4",
+                  "T9"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Dashboard displays pending requests for manager's team; approve/reject buttons functional; request details (employee, dates, reason) visible."
+              },
+              {
+                "id": "T13",
+                "name": "Implement authentication and authorization (employee vs. manager vs. HR roles)",
+                "phase": 2,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Employees can only see/edit their own requests; managers can approve/reject their team's requests; HR can view all requests; role-based access control enforced."
+              },
+              {
+                "id": "T14",
+                "name": "Conduct internal demo with HR team; gather feedback",
+                "phase": 2,
+                "effort_hours": 4.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T11",
+                  "T12"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Demo completed with at least 2 HR team members; feedback documented; scope change requests (if any) logged for Phase 3 or deferred."
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases",
+            "duration_weeks": 2.5,
+            "percentage_of_total": 21.0,
+            "milestones": [
+              "All integrations tested (email, authentication, database)",
+              "Edge cases handled (overlapping requests, manager absence, bulk operations)",
+              "Security review completed",
+              "Performance baseline established"
+            ],
+            "tasks": [
+              {
+                "id": "T15",
+                "name": "Implement request conflict detection (overlapping leave dates)",
+                "phase": 3,
+                "effort_hours": 10.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "System prevents approval of overlapping requests for same employee; returns 409 Conflict with explanation; UI shows conflicting dates."
+              },
+              {
+                "id": "T16",
+                "name": "Implement manager delegation (if manager is on leave, designate approver)",
+                "phase": 3,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T9",
+                  "T13"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Manager can designate temporary approver; requests route to delegate during manager's leave; audit trail shows delegation."
+              },
+              {
+                "id": "T17",
+                "name": "Test email delivery at scale (50+ employees, concurrent requests)",
+                "phase": 3,
+                "effort_hours": 8.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T10"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Emails delivered within 5 minutes of approval/rejection; no bounces; SendGrid rate limits respected; retry logic tested."
+              },
+              {
+                "id": "T18",
+                "name": "Conduct security review: authentication, authorization, data protection",
+                "phase": 3,
+                "effort_hours": 10.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T13"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Security checklist completed: no SQL injection, no XSS, passwords hashed, API tokens secured, HTTPS enforced; findings documented."
+              },
+              {
+                "id": "T19",
+                "name": "Performance testing: response time and database query optimization",
+                "phase": 3,
+                "effort_hours": 8.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Dashboard loads in < 2 seconds with 50 concurrent users; API endpoints respond in < 500ms; database queries indexed; baseline metrics recorded."
+              },
+              {
+                "id": "T20",
+                "name": "Implement audit logging for all leave request actions",
+                "phase": 3,
+                "effort_hours": 6.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T9"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "All actions (submit, approve, reject, delegate) logged with timestamp, user, and change details; audit log queryable by HR."
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 2.5,
+            "percentage_of_total": 20.0,
+            "milestones": [
+              "All critical bugs resolved",
+              "User acceptance testing completed with HR team",
+              "Accessibility compliance verified (WCAG 2.1 AA)",
+              "Documentation written (user guide, admin guide)"
+            ],
+            "tasks": [
+              {
+                "id": "T21",
+                "name": "Execute comprehensive test plan: functional, integration, regression",
+                "phase": 4,
+                "effort_hours": 20.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T15",
+                  "T18"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Test cases for all workflows (submit, approve, reject, delegate) executed; critical bugs (P1/P2) resolved; test report generated."
+              },
+              {
+                "id": "T22",
+                "name": "Conduct user acceptance testing (UAT) with HR team and sample managers",
+                "phase": 4,
+                "effort_hours": 12.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T21"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "UAT session completed with 3+ HR team members and 2+ managers; feedback documented; sign-off obtained or issues logged for Phase 4 resolution."
+              },
+              {
+                "id": "T23",
+                "name": "Verify accessibility compliance (WCAG 2.1 AA standard)",
+                "phase": 4,
+                "effort_hours": 8.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T11",
+                  "T12"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Automated accessibility scan passed; keyboard navigation tested; screen reader compatibility verified; color contrast meets WCAG AA."
+              },
+              {
+                "id": "T24",
+                "name": "Write user documentation: employee guide, manager guide, FAQ",
+                "phase": 4,
+                "effort_hours": 10.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T22"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Guides cover request submission, approval workflow, email notifications, troubleshooting; published in HR wiki or knowledge base."
+              },
+              {
+                "id": "T25",
+                "name": "Write admin/operations documentation: deployment, monitoring, troubleshooting",
+                "phase": 4,
+                "effort_hours": 8.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T18"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Runbook covers deployment steps, environment variables, database backups, common issues; published in internal wiki."
+              },
+              {
+                "id": "T26",
+                "name": "Resolve remaining bugs and performance issues",
+                "phase": 4,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T21",
+                  "T22"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "All P1 bugs fixed; P2 bugs resolved or deferred to post-launch; performance targets met; regression tests pass."
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 1.0,
+            "percentage_of_total": 9.0,
+            "milestones": [
+              "Production deployment completed",
+              "Smoke testing in production passed",
+              "Go-live sign-off obtained",
+              "Post-launch support plan documented"
+            ],
+            "tasks": [
+              {
+                "id": "T27",
+                "name": "Deploy to production: database migration, application deployment, DNS cutover",
+                "phase": 5,
+                "effort_hours": 8.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T26"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Application running in production; database migrated; all endpoints responding; no errors in logs."
+              },
+              {
+                "id": "T28",
+                "name": "Execute smoke tests in production: submit request, approve, receive email",
+                "phase": 5,
+                "effort_hours": 4.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T27"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "End-to-end workflow tested in production; email delivered; no critical issues found."
+              },
+              {
+                "id": "T29",
+                "name": "Obtain go-live sign-off from HR stakeholder",
+                "phase": 5,
+                "effort_hours": 2.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T28"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "HR stakeholder confirms system is ready for employee use; sign-off documented."
+              },
+              {
+                "id": "T30",
+                "name": "Set up monitoring and alerting for production system",
+                "phase": 5,
+                "effort_hours": 6.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T27"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Alerts configured for API errors, database issues, email delivery failures; on-call rotation established."
+              },
+              {
+                "id": "T31",
+                "name": "Document post-launch support plan and handoff to operations team",
+                "phase": 5,
+                "effort_hours": 4.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T29"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Support plan includes escalation path, known issues, workarounds; operations team trained; handoff meeting completed."
+              }
+            ]
+          }
+        ]
+      },
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Scope",
+          "description": "If stakeholder approval of scope is not obtained in writing before Phase 2 begins, then Phase 1 will extend or Phase 2 will be blocked by scope disputes, consuming 20-30% of development effort in rework.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "HR stakeholder does not sign off on requirements document by end of Phase 1 Week 1",
+          "mitigation": "Schedule formal requirements review meeting with HR team lead in Phase 1 Day 1; document all decisions in writing; obtain email sign-off before Phase 2 kickoff.",
+          "contingency": "If sign-off is delayed, freeze Phase 2 scope and document all pending decisions as Phase 3 or post-launch items; do not start development on unsigned requirements."
+        },
+        {
+          "id": "R2",
+          "category": "Resource",
+          "description": "If core team (2 Backend Developers, 1 Frontend Developer, 1 QA Engineer) is not available full-time, then critical path tasks will slip and timeline will extend by 2-4 weeks.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Any developer allocated < 80% to this project or pulled to competing priority",
+          "mitigation": "Obtain written commitment from engineering manager for full-time allocation; document in project charter; establish weekly capacity check-ins.",
+          "contingency": "If developer is diverted, immediately escalate to engineering leadership; identify replacement or reduce scope to match available capacity."
+        },
+        {
+          "id": "R3",
+          "category": "Technical",
+          "description": "If approval workflow logic is more complex than assumed (e.g., multi-level approval, escalation, delegation), then Phase 2 backend effort increases 40-60% and Phase 3 integration testing extends by 1-2 weeks.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "HR stakeholder requests features like escalation, delegation, or multi-level approval during Phase 1 or Phase 2",
+          "mitigation": "Document workflow requirements explicitly in Phase 1 Task T5; use state diagram to validate all edge cases; obtain stakeholder sign-off on workflow before Phase 2 begins.",
+          "contingency": "If new workflow requirements emerge, defer to Phase 2 scope change or post-launch; do not expand Phase 2 without extending timeline."
+        },
+        {
+          "id": "R4",
+          "category": "Integration",
+          "description": "If email service (SendGrid) integration fails or rate limits are hit, then notifications will not be delivered and user experience will degrade; Phase 3 testing will extend by 1 week.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "SendGrid API returns errors during Phase 2 or Phase 3 testing; rate limits exceeded with 50+ concurrent requests",
+          "mitigation": "Set up SendGrid sandbox environment in Phase 1; test email delivery with realistic load in Phase 3 Task T17; implement retry logic with exponential backoff.",
+          "contingency": "If SendGrid is unavailable, switch to alternative email provider (AWS SES, Mailgun) or implement internal SMTP relay; update Phase 3 integration tests."
+        },
+        {
+          "id": "R5",
+          "category": "Schedule",
+          "description": "If Phase 1 requirements gathering extends beyond 1.5 weeks due to stakeholder unavailability or scope ambiguity, then critical path will slip and Phase 2 start date will be delayed by 1-2 weeks.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "HR stakeholder unavailable for requirements workshop; scope questions unresolved by Phase 1 Day 5",
+          "mitigation": "Schedule requirements workshop in Phase 1 Day 1; prepare agenda and scope template in advance; set decision deadline for Phase 1 Day 3.",
+          "contingency": "If stakeholder is unavailable, proceed with best-guess scope and document assumptions; plan scope validation session in Phase 2 Week 1."
+        },
+        {
+          "id": "R6",
+          "category": "Compliance",
+          "description": "If security requirements are not defined (authentication method, data sensitivity, encryption), then Phase 3 security review will uncover gaps and Phase 4 will extend by 1-2 weeks for remediation.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Security review in Phase 3 Task T18 identifies missing authentication, unencrypted data, or authorization gaps",
+          "mitigation": "Define security requirements in Phase 1 Task T1; assume SSO/LDAP authentication and encryption at rest; document data sensitivity (PII: employee names, dates); conduct security review in Phase 3 Task T18.",
+          "contingency": "If security gaps are found, prioritize P1 issues for Phase 4 resolution; defer P2 issues to post-launch; do not deploy to production without P1 fixes."
+        },
+        {
+          "id": "R7",
+          "category": "Resource",
+          "description": "If QA Engineer is not allocated at minimum 25% of total development effort (70+ hours), then test coverage will be insufficient and critical bugs will escape to production.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "QA effort falls below 70 hours; QA Engineer allocated to competing project during Phase 3-4",
+          "mitigation": "Allocate QA Engineer full-time in Phases 3-4 (minimum 25% of total project hours); establish test plan in Phase 1; execute regression tests in Phase 4.",
+          "contingency": "If QA capacity is unavailable, extend Phase 4 by 1-2 weeks or reduce scope to core workflows only; do not ship without QA sign-off."
+        },
+        {
+          "id": "R8",
+          "category": "Execution",
+          "description": "If team has no prior experience with chosen technology stack (Node.js/Express, React, PostgreSQL), then Phase 2 development will extend 30-50% and technical debt will accumulate.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Developers report unfamiliarity with stack; code review reveals architectural issues or performance problems",
+          "mitigation": "Confirm team experience with stack in Phase 1; allocate 2-3 days for spike/POC if stack is new; pair experienced and junior developers.",
+          "contingency": "If team lacks experience, extend Phase 2 by 2-3 weeks or bring in external contractor for architecture guidance; do not proceed with unfamiliar stack without mitigation."
+        },
+        {
+          "id": "R9",
+          "category": "Scope",
+          "description": "If HR stakeholder requests scope creep (e.g., reporting, analytics, integration with payroll system), then Phase 2 will extend and timeline will slip by 2-4 weeks.",
+          "probability": "HIGH",
+          "impact": "MEDIUM",
+          "score": "HIGH",
+          "trigger": "HR stakeholder requests new features during Phase 2 or Phase 3; scope change requests logged",
+          "mitigation": "Define scope boundaries explicitly in Phase 1 Task T1; document 'out of scope' items (e.g., payroll integration, advanced reporting); establish change control process.",
+          "contingency": "If scope creep occurs, evaluate impact on timeline; defer non-critical features to Phase 2 (post-launch); obtain stakeholder approval for timeline extension."
+        },
+        {
+          "id": "R10",
+          "category": "Schedule",
+          "description": "If critical path tasks (T1, T3, T5, T8, T12, T15, T18, T21) slip by more than 3 days each, then overall project timeline will extend beyond 12 weeks.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Any critical path task takes longer than estimated; dependencies block downstream tasks",
+          "mitigation": "Monitor critical path tasks weekly; identify blockers early; allocate buffer time (15% of total timeline already applied); escalate delays immediately.",
+          "contingency": "If critical path slips, evaluate scope reduction or resource addition; do not absorb delays without timeline adjustment."
+        }
+      ],
+      "staffing_plan": [
+        {
+          "role": "Product Manager",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 60.0,
+          "allocation_percent": 12.0,
+          "skills_required": [
+            "Requirements gathering",
+            "Stakeholder management",
+            "Project planning",
+            "Scope management"
+          ],
+          "critical_path": true,
+          "notes": "Owns scope, timeline, and stakeholder alignment; must be available for Phase 1 requirements workshop and Phase 4 UAT; 12% allocation is within 10-15% PM oversight rule."
+        },
+        {
+          "role": "Backend Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 180.0,
+          "allocation_percent": 36.0,
+          "skills_required": [
+            "Node.js/Express",
+            "PostgreSQL",
+            "REST API design",
+            "Authentication/authorization",
+            "Email integration"
+          ],
+          "critical_path": true,
+          "notes": "Implements database, API endpoints, approval workflow, email integration, security; full-time in Phases 2-4; critical path tasks T3, T5, T8, T12, T15, T18."
+        },
+        {
+          "role": "Frontend Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "total_hours": 140.0,
+          "allocation_percent": 28.0,
+          "skills_required": [
+            "React 18",
+            "TypeScript",
+            "REST API consumption",
+            "Responsive design",
+            "Accessibility (WCAG 2.1)"
+          ],
+          "critical_path": true,
+          "notes": "Implements employee request form and manager dashboard; full-time in Phases 2-4; critical path task T12; must ensure WCAG 2.1 AA compliance."
+        },
+        {
+          "role": "QA Engineer",
+          "phase_involvement": [
+            3,
+            4,
+            5
+          ],
+          "total_hours": 70.0,
+          "allocation_percent": 14.0,
+          "skills_required": [
+            "Test planning",
+            "Functional testing",
+            "Integration testing",
+            "Accessibility testing",
+            "Performance testing"
+          ],
+          "critical_path": true,
+          "notes": "Executes test plan, UAT, accessibility verification, performance testing; full-time in Phases 3-4; 70 hours = 25% of 280 total dev hours (meets PMBOK 8.2 minimum); critical path task T21."
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "What is the formal deadline for this project? Input provides no target date; assumed 12 weeks, but if deadline is shorter (e.g., 6 weeks) or longer (e.g., 20 weeks), timeline and phase allocations must be re-baselined.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Timeline estimate becomes invalid; critical path may not fit within actual deadline; scope may need to be cut or team expanded."
+        },
+        {
+          "priority": 2,
+          "question": "Who is the named HR stakeholder responsible for scope approval and UAT sign-off? Input does not name an individual; PM cannot proceed without a single decision-maker.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Phase 1 requirements workshop cannot be scheduled; scope approval will be delayed; Phase 2 start date will slip."
+        },
+        {
+          "priority": 3,
+          "question": "What is the approval workflow complexity? Input mentions 'approval workflows' but does not specify: (a) single-level (manager only) or multi-level (manager \u2192 director \u2192 HR)? (b) delegation if manager is absent? (c) escalation for urgent requests? Assumed simple two-step (employee \u2192 manager), but if more complex, Phase 2 backend effort increases 40-60%.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Backend task estimates (T9, T16) become invalid; Phase 2 duration may extend by 1-2 weeks; database schema may need redesign."
+        },
+        {
+          "priority": 4,
+          "question": "What authentication method is required? Input does not specify SSO/LDAP, local username/password, or OAuth. Assumed SSO/LDAP (standard for internal tools), but if local auth is mandated, Phase 2 backend effort increases 10-15 hours.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Authentication implementation (T13) may require rework; security review (T18) may uncover gaps; Phase 4 may extend by 3-5 days."
+        },
+        {
+          "priority": 5,
+          "question": "Is there a named Product Owner responsible for backlog prioritization during Phases 2-3 (Hybrid SDLC approach)? Input does not specify; assumed PM owns backlog, but if a separate PO is required, governance and decision-making must be clarified.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Sprint planning and backlog refinement in Phases 2-3 will be delayed; scope changes may not be prioritized consistently; team may lack clear direction."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 42.0,
+        "deductions": [
+          {
+            "amount": 10.0,
+            "reason": "Input quality is LOW: single paragraph with no explicit deadline, budget, team composition, or success metrics; only core features named."
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: deadline not provided; assumed 12 weeks."
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: team composition not specified; assumed 1 PM, 2 Backend, 1 Frontend, 1 QA."
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: technology stack not mandated; assumed Node.js/Express, React, PostgreSQL."
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: stakeholder approval not mentioned; assumed scope sign-off will be obtained in Phase 1."
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption count: 6 assumptions logged (A1-A6); each assumption is an unvalidated risk."
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk count: 5 HIGH-scored risks in register (R2, R3, R4, R6, R9); indicates significant execution uncertainty."
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present: R1 (Scope approval not obtained); project cannot proceed without stakeholder sign-off."
+          },
+          {
+            "amount": 5.0,
+            "reason": "SDLC approach is Hybrid: requires sprint-based execution in Phases 2-3, adding coordination overhead and uncertainty."
+          }
+        ],
+        "interpretation": "PM confidence score is 42.0 because input quality is LOW (single paragraph, no deadline/budget/team), 6 assumptions are required to proceed, 1 CRITICAL risk exists (scope approval), and 5 HIGH risks indicate significant execution uncertainty; project is viable but requires immediate stakeholder engagement and scope sign-off before Phase 2 can begin."
+      },
+      "project_viability": null
+    },
+    "gate": {
+      "fired": true,
+      "reasons": [
+        "confidence_score < 60 \u2014 plan needs review",
+        "risk_register contains CRITICAL risk \u2014 PM decision required"
+      ],
+      "decision": null
+    },
+    "validation": {
+      "valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "tokens_used": 11417,
+    "input_tokens": 102,
+    "output_tokens": 11315,
+    "cache_hit": false
+  }
+}

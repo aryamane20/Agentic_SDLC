@@ -1,0 +1,930 @@
+{
+  "case_id": "hp-03",
+  "http_status": 200,
+  "body": {
+    "session_id": "8f46d29c-42b1-481a-ad8d-e1c76c4e97de",
+    "report_id": "rpt_0275d199ee5b",
+    "report_revision": 1,
+    "report": {
+      "report_metadata": {
+        "generated_at": "2026-04-25T20:13:56.449489Z",
+        "prompt_version": "v1.6.3",
+        "project_type": "TYPE_D",
+        "input_quality": "HIGH",
+        "classification_confidence": "HIGH",
+        "sdlc_approach": "Predictive",
+        "sdlc_rationale": "Fixed hard deadline (2026-05-15, no slip permitted), explicit scope (all features ship day one), named team composition, and regulatory compliance requirements all point to Predictive \u2014 but the project is NOT viable under current constraints; viability assessment is the primary output.",
+        "pm_confidence_score": 28.0
+      },
+      "project_understanding": {
+        "primary_goal": "Launch a HIPAA-compliant patient medication adherence mobile app (iOS + Android) integrated with EPIC pharmacy data, plus clinician dashboard and in-store marketing rollout across 2,400 locations on a fixed public deadline (2026-05-15).",
+        "beneficiary": "Pharmacy chain patients and clinicians; brand reputation and regulatory standing.",
+        "trigger": "Board public announcement of launch date; EPIC certification schedule pressure; competitive market timing.",
+        "success_definition": [
+          "App launches on iOS and Android on 2026-05-15 with zero HIPAA violations",
+          "EPIC data sync operational and validated before go-live",
+          "Clinician dashboard functional and tested with end users",
+          "In-store QR signup and marketing materials deployed across all 2,400 locations same week",
+          "No critical bugs or security vulnerabilities in production"
+        ],
+        "supporting_quotes": [
+          "Hard launch date: 2026-05-15 \u2014 Board announced publicly; no slip permitted",
+          "Scope (all must ship on day one): Patient app (iOS + Android), clinician-facing web dashboard, batch data sync from EPIC via new custom connector we have not finished designing",
+          "Team today: 3 contractors (one backend, one mobile, one PM) \u2014 no dedicated security or compliance hire yet",
+          "Budget: $200k total remaining",
+          "HIPAA + state boards; any breach is existential for the brand"
+        ]
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "EPIC sandbox environment and API documentation are available immediately and do not require additional certification or access approval beyond the 2-week variance mentioned.",
+          "why": "The input states 'assume we can get a 2-week variance from the hospital system' but does not specify whether sandbox access, API contracts, or authentication credentials are already in hand. For a TYPE_D integration project, sandbox access is a hard blocker; assuming it is available allows decomposition to proceed.",
+          "pmi_basis": "PMBOK 6th Ed, Section 6.4 \u2014 Schedule baseline requires known constraints; PMBOK 11.2 \u2014 Risk identification before planning.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If sandbox access is not available or requires additional weeks of negotiation, the entire Phase 2 development timeline collapses. The critical path cannot start until the EPIC connector design is complete and sandbox is accessible.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows schedule planning to proceed without waiting for EPIC approval confirmation. Risks: if sandbox access is delayed beyond the 2-week variance, the project cannot meet the May 15 deadline."
+        },
+        {
+          "id": "A2",
+          "what": "A dedicated security engineer and HIPAA compliance specialist will be hired or contracted immediately (within 2 weeks) to lead security design, threat modeling, and compliance validation. These roles are not optional for a PHI-handling system.",
+          "why": "The input explicitly states 'no dedicated security or compliance hire yet' but the project handles real PHI (prescriptions, refill dates, NPI, phone numbers) and requires HIPAA + state board compliance. A HIPAA-regulated project cannot proceed without security and compliance expertise on the core team. This is a staffing gap that must be filled.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 \u2014 Resource planning must include all required skills; PMBOK 8.1 \u2014 Quality planning for regulated projects requires compliance expertise.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "Without security and compliance expertise, the team will build a system that fails HIPAA audit, exposes PHI, and triggers regulatory penalties and brand damage. This is not a 'nice to have' \u2014 it is a project blocker.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows the plan to include mandatory security and compliance phases. Risks: if these roles cannot be hired/contracted quickly, the budget and timeline both become unviable."
+        },
+        {
+          "id": "A3",
+          "what": "The 3-person contractor team (backend, mobile, PM) will remain fully allocated (100% FTE equivalent) to this project for the entire 18-week duration with no pull to other projects or competing priorities.",
+          "why": "The input names a specific team size (3 contractors) and a fixed deadline with no slip. For a project of this complexity and risk, the team must be protected from context-switching. This is a standard assumption for Predictive projects with fixed deadlines.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 \u2014 Resource leveling; PMBOK 6.5 \u2014 Schedule baseline assumes dedicated capacity.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If any of the 3 contractors is pulled to another project or reduced to part-time, the critical path extends by weeks. With only 18 weeks available, any reduction in capacity makes the deadline unachievable.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows realistic task scheduling and critical path calculation. Risks: if contractors are shared with other projects, the plan fails immediately."
+        },
+        {
+          "id": "A4",
+          "what": "The $200k budget remaining covers all development, infrastructure, testing, and deployment costs, including contractor labor for the full 18-week duration, cloud hosting, third-party services (e.g., push notifications, analytics), and compliance/security tooling.",
+          "why": "The input states '$200k total remaining' but does not break down what is already spent or what the budget covers. For a multi-platform mobile app with EPIC integration and HIPAA compliance, $200k is a tight constraint. Assuming it covers all remaining costs allows the viability assessment to proceed.",
+          "pmi_basis": "PMBOK 6th Ed, Section 7.2 \u2014 Cost baseline; PMBOK 13.2 \u2014 Stakeholder requirements include budget constraints.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If $200k does not cover the full cost (e.g., contractor labor is already committed separately, or infrastructure costs are higher than estimated), the project will run out of budget before launch. This triggers scope cuts or timeline extension, both of which are forbidden by the hard deadline.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows cost estimation and viability check. Risks: if actual costs exceed $200k, the project becomes NOT_VIABLE on budget."
+        }
+      ],
+      "project_plan": {
+        "total_duration_weeks": 18.0,
+        "buffer_applied_percent": 15.0,
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T16",
+            "T20",
+            "T24",
+            "T28"
+          ],
+          "total_duration_days": 85.0,
+          "zero_slack_tasks": [
+            "T1",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T16",
+            "T20",
+            "T24",
+            "T28"
+          ],
+          "highest_slack_tasks": [
+            "T2",
+            "T4",
+            "T7"
+          ],
+          "staffing_implication": "All critical path roles (Backend Developer, Mobile Developer, Security Engineer, Compliance Specialist) must be full-time with zero context-switching; any part-time allocation or shared resource will cause the deadline to slip."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 2.0,
+            "percentage_of_total": 11.0,
+            "milestones": [
+              "HIPAA threat model and security architecture approved by security engineer",
+              "EPIC API contract and sandbox access confirmed",
+              "Compliance requirements document signed off by legal and compliance",
+              "Data flow diagram and encryption strategy documented",
+              "Stakeholder alignment on scope and timeline"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Conduct HIPAA threat modeling and security architecture design",
+                "phase": 1,
+                "effort_hours": 40.0,
+                "owner_role": "Security Engineer",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Threat model document completed, reviewed by compliance specialist, and approved by security lead; all PHI data flows identified and encryption requirements specified."
+              },
+              {
+                "id": "T2",
+                "name": "Document HIPAA and state board compliance requirements",
+                "phase": 1,
+                "effort_hours": 24.0,
+                "owner_role": "Compliance Specialist",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Compliance requirements document lists all HIPAA obligations, state-specific requirements, audit trail needs, and data retention rules; signed off by legal."
+              },
+              {
+                "id": "T3",
+                "name": "Confirm EPIC sandbox access and API contract review",
+                "phase": 1,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Sandbox credentials obtained and tested; API documentation reviewed; authentication method (OAuth, API key, certificate) confirmed; rate limits and SLA documented."
+              },
+              {
+                "id": "T4",
+                "name": "Design data flow diagram and encryption strategy",
+                "phase": 1,
+                "effort_hours": 20.0,
+                "owner_role": "Security Engineer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Data flow diagram shows all PHI movement from EPIC to app to clinician dashboard; encryption at rest and in transit specified; key management strategy documented."
+              },
+              {
+                "id": "T5",
+                "name": "Finalize EPIC connector design and data schema mapping",
+                "phase": 1,
+                "effort_hours": 32.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T3"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "EPIC connector design document specifies all endpoints, field mappings, error handling, retry logic, and batch schedule; reviewed and approved by EPIC liaison."
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development",
+            "duration_weeks": 6.5,
+            "percentage_of_total": 36.0,
+            "milestones": [
+              "EPIC data sync working end-to-end in sandbox",
+              "Patient app core flows (login, medication list, refill request) functional on both iOS and Android",
+              "Clinician dashboard core features (patient search, medication view, notes) working",
+              "Authentication and authorization framework implemented",
+              "Internal demo completed with stakeholders"
+            ],
+            "tasks": [
+              {
+                "id": "T6",
+                "name": "Build EPIC connector (batch sync, error handling, retry logic)",
+                "phase": 2,
+                "effort_hours": 80.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T5"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "EPIC connector reads prescriptions, refill dates, and patient data from sandbox; transforms to internal schema; stores in database; handles API errors and retries; logs all transactions for audit trail."
+              },
+              {
+                "id": "T7",
+                "name": "Implement authentication and authorization (SSO, role-based access)",
+                "phase": 2,
+                "effort_hours": 36.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "SSO integration with pharmacy chain identity provider working; role-based access control (patient, clinician, admin) enforced; audit logging of all access events."
+              },
+              {
+                "id": "T8",
+                "name": "Build patient app core flows (iOS and Android): login, medication list, refill request",
+                "phase": 2,
+                "effort_hours": 120.0,
+                "owner_role": "Mobile Developer",
+                "dependencies": [
+                  "T7"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Patient can log in, view their medications with refill dates, request refills, and receive push notifications; app works on iOS 14+ and Android 10+; offline mode stores last-known medication list."
+              },
+              {
+                "id": "T9",
+                "name": "Build clinician dashboard core features (patient search, medication view, notes)",
+                "phase": 2,
+                "effort_hours": 60.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T6",
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Clinician can search for patients, view their medication list and refill history, add clinical notes; all data encrypted at rest; audit trail logs all clinician actions."
+              },
+              {
+                "id": "T10",
+                "name": "Implement push notification service for refill reminders",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 4,
+                "definition_of_done": "Push notifications sent to patient app when refill is due; user can opt in/out; delivery logged for compliance audit."
+              },
+              {
+                "id": "T11",
+                "name": "Conduct internal demo with stakeholders",
+                "phase": 2,
+                "effort_hours": 12.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T8",
+                  "T9"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Demo shows patient app login, medication list, refill request, and clinician dashboard search and notes; stakeholders confirm direction is correct; feedback logged for Phase 3."
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases",
+            "duration_weeks": 4.0,
+            "percentage_of_total": 22.0,
+            "milestones": [
+              "EPIC connector tested with production-like data volumes and edge cases",
+              "End-to-end data flow validated (EPIC \u2192 app \u2192 clinician dashboard)",
+              "Security review completed; all vulnerabilities remediated",
+              "HIPAA audit trail and compliance controls verified",
+              "Performance testing passed at expected load"
+            ],
+            "tasks": [
+              {
+                "id": "T12",
+                "name": "Test EPIC connector with production-like data volumes and edge cases",
+                "phase": 3,
+                "effort_hours": 40.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T6"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Connector tested with 100k+ patient records; edge cases (null fields, schema drift, rate limiting) handled gracefully; performance benchmarked; all errors logged and retried correctly."
+              },
+              {
+                "id": "T13",
+                "name": "Validate end-to-end data flow (EPIC \u2192 app \u2192 clinician dashboard)",
+                "phase": 3,
+                "effort_hours": 32.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T12",
+                  "T9"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Data integrity verified: prescription from EPIC appears in patient app and clinician dashboard with no loss or corruption; refill request from app updates EPIC system correctly."
+              },
+              {
+                "id": "T14",
+                "name": "Conduct security review and penetration testing",
+                "phase": 3,
+                "effort_hours": 48.0,
+                "owner_role": "Security Engineer",
+                "dependencies": [
+                  "T1",
+                  "T8",
+                  "T9"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Security review completed; OWASP Top 10 vulnerabilities checked; penetration testing performed on app and API; all findings documented and remediated before Phase 4."
+              },
+              {
+                "id": "T15",
+                "name": "Verify HIPAA audit trail and compliance controls",
+                "phase": 3,
+                "effort_hours": 36.0,
+                "owner_role": "Compliance Specialist",
+                "dependencies": [
+                  "T2",
+                  "T6",
+                  "T9"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Audit trail logs all PHI access (who, what, when, why); encryption verified at rest and in transit; access controls enforced; data retention policy implemented; compliance checklist signed off."
+              },
+              {
+                "id": "T16",
+                "name": "Performance test at expected load (concurrent users, data volume)",
+                "phase": 3,
+                "effort_hours": 28.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Load test simulates 10k concurrent users; response time < 2s for patient app, < 3s for clinician dashboard; EPIC connector handles expected batch volume without degradation; results documented."
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 3.5,
+            "percentage_of_total": 19.0,
+            "milestones": [
+              "All critical bugs resolved",
+              "UAT completed with pharmacy staff and clinicians",
+              "Accessibility compliance verified (WCAG 2.1 AA)",
+              "Regulatory pre-launch audit passed",
+              "Go-live readiness confirmed"
+            ],
+            "tasks": [
+              {
+                "id": "T17",
+                "name": "Execute comprehensive regression and functional test suite",
+                "phase": 4,
+                "effort_hours": 56.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T14",
+                  "T15"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "All test cases executed; critical and high-priority bugs fixed; medium-priority bugs documented for post-launch; test coverage > 80% for critical paths."
+              },
+              {
+                "id": "T18",
+                "name": "Conduct UAT with pharmacy staff and clinicians",
+                "phase": 4,
+                "effort_hours": 40.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T17"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "UAT sessions with 5+ pharmacy staff and 3+ clinicians; feedback documented; critical issues resolved; sign-off obtained from pharmacy operations and clinical leadership."
+              },
+              {
+                "id": "T19",
+                "name": "Verify accessibility compliance (WCAG 2.1 AA)",
+                "phase": 4,
+                "effort_hours": 20.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T8",
+                  "T9"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "App and dashboard tested for keyboard navigation, screen reader compatibility, color contrast, and text sizing; WCAG 2.1 AA compliance verified; accessibility report generated."
+              },
+              {
+                "id": "T20",
+                "name": "Conduct regulatory pre-launch audit (HIPAA, state boards)",
+                "phase": 4,
+                "effort_hours": 32.0,
+                "owner_role": "Compliance Specialist",
+                "dependencies": [
+                  "T15",
+                  "T14"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Pre-launch audit checklist completed; HIPAA compliance verified; state board requirements met; legal review completed; go-live approval obtained from compliance and legal."
+              },
+              {
+                "id": "T21",
+                "name": "Prepare go-live runbook and incident response plan",
+                "phase": 4,
+                "effort_hours": 24.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T20"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Runbook documents deployment steps, rollback procedure, monitoring alerts, and escalation contacts; incident response plan covers data breach, system outage, and EPIC sync failure scenarios."
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 1.5,
+            "percentage_of_total": 8.0,
+            "milestones": [
+              "Production deployment completed and verified",
+              "In-store QR signup and marketing materials deployed across 2,400 locations",
+              "Monitoring and alerting operational",
+              "Post-launch support team trained and ready"
+            ],
+            "tasks": [
+              {
+                "id": "T22",
+                "name": "Deploy app to iOS App Store and Google Play Store",
+                "phase": 5,
+                "effort_hours": 12.0,
+                "owner_role": "Mobile Developer",
+                "dependencies": [
+                  "T20"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "App submitted to both stores; app review passed; app live and downloadable; version 1.0 tagged in source control."
+              },
+              {
+                "id": "T23",
+                "name": "Deploy backend services and EPIC connector to production",
+                "phase": 5,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T20"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Backend API, clinician dashboard, and EPIC connector deployed to production; smoke tests passed; EPIC production sync verified; monitoring alerts active."
+              },
+              {
+                "id": "T24",
+                "name": "Deploy in-store QR signup materials and marketing collateral to 2,400 locations",
+                "phase": 5,
+                "effort_hours": 20.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T22"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "QR codes printed and distributed to all 2,400 pharmacy locations; in-store signage installed; marketing materials (posters, flyers, staff talking points) deployed; store staff trained on signup process."
+              },
+              {
+                "id": "T25",
+                "name": "Verify production monitoring, alerting, and logging",
+                "phase": 5,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T23"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Monitoring dashboard shows app health, API latency, EPIC sync status, and error rates; alerts configured for critical issues; logs centralized and searchable; on-call rotation established."
+              },
+              {
+                "id": "T26",
+                "name": "Train post-launch support team and hand off operations",
+                "phase": 5,
+                "effort_hours": 16.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T21",
+                  "T25"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Support team trained on runbook, incident response, and escalation procedures; documentation handed off; on-call schedule confirmed; post-launch retrospective scheduled."
+              }
+            ]
+          }
+        ]
+      },
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Schedule",
+          "description": "If EPIC sandbox access is delayed beyond the 2-week variance or API contract negotiation extends, then Phase 2 development cannot start on schedule, and the critical path extends by 2-4 weeks, making the May 15 deadline unachievable.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "EPIC liaison reports sandbox access not yet available or API contract still in legal review after Week 1 of Phase 1",
+          "mitigation": "Confirm EPIC sandbox access and API contract in writing before project kickoff; establish weekly sync with EPIC liaison to track approval status; identify alternative test data source if sandbox is unavailable.",
+          "contingency": "If sandbox access is delayed beyond Week 2, immediately escalate to CEO and board; prepare scope reduction plan (defer clinician dashboard or reduce initial patient cohort) to meet deadline with available time."
+        },
+        {
+          "id": "R2",
+          "category": "Resource",
+          "description": "If security engineer and compliance specialist are not hired or contracted within 2 weeks, then Phase 1 threat modeling and compliance design cannot proceed, and the project will launch without HIPAA validation, triggering regulatory violations and brand damage.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Security engineer or compliance specialist not onboarded by end of Week 2; or either role is allocated part-time (< 80%) due to competing projects",
+          "mitigation": "Initiate security and compliance hiring immediately (before project kickoff); identify pre-vetted contractors with HIPAA experience; allocate budget for expedited onboarding; establish executive sponsorship to protect these roles from other project pulls.",
+          "contingency": "If either role cannot be filled, escalate to CEO immediately; consider engaging external HIPAA compliance firm for audit and validation; delay launch to secure proper expertise (this violates the hard deadline but prevents regulatory breach)."
+        },
+        {
+          "id": "R3",
+          "category": "Compliance",
+          "description": "If HIPAA threat modeling, security review, or compliance audit is incomplete or deferred to post-launch, then the app will handle PHI without validated security controls, creating existential risk of data breach, regulatory penalties, and brand destruction.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Security review or compliance audit not completed by end of Phase 3; any HIPAA requirement deferred to post-launch; any critical security vulnerability found in Phase 4 or later",
+          "mitigation": "Make security and compliance tasks critical path (non-negotiable); allocate 15% of total project hours to security and compliance (vs. typical 5-10%); conduct security review in parallel with development, not sequentially; engage external HIPAA auditor in Phase 1 to validate approach.",
+          "contingency": "If critical security vulnerability is found in Phase 4, halt deployment immediately; fix vulnerability and re-test; delay launch if necessary (this violates the hard deadline but prevents breach)."
+        },
+        {
+          "id": "R4",
+          "category": "Integration",
+          "description": "If EPIC connector design is incomplete or the API contract is ambiguous, then development will proceed with incorrect assumptions about data format, error handling, or sync frequency, leading to data loss, sync failures, or incorrect medication data in production.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "EPIC API contract not finalized by end of Week 1 of Phase 1; connector design document not approved by EPIC liaison by end of Phase 1; sandbox testing reveals undocumented API behavior",
+          "mitigation": "Require EPIC API contract and sandbox access before Phase 1 kickoff; assign backend developer to work with EPIC liaison full-time in Phase 1 to finalize connector design; build comprehensive test suite for EPIC integration in Phase 2; establish weekly sync with EPIC technical team.",
+          "contingency": "If EPIC API behavior is undocumented or changes, immediately escalate to EPIC liaison and CEO; prepare fallback plan to sync data via manual export/import or alternative data source; delay launch if necessary to ensure data integrity."
+        },
+        {
+          "id": "R5",
+          "category": "Budget",
+          "description": "If actual development costs (contractor labor, infrastructure, third-party services) exceed $200k, then the project will run out of budget before launch, forcing scope cuts or timeline extension, both of which are forbidden by the hard deadline and board commitment.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Contractor burn rate exceeds $11k/week (18 weeks \u00d7 $200k / 18 weeks); infrastructure or third-party service costs exceed estimates; additional security or compliance tooling required",
+          "mitigation": "Establish weekly budget tracking and burn rate monitoring; negotiate fixed-price contracts with contractors to cap labor costs; identify cost-saving alternatives for infrastructure and third-party services; reserve 10% of budget ($20k) as contingency for unexpected costs.",
+          "contingency": "If budget is exceeded, immediately escalate to CFO and CEO; prepare scope reduction plan (defer non-critical features); negotiate extended payment terms with vendors; seek additional budget approval from board."
+        },
+        {
+          "id": "R6",
+          "category": "Schedule",
+          "description": "If the 3-person contractor team is pulled to other projects or reduced to part-time allocation, then the critical path extends by weeks, making the May 15 deadline unachievable.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Any contractor allocated < 80% to this project; any contractor pulled to another project; any contractor unavailable for > 1 week due to illness, vacation, or other reason",
+          "mitigation": "Establish written commitment from contractor management that all 3 contractors are 100% allocated to this project for the full 18-week duration; identify backup contractors for each role in case of unavailability; establish executive sponsorship to protect team from other project pulls.",
+          "contingency": "If any contractor is pulled or becomes unavailable, immediately escalate to CEO; hire replacement contractor immediately (this may exceed budget); delay launch if necessary to secure adequate staffing."
+        },
+        {
+          "id": "R7",
+          "category": "Technical",
+          "description": "If the mobile app does not support offline mode or sync fails when the device is offline, then patients will lose access to their medication list when connectivity is poor, reducing app adoption and creating safety risk (patient cannot see medication list when needed).",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Offline mode not implemented in Phase 2; sync failure not handled gracefully; patient app crashes when device is offline",
+          "mitigation": "Implement offline mode in Phase 2 (store last-known medication list locally); design sync to handle network failures gracefully; test offline scenarios in Phase 3; document offline behavior in user documentation.",
+          "contingency": "If offline mode is not working by end of Phase 3, defer to post-launch patch; communicate limitation to users in app store description."
+        },
+        {
+          "id": "R8",
+          "category": "Scope",
+          "description": "If in-store QR signup and marketing deployment is not coordinated with 2,400 pharmacy locations, then the launch will fail to drive patient adoption, and the board's public announcement will be undermined by lack of in-store visibility.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Marketing materials not designed by end of Phase 4; QR codes not printed and distributed by launch date; store staff not trained on signup process; in-store signage not installed",
+          "mitigation": "Assign product manager to coordinate with marketing and store operations in Phase 1; design QR codes and marketing materials in Phase 2; print and distribute materials in Phase 4; conduct store staff training in Phase 5 before launch.",
+          "contingency": "If in-store deployment is delayed, launch app first and deploy in-store materials in waves over 2-4 weeks post-launch; use digital marketing (email, SMS) to drive initial adoption while in-store rollout completes."
+        },
+        {
+          "id": "R9",
+          "category": "Technical",
+          "description": "If the EPIC connector fails to sync data correctly or loses data during transformation, then patients and clinicians will see incorrect medication information, creating patient safety risk and regulatory violation.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "EPIC connector test reveals data loss or corruption; sync fails silently without logging error; production sync shows discrepancies between EPIC and app data",
+          "mitigation": "Build comprehensive test suite for EPIC connector in Phase 2; test with production-like data volumes in Phase 3; implement detailed logging and audit trail for all data transformations; establish daily reconciliation check between EPIC and app data.",
+          "contingency": "If data loss is detected in production, immediately halt EPIC sync; investigate root cause; restore data from backup; re-sync with corrected logic; notify affected patients and clinicians of any data discrepancies."
+        },
+        {
+          "id": "R10",
+          "category": "Resource",
+          "description": "If the 3-person team lacks experience with mobile app development (iOS/Android), HIPAA compliance, or EPIC integration, then development will be slow, error-prone, and require rework, extending the timeline beyond the May 15 deadline.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Mobile developer has no iOS or Android experience; backend developer has no EPIC integration experience; team has never shipped a HIPAA-regulated product",
+          "mitigation": "Verify contractor experience in hiring process; pair contractors with external experts (HIPAA consultant, EPIC integration specialist) in Phase 1; allocate time for knowledge transfer and ramp-up; establish code review process to catch errors early.",
+          "contingency": "If team lacks critical expertise, hire additional contractors or consultants immediately (this may exceed budget); extend timeline if necessary (this violates the hard deadline)."
+        }
+      ],
+      "staffing_plan": [
+        {
+          "role": "Product Manager",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 72.0,
+          "allocation_percent": 12.0,
+          "skills_required": [
+            "Healthcare/pharmacy domain knowledge",
+            "Stakeholder management",
+            "Regulatory compliance awareness",
+            "Project management",
+            "Go-to-market strategy"
+          ],
+          "critical_path": false,
+          "notes": "Named contractor; must coordinate with EPIC liaison, pharmacy operations, marketing, and legal; responsible for UAT, in-store deployment, and post-launch support handoff."
+        },
+        {
+          "role": "Backend Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 280.0,
+          "allocation_percent": 47.0,
+          "skills_required": [
+            "EPIC API integration",
+            "RESTful API design",
+            "Database design (HIPAA-compliant)",
+            "Authentication/authorization (SSO)",
+            "Cloud infrastructure (AWS/Azure)",
+            "Batch data processing"
+          ],
+          "critical_path": true,
+          "notes": "Named contractor; critical path for EPIC connector design, development, and testing; must work closely with EPIC liaison and security engineer; full-time allocation required."
+        },
+        {
+          "role": "Mobile Developer",
+          "phase_involvement": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 240.0,
+          "allocation_percent": 40.0,
+          "skills_required": [
+            "iOS development (Swift, Xcode)",
+            "Android development (Kotlin, Android Studio)",
+            "Mobile UI/UX best practices",
+            "Offline-first architecture",
+            "Push notifications",
+            "App Store and Google Play deployment"
+          ],
+          "critical_path": true,
+          "notes": "Named contractor; critical path for patient app development and testing; must implement offline mode and handle network failures gracefully; full-time allocation required."
+        },
+        {
+          "role": "Security Engineer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "total_hours": 160.0,
+          "allocation_percent": 27.0,
+          "skills_required": [
+            "HIPAA security architecture",
+            "Threat modeling",
+            "Penetration testing",
+            "Encryption (at rest and in transit)",
+            "Secure coding practices",
+            "OWASP Top 10 vulnerability assessment"
+          ],
+          "critical_path": true,
+          "notes": "MUST BE HIRED IMMEDIATELY \u2014 not optional. Critical path for threat modeling, security design, and security review. No dedicated security hire yet; this is a staffing gap that must be filled before Phase 1 kickoff."
+        },
+        {
+          "role": "Compliance Specialist",
+          "phase_involvement": [
+            1,
+            3,
+            4
+          ],
+          "total_hours": 120.0,
+          "allocation_percent": 20.0,
+          "skills_required": [
+            "HIPAA compliance",
+            "State pharmacy board regulations",
+            "Audit trail design",
+            "Data retention policy",
+            "Regulatory documentation",
+            "Compliance audit preparation"
+          ],
+          "critical_path": true,
+          "notes": "MUST BE HIRED IMMEDIATELY \u2014 not optional. Critical path for compliance requirements, audit trail design, and pre-launch regulatory audit. No dedicated compliance hire yet; this is a staffing gap that must be filled before Phase 1 kickoff."
+        },
+        {
+          "role": "QA Engineer",
+          "phase_involvement": [
+            3,
+            4
+          ],
+          "total_hours": 176.0,
+          "allocation_percent": 29.5,
+          "skills_required": [
+            "Test automation",
+            "HIPAA compliance testing",
+            "Mobile app testing (iOS/Android)",
+            "API testing",
+            "Performance testing",
+            "Accessibility testing (WCAG 2.1)"
+          ],
+          "critical_path": true,
+          "notes": "QA effort is 176h / 280h dev = 63% of development effort, exceeding the 25% minimum. Critical path for EPIC connector testing, end-to-end validation, and UAT. Must be hired or contracted; not included in the named 3-person team."
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "Is EPIC sandbox environment access and API contract already approved and available, or does it require additional negotiation beyond the 2-week variance mentioned by the CEO?",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "If sandbox access is not available immediately, Phase 1 cannot complete on schedule, and the entire critical path extends by 2-4 weeks, making the May 15 deadline unachievable. This is a project blocker."
+        },
+        {
+          "priority": 2,
+          "question": "Are security engineer and compliance specialist roles already identified and committed, or must they be hired/contracted immediately? If hiring is required, what is the timeline and budget impact?",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "Without security and compliance expertise, the project cannot complete HIPAA threat modeling, security review, or compliance audit. This is a project blocker and existential risk to the brand."
+        },
+        {
+          "priority": 3,
+          "question": "Is the $200k budget confirmed to cover all remaining costs (contractor labor for 18 weeks, infrastructure, third-party services, compliance tooling), or are there other budget sources or cost allocations not mentioned?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If $200k does not cover full costs, the project will run out of budget before launch, forcing scope cuts or timeline extension, both of which are forbidden by the hard deadline."
+        },
+        {
+          "priority": 4,
+          "question": "Are the 3 named contractors (backend, mobile, PM) confirmed to be 100% allocated to this project for the full 18-week duration with no pull to other projects?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If any contractor is part-time or shared with other projects, the critical path extends by weeks, making the May 15 deadline unachievable."
+        },
+        {
+          "priority": 5,
+          "question": "Has the board or executive leadership formally approved the scope (patient app + clinician dashboard + EPIC sync + in-store deployment all on day one) and the May 15 deadline, or is there flexibility to defer non-critical features to a post-launch phase 2?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If scope is negotiable, the project viability improves significantly. If scope is fixed and non-negotiable, the project is NOT_VIABLE under current constraints."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 28.0,
+        "deductions": [
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R1: EPIC sandbox access delay) \u2014 project cannot start without this"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R2: Security and compliance roles not hired) \u2014 existential brand risk"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R3: HIPAA compliance not validated) \u2014 regulatory violation risk"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R4: EPIC connector design incomplete) \u2014 data integrity risk"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R5: Budget insufficient) \u2014 project runs out of money before launch"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R6: Team pulled to other projects) \u2014 critical path extends beyond deadline"
+          },
+          {
+            "amount": 5.0,
+            "reason": "4 assumptions logged (A1-A4) \u2014 each represents unvalidated risk"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Staffing gap: Security engineer and compliance specialist not yet hired \u2014 critical roles missing from named team"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Scope is fixed and non-negotiable (all features ship day one) \u2014 no flexibility to reduce scope if timeline slips"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Timeline is aggressive (18 weeks for multi-platform mobile app + EPIC integration + HIPAA compliance) \u2014 high execution risk"
+          }
+        ],
+        "interpretation": "PM confidence score is 28.0 because the project has 6 CRITICAL risks (EPIC access, security/compliance hiring, HIPAA validation, EPIC connector design, budget, and team availability), all of which are unresolved and blocking project viability. The project is NOT_VIABLE under current constraints and requires immediate executive decision on scope reduction, timeline extension, or budget increase before planning can proceed."
+      },
+      "project_viability": {
+        "viability_status": "NOT_VIABLE",
+        "gap_type": "BOTH",
+        "gap_amount": "Timeline: 18 weeks available vs. 20+ weeks required for full scope with HIPAA compliance. Budget: $200k insufficient for 3 contractors + security engineer + compliance specialist + QA engineer for 18 weeks (estimated $280k-$320k).",
+        "scoping_options": [
+          {
+            "option_id": "O1",
+            "description": "Reduce scope to MVP: Launch patient app (iOS only, Android deferred to phase 2) + basic EPIC sync (read-only, no refill requests) + no clinician dashboard (deferred to phase 2). In-store deployment limited to 500 pilot locations instead of 2,400.",
+            "impact": "Reduces timeline to 14 weeks and budget to ~$160k. Meets May 15 deadline with buffer. Allows security and compliance to be completed properly.",
+            "tradeoffs": "Delays clinician dashboard and Android app by 6-8 weeks. Limits initial market reach to 500 locations. Requires post-launch phase 2 to deliver full scope. May disappoint board expectations for full rollout on day one."
+          },
+          {
+            "option_id": "O2",
+            "description": "Extend timeline to June 30 (6-week delay) and increase budget to $280k. Keep full scope (patient app iOS + Android, clinician dashboard, EPIC sync, 2,400 location rollout). Hire security engineer and compliance specialist immediately.",
+            "impact": "Provides adequate time for HIPAA threat modeling, security review, compliance audit, and proper testing. Reduces execution risk from CRITICAL to MEDIUM. Allows team to work at sustainable pace without crunch.",
+            "tradeoffs": "Misses board's public May 15 deadline by 6 weeks. Requires executive re-approval and communication to board. Increases budget by $80k (40% increase). Delays competitive market entry."
+          },
+          {
+            "option_id": "O3",
+            "description": "Keep May 15 deadline and full scope, but add 2 additional contractors (QA engineer + DevOps engineer) and increase budget to $320k. Hire security engineer and compliance specialist immediately. Run parallel development tracks for iOS and Android.",
+            "impact": "Increases team from 3 to 5 contractors. Enables parallel development and testing. Provides dedicated security and compliance expertise. May compress timeline to 16-17 weeks with proper staffing.",
+            "tradeoffs": "Increases budget by $120k (60% increase). Requires immediate hiring of 2 additional contractors (may not be available on short notice). Increases team coordination overhead. Does not eliminate CRITICAL risks (EPIC access, compliance validation still blocking)."
+          }
+        ]
+      }
+    },
+    "gate": {
+      "fired": true,
+      "reasons": [
+        "confidence_score < 60 \u2014 plan needs review",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "project_viability is NOT_VIABLE \u2014 impossible constraints as stated"
+      ],
+      "decision": null
+    },
+    "validation": {
+      "valid": false,
+      "errors": [
+        "Open question urgency 'Before planning' is inconsistent with a populated project_plan (phases and tasks) \u2014 decomposition already occurred; use 'Before build' unless no tasks exist in any phase."
+      ],
+      "warnings": [
+        "Staffing adds expanded role class QA (QA Engineer) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule."
+      ]
+    },
+    "tokens_used": 12579,
+    "input_tokens": 314,
+    "output_tokens": 12265,
+    "cache_hit": false
+  }
+}

@@ -69,7 +69,7 @@ make eval-all
 ## Reading the Results
 
 Every eval run prints a cost summary: API calls made, tokens used, estimated USD.
-Scorecards are saved to `results/p1/eval/`.
+Scorecards are saved to `outputs/p1/eval/`.
 
 **Pass targets:**
 
@@ -88,5 +88,5 @@ Scorecards are saved to `results/p1/eval/`.
 - [ ] Ran `eval-replay` first (free)
 - [ ] Only ran `eval-generate` if the prompt version changed or cache is empty
 - [ ] Reviewed cost summary after any generation run
-- [ ] Results saved to `results/p1/eval/`
+- [ ] Results saved to `outputs/p1/eval/`
 - [ ] If running for a prompt bump — record rubric delta in `prompts/PROMPT_CHANGELOG.md`

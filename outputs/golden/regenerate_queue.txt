@@ -1,0 +1,6 @@
+# Golden queue
+
+## Last regen: v1.6.4 (hp-09, risk-02, risk-08, risk-10) — OK
+
+## Replay
+`make eval-replay-golden` → 30/30 pass (as of v1.6.4 regen). Summary: `outputs/golden/golden_replay.xlsx`.

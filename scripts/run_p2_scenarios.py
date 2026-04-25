@@ -3,7 +3,7 @@
 P2 workflow scenario loader — lists scenarios and prints refinement steps.
 
 Dry-run: lists scenarios and prints brief path + refinement text.
-Live E2E: use scripts/run_p2_e2e.py (see results/p2/e2e/README.md).
+Live E2E: use scripts/run_p2_e2e.py (see outputs/p2/e2e/README.md).
 --execute prints that pointer (this script stays read-only for inputs).
 """
 
@@ -50,7 +50,7 @@ def main() -> None:
         print(
             "Use the E2E runner (starts the API separately, then):\n"
             "  python scripts/run_p2_e2e.py --scenario <folder-or-id> --mode manifest|file|interactive\n"
-            "See results/p2/e2e/README.md and inputs/test-cases-p2/e2e_feedback/README.md",
+            "See outputs/p2/e2e/README.md and inputs/test-cases-p2/e2e_feedback/README.md",
             file=sys.stderr,
         )
         sys.exit(2)

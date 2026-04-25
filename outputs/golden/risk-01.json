@@ -1,0 +1,870 @@
+{
+  "case_id": "risk-01",
+  "http_status": 200,
+  "body": {
+    "session_id": "e3ec7aaa-79af-4333-b11f-586255d443fa",
+    "report_id": "rpt_f4ca79e24ea6",
+    "report_revision": 1,
+    "report": {
+      "report_metadata": {
+        "generated_at": "2026-04-25T18:53:49.160089Z",
+        "prompt_version": "v1.6.2",
+        "project_type": "TYPE_A",
+        "input_quality": "HIGH",
+        "classification_confidence": "HIGH",
+        "sdlc_approach": "Predictive",
+        "sdlc_rationale": "Requirements fully defined and signed off (CPO flagged priority), team has direct experience with stated stack (React, Node.js, PostgreSQL), fixed 16-week deadline with no flexibility mentioned, and scope is bounded by success metrics.",
+        "pm_confidence_score": 78.0
+      },
+      "project_understanding": {
+        "primary_goal": "Build a self-service employee onboarding portal enabling new hires to complete paperwork, set up IT accounts, and receive equipment checklists before day one.",
+        "beneficiary": "HR department (8 people) and new hires (approximately 150 per year).",
+        "trigger": "Current manual onboarding process (PDFs, email, hand-raised IT tickets) is a top-10 productivity drain; CPO flagged as priority in all-hands meeting.",
+        "success_definition": [
+          "80% of onboarding tasks completed by new hires before day one",
+          "HR admin time per hire reduced from 4 hours to under 30 minutes",
+          "IT account setup automated end-to-end with zero manual tickets",
+          "New hire satisfaction score above 4.2 out of 5 at 30-day mark"
+        ],
+        "supporting_quotes": [
+          "Current onboarding is entirely manual \u2014 PDFs emailed back and forth, IT tickets raised by hand, equipment not ready on time.",
+          "The CPO flagged this as a top-10 productivity drain in last quarter's all-hands.",
+          "A self-service portal where new hires complete all required paperwork, set up IT accounts, and receive their equipment checklist before day one."
+        ]
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "Workday and Okta integration APIs are fully documented, sandbox access is available, and both systems support the required read/write operations for account provisioning and SSO setup.",
+          "why": "External API dependencies are critical to the critical path (IT account automation). Without confirmed sandbox access and API capability, development cannot proceed without blocking delays. This is a standard assumption for integration projects but must be validated before Phase 2 begins.",
+          "pmi_basis": "PMBOK 6th Ed, Section 11.2 \u2014 Risk identification before planning baseline; PMBOK 6th Ed, Section 5.4 \u2014 Scope baseline requires accepted requirements including external dependencies.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If Workday or Okta APIs lack required functionality or sandbox access is delayed, the IT account automation feature (core success metric) cannot be delivered. Timeline slips by 3-4 weeks minimum, or feature is descoped.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows Phase 2 development to begin without waiting for API confirmation. Risks: if APIs are unavailable or undocumented, entire integration track must be redesigned or descoped, breaking the 'zero manual tickets' success metric."
+        },
+        {
+          "id": "A2",
+          "what": "Data retention and archival policy for employee onboarding records (how long data is stored post-hire, deletion rules for rejected candidates, GDPR/privacy compliance scope) is defined by HR and Legal before Phase 1 ends.",
+          "why": "SOC 2 Type II compliance is explicitly in scope. Data retention is a material compliance requirement that affects database schema, encryption strategy, and audit logging. If retention policy is undefined, the security architecture cannot be finalized.",
+          "pmi_basis": "PMBOK 6th Ed, Section 8.1 \u2014 Quality metrics defined before build begins; PMBOK 6th Ed, Section 5.4 \u2014 Scope baseline requires accepted requirements including compliance scope.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If data retention policy is undefined until Phase 3 or 4, the database schema and encryption strategy may need to be redesigned. SOC 2 audit will fail if retention/deletion procedures are not documented and implemented. Rework cost: 2-3 weeks.",
+          "source": "nfr",
+          "tradeoff": "Gains: allows security architecture to be finalized in Phase 1 without rework. Risks: if policy is vague or changes mid-project, encryption and audit logging must be retrofitted."
+        },
+        {
+          "id": "A3",
+          "what": "HR department has designated a single Product Owner (not a committee) who is available for decisions and UAT sign-off throughout the project, with response time \u2264 2 business days.",
+          "why": "A 16-week project with a fixed deadline requires rapid stakeholder feedback. If decisions are delayed by committee process or PO unavailability, critical path tasks will slip. This is a standard assumption for internal projects but must be confirmed in writing.",
+          "pmi_basis": "PMBOK 6th Ed, Section 13.2 \u2014 Stakeholder requirements documented before execution; PMBOK 6th Ed, Section 6.4 \u2014 Schedule baseline derived from scope definition and stakeholder availability.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If PO is unavailable or decisions require committee approval, Phase 1 requirements sign-off and Phase 4 UAT will slip by 1-2 weeks each. Total timeline impact: 2-3 weeks.",
+          "source": "scope",
+          "tradeoff": "Gains: allows Phase 1 to complete on schedule with clear requirements. Risks: if PO is part-time or unavailable, Phase 1 extends and critical path slips."
+        },
+        {
+          "id": "A4",
+          "what": "The stated team (2 backend, 1 frontend, 1 UX, 1 QA, 1 PM) is fully allocated to this project at 100% for the full 16 weeks with no competing priorities or shared resource contention.",
+          "why": "A 16-week fixed deadline with a small team (6 people) requires full-time commitment. If any role is part-time or shared with other projects, the critical path will slip. This is a material assumption that must be confirmed in writing by HR/resource management.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.2 \u2014 Resource estimation tied to WBS; PMBOK 6th Ed, Section 6.5 \u2014 Schedule reserve and resource leveling.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If any developer is pulled to another project or allocated part-time, critical path tasks will slip by 1-2 weeks per person-week of lost capacity. With a 6-person team, losing even one person to 50% allocation breaks the schedule.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows a realistic 16-week plan with full team commitment. Risks: if team is shared or part-time, timeline must be extended to 20-24 weeks or scope must be reduced."
+        }
+      ],
+      "project_plan": {
+        "total_duration_weeks": 18.4,
+        "buffer_applied_percent": 15.0,
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T15",
+            "T18",
+            "T21"
+          ],
+          "total_duration_days": 92.0,
+          "zero_slack_tasks": [
+            "T1",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T15",
+            "T18",
+            "T21"
+          ],
+          "highest_slack_tasks": [
+            "T2",
+            "T4",
+            "T7"
+          ],
+          "staffing_implication": "Backend developers and QA engineer must be full-time on critical path; UX designer and frontend developer have some flexibility in Phases 2-3 but must be full-time in Phases 1 and 4."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 2.3,
+            "percentage_of_total": 12.5,
+            "milestones": [
+              "Requirements document finalized and signed off by HR PO",
+              "Workday and Okta API contracts reviewed and sandbox access confirmed",
+              "Data retention and compliance scope documented",
+              "Architecture and security design approved by tech lead",
+              "Wireframes and user flows approved by HR stakeholders"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Conduct stakeholder interviews and document onboarding workflow",
+                "phase": 1,
+                "effort_hours": 16.0,
+                "owner_role": "Product Manager",
+                "dependencies": [],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Workflow document signed off by HR PO; all current manual steps mapped and pain points identified."
+              },
+              {
+                "id": "T2",
+                "name": "Design UX wireframes for onboarding portal (new hire flow)",
+                "phase": 1,
+                "effort_hours": 24.0,
+                "owner_role": "UX Designer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Wireframes for all 5 onboarding steps (profile, paperwork, IT setup, equipment, confirmation) reviewed and approved by HR stakeholders."
+              },
+              {
+                "id": "T3",
+                "name": "Review Workday and Okta API documentation; confirm sandbox access and integration scope",
+                "phase": 1,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "API contract document completed; sandbox credentials obtained; integration scope (user creation, SSO, group assignment) confirmed in writing."
+              },
+              {
+                "id": "T4",
+                "name": "Document data retention policy and SOC 2 compliance requirements with HR and Legal",
+                "phase": 1,
+                "effort_hours": 8.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Data retention policy document signed by HR and Legal; encryption, audit logging, and access control requirements documented."
+              },
+              {
+                "id": "T5",
+                "name": "Design system architecture (React frontend, Node.js API, PostgreSQL, Workday/Okta integration, encryption at rest/in transit)",
+                "phase": 1,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T3",
+                  "T4"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Architecture diagram and design document approved by tech lead; security review completed; database schema drafted."
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development",
+            "duration_weeks": 6.9,
+            "percentage_of_total": 37.5,
+            "milestones": [
+              "New hire onboarding form (profile, paperwork upload) working end-to-end",
+              "Workday integration (user creation, profile sync) implemented and tested in sandbox",
+              "Okta SSO integration (account provisioning, group assignment) implemented and tested",
+              "Equipment checklist workflow implemented",
+              "Internal demo completed with HR stakeholders"
+            ],
+            "tasks": [
+              {
+                "id": "T6",
+                "name": "Set up development environment, CI/CD pipeline, and database schema",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T5"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Dev environment running locally; CI/CD pipeline (GitHub Actions or equivalent) configured; PostgreSQL schema created with encryption at rest enabled."
+              },
+              {
+                "id": "T7",
+                "name": "Build React frontend components for onboarding form (profile, paperwork, IT setup, equipment, confirmation)",
+                "phase": 2,
+                "effort_hours": 32.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T2",
+                  "T6"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "All 5 form screens built and styled; form validation working; no backend integration yet."
+              },
+              {
+                "id": "T8",
+                "name": "Implement Node.js API endpoints for new hire profile and paperwork submission",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T5",
+                  "T6"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "POST /newHire/profile and POST /newHire/paperwork endpoints working; data encrypted at rest; audit logging enabled."
+              },
+              {
+                "id": "T9",
+                "name": "Implement Workday integration (user creation, profile sync, error handling)",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Workday API calls working in sandbox; new hire profile synced to Workday; error handling for API failures implemented."
+              },
+              {
+                "id": "T10",
+                "name": "Implement Okta SSO integration (account provisioning, group assignment, error handling)",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Okta API calls working in sandbox; new hire account created and assigned to correct groups; error handling for API failures implemented."
+              },
+              {
+                "id": "T11",
+                "name": "Build equipment checklist workflow (IT to assign, new hire to acknowledge)",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T7",
+                  "T8"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Equipment checklist form working; IT can assign items; new hire can acknowledge receipt; data persisted to database."
+              },
+              {
+                "id": "T12",
+                "name": "Integrate frontend with backend API; test end-to-end new hire onboarding flow",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T7",
+                  "T8",
+                  "T9",
+                  "T10",
+                  "T11"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "New hire can complete entire onboarding flow from profile to equipment checklist; all data flows to backend and external systems."
+              },
+              {
+                "id": "T13",
+                "name": "Conduct internal demo with HR stakeholders; gather feedback",
+                "phase": 2,
+                "effort_hours": 8.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Demo completed with HR PO and 2-3 HR team members; feedback documented; no blocking issues identified."
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases",
+            "duration_weeks": 4.0,
+            "percentage_of_total": 21.7,
+            "milestones": [
+              "Workday and Okta integrations fully tested in sandbox and production-like environment",
+              "Error handling and retry logic for external API failures implemented and tested",
+              "Data validation and edge cases (duplicate emails, invalid phone numbers, missing fields) handled",
+              "Security review completed; encryption and audit logging verified",
+              "Performance testing completed (concurrent new hire submissions)"
+            ],
+            "tasks": [
+              {
+                "id": "T14",
+                "name": "Test Workday integration end-to-end (user creation, profile sync, error scenarios)",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T9"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Test cases for happy path and error scenarios (API down, timeout, invalid data) executed; all pass; error handling verified."
+              },
+              {
+                "id": "T15",
+                "name": "Test Okta integration end-to-end (account provisioning, group assignment, error scenarios)",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T10"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Test cases for happy path and error scenarios (API down, timeout, invalid data) executed; all pass; error handling verified."
+              },
+              {
+                "id": "T16",
+                "name": "Implement and test data validation (email uniqueness, phone format, required fields, duplicate detection)",
+                "phase": 3,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "All validation rules implemented; test cases for edge cases (duplicate emails, invalid formats) pass; user-friendly error messages displayed."
+              },
+              {
+                "id": "T17",
+                "name": "Implement retry logic and circuit breaker for Workday and Okta API calls",
+                "phase": 3,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T9",
+                  "T10"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Retry logic (exponential backoff) implemented; circuit breaker prevents cascading failures; monitoring alerts configured."
+              },
+              {
+                "id": "T18",
+                "name": "Conduct security review (encryption at rest/in transit, audit logging, access control, SOC 2 compliance)",
+                "phase": 3,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T5",
+                  "T8",
+                  "T15"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Security review checklist completed; encryption verified; audit logging tested; SOC 2 compliance confirmed; no critical findings."
+              },
+              {
+                "id": "T19",
+                "name": "Performance test: concurrent new hire submissions (target: 50 concurrent users, <2s response time)",
+                "phase": 3,
+                "effort_hours": 12.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Load test executed with 50 concurrent users; response time < 2s; no errors; database performance acceptable."
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 3.5,
+            "percentage_of_total": 19.0,
+            "milestones": [
+              "All critical bugs resolved",
+              "Regression testing completed (no existing functionality broken)",
+              "UAT completed with HR team and sample new hires",
+              "Accessibility testing completed (WCAG 2.1 AA)",
+              "Documentation and runbooks written"
+            ],
+            "tasks": [
+              {
+                "id": "T20",
+                "name": "Execute comprehensive test suite (functional, integration, regression, edge cases)",
+                "phase": 4,
+                "effort_hours": 32.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T18"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "All test cases executed; critical and high bugs fixed; medium/low bugs logged for post-launch; test report signed off."
+              },
+              {
+                "id": "T21",
+                "name": "Conduct UAT with HR team and sample new hires (5-10 participants); gather feedback and sign-off",
+                "phase": 4,
+                "effort_hours": 20.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T20"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "UAT completed with HR PO and sample new hires; feedback documented; all critical issues resolved; sign-off obtained."
+              },
+              {
+                "id": "T22",
+                "name": "Accessibility testing (WCAG 2.1 AA compliance); fix any issues",
+                "phase": 4,
+                "effort_hours": 12.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T20"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Accessibility audit completed; WCAG 2.1 AA compliance verified; keyboard navigation, screen reader support, color contrast all pass."
+              },
+              {
+                "id": "T23",
+                "name": "Write user documentation, admin guide, and operational runbooks",
+                "phase": 4,
+                "effort_hours": 16.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T21"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "User guide (for new hires), admin guide (for HR), and runbooks (for IT support) written and reviewed by HR PO."
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 1.7,
+            "percentage_of_total": 9.2,
+            "milestones": [
+              "Production deployment completed",
+              "Smoke testing in production passed",
+              "Go-live sign-off obtained",
+              "Post-launch support plan activated"
+            ],
+            "tasks": [
+              {
+                "id": "T24",
+                "name": "Deploy to production; configure monitoring, logging, and alerting",
+                "phase": 5,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T21"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Application deployed to production; monitoring dashboards active; alerts configured for API failures, database errors, and performance degradation."
+              },
+              {
+                "id": "T25",
+                "name": "Execute smoke tests in production; verify all critical flows working",
+                "phase": 5,
+                "effort_hours": 8.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T24"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Smoke tests executed in production; new hire onboarding flow, Workday sync, Okta provisioning all working; no critical issues."
+              },
+              {
+                "id": "T26",
+                "name": "Conduct go-live meeting with HR and IT; obtain sign-off; activate post-launch support",
+                "phase": 5,
+                "effort_hours": 4.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T25"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Go-live meeting completed; HR PO and IT lead sign off on production readiness; support escalation process documented and communicated."
+              }
+            ]
+          }
+        ]
+      },
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Integration",
+          "description": "If Workday or Okta API documentation is incomplete, sandbox access is delayed, or API capabilities do not match requirements, then IT account automation cannot be implemented as designed. The 'zero manual tickets' success metric will be missed, and the project will slip by 3-4 weeks or scope will be descoped.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Sandbox access not obtained by end of Phase 1, or API contract review reveals missing functionality.",
+          "mitigation": "Confirm Workday and Okta API documentation and sandbox access in writing during Phase 1 kickoff (Task T3). Schedule API review meeting with Workday and Okta representatives before Phase 2 begins.",
+          "contingency": "If API capabilities are insufficient, pivot to manual IT account creation with email notifications to IT team (reduces automation but preserves core onboarding flow). Descope advanced features (group assignment, profile sync) to Phase 2 post-launch."
+        },
+        {
+          "id": "R2",
+          "category": "Compliance",
+          "description": "If data retention policy, encryption requirements, or audit logging scope are not defined before Phase 2 begins, the database schema and security architecture will need to be redesigned mid-project. SOC 2 Type II audit will fail if compliance requirements are not implemented and documented.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Data retention policy not documented by end of Phase 1, or security review in Phase 3 reveals missing compliance controls.",
+          "mitigation": "Schedule data retention and compliance scope meeting with HR and Legal during Phase 1 (Task T4). Document all requirements in writing and obtain sign-off before Phase 2 begins.",
+          "contingency": "If policy is delayed, assume 7-year retention (standard for HR records) and implement full encryption at rest/in transit + audit logging. Adjust policy retroactively if needed, but do not delay Phase 2 start."
+        },
+        {
+          "id": "R3",
+          "category": "Resource",
+          "description": "If any team member (backend developer, frontend developer, QA engineer) is pulled to another project or allocated part-time, critical path tasks will slip by 1-2 weeks per person-week of lost capacity. With a 6-person team on a 16-week fixed deadline, losing even one person breaks the schedule.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Any team member allocated to competing project, or resource manager indicates part-time allocation.",
+          "mitigation": "Obtain written commitment from resource management that all 6 team members are 100% allocated for full 16 weeks. Schedule resource confirmation meeting before Phase 1 kickoff.",
+          "contingency": "If team member is pulled mid-project, immediately escalate to executive sponsor. Options: (1) extend deadline by 2-3 weeks, (2) reduce scope (descope non-critical features), or (3) bring in contractor to backfill."
+        },
+        {
+          "id": "R4",
+          "category": "Scope",
+          "description": "If HR stakeholders are unavailable for timely decisions (requirements clarification, UAT sign-off, scope change approvals), Phase 1 requirements sign-off and Phase 4 UAT will slip by 1-2 weeks each. Total timeline impact: 2-3 weeks.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "HR PO unavailable for Phase 1 kickoff, or decisions delayed beyond 2 business days.",
+          "mitigation": "Designate single HR Product Owner before Phase 1 kickoff. Establish decision-making SLA (\u22642 business days for all decisions). Schedule recurring sync meetings (weekly) with HR stakeholders.",
+          "contingency": "If PO is unavailable, escalate to CPO (who flagged this as priority). Establish interim decision-maker with authority to approve on behalf of HR."
+        },
+        {
+          "id": "R5",
+          "category": "Technical",
+          "description": "If Workday or Okta API rate limiting, schema changes, or downtime occur during development or production, the integration will fail silently or require manual intervention. New hire account provisioning will be delayed, breaking the 'zero manual tickets' success metric.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "API rate limit exceeded during testing, or API schema change announced by vendor.",
+          "mitigation": "Implement retry logic with exponential backoff (Task T17). Configure circuit breaker to prevent cascading failures. Monitor API health and set up alerts for rate limiting or schema changes.",
+          "contingency": "If API is down, queue new hire requests in database and retry when API recovers. Notify IT team of provisioning delay. Implement manual fallback (email to IT) if API is down for >1 hour."
+        },
+        {
+          "id": "R6",
+          "category": "Schedule",
+          "description": "If Phase 1 requirements sign-off is delayed beyond 2 weeks, or if UAT in Phase 4 reveals major design issues, the project will slip past the 16-week deadline. With only 15% buffer applied, there is limited slack for rework.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Phase 1 sign-off delayed beyond week 2, or UAT reveals design issues requiring Phase 2 rework.",
+          "mitigation": "Lock requirements by end of week 1 of Phase 1. Conduct internal design review before Phase 2 begins. Involve HR stakeholders in Phase 2 internal demo (Task T13) to catch design issues early.",
+          "contingency": "If UAT reveals major issues, prioritize critical path fixes (Workday/Okta integration, core onboarding flow). Descope nice-to-have features (advanced reporting, analytics) to Phase 2 post-launch."
+        },
+        {
+          "id": "R7",
+          "category": "Technical",
+          "description": "If the team lacks experience with React 18, Node.js, or PostgreSQL encryption, development velocity will be slower than estimated. Phase 2 and 3 will slip by 1-2 weeks.",
+          "probability": "LOW",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Developer reports unfamiliarity with required technology during Phase 1, or code review reveals performance issues or security gaps.",
+          "mitigation": "Confirm team experience with React 18, Node.js, and PostgreSQL during Phase 1 kickoff. Allocate 2-3 days for spike/POC on encryption implementation if needed.",
+          "contingency": "If team lacks experience, bring in contractor or external consultant for 2-3 weeks to mentor team and accelerate learning curve."
+        },
+        {
+          "id": "R8",
+          "category": "Scope",
+          "description": "If HR stakeholders request scope additions (additional onboarding steps, advanced reporting, analytics) during Phase 2 or 3, the project will slip past the 16-week deadline. Scope creep is common on internal projects with multiple stakeholders.",
+          "probability": "HIGH",
+          "impact": "MEDIUM",
+          "score": "HIGH",
+          "trigger": "HR stakeholder requests new feature or scope addition during Phase 2 or later.",
+          "mitigation": "Establish formal change control process before Phase 1 ends. Document all scope additions as 'Phase 2 post-launch' items. Communicate scope boundaries clearly to HR stakeholders in Phase 1 kickoff.",
+          "contingency": "If scope addition is critical, evaluate impact on timeline. Options: (1) extend deadline, (2) reduce other scope, or (3) defer to Phase 2 post-launch. Require executive sponsor approval for any scope change."
+        }
+      ],
+      "staffing_plan": [
+        {
+          "role": "Product Manager",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 72.0,
+          "allocation_percent": 12.0,
+          "skills_required": [
+            "Stakeholder management",
+            "Requirements definition",
+            "Project planning",
+            "HR domain knowledge (preferred)"
+          ],
+          "critical_path": true,
+          "notes": "Leads all phases; owns stakeholder alignment, requirements sign-off, UAT coordination, and go-live. Must be available for rapid decisions (\u22642 business days)."
+        },
+        {
+          "role": "Backend Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 176.0,
+          "allocation_percent": 29.3,
+          "skills_required": [
+            "Node.js",
+            "PostgreSQL",
+            "REST API design",
+            "Workday API integration",
+            "Okta API integration",
+            "Encryption (at rest and in transit)",
+            "Error handling and retry logic"
+          ],
+          "critical_path": true,
+          "notes": "Owns architecture, API implementation, Workday/Okta integration, security review, and production deployment. Must be full-time; tasks are on critical path."
+        },
+        {
+          "role": "Backend Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 176.0,
+          "allocation_percent": 29.3,
+          "skills_required": [
+            "Node.js",
+            "PostgreSQL",
+            "REST API design",
+            "Workday API integration",
+            "Okta API integration",
+            "Encryption (at rest and in transit)"
+          ],
+          "critical_path": true,
+          "notes": "Second backend developer; shares API implementation and integration work. Must be full-time; critical path tasks require both developers working in parallel."
+        },
+        {
+          "role": "Frontend Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "total_hours": 88.0,
+          "allocation_percent": 14.7,
+          "skills_required": [
+            "React 18",
+            "TypeScript",
+            "REST API integration",
+            "Form validation",
+            "Accessibility (WCAG 2.1 AA)"
+          ],
+          "critical_path": true,
+          "notes": "Owns frontend component development, form integration, and accessibility testing. Must be full-time in Phases 2-4; some flexibility in Phase 1."
+        },
+        {
+          "role": "UX Designer",
+          "phase_involvement": [
+            1,
+            2
+          ],
+          "total_hours": 48.0,
+          "allocation_percent": 8.0,
+          "skills_required": [
+            "Wireframing",
+            "User research",
+            "Interaction design",
+            "HR domain knowledge (preferred)"
+          ],
+          "critical_path": false,
+          "notes": "Front-loaded in Phases 1-2; owns wireframes, user flows, and design review. Can be part-time or shared after Phase 2 if needed."
+        },
+        {
+          "role": "QA Engineer",
+          "phase_involvement": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 104.0,
+          "allocation_percent": 17.3,
+          "skills_required": [
+            "Test case design",
+            "API testing",
+            "Integration testing",
+            "Performance testing",
+            "Accessibility testing",
+            "Workday/Okta API knowledge (preferred)"
+          ],
+          "critical_path": true,
+          "notes": "Owns QA strategy, integration testing (Workday/Okta), performance testing, UAT coordination, and smoke testing. Must be full-time in Phases 3-4; critical path tasks require full availability."
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "Are Workday and Okta sandbox environments available for development and testing, and do the APIs support all required operations (user creation, profile sync, SSO provisioning, group assignment)?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If sandbox access is unavailable or APIs lack required functionality, the IT account automation feature (core success metric) cannot be delivered. Timeline slips 3-4 weeks or feature is descoped."
+        },
+        {
+          "priority": 2,
+          "question": "Has HR and Legal formally documented the data retention policy (how long employee onboarding records are stored, deletion rules for rejected candidates, GDPR/privacy compliance scope)?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If data retention policy is undefined, database schema and encryption strategy cannot be finalized. SOC 2 audit will fail if retention/deletion procedures are not documented. Rework cost: 2-3 weeks."
+        },
+        {
+          "priority": 3,
+          "question": "Has a single HR Product Owner been designated with authority to make decisions and approve scope changes, with availability for \u22642 business day response time throughout the project?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If PO is unavailable or decisions require committee approval, Phase 1 sign-off and Phase 4 UAT will slip 1-2 weeks each. Total timeline impact: 2-3 weeks."
+        },
+        {
+          "priority": 4,
+          "question": "Has resource management confirmed in writing that all 6 team members (2 backend, 1 frontend, 1 UX, 1 QA, 1 PM) are 100% allocated to this project for the full 16 weeks with no competing priorities?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If any team member is pulled to another project or allocated part-time, critical path tasks will slip 1-2 weeks per person-week of lost capacity. With a 6-person team, losing even one person breaks the 16-week schedule."
+        },
+        {
+          "priority": 5,
+          "question": "What is the expected volume of new hires per day/week during the first 30 days post-launch, and are there any peak onboarding periods (e.g., summer internship cohorts) that should be considered for performance testing?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If peak load is underestimated, performance testing (Task T19) will not reflect real-world conditions. System may fail under actual load post-launch, requiring emergency scaling or manual workarounds."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 78.0,
+        "deductions": [
+          {
+            "amount": 5.0,
+            "reason": "Assumption A1 (Workday/Okta API availability and capability) \u2014 external integration risk with HIGH consequence if wrong"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A2 (data retention policy defined) \u2014 compliance requirement with HIGH consequence if wrong"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A3 (HR PO availability and decision-making SLA) \u2014 stakeholder availability risk with MEDIUM consequence"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A4 (team 100% allocated, no competing priorities) \u2014 resource risk with HIGH consequence if wrong"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Risk R1 (Integration risk: Workday/Okta API) scored HIGH \u2014 external dependency with significant impact"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Risk R2 (Compliance risk: data retention and SOC 2) scored HIGH \u2014 regulatory requirement with significant impact"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Risk R3 (Resource risk: team allocation) scored HIGH \u2014 small team on fixed deadline with no slack"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Risk R6 (Schedule risk: Phase 1 sign-off and UAT delays) scored HIGH \u2014 fixed deadline with limited buffer"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Risk R8 (Scope creep: HR stakeholder requests) scored HIGH \u2014 common on internal projects with multiple stakeholders"
+          }
+        ],
+        "interpretation": "PM confidence score is 78.0 because the project is well-specified (HIGH input quality, clear success metrics, fixed deadline, named team, explicit tech stack) but carries multiple HIGH-probability integration and resource risks (Workday/Okta API availability, team allocation, scope creep) that could slip the 16-week deadline if not actively managed. The 15% schedule buffer and critical path discipline mitigate some risk, but stakeholder alignment and external API confirmation are prerequisites before Phase 2 begins."
+      },
+      "project_viability": {
+        "viability_status": "VIABLE",
+        "gap_type": "N/A",
+        "gap_amount": "N/A",
+        "scoping_options": null
+      }
+    },
+    "gate": {
+      "fired": false,
+      "reasons": [],
+      "decision": null
+    },
+    "validation": {
+      "valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "tokens_used": 11411,
+    "input_tokens": 419,
+    "output_tokens": 10992,
+    "cache_hit": false
+  }
+}

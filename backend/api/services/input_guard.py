@@ -11,10 +11,21 @@ _PROFANITY = frozenset({
 
 _PROJECT_SIGNALS = frozenset({
     "build", "dashboard", "pipeline", "migrate", "portal", "api",
-    "feature", "users", "workflow", "platform", "service", "system",
+    "feature", "users", "workflow", "workflows", "platform", "service", "system",
     "app", "tool", "integration", "database", "deploy", "backend",
     "frontend", "module", "product", "redesign", "automate", "tracker", "report",
+    # Common verb/noun stems missed by the original list — drove false
+    # `no_project_signal` flags on hp-02 (scenario-b-low-confidence) and
+    # hp-06 (tc-04-vague). See test_intake_contract for guarded cases.
+    "track", "tracking", "project", "projects", "team", "teams",
+    "manage", "manager",
 })
+
+# Word tokenizer used by Rules 5 and 10. Plain `text.lower().split()` keeps
+# punctuation glued to tokens (e.g. "app?" → "app?") and silently breaks
+# membership checks against _PROJECT_SIGNALS / _PROFANITY. This regex pulls
+# alphabetic-only tokens (with optional inner apostrophe) so "app?" → "app".
+_TOKEN_RE = re.compile(r"[a-z]+(?:'[a-z]+)?")
 
 _RULES: list[tuple[str, Literal["REFUSED", "NEEDS_BRIEF"], str, list[re.Pattern]]] = []
 
@@ -101,7 +112,9 @@ def classify_input(text: str, prd_text: str = "") -> IntakeVerdict:
     # project keywords rather than input length. A malicious input with a project
     # keyword appended will also pass — this is a known, documented limitation.
     # Do not tighten this rule without re-running test_input_guard.py gr-03.
-    words = set(text.lower().split())
+    # Tokenize via _TOKEN_RE so trailing punctuation ("app?", "Fuck,") doesn't
+    # silently break membership lookups against _PROJECT_SIGNALS / _PROFANITY.
+    words = set(_TOKEN_RE.findall(text.lower()))
     if words & _PROFANITY and not (words & _PROJECT_SIGNALS):
         return IntakeVerdict(verdict="REFUSED", reason_code="abuse",
                              user_message=_MSG_REFUSED)

@@ -1,0 +1,802 @@
+{
+  "case_id": "risk-03",
+  "http_status": 200,
+  "body": {
+    "session_id": "a9b42ca6-d42b-4333-9cf9-325bc200d979",
+    "report_id": "rpt_890b7839a00f",
+    "report_revision": 1,
+    "report": {
+      "report_metadata": {
+        "generated_at": "2026-04-25T20:29:37.838575Z",
+        "prompt_version": "v1.6.3",
+        "project_type": "TYPE_D",
+        "input_quality": "HIGH",
+        "classification_confidence": "HIGH",
+        "sdlc_approach": "Predictive",
+        "sdlc_rationale": "Fixed deadline, defined scope, known technology stack (banking APIs, reconciliation logic), and explicit team composition drive a predictive approach despite extreme time pressure.",
+        "pm_confidence_score": 28.0
+      },
+      "project_understanding": {
+        "primary_goal": "Build an internal payment reconciliation platform integrating with Chase, Wells Fargo, and Stripe that performs automated three-way transaction matching, flags discrepancies, and generates SOX-compliant audit reports.",
+        "beneficiary": "Finance team (25 people) and external auditors.",
+        "trigger": "Regulatory audit scheduled in 3 weeks; current manual Excel-based reconciliation process is non-compliant with SOX requirements.",
+        "success_definition": [
+          "100% of transactions reconciled automatically within 24 hours",
+          "Discrepancy rate flagged for human review under 0.1%",
+          "SOX-compliant audit trail exportable as PDF and CSV",
+          "Integration live with all three banking partners (Chase, Wells Fargo, Stripe)"
+        ],
+        "supporting_quotes": [
+          "Regulatory audit is scheduled for 3 weeks from today",
+          "The CFO has stated this is non-negotiable \u2014 the audit cannot proceed without an automated trail",
+          "Timeline: 3 weeks hard deadline. No extensions possible."
+        ]
+      },
+      "constraint_extraction": {
+        "hard_constraints": {
+          "deadline": "3 weeks from today (21 calendar days)",
+          "budget": "$50,000",
+          "team_size": "3 people (2 backend engineers, 1 PM)",
+          "team_composition": "2 Backend Engineers, 1 Product Manager. No QA engineer budgeted.",
+          "technology_stack": "Banking APIs (Chase, Wells Fargo, Stripe), reconciliation engine, audit trail system. Stack not explicitly specified beyond integrations.",
+          "compliance": "SOX compliance required; audit trail must be exportable and regulatory-compliant"
+        },
+        "soft_constraints": {
+          "preferred_timeline": "None stated",
+          "preferred_tools": "None stated",
+          "nice_to_have": "None stated"
+        },
+        "non_functional_requirements": {
+          "performance": "100% of transactions reconciled within 24 hours (batch processing acceptable)",
+          "availability": "UNKNOWN \u2014 audit trail must be available for auditor access, but uptime SLA not specified",
+          "security": "SOX compliance implies authentication, authorization, encryption at rest and in transit, and immutable audit logging",
+          "usability": "UNKNOWN \u2014 UI/UX for discrepancy review not specified",
+          "data_retention": "UNKNOWN \u2014 how long audit trails and transaction records must be retained",
+          "scalability": "UNKNOWN \u2014 expected transaction volume not specified, but 25-person finance team suggests moderate scale"
+        }
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "Availability SLA for audit trail access is 99.5% during business hours (standard for internal financial systems)",
+          "why": "Auditors need reliable access to audit trail during audit window; no explicit SLA stated, so standard business-hours availability is reasonable default",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.2 \u2014 Scope baseline requires acceptance of quality characteristics",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If actual availability requirement is 99.9% or 24/7, infrastructure architecture must change (redundancy, failover, monitoring); re-architecture required",
+          "source": "nfr",
+          "tradeoff": "Gains: allows infrastructure planning to proceed without stakeholder delay. Risks: if auditors require 24/7 access, deployment architecture must be redesigned mid-project."
+        },
+        {
+          "id": "A2",
+          "what": "Data retention requirement is 7 years (standard for SOX-regulated financial records)",
+          "why": "SOX compliance typically requires 7-year retention; no explicit retention period stated in input",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.4 \u2014 Scope baseline requires documented constraints",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If actual retention is shorter (e.g., 3 years) or longer (e.g., indefinite), storage architecture and archival strategy must change; re-architecture required",
+          "source": "nfr",
+          "tradeoff": "Gains: allows database schema and archival design to proceed. Risks: if wrong, storage costs and compliance audit failure."
+        },
+        {
+          "id": "A3",
+          "what": "Expected transaction volume is 10,000\u201350,000 transactions per day across all three banking partners",
+          "why": "Finance team of 25 people suggests mid-market company; no explicit volume stated. Assumption allows performance testing and database sizing to proceed.",
+          "pmi_basis": "PMBOK 6th Ed, Section 6.4 \u2014 Schedule baseline derived from scope definition including performance constraints",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If actual volume is 500,000+ transactions/day, database and reconciliation engine must be re-architected for scale; performance testing will fail late in Phase 3",
+          "source": "nfr",
+          "tradeoff": "Gains: allows database schema and reconciliation algorithm design to proceed. Risks: if volume is higher, Phase 3 integration testing will expose performance failures requiring re-architecture."
+        },
+        {
+          "id": "A4",
+          "what": "Banking partner APIs (Chase, Wells Fargo, Stripe) have sandbox environments available and documented; authentication is via API keys or OAuth; rate limits are at least 1,000 requests/minute",
+          "why": "All three are major financial services providers with mature APIs; sandbox access is standard. No explicit API documentation or rate limits stated.",
+          "pmi_basis": "PMBOK 6th Ed, Section 11.2 \u2014 Risk identification before planning baseline",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If sandbox access is unavailable, delayed, or requires legal approval, Phase 2 development cannot start. If rate limits are lower than assumed, reconciliation engine must be redesigned.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows Phase 2 development to start immediately. Risks: if API access is delayed or restricted, critical path is blocked."
+        },
+        {
+          "id": "A5",
+          "what": "SOX audit trail implementation requires immutable logging, role-based access control (RBAC), and cryptographic signing of audit records; no additional compliance frameworks (HIPAA, PCI-DSS) apply",
+          "why": "SOX compliance is explicitly stated; immutable audit trail is standard SOX requirement. No other compliance frameworks mentioned.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.2 \u2014 Scope baseline requires acceptance of regulatory constraints",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If PCI-DSS or other compliance frameworks apply, security architecture must expand; Phase 3 security review will fail and require re-architecture",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows security architecture to be scoped to SOX only. Risks: if additional compliance applies, security implementation will be incomplete."
+        }
+      ],
+      "project_plan": {
+        "total_duration_weeks": 3.0,
+        "buffer_applied_percent": 0.0,
+        "buffer_note": "No buffer can be applied \u2014 deadline is fixed at 3 weeks with no extensions possible. This is a critical risk.",
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T2",
+            "T3",
+            "T4",
+            "T5",
+            "T6",
+            "T7",
+            "T8",
+            "T9",
+            "T10",
+            "T11",
+            "T12"
+          ],
+          "total_duration_days": 15.0,
+          "zero_slack_tasks": [
+            "T1",
+            "T2",
+            "T3",
+            "T4",
+            "T5",
+            "T6",
+            "T7",
+            "T8",
+            "T9",
+            "T10",
+            "T11",
+            "T12"
+          ],
+          "highest_slack_tasks": [],
+          "staffing_implication": "Every task is on the critical path with zero slack; any delay in any task cascades to project failure. Both backend engineers must be 100% allocated and cannot be interrupted. PM must be full-time for coordination and stakeholder management."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 0.4,
+            "percentage_of_total": 13.0,
+            "milestones": [
+              "Banking partner API contracts reviewed and sandbox access confirmed",
+              "Three-way matching algorithm designed and approved",
+              "SOX audit trail architecture approved",
+              "Database schema finalized"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Review Chase, Wells Fargo, and Stripe API documentation; confirm sandbox access and rate limits",
+                "phase": 1,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Engineer (Lead)",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Sandbox credentials obtained for all three partners; API rate limits and authentication method documented; blockers identified"
+              },
+              {
+                "id": "T2",
+                "name": "Design three-way matching algorithm (transaction ID, amount, date matching logic)",
+                "phase": 1,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Engineer (Lead)",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Algorithm pseudocode written; edge cases (partial matches, timing differences) documented; PM and finance stakeholder sign-off obtained"
+              },
+              {
+                "id": "T3",
+                "name": "Design SOX-compliant audit trail schema (immutable logging, RBAC, cryptographic signing)",
+                "phase": 1,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Engineer (Lead)",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Audit trail schema documented; immutability strategy (append-only table, event sourcing, or blockchain) chosen; cryptographic signing method selected"
+              },
+              {
+                "id": "T4",
+                "name": "Design database schema for transaction storage, reconciliation state, and discrepancy tracking",
+                "phase": 1,
+                "effort_hours": 10.0,
+                "owner_role": "Backend Engineer (Secondary)",
+                "dependencies": [
+                  "T2",
+                  "T3"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Schema diagram complete; indexing strategy for 24-hour reconciliation window defined; performance estimates for expected transaction volume provided"
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development",
+            "duration_weeks": 1.2,
+            "percentage_of_total": 40.0,
+            "milestones": [
+              "API connectors for all three banking partners implemented",
+              "Three-way matching engine working end-to-end",
+              "Audit trail logging functional",
+              "Internal demo with finance team completed"
+            ],
+            "tasks": [
+              {
+                "id": "T5",
+                "name": "Implement Chase API connector (authentication, transaction fetch, error handling)",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Engineer (Lead)",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Chase connector fetches transactions from sandbox; authentication working; rate limiting respected; error handling for API failures implemented"
+              },
+              {
+                "id": "T6",
+                "name": "Implement Wells Fargo API connector (authentication, transaction fetch, error handling)",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Engineer (Secondary)",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Wells Fargo connector fetches transactions from sandbox; authentication working; rate limiting respected; error handling for API failures implemented"
+              },
+              {
+                "id": "T7",
+                "name": "Implement Stripe API connector (authentication, transaction fetch, error handling)",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Engineer (Secondary)",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Stripe connector fetches transactions from sandbox; authentication working; rate limiting respected; error handling for API failures implemented"
+              },
+              {
+                "id": "T8",
+                "name": "Implement three-way matching engine (transaction ID, amount, date matching; discrepancy flagging)",
+                "phase": 2,
+                "effort_hours": 32.0,
+                "owner_role": "Backend Engineer (Lead)",
+                "dependencies": [
+                  "T2",
+                  "T5",
+                  "T6",
+                  "T7"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Matching engine processes transactions from all three sources; flags discrepancies; achieves < 0.1% false positive rate on test data"
+              },
+              {
+                "id": "T9",
+                "name": "Implement audit trail logging (immutable append, RBAC, cryptographic signing)",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Engineer (Secondary)",
+                "dependencies": [
+                  "T3",
+                  "T4"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Every reconciliation action logged immutably; user identity and timestamp recorded; audit trail cryptographically signed; export to CSV working"
+              },
+              {
+                "id": "T10",
+                "name": "Implement discrepancy review UI (list flagged transactions, manual override capability, audit logging)",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Engineer (Secondary)",
+                "dependencies": [
+                  "T8",
+                  "T9"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Finance team can view flagged discrepancies; manual override recorded in audit trail; UI is functional (not polished)"
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases",
+            "duration_weeks": 0.6,
+            "percentage_of_total": 20.0,
+            "milestones": [
+              "All three banking partner integrations tested end-to-end",
+              "Edge cases (partial matches, timing differences, duplicate transactions) handled",
+              "Performance validated for 24-hour reconciliation window",
+              "Security review completed"
+            ],
+            "tasks": [
+              {
+                "id": "T11",
+                "name": "End-to-end integration testing: all three banking partners, full transaction flow, discrepancy detection",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Engineer (Lead)",
+                "dependencies": [
+                  "T5",
+                  "T6",
+                  "T7",
+                  "T8",
+                  "T9",
+                  "T10"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Test data from all three partners processed; matching results validated against manual reconciliation; no crashes or data loss"
+              },
+              {
+                "id": "T12",
+                "name": "Edge case testing and security review (partial matches, timing drift, duplicate handling; SOX audit trail validation)",
+                "phase": 3,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Engineer (Secondary)",
+                "dependencies": [
+                  "T11"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Edge cases documented and handled; audit trail immutability verified; cryptographic signing validated; no SOX compliance gaps identified"
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 0.45,
+            "percentage_of_total": 17.0,
+            "milestones": [
+              "All critical bugs resolved",
+              "UAT completed with finance team and external auditors",
+              "Audit trail PDF export validated",
+              "Go-live sign-off obtained"
+            ],
+            "tasks": [
+              {
+                "id": "T13",
+                "name": "Critical bug fix and regression testing (developer-led QA; no dedicated QA engineer)",
+                "phase": 4,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Engineer (Lead)",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "All P0/P1 bugs fixed; regression test suite passes; no new defects introduced"
+              },
+              {
+                "id": "T14",
+                "name": "UAT with finance team and external auditors (discrepancy accuracy, audit trail completeness, PDF/CSV export)",
+                "phase": 4,
+                "effort_hours": 12.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T13"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Finance team validates 100% reconciliation accuracy; auditors confirm audit trail meets SOX requirements; sign-off obtained"
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 0.35,
+            "percentage_of_total": 10.0,
+            "milestones": [
+              "Production deployment completed",
+              "Audit trail live and accessible to auditors",
+              "Runbook and operational handoff documented"
+            ],
+            "tasks": [
+              {
+                "id": "T15",
+                "name": "Production deployment (database migration, API credential setup, monitoring configuration)",
+                "phase": 5,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Engineer (Lead)",
+                "dependencies": [
+                  "T14"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "System live in production; all three banking partner APIs connected to production; audit trail accessible; monitoring alerts configured"
+              },
+              {
+                "id": "T16",
+                "name": "Operational handoff and runbook documentation (how to monitor, troubleshoot, and escalate issues)",
+                "phase": 5,
+                "effort_hours": 8.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T15"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Runbook written; finance team trained on system operation; escalation contacts documented"
+              }
+            ]
+          }
+        ]
+      },
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Schedule",
+          "description": "If 3-week deadline is fixed and scope includes full integration with three banking partners plus SOX compliance, then critical path will exceed available time and project will fail to deliver before audit.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Any task in Phase 1 or Phase 2 slips by more than 1 day; any banking partner API access delayed; any security review finding requires re-architecture",
+          "mitigation": "Confirm banking partner sandbox access and API documentation on Day 1 (T1); parallelize API connector development (T5, T6, T7 run simultaneously); pre-stage production infrastructure before Phase 5",
+          "contingency": "If any critical path task slips, immediately escalate to CFO and auditors to negotiate audit delay or scope reduction (e.g., defer one banking partner to post-audit phase)"
+        },
+        {
+          "id": "R2",
+          "category": "Resource",
+          "description": "If only 2 backend engineers are allocated and both are on the critical path with zero slack, then any illness, context-switching, or competing priority will break the schedule.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Either engineer unavailable for more than 1 day; either engineer pulled to another project; either engineer context-switches to support production issues",
+          "mitigation": "Secure written commitment from engineering leadership that both engineers are 100% allocated and cannot be interrupted; establish daily standup to detect blockers immediately; pre-identify backup engineer who can step in if needed",
+          "contingency": "If either engineer becomes unavailable, immediately escalate to VP Engineering and CFO; negotiate scope reduction or audit delay"
+        },
+        {
+          "id": "R3",
+          "category": "Integration",
+          "description": "If banking partner APIs (Chase, Wells Fargo, Stripe) have undocumented rate limits, schema changes, or sandbox access delays, then Phase 2 development will be blocked.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Sandbox access not granted within 24 hours; API documentation incomplete or contradicts actual behavior; rate limits lower than 1,000 req/min; API schema changes mid-project",
+          "mitigation": "Contact all three banking partners on Day 1 to confirm sandbox access and obtain API documentation; establish direct technical contact at each partner; test API connectivity before Phase 2 starts",
+          "contingency": "If any API access is delayed, immediately escalate to CFO and banking partner relationship manager; request expedited access or negotiate audit delay"
+        },
+        {
+          "id": "R4",
+          "category": "Compliance",
+          "description": "If SOX audit trail implementation is incomplete or does not meet auditor expectations, then audit will fail and project will not achieve success criteria.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Auditors identify gaps in immutability, RBAC, or cryptographic signing during UAT; audit trail export format does not meet auditor requirements; compliance review identifies additional requirements (e.g., PCI-DSS)",
+          "mitigation": "Engage external auditors in Phase 1 to review audit trail design before implementation; include auditor sign-off in Phase 3 security review; test audit trail export format with auditors before Phase 4 UAT",
+          "contingency": "If auditors identify gaps in Phase 4, immediately escalate to CFO; negotiate scope reduction or audit delay"
+        },
+        {
+          "id": "R5",
+          "category": "Technical",
+          "description": "If three-way matching algorithm does not achieve < 0.1% discrepancy rate on production data, then success criteria will not be met.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Test data shows discrepancy rate > 0.1%; production data reveals edge cases not covered by algorithm (e.g., partial matches, timing drift); matching logic produces false positives",
+          "mitigation": "Design matching algorithm with explicit handling for partial matches and timing drift (T2); test algorithm on representative sample of historical transaction data before Phase 2; include finance team in algorithm validation",
+          "contingency": "If discrepancy rate exceeds threshold in Phase 3, immediately escalate to finance team; negotiate acceptable threshold or redesign algorithm (high risk of schedule slip)"
+        },
+        {
+          "id": "R6",
+          "category": "Resource",
+          "description": "If no dedicated QA engineer is allocated and developers test their own code, then defect escape rate will be high and critical bugs will be discovered late in Phase 4.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Phase 4 UAT discovers critical bugs (data loss, audit trail corruption, API failures); defect escape rate exceeds 10%; auditors identify compliance gaps in testing",
+          "mitigation": "Allocate minimum 25% of development effort to QA (currently 0%); hire contract QA engineer or reallocate one backend engineer to QA role; implement automated test suite for matching algorithm and audit trail; conduct security review in Phase 3 before Phase 4 UAT",
+          "contingency": "If critical bugs are discovered in Phase 4, immediately escalate to CFO; negotiate audit delay or scope reduction"
+        },
+        {
+          "id": "R7",
+          "category": "Schedule",
+          "description": "If Phase 4 (QA & Testing) is compressed to 15% of timeline (0.45 weeks = 2.7 days) with no dedicated QA engineer, then testing will be insufficient and defects will reach production.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Phase 4 timeline is 2.7 calendar days; developers cannot complete both bug fixes and UAT in that window; auditors identify untested code paths during UAT",
+          "mitigation": "Allocate dedicated QA engineer to Phase 4 (minimum 25% of dev effort); implement automated test suite in Phase 2 to reduce manual testing burden; conduct security review in Phase 3 before Phase 4 UAT",
+          "contingency": "If Phase 4 timeline is insufficient, immediately escalate to CFO; negotiate audit delay or scope reduction"
+        },
+        {
+          "id": "R8",
+          "category": "Scope",
+          "description": "If stakeholder expectations for audit trail completeness or discrepancy accuracy are not formally documented and signed off, then UAT will fail and project will not achieve success criteria.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Finance team or auditors expect different discrepancy threshold (e.g., 0.05% instead of 0.1%); audit trail export format does not match auditor expectations; success criteria are interpreted differently by different stakeholders",
+          "mitigation": "Obtain written sign-off from finance team and external auditors on success criteria in Phase 1 (T2); include auditors in algorithm design review; conduct UAT with both finance team and auditors present",
+          "contingency": "If stakeholders disagree on success criteria in Phase 4, immediately escalate to CFO; negotiate scope reduction or audit delay"
+        },
+        {
+          "id": "R9",
+          "category": "Technical",
+          "description": "If transaction volume is higher than assumed (A3: 10,000\u201350,000/day), then database and reconciliation engine will not complete 24-hour reconciliation window and performance will fail.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Phase 3 performance testing reveals reconciliation takes > 24 hours; production data volume exceeds 50,000 transactions/day; database queries timeout or lock",
+          "mitigation": "Obtain actual transaction volume estimate from finance team in Phase 1 (T4); conduct performance testing on production-scale data in Phase 3 (T11); design database schema with indexing strategy for expected volume",
+          "contingency": "If performance testing fails, immediately escalate to finance team; negotiate acceptable reconciliation window or scope reduction"
+        },
+        {
+          "id": "R10",
+          "category": "Budget",
+          "description": "If $50,000 budget is insufficient for 3 backend engineers (2 allocated + 1 contract QA engineer) for 3 weeks, then project will run out of budget before completion.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Contract QA engineer costs exceed budget; infrastructure costs (database, API calls, monitoring) exceed budget; overtime costs for schedule compression exceed budget",
+          "mitigation": "Obtain detailed cost estimate for contract QA engineer and infrastructure in Phase 1; negotiate fixed-price contract with QA provider; pre-stage production infrastructure to avoid last-minute costs",
+          "contingency": "If budget is exceeded, immediately escalate to CFO; negotiate budget increase or scope reduction"
+        }
+      ],
+      "staffing_plan": [
+        {
+          "role": "Product Manager",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 80.0,
+          "allocation_percent": 15.0,
+          "skills_required": [
+            "Banking/finance domain knowledge",
+            "Stakeholder management",
+            "Regulatory compliance (SOX)",
+            "Project coordination"
+          ],
+          "critical_path": true,
+          "notes": "Must be 100% allocated and full-time. Responsible for stakeholder alignment, scope management, and escalation. Cannot be shared with other projects."
+        },
+        {
+          "role": "Backend Engineer (Lead)",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 200.0,
+          "allocation_percent": 37.0,
+          "skills_required": [
+            "Banking API integration",
+            "Database design and optimization",
+            "SOX compliance and audit logging",
+            "Python or Java",
+            "REST API design"
+          ],
+          "critical_path": true,
+          "notes": "Must be 100% allocated and full-time. Owns API integrations, matching algorithm, and audit trail implementation. Cannot be shared with other projects. No backup identified \u2014 single point of failure."
+        },
+        {
+          "role": "Backend Engineer (Secondary)",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 200.0,
+          "allocation_percent": 37.0,
+          "skills_required": [
+            "Banking API integration",
+            "Database design",
+            "Python or Java",
+            "REST API design"
+          ],
+          "critical_path": true,
+          "notes": "Must be 100% allocated and full-time. Owns secondary API connectors, database schema, and discrepancy review UI. Cannot be shared with other projects. No backup identified \u2014 single point of failure."
+        },
+        {
+          "role": "QA Engineer (Contract)",
+          "phase_involvement": [
+            3,
+            4
+          ],
+          "total_hours": 80.0,
+          "allocation_percent": 15.0,
+          "skills_required": [
+            "Banking/finance domain knowledge",
+            "Test automation",
+            "SOX compliance testing",
+            "Security testing"
+          ],
+          "critical_path": true,
+          "notes": "RECOMMENDED ADDITION \u2014 not budgeted in input. Required to meet 25% QA effort minimum (PMBOK 8.2). Current plan allocates 0% QA effort, which violates QA staffing rule. Contract QA engineer must be hired immediately to conduct Phase 3 integration testing and Phase 4 UAT. Cost impact: ~$15,000\u2013$20,000 (within $50,000 budget if other costs are controlled)."
+        }
+      ],
+      "staffing_vs_stated_team_assumptions": [
+        {
+          "id": "A6",
+          "what": "QA Engineer (contract) will be available for Phases 3-4 at 15% allocation (80 hours total)",
+          "why": "Input specifies no QA engineer budgeted; developers will test their own code. However, PMBOK 8.2 requires QA effort to be minimum 25% of development effort. With 400 hours of development effort, minimum QA is 100 hours. Assuming contract QA engineer at 80 hours (20% of dev effort) is a compromise that partially addresses the gap but still falls short of the 25% minimum.",
+          "pmi_basis": "PMBOK 6th Ed, Section 8.2 \u2014 Quality Management Plan requires QA effort allocation",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If contract QA engineer is unavailable or budget does not allow hiring, QA effort drops to 0% (developer self-testing only). Defect escape rate will be high; critical bugs will be discovered in Phase 4 UAT or production, causing schedule slip or audit failure.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows Phase 3-4 testing to be more rigorous than developer self-testing alone. Risks: if contract QA engineer is not hired, QA effort remains insufficient and defect escape rate will be high."
+        }
+      ],
+      "project_viability": {
+        "viability_status": "NOT_VIABLE",
+        "gap_type": "BOTH",
+        "gap_amount": "Critical path duration is 15 days (3 weeks calendar time); timeline is at absolute minimum with zero slack. Budget of $50,000 is insufficient for 3 backend engineers + 1 contract QA engineer for 3 weeks (estimated cost: $60,000\u2013$75,000 including infrastructure and contingency).",
+        "scoping_options": [
+          {
+            "option_id": "O1",
+            "description": "Reduce scope to single banking partner (e.g., Chase only) for initial audit; defer Wells Fargo and Stripe integrations to post-audit phase 2",
+            "impact": "Reduces Phase 2 development effort by ~40%; frees 1 backend engineer for QA role; allows 24-hour reconciliation window to be met with single-partner data volume",
+            "tradeoffs": "Audit will only cover Chase transactions; finance team must manually reconcile Wells Fargo and Stripe transactions until phase 2 completes. Auditors may not accept partial automation. Requires stakeholder re-approval."
+          },
+          {
+            "option_id": "O2",
+            "description": "Extend timeline to 5 weeks (add 2 weeks buffer); hire dedicated QA engineer; allocate 15% buffer to critical path tasks",
+            "impact": "Allows proper QA allocation (25% of dev effort); reduces schedule risk from CRITICAL to HIGH; provides slack for integration testing and bug fixes",
+            "tradeoffs": "Misses 3-week audit deadline; requires CFO and auditor approval for delay. May not be acceptable given regulatory pressure."
+          },
+          {
+            "option_id": "O3",
+            "description": "Hire 1 additional backend engineer (total 3) and 1 contract QA engineer; parallelize API connector development and matching algorithm work; compress timeline to 3 weeks with proper QA",
+            "impact": "Allows full scope (all three banking partners) to be delivered in 3 weeks with dedicated QA; reduces schedule risk from CRITICAL to MEDIUM; increases cost to ~$75,000",
+            "tradeoffs": "Budget increases by $25,000 (50% over stated $50,000); requires CFO approval for budget increase. Hiring and onboarding additional engineer in 24 hours is high-risk."
+          },
+          {
+            "option_id": "O4",
+            "description": "Accept developer self-testing (0% QA allocation); compress Phase 4 to 1 week; accept higher defect escape rate and audit risk",
+            "impact": "Stays within 3-week timeline and $50,000 budget; delivers full scope",
+            "tradeoffs": "Defect escape rate will be high; critical bugs will likely be discovered in production or during auditor review; audit may fail due to untested code paths or compliance gaps. NOT RECOMMENDED."
+          }
+        ]
+      },
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "Can the 3-week deadline be extended to 5 weeks, or is the regulatory audit date immovable? If immovable, can the audit scope be reduced to a single banking partner for the initial audit?",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "If deadline is truly immovable and scope cannot be reduced, project is not viable. Proceeding without answering this question will result in schedule failure and audit failure."
+        },
+        {
+          "priority": 2,
+          "question": "What is the actual daily transaction volume across all three banking partners? Is it within the assumed 10,000\u201350,000 range, or significantly higher?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If volume is higher than assumed, Phase 3 performance testing will fail and reconciliation engine must be re-architected. This will cause schedule slip."
+        },
+        {
+          "priority": 3,
+          "question": "Can the $50,000 budget be increased to $75,000 to hire a dedicated QA engineer and additional backend engineer? If not, which scope items should be deferred to post-audit phase 2?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If budget cannot be increased and QA engineer cannot be hired, QA effort will be 0% (developer self-testing only). Defect escape rate will be high and audit will likely fail."
+        },
+        {
+          "priority": 4,
+          "question": "Have the external auditors been engaged to review the SOX audit trail design and confirm that the planned implementation meets their requirements? If not, when can this review be scheduled?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If auditors identify gaps in audit trail design during Phase 4 UAT, re-architecture will be required and schedule will slip. Engaging auditors in Phase 1 is critical to avoid late-stage surprises."
+        },
+        {
+          "priority": 5,
+          "question": "Have sandbox credentials and API documentation been obtained from Chase, Wells Fargo, and Stripe? If not, what is the expected timeline for access approval?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If sandbox access is delayed beyond Day 1, Phase 2 development will be blocked and critical path will slip. This is the highest-risk dependency."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 28.0,
+        "deductions": [
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R1: Schedule \u2014 fixed deadline with scope exceeding available time)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R2: Resource \u2014 2 backend engineers on critical path with zero slack and no backup)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R3: Integration \u2014 banking partner API access and rate limits unconfirmed)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R6: Resource \u2014 no dedicated QA engineer; developers testing their own code violates PMBOK 8.2 QA minimum)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk present (R7: Schedule \u2014 Phase 4 compressed to 2.7 days with no QA engineer)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk present (R4: Compliance \u2014 SOX audit trail implementation may not meet auditor expectations)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk present (R5: Technical \u2014 three-way matching algorithm may not achieve < 0.1% discrepancy rate)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk present (R8: Scope \u2014 stakeholder expectations for audit trail and discrepancy accuracy not formally documented)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk present (R9: Technical \u2014 transaction volume may exceed assumed range, causing performance failure)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption count: 6 assumptions logged (A1\u2013A6); each assumption represents an unvalidated risk"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Project viability is NOT_VIABLE \u2014 critical path duration matches deadline with zero buffer; budget is insufficient for required staffing"
+          },
+          {
+            "amount": 5.0,
+            "reason": "SDLC approach is Predictive but timeline is extremely aggressive (3 weeks for full banking integration + SOX compliance); no schedule buffer possible"
+          }
+        ],
+        "interpretation": "PM confidence score is 28.0 because the project has 5 CRITICAL risks (schedule, resource, integration, QA allocation, and phase compression), insufficient budget for required staffing, zero schedule slack, and is not viable as currently scoped. Proceeding without extending the deadline, increasing budget, or reducing scope will result in schedule failure and audit failure."
+      }
+    },
+    "gate": {
+      "fired": true,
+      "reasons": [
+        "confidence_score < 60 \u2014 plan needs review",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "risk_register contains CRITICAL risk \u2014 PM decision required",
+        "project_viability is NOT_VIABLE \u2014 impossible constraints as stated"
+      ],
+      "decision": null
+    },
+    "validation": {
+      "valid": false,
+      "errors": [
+        "HIGH quality input should not produce more than 4 assumptions \u2014 materiality gate not applied correctly.",
+        "Open question urgency 'Before planning' is inconsistent with a populated project_plan (phases and tasks) \u2014 decomposition already occurred; use 'Before build' unless no tasks exist in any phase."
+      ],
+      "warnings": [
+        "Corrected Phase 5 percentage from 12.0% to 10%; moved 2.0% to phase 4 (percentage_of_total now 17.0%).",
+        "Staffing adds expanded role class PM (Product Manager) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule.",
+        "Staffing adds expanded role class QA (QA Engineer (Contract)) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule."
+      ]
+    },
+    "tokens_used": 10958,
+    "input_tokens": 346,
+    "output_tokens": 10612,
+    "cache_hit": false
+  }
+}

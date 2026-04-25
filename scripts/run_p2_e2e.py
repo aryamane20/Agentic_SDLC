@@ -2,7 +2,7 @@
 """
 P2 end-to-end: create session → generate report → refine (gate re-checked each time).
 
-Calls the running FastAPI backend (real agent + tokens). Logs JSON under results/p2/e2e/.
+Calls the running FastAPI backend (real agent + tokens). Logs JSON under outputs/p2/e2e/.
 
 Feedback sources (--mode):
   manifest   — use refinement_rounds from scenario manifest.json in order
@@ -31,7 +31,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 P2_DIR = ROOT / "inputs" / "test-cases-p2"
-E2E_LOG_DIR = ROOT / "results" / "p2" / "e2e"
+E2E_LOG_DIR = ROOT / "outputs" / "p2" / "e2e"
 
 
 def _utc_iso() -> str:

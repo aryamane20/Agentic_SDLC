@@ -1,0 +1,785 @@
+{
+  "case_id": "risk-07",
+  "http_status": 200,
+  "body": {
+    "session_id": "bc3f3b8e-6ef7-4259-ad01-d85c9196dcb1",
+    "report_id": "rpt_8658c091b95a",
+    "report_revision": 1,
+    "report": {
+      "report_metadata": {
+        "generated_at": "2026-04-25T19:04:49.501985Z",
+        "prompt_version": "v1.6.2",
+        "project_type": "TYPE_A",
+        "input_quality": "HIGH",
+        "classification_confidence": "HIGH",
+        "sdlc_approach": "Predictive",
+        "sdlc_rationale": "Requirements are fully defined with explicit scope (expense submission, approval workflow, QuickBooks export), fixed deadline (10 weeks), fixed budget ($60,000), and named team composition (2 developers, 1 designer). No indication of evolving requirements or technology uncertainty.",
+        "pm_confidence_score": 50.0
+      },
+      "project_understanding": {
+        "primary_goal": "Build an internal expense management portal enabling employees to submit expenses with receipt attachments, track reimbursement status, and allowing managers to approve/reject submissions with automated export to QuickBooks.",
+        "beneficiary": "All employees (approx 300) and finance team (6 people)",
+        "trigger": "Finance team needs a centralized expense management system to replace manual processes and improve reimbursement tracking.",
+        "success_definition": [
+          "Employees can submit expenses with receipt attachments",
+          "Managers can approve or reject submissions",
+          "Reimbursement status is visible to submitters",
+          "Monthly reports export to QuickBooks without manual intervention",
+          "System handles 300+ concurrent users"
+        ],
+        "supporting_quotes": [
+          "Employees should be able to submit expenses, attach receipts, and track reimbursement status",
+          "Managers approve or reject submissions",
+          "Finance exports monthly reports to our accounting system (QuickBooks)"
+        ]
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "Security authentication will use company SSO (single sign-on) rather than local username/password",
+          "why": "Internal tool for 300+ employees requires centralized identity management; SSO is standard for enterprise internal systems",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.4 \u2014 Scope baseline requires accepted requirements; security architecture is foundational",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If SSO is not available or required, authentication layer must be redesigned and re-implemented, adding 2-3 weeks to Phase 2",
+          "source": "nfr",
+          "tradeoff": "Gains: aligns with enterprise security standards and reduces credential management burden. Risks: if SSO is not available or company uses different auth method, architecture must pivot."
+        },
+        {
+          "id": "A2",
+          "what": "QuickBooks integration will use the QuickBooks Online API (cloud-based) rather than desktop QuickBooks",
+          "why": "QuickBooks Online is the modern standard for business accounting; desktop integration is legacy and less common in new projects",
+          "pmi_basis": "PMBOK 6th Ed, Section 11.2 \u2014 Risk identification before planning baseline; external API availability is a technical dependency",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If company uses QuickBooks Desktop, integration approach changes entirely (may require middleware or manual export), adding 3-4 weeks to Phase 3",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: allows Phase 3 integration planning to proceed with modern API assumptions. Risks: if company uses Desktop version, integration complexity and timeline increase significantly."
+        },
+        {
+          "id": "A3",
+          "what": "Data retention policy: expense records retained for 7 years (standard for financial audit compliance)",
+          "why": "Financial records typically require 7-year retention per IRS and SOX compliance standards for internal systems handling reimbursement data",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.4 \u2014 Scope baseline; compliance requirements affect architecture",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If actual retention requirement differs (shorter or longer), database storage architecture and archival strategy must be redesigned",
+          "source": "nfr",
+          "tradeoff": "Gains: allows database design to proceed with standard retention assumptions. Risks: if company has different compliance requirement, storage and archival design must change."
+        },
+        {
+          "id": "A4",
+          "what": "QA Engineer (dedicated role) will be provided by shared services or hired as contractor, since input explicitly states 'developers will validate their own work' but does not name a QA resource",
+          "why": "PMBOK 8.2 requires QA effort minimum 25% of development hours; developer self-testing alone does not meet quality standards for a 300-user internal system. Staffing plan must include dedicated QA to meet this baseline.",
+          "pmi_basis": "PMBOK 6th Ed, Section 8.1 \u2014 Quality metrics defined before build begins; PMBOK 8.2 \u2014 Quality assurance requires independent verification",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If QA resource is not available, test coverage will be insufficient, critical bugs will reach production, and reimbursement data integrity will be at risk. Rework and hotfixes will consume 20-30% of Phase 4 and Phase 5 effort.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: ensures independent test coverage and compliance with quality baseline. Risks: if QA resource is unavailable, project must either delay to hire/contract QA or accept HIGH quality risk (flagged in risk_register as R4)."
+        }
+      ],
+      "project_plan": {
+        "total_duration_weeks": 11.5,
+        "buffer_applied_percent": 15.0,
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T15",
+            "T18"
+          ],
+          "total_duration_days": 57.5,
+          "zero_slack_tasks": [
+            "T1",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T15",
+            "T18"
+          ],
+          "highest_slack_tasks": [
+            "T2",
+            "T4",
+            "T7"
+          ],
+          "staffing_implication": "Backend Developer and QA Engineer must be allocated full-time (100% and 80% respectively) with zero flexibility; any slip on API design, QuickBooks integration, or UAT will delay production deployment."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 1.5,
+            "percentage_of_total": 13.0,
+            "milestones": [
+              "Requirements document finalized and signed off by finance stakeholders",
+              "UI/UX wireframes approved by finance team",
+              "API contract with QuickBooks confirmed",
+              "Security and data retention requirements documented"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Conduct stakeholder interviews with finance team and sample employees to validate requirements",
+                "phase": 1,
+                "effort_hours": 16.0,
+                "owner_role": "Product Manager",
+                "dependencies": [],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Interview notes documented, key requirements confirmed, sign-off email from finance lead received"
+              },
+              {
+                "id": "T2",
+                "name": "Design expense submission and approval workflow UI mockups",
+                "phase": 1,
+                "effort_hours": 24.0,
+                "owner_role": "UX Designer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Wireframes for submission form, approval dashboard, and status tracking page reviewed and approved by finance team"
+              },
+              {
+                "id": "T3",
+                "name": "Document API specifications for QuickBooks Online integration and authentication flow",
+                "phase": 1,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "API spec document includes endpoint definitions, data mapping, error handling, and authentication method; reviewed by tech lead"
+              },
+              {
+                "id": "T4",
+                "name": "Create database schema design for expenses, approvals, and audit trail",
+                "phase": 1,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Schema diagram with all tables, relationships, and indexes documented; 7-year retention policy incorporated"
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development",
+            "duration_weeks": 4.5,
+            "percentage_of_total": 39.0,
+            "milestones": [
+              "Expense submission form working end-to-end",
+              "Approval workflow implemented and tested",
+              "User authentication and authorization working",
+              "Internal demo completed with finance team"
+            ],
+            "tasks": [
+              {
+                "id": "T5",
+                "name": "Implement user authentication (SSO integration) and role-based access control",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T3"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Users can log in via SSO, employee and manager roles are enforced, access control tested for all user types"
+              },
+              {
+                "id": "T6",
+                "name": "Build expense submission form frontend with receipt upload capability",
+                "phase": 2,
+                "effort_hours": 32.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T2"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Form accepts expense details, file upload works, validation rules enforced, form submits to backend API"
+              },
+              {
+                "id": "T7",
+                "name": "Implement approval workflow backend (state machine for pending/approved/rejected)",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T5"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Approval state transitions working, notifications sent to managers and employees, audit trail recorded"
+              },
+              {
+                "id": "T8",
+                "name": "Build approval dashboard frontend for managers",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T6",
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Dashboard displays pending expenses, allows approve/reject actions, shows approval history"
+              },
+              {
+                "id": "T9",
+                "name": "Implement reimbursement status tracking and employee dashboard",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Employees can view submitted expenses and current status, status updates reflect approval workflow state"
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases",
+            "duration_weeks": 2.5,
+            "percentage_of_total": 22.0,
+            "milestones": [
+              "QuickBooks integration tested with sandbox data",
+              "Monthly export process working end-to-end",
+              "Error handling and retry logic implemented",
+              "Security review completed"
+            ],
+            "tasks": [
+              {
+                "id": "T10",
+                "name": "Implement QuickBooks Online API integration for monthly expense export",
+                "phase": 3,
+                "effort_hours": 36.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Export process reads approved expenses, maps to QuickBooks format, sends to QuickBooks API, handles errors and retries"
+              },
+              {
+                "id": "T11",
+                "name": "Implement receipt file storage and retrieval (cloud storage integration)",
+                "phase": 3,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T6"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Receipt files uploaded and stored securely, retrievable by authorized users, virus scanning enabled"
+              },
+              {
+                "id": "T12",
+                "name": "Test QuickBooks integration with sandbox environment and validate data mapping",
+                "phase": 3,
+                "effort_hours": 24.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T10"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Sample expenses exported to QuickBooks sandbox, data verified field-by-field, error scenarios tested (API down, rate limit, schema mismatch)"
+              },
+              {
+                "id": "T13",
+                "name": "Implement edge case handling (duplicate submissions, concurrent approvals, large file uploads)",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T9"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Duplicate detection working, concurrent approval conflicts resolved, file upload limits enforced"
+              },
+              {
+                "id": "T14",
+                "name": "Security review: authentication, authorization, data encryption, and compliance audit",
+                "phase": 3,
+                "effort_hours": 16.0,
+                "owner_role": "Security Engineer",
+                "dependencies": [
+                  "T11"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Security checklist completed, encryption at rest and in transit verified, audit trail immutability confirmed, compliance with 7-year retention policy validated"
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 2.5,
+            "percentage_of_total": 20.0,
+            "milestones": [
+              "All critical bugs resolved",
+              "UAT completed with finance team and sample employees",
+              "Performance testing at 300+ concurrent users passed",
+              "Accessibility compliance verified (WCAG 2.1 AA)"
+            ],
+            "tasks": [
+              {
+                "id": "T15",
+                "name": "Execute comprehensive functional test suite (submission, approval, export workflows)",
+                "phase": 4,
+                "effort_hours": 32.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "All test cases executed, critical bugs logged and fixed, regression testing passed"
+              },
+              {
+                "id": "T16",
+                "name": "Conduct user acceptance testing (UAT) with finance team and sample employees",
+                "phase": 4,
+                "effort_hours": 20.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T15"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "UAT sign-off from finance lead, employee feedback documented, any critical issues resolved"
+              },
+              {
+                "id": "T17",
+                "name": "Performance testing: load test at 300+ concurrent users, measure response times and throughput",
+                "phase": 4,
+                "effort_hours": 16.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T15"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Load test results show < 2s response time at 300 concurrent users, no errors under load, database queries optimized"
+              },
+              {
+                "id": "T18",
+                "name": "Accessibility testing and remediation (WCAG 2.1 AA compliance)",
+                "phase": 4,
+                "effort_hours": 12.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T15"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Automated accessibility scan passed, manual keyboard navigation tested, screen reader compatibility verified"
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 0.9,
+            "percentage_of_total": 6.0,
+            "milestones": [
+              "Production deployment completed",
+              "Smoke testing in production passed",
+              "Documentation and runbooks written",
+              "Go-live sign-off from finance team"
+            ],
+            "tasks": [
+              {
+                "id": "T19",
+                "name": "Deploy to production and execute smoke tests",
+                "phase": 5,
+                "effort_hours": 12.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T18"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Application deployed to production, smoke tests passed, monitoring and alerting active"
+              },
+              {
+                "id": "T20",
+                "name": "Write operational runbooks and post-launch support documentation",
+                "phase": 5,
+                "effort_hours": 8.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T19"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 0,
+                "definition_of_done": "Runbooks cover common issues, escalation procedures, and backup/recovery steps; finance team trained"
+              }
+            ]
+          }
+        ]
+      },
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Resource",
+          "description": "QA resource not named in input; developers will self-test. If dedicated QA engineer is not available from shared services or contractor, test coverage will be insufficient for a 300-user system, and critical bugs will reach production.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "QA resource request denied or unavailable; developers begin Phase 2 without independent QA support",
+          "mitigation": "Secure written commitment from shared services or contract QA engineer before Phase 2 begins. Establish QA allocation at 80% minimum for Phases 3-4.",
+          "contingency": "If QA is unavailable, extend Phase 4 by 2 weeks and allocate one developer (50%) to QA duties; accept HIGH quality risk and flag for post-launch hotfix budget."
+        },
+        {
+          "id": "R2",
+          "category": "Integration",
+          "description": "QuickBooks Online API integration is a critical external dependency. If API contract is not confirmed, sandbox access is delayed, or API schema differs from assumptions, Phase 3 integration will slip by 2-3 weeks.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "QuickBooks API documentation unavailable, sandbox access not granted, or API rate limits are lower than expected",
+          "mitigation": "Confirm QuickBooks API access and documentation in Phase 1 (T3). Test with sandbox data before Phase 3 begins. Document rate limits and error handling upfront.",
+          "contingency": "If API access is delayed, implement manual export CSV template in Phase 3 as fallback; automate QuickBooks sync in Phase 2 post-launch."
+        },
+        {
+          "id": "R3",
+          "category": "Technical",
+          "description": "SSO authentication integration is assumed but not confirmed. If company uses a different authentication method (LDAP, custom auth, or no SSO), Phase 2 authentication implementation must be redesigned, adding 2-3 weeks.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "IT confirms company does not use SSO or uses non-standard authentication method",
+          "mitigation": "Confirm authentication method with IT security team in Phase 1 (T3). Validate SSO sandbox access before Phase 2 begins.",
+          "contingency": "If SSO is unavailable, implement local authentication with password reset flow; extend Phase 2 by 1 week."
+        },
+        {
+          "id": "R4",
+          "category": "Schedule",
+          "description": "Timeline is 10 weeks (11.5 weeks with 15% buffer). Critical path is 57.5 days (8.2 weeks). If any critical path task (T1, T3, T5, T8, T12, T15, T18) slips by more than 3 days, production deployment will miss the 10-week target.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Any critical path task exceeds estimated effort by >20%, or external dependency (QuickBooks API, SSO) is delayed",
+          "mitigation": "Allocate Backend Developer and QA Engineer at 100% and 80% respectively. Schedule critical path tasks in weeks 2-9 (avoid week 1 ramp-up and week 10 deployment freeze). Weekly status reviews on critical path tasks.",
+          "contingency": "If critical path slips, reduce Phase 4 UAT scope (finance team only, no employee sample group) and extend Phase 5 by 1 week."
+        },
+        {
+          "id": "R5",
+          "category": "Scope",
+          "description": "Scope is well-defined but stakeholder sign-off is not explicitly mentioned in input. If finance team changes requirements mid-project (e.g., adds approval hierarchy, multi-currency support, or integration with other systems), scope creep will consume 2-3 weeks.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Finance team requests new features or changes approval workflow after Phase 1 sign-off",
+          "mitigation": "Obtain written scope sign-off from finance lead at end of Phase 1 (T1). Establish change control process: any scope change requires timeline or budget adjustment.",
+          "contingency": "If scope creep occurs, defer non-critical features to Phase 2 post-launch and adjust timeline accordingly."
+        },
+        {
+          "id": "R6",
+          "category": "Resource",
+          "description": "Team size is small (2 developers, 1 designer). If either developer is pulled to another project or becomes unavailable, critical path tasks (T3, T5, T8, T10, T12) will have no backup, and timeline will slip by 2-4 weeks.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Developer is reassigned to another project, becomes ill, or leaves the company",
+          "mitigation": "Secure written commitment from management that both developers are 100% allocated to this project for 11.5 weeks. Identify backup developer from shared pool before Phase 2 begins.",
+          "contingency": "If developer becomes unavailable, hire contractor backend developer immediately; extend Phase 2 by 1 week for onboarding."
+        },
+        {
+          "id": "R7",
+          "category": "Compliance",
+          "description": "System handles financial data (expense reimbursement) and must comply with 7-year retention policy and audit trail requirements. If compliance requirements are not enforced during build, post-launch remediation will be costly and time-consuming.",
+          "probability": "LOW",
+          "impact": "HIGH",
+          "score": "MEDIUM",
+          "trigger": "Audit discovers missing audit trail, data retention policy not enforced, or encryption not implemented",
+          "mitigation": "Include compliance requirements in Phase 1 scope (T1, T3). Conduct security review in Phase 3 (T14). Validate audit trail immutability and retention policy in Phase 4 (T15).",
+          "contingency": "If compliance gaps are discovered in Phase 4, allocate 1 week to remediation before UAT."
+        },
+        {
+          "id": "R8",
+          "category": "Technical",
+          "description": "Receipt file upload and storage is a new capability for the team. If file handling, virus scanning, or cloud storage integration is not properly implemented, security vulnerabilities or data loss could occur.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "File upload fails, virus scanning is not enabled, or files are not retrievable after upload",
+          "mitigation": "Use managed cloud storage service (AWS S3, Azure Blob) with built-in virus scanning. Implement file size limits and type validation in Phase 2 (T6). Test file retrieval in Phase 3 (T11).",
+          "contingency": "If file storage fails, implement temporary local storage with manual backup to cloud; extend Phase 3 by 3 days."
+        }
+      ],
+      "staffing_plan": [
+        {
+          "role": "Product Manager",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 72.0,
+          "allocation_percent": 12.0,
+          "skills_required": [
+            "Internal product management",
+            "Stakeholder communication",
+            "Finance domain knowledge",
+            "Project planning and tracking"
+          ],
+          "critical_path": true,
+          "notes": "Owns requirements gathering, stakeholder alignment, UAT coordination, and post-launch handoff. Must be available for weekly status reviews and critical decision-making."
+        },
+        {
+          "role": "Backend Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "total_hours": 240.0,
+          "allocation_percent": 80.0,
+          "skills_required": [
+            "REST API design",
+            "Database design and optimization",
+            "Authentication and authorization",
+            "Third-party API integration",
+            "Node.js or Python"
+          ],
+          "critical_path": true,
+          "notes": "Critical path: owns API design (T3), authentication (T5), approval workflow (T7), QuickBooks integration (T10), and edge case handling (T13). Must be 100% allocated; no shared projects. Backup developer identified before Phase 2."
+        },
+        {
+          "role": "Frontend Developer",
+          "phase_involvement": [
+            2,
+            3,
+            4
+          ],
+          "total_hours": 180.0,
+          "allocation_percent": 60.0,
+          "skills_required": [
+            "React or Vue.js",
+            "TypeScript",
+            "CSS and responsive design",
+            "Form validation",
+            "Accessibility (WCAG 2.1)"
+          ],
+          "critical_path": false,
+          "notes": "Owns submission form (T6), approval dashboard (T8), and status tracking (T9). Supports accessibility testing (T18). Can be shared with other projects at 40% if needed, but Phase 2 requires 80% allocation."
+        },
+        {
+          "role": "UX Designer",
+          "phase_involvement": [
+            1,
+            2
+          ],
+          "total_hours": 48.0,
+          "allocation_percent": 16.0,
+          "skills_required": [
+            "Wireframing and prototyping",
+            "User research",
+            "Accessibility design",
+            "Finance domain familiarity"
+          ],
+          "critical_path": false,
+          "notes": "Front-loaded: owns UI/UX design (T2) in Phase 1-2. Can be allocated to other projects at 84% after Phase 2 ends."
+        },
+        {
+          "role": "QA Engineer",
+          "phase_involvement": [
+            3,
+            4
+          ],
+          "total_hours": 100.0,
+          "allocation_percent": 17.0,
+          "skills_required": [
+            "Test case design and execution",
+            "API testing",
+            "Performance testing and load testing",
+            "Accessibility testing (WCAG 2.1)",
+            "QuickBooks integration testing"
+          ],
+          "critical_path": true,
+          "notes": "CRITICAL: Assumed from shared services or contractor (not named in input). Owns QuickBooks integration testing (T12), functional testing (T15), performance testing (T17), and accessibility testing (T18). Must be 80% allocated in Phases 3-4. QA effort (100h) = 25% of development effort (240h + 180h = 420h \u00d7 25% = 105h minimum). Actual allocation meets baseline."
+        },
+        {
+          "role": "Security Engineer",
+          "phase_involvement": [
+            3
+          ],
+          "total_hours": 16.0,
+          "allocation_percent": 3.0,
+          "skills_required": [
+            "Security architecture review",
+            "Encryption and data protection",
+            "Compliance audit (SOX, audit trail)",
+            "Penetration testing basics"
+          ],
+          "critical_path": false,
+          "notes": "Assumed from shared services or security team (not named in input). Owns security review (T14) in Phase 3. Can be allocated part-time (20%) for 1 week."
+        },
+        {
+          "role": "DevOps Engineer",
+          "phase_involvement": [
+            5
+          ],
+          "total_hours": 12.0,
+          "allocation_percent": 2.0,
+          "skills_required": [
+            "Production deployment",
+            "Infrastructure as code",
+            "Monitoring and alerting",
+            "Backup and disaster recovery"
+          ],
+          "critical_path": false,
+          "notes": "Back-loaded: owns production deployment (T19) in Phase 5. Can be allocated part-time (20%) for 1 week. Assumes infrastructure (servers, databases, cloud storage) is pre-provisioned."
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "Is a dedicated QA Engineer available from shared services or will one need to be hired/contracted? Input states 'developers will validate their own work,' but PMBOK 8.2 requires QA effort minimum 25% of development hours for quality assurance.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If QA resource is unavailable, test coverage will be insufficient, critical bugs will reach production, and reimbursement data integrity will be at risk. Rework and hotfixes will consume 20-30% of Phase 4-5 effort, and go-live will slip by 2-3 weeks."
+        },
+        {
+          "priority": 2,
+          "question": "Has the finance team formally approved the scope (expense submission, approval workflow, QuickBooks export) in writing, or is Phase 1 sign-off still pending?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If scope is not formally approved, mid-project changes (e.g., approval hierarchy, multi-currency, additional integrations) will consume 2-3 weeks and delay deployment."
+        },
+        {
+          "priority": 3,
+          "question": "Does the company use QuickBooks Online (cloud-based) or QuickBooks Desktop? Integration approach and timeline depend on this answer.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If company uses QuickBooks Desktop, integration approach changes entirely (may require middleware or manual export), adding 3-4 weeks to Phase 3 and delaying deployment."
+        },
+        {
+          "priority": 4,
+          "question": "What authentication method does the company use: SSO (single sign-on), LDAP, or local authentication? Phase 2 implementation depends on this.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If SSO is not available, authentication layer must be redesigned and re-implemented, adding 1-2 weeks to Phase 2 and delaying downstream phases."
+        },
+        {
+          "priority": 5,
+          "question": "Are both developers committed to 100% allocation for the full 11.5-week timeline, or are they shared with other projects? Any part-time allocation will break the critical path.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If developers are shared or part-time, critical path tasks will slip, and deployment will miss the 10-week target by 2-4 weeks."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 50,
+        "deductions": [
+          {
+            "amount": 5.0,
+            "reason": "QA resource not named in input; assumption logged (A4) with HIGH risk_if_wrong"
+          },
+          {
+            "amount": 5.0,
+            "reason": "QuickBooks integration approach not confirmed; assumption logged (A2) with HIGH risk_if_wrong"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Data retention policy not explicitly stated; assumption logged (A3) with HIGH risk_if_wrong"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Authentication method not confirmed; assumption logged (A1) with HIGH risk_if_wrong"
+          },
+          {
+            "amount": 5.0,
+            "reason": "One HIGH risk present in risk register (R2, R3, R4, R6 \u2014 four HIGH risks)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "One HIGH risk present in risk register (second HIGH risk)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "One HIGH risk present in risk register (third HIGH risk)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "One HIGH risk present in risk register (fourth HIGH risk)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Stakeholder sign-off not explicitly mentioned in input; scope approval assumed but not documented"
+          },
+          {
+            "amount": 12.0,
+            "reason": "Hard cap enforced by post-processing: CRITICAL risk + >=3 assumptions -> cap 50"
+          }
+        ],
+        "interpretation": "PM confidence 50 after hard-cap enforcement (model-reported score was 62; CRITICAL risk + >=3 assumptions -> cap 50)."
+      },
+      "project_viability": {
+        "viability_status": "VIABLE",
+        "gap_type": "N/A",
+        "gap_amount": "N/A",
+        "scoping_options": null
+      }
+    },
+    "gate": {
+      "fired": true,
+      "reasons": [
+        "confidence_score < 60 \u2014 plan needs review",
+        "risk_register contains CRITICAL risk \u2014 PM decision required"
+      ],
+      "decision": null
+    },
+    "validation": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        "Staffing adds expanded role class PM (Product Manager) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule.",
+        "Staffing adds expanded role class UX (UX Designer) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule.",
+        "Staffing adds expanded role class DEVOPS (DevOps Engineer) not evidenced in project_understanding text \u2014 missing dedicated assumption_log row per v1.6.2 staffing rule."
+      ]
+    },
+    "tokens_used": 9435,
+    "input_tokens": 216,
+    "output_tokens": 9219,
+    "cache_hit": false
+  }
+}
