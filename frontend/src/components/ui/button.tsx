@@ -4,16 +4,16 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-white text-black hover:bg-zinc-200",
+        default: "bg-slate-900 text-white hover:bg-slate-700",
         secondary:
-          "bg-zinc-800 text-zinc-100 border border-zinc-700 hover:bg-zinc-700",
-        ghost: "hover:bg-zinc-800 hover:text-zinc-100",
+          "bg-slate-100 text-slate-800 border border-slate-200 hover:bg-slate-200",
+        ghost: "hover:bg-slate-100 hover:text-slate-900",
         outline:
-          "border border-zinc-600 bg-transparent text-zinc-100 hover:bg-zinc-900",
+          "border border-slate-300 bg-transparent text-slate-700 hover:bg-slate-100",
       },
       size: {
         default: "h-10 px-4 py-2",

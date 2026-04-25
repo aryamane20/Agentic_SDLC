@@ -13,9 +13,7 @@ export function PlanFloatingComposer({
   onChange,
   onSubmit,
   canSubmit,
-  /** Extra send guards (e.g. PRD extraction). Does not disable typing. */
   sendLocked,
-  /** Blocks only the attach (+) control. */
   uploadLocked,
   placeholder,
   reduceMotion,
@@ -57,11 +55,11 @@ export function PlanFloatingComposer({
     <div className="w-full max-w-2xl">
       {showPrd && prdFileLabel ? (
         <div className="mb-2 flex justify-center">
-          <span className="inline-flex max-w-full items-center gap-1 truncate rounded-full border border-zinc-700/70 bg-zinc-900/70 px-3 py-1 text-[11px] text-zinc-200 backdrop-blur-md">
+          <span className="inline-flex max-w-full items-center gap-1 truncate rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-[11px] text-slate-600 shadow-sm backdrop-blur-md">
             <span className="truncate">{prdFileLabel}</span>
             <button
               type="button"
-              className="rounded-full p-0.5 text-zinc-400 hover:text-white"
+              className="rounded-full p-0.5 text-slate-400 hover:text-slate-700"
               aria-label="Remove PRD"
               onClick={() => onClearPrd?.()}
             >
@@ -78,7 +76,7 @@ export function PlanFloatingComposer({
       >
         <div
           className={cn(
-            "flex items-end gap-1 rounded-[24px] bg-zinc-950/90 px-2 py-2 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.85)]"
+            "flex items-end gap-1 rounded-[24px] bg-white/95 px-2 py-2 shadow-md"
           )}
         >
           {showPrd ? (
@@ -87,7 +85,7 @@ export function PlanFloatingComposer({
               disabled={Boolean(uploadLocked || prdBusy)}
               onClick={() => onPickPrd?.()}
               className={cn(
-                "mb-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-zinc-600/70 bg-zinc-900/80 text-zinc-200 transition hover:border-zinc-500 hover:bg-zinc-800/80 hover:text-white disabled:opacity-40"
+                "mb-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-600 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-800 disabled:opacity-40"
               )}
               aria-label="Attach PRD"
             >
@@ -111,7 +109,7 @@ export function PlanFloatingComposer({
               }
             }}
             placeholder={placeholder}
-            className="mb-1 max-h-[220px] min-h-[44px] flex-1 resize-none bg-transparent px-2 py-2.5 text-[15px] leading-relaxed text-zinc-100 placeholder:text-zinc-500 focus:outline-none"
+            className="mb-1 max-h-[220px] min-h-[44px] flex-1 resize-none bg-transparent px-2 py-2.5 text-[15px] leading-relaxed text-slate-800 placeholder:text-slate-400 focus:outline-none"
           />
 
           <Button
@@ -131,7 +129,7 @@ export function PlanFloatingComposer({
       </StudioShineBorder>
 
       {footerHint ? (
-        <p className="mt-2 text-center text-[11px] text-zinc-400 tabular-nums">
+        <p className="mt-2 text-center text-[11px] text-slate-400 tabular-nums">
           {footerHint}
         </p>
       ) : null}

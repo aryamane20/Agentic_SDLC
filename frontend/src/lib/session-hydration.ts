@@ -40,7 +40,7 @@ export function buildThreadFromReportEntry(
     id: rid(),
     role: "user",
     variant: "brief",
-    content: displayBrief || (prdText ? "(PRD only — see attachment)" : ""),
+    content: displayBrief || (prdText ? "(PRD only, see attachment)" : ""),
     ...(prdText && prdLabel
       ? { prdAttachment: { filename: prdLabel, excerptChars: prdText.length } }
       : prdText
@@ -72,7 +72,7 @@ export function buildThreadFromReportEntry(
       id: rid(),
       role: "assistant",
       variant: "refine_summary",
-      title: `Plan updated — v${v}`,
+      title: `Plan updated: v${v}`,
       lines: ["Refinement applied."],
     })
     v++

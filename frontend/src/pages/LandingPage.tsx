@@ -80,9 +80,9 @@ const LANDING_WORDS: string[] = [
 
 export function LandingPage() {
   return (
-    <div className="bg-black text-zinc-100 antialiased">
+    <div className="antialiased">
       <section
-        className="relative min-h-[90dvh] bg-black"
+        className="relative min-h-screen bg-black"
         aria-label="PLANR hero"
       >
         <div className="absolute inset-0 z-0" aria-hidden>
@@ -103,28 +103,28 @@ export function LandingPage() {
         <ScrollCueAuroraGlass className="absolute bottom-6 left-1/2 z-20 -translate-x-1/2" />
       </section>
 
-      <main>
+      <main style={{ background: "hsl(20, 12%, 95.1%)" }}>
         <section
           id="about"
-          className="scroll-mt-8 border-t border-zinc-900 px-6 py-16 md:py-24 max-w-3xl mx-auto min-h-[72dvh] flex flex-col"
+          className="scroll-mt-8 border-t border-[hsl(20deg_12%_88%)] px-6 py-16 md:py-24 max-w-3xl mx-auto min-h-[72dvh] flex flex-col"
         >
-          <p className="mb-3 text-sm font-medium uppercase tracking-widest text-zinc-300">
+          <p className="mb-3 text-sm font-medium uppercase tracking-widest text-stone-400">
             About
           </p>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900 mb-6">
             Give it a brief. Get a plan worth signing off on.
           </h1>
-          <p className="mb-6 text-lg leading-relaxed text-zinc-200">
+          <p className="mb-6 text-lg leading-relaxed text-stone-600">
             PLANR turns any project input, from a napkin idea to a full PRD, into
             the four things a senior PM would produce before anyone writes a line
             of code: assumptions, project plan, risk register, and staffing plan.
           </p>
-          <p className="mb-6 text-lg leading-relaxed text-zinc-200">
+          <p className="mb-6 text-lg leading-relaxed text-stone-600">
             Built-in approval gates mean nothing moves forward until a human says
             so. Push back, add a constraint you missed, refine the scope. The plan
             updates, and the gates hold.
           </p>
-          <p className="mb-10 text-lg leading-relaxed text-zinc-200">
+          <p className="mb-10 text-lg leading-relaxed text-stone-600">
             The name is intentional. Dead simple, and it works as a verb. &quot;Let
             me Planr this first.&quot;
           </p>
@@ -143,10 +143,11 @@ export function LandingPage() {
 
         <section
           id="capabilities"
-          className="border-t border-zinc-900 bg-zinc-950/50 px-6 py-16 scroll-mt-8"
+          className="border-t border-[hsl(20deg_12%_88%)] px-6 py-16 scroll-mt-8"
+          style={{ background: "hsl(20, 12%, 95.1%)" }}
         >
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-2xl font-semibold text-white mb-10 text-center">
+            <h2 className="text-2xl font-semibold text-stone-800 mb-10 text-center">
               What you get
             </h2>
             <ul className="grid list-none gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
@@ -156,20 +157,20 @@ export function LandingPage() {
                     key={title}
                     className={cn("min-h-0", liClassName)}
                   >
-                    <CardCurtainReveal className="h-full w-full rounded-xl border border-zinc-800 bg-black/40">
+                    <CardCurtainReveal className="group h-full w-full rounded-xl border border-stone-200 bg-white/80 shadow-sm backdrop-blur-sm transition-colors duration-300 hover:border-slate-700/50 hover:bg-slate-900">
                       <CardCurtainRevealBody className="relative flex flex-col">
                         <Icon
-                          className="mb-3 h-8 w-8 shrink-0 text-zinc-200"
+                          className="mb-3 h-8 w-8 shrink-0 text-stone-500 transition-colors duration-300 group-hover:text-slate-300"
                           strokeWidth={1.5}
                           aria-hidden
                         />
-                        <CardCurtainRevealTitle className="mb-1 font-medium text-white">
+                        <CardCurtainRevealTitle className="mb-1 font-medium text-stone-900 transition-colors duration-300 group-hover:text-white">
                           {title}
                         </CardCurtainRevealTitle>
-                        <CardCurtainRevealDescription className="text-sm leading-relaxed text-zinc-200">
+                        <CardCurtainRevealDescription className="text-sm leading-relaxed text-stone-600 transition-colors duration-300 group-hover:text-slate-300">
                           <p>{description}</p>
                         </CardCurtainRevealDescription>
-                        <CardCurtain className="bg-zinc-400/25" />
+                        <CardCurtain className="bg-white/5" />
                       </CardCurtainRevealBody>
                       <CardCurtainRevealFooter className="relative isolate mt-0 h-20 w-full shrink-0">
                         <img
@@ -191,7 +192,7 @@ export function LandingPage() {
         </section>
       </main>
 
-      <footer className="border-t border-zinc-900 px-6 py-6 text-center text-xs text-zinc-400">
+      <footer className="border-t border-[hsl(20deg_12%_88%)] px-6 py-6 text-center text-xs text-stone-400" style={{ background: "hsl(20, 12%, 95.1%)" }}>
         Particle hero • shadcn-style UI + Tailwind
       </footer>
     </div>

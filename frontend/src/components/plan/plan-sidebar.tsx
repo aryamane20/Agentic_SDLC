@@ -39,14 +39,14 @@ export function PlanSidebar({
   return (
     <aside
       className={cn(
-        "flex max-h-[min(42vh,280px)] shrink-0 flex-col border-zinc-800/60 bg-zinc-950/45 backdrop-blur-2xl transition-[width] duration-200 ease-out",
+        "flex max-h-[min(42vh,280px)] shrink-0 flex-col border-slate-200/70 bg-white/70 backdrop-blur-xl transition-[width] duration-200 ease-out",
         "border-b lg:max-h-none lg:h-[calc(100dvh-3.25rem)] lg:border-b-0 lg:border-r",
         open ? "w-full lg:w-[272px]" : "w-full lg:w-[4.25rem]"
       )}
     >
       <div
         className={cn(
-          "flex items-center gap-2 border-b border-zinc-800/50 px-3 py-3",
+          "flex items-center gap-2 border-b border-slate-200/60 px-3 py-3",
           !open && "lg:flex-col lg:items-center lg:gap-3 lg:px-2 lg:py-4"
         )}
       >
@@ -54,7 +54,7 @@ export function PlanSidebar({
           type="button"
           onClick={onToggle}
           className={cn(
-            "rounded-lg p-2 text-zinc-200 transition hover:bg-zinc-800/60 hover:text-white",
+            "rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800",
             "hidden lg:flex"
           )}
           aria-expanded={open}
@@ -67,7 +67,7 @@ export function PlanSidebar({
           )}
         </button>
         {open ? (
-          <span className="text-sm font-semibold tracking-tight text-zinc-100">
+          <span className="text-sm font-semibold tracking-tight text-slate-800">
             PLANR
           </span>
         ) : null}
@@ -84,7 +84,7 @@ export function PlanSidebar({
           onClick={() => void onNewPlan()}
           disabled={newPlanDisabled}
           className={cn(
-            "flex items-center gap-2 rounded-xl border border-zinc-700/50 bg-zinc-900/50 px-3 py-2.5 text-left text-sm font-medium text-zinc-100 transition hover:border-zinc-600/80 hover:bg-zinc-800/50 disabled:opacity-45",
+            "flex items-center gap-2 rounded-xl border border-slate-200 bg-white/80 px-3 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:opacity-45",
             !open && "lg:w-10 lg:justify-center lg:px-0 lg:py-2.5"
           )}
         >
@@ -95,7 +95,7 @@ export function PlanSidebar({
         <Link
           to="/"
           className={cn(
-            "flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-zinc-200 transition hover:bg-zinc-800/40 hover:text-white",
+            "flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-slate-100 hover:text-slate-900",
             !open && "lg:w-10 lg:justify-center lg:px-0"
           )}
         >
@@ -105,15 +105,15 @@ export function PlanSidebar({
 
         {open ? (
           <>
-            <p className="mt-4 px-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-400">
+            <p className="mt-4 px-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
               Your plans
             </p>
             <ul className="mt-1 min-h-0 flex-1 space-y-0.5 overflow-y-auto pr-1">
               {chats.length === 0 ? (
-                <li className="px-2 py-2 text-xs text-zinc-400">
+                <li className="px-2 py-2 text-xs text-slate-400">
                   Saved plans for this browser show up after you run{" "}
-                  <span className="text-zinc-300">Generate</span>. Use{" "}
-                  <span className="text-zinc-300">New plan</span> for another
+                  <span className="text-slate-600">Generate</span>. Use{" "}
+                  <span className="text-slate-600">New plan</span> for another
                   initiative.
                 </li>
               ) : (
@@ -131,8 +131,8 @@ export function PlanSidebar({
                         className={cn(
                           "w-full rounded-lg border px-2 py-2 text-left transition disabled:opacity-45",
                           active
-                            ? "border-zinc-500/60 bg-zinc-800/50 text-zinc-100 font-medium"
-                            : "border-transparent text-zinc-300 hover:bg-zinc-800/35 hover:text-zinc-100"
+                            ? "border-slate-300 bg-slate-100 text-slate-900 font-medium"
+                            : "border-transparent text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
                         )}
                       >
                         <span
@@ -141,14 +141,14 @@ export function PlanSidebar({
                         >
                           {c.preview}
                         </span>
-                        <span className="mt-0.5 block font-mono text-[10px] text-zinc-500">
+                        <span className="mt-0.5 block font-mono text-[10px] text-slate-400">
                           {c.isLocalDraft ? (
-                            <span className="text-amber-500/90">draft</span>
+                            <span className="text-amber-600">draft</span>
                           ) : (
                             <>
                               {formatChatWhen(c.updated_at)}
                               {c.report_count > 0 && (
-                                <span className="text-zinc-600">
+                                <span className="text-slate-300">
                                   {" "}
                                   · {c.report_count} plan
                                   {c.report_count === 1 ? "" : "s"}

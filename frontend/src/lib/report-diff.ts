@@ -57,7 +57,7 @@ export function computeReportDiff(
   const w0 = weeks(prior)
   const w1 = weeks(next)
   if (w0 !== w1) {
-    lines.push(`Timeline:    ${w0 ?? "—"} weeks → ${w1 ?? "—"} weeks`)
+    lines.push(`Timeline:    ${w0 ?? "-"} weeks -> ${w1 ?? "-"} weeks`)
   }
 
   const c0 = confidence(prior)
@@ -67,7 +67,7 @@ export function computeReportDiff(
     const extra = interp
       ? ` (${interp.length > 90 ? `${interp.slice(0, 87)}…` : interp})`
       : ""
-    lines.push(`Confidence:  ${c0 ?? "—"} → ${c1 ?? "—"}${extra}`)
+    lines.push(`Confidence:  ${c0 ?? "-"} -> ${c1 ?? "-"}${extra}`)
   }
 
   const r0 = riskCount(prior)
@@ -81,17 +81,17 @@ export function computeReportDiff(
       nextGate.reasons?.length > 0
         ? nextGate.reasons.join("; ")
         : "See approval gate details"
-    lines.push(`Gate:        ⚠ Fired — ${reasons}`)
+    lines.push(`Gate:        ⚠ Fired: ${reasons}`)
   } else if (priorGate?.fired && !nextGate.fired) {
     lines.push(`Gate:        Cleared (no blocking issues)`)
   }
 
   if (lines.length === 0) {
-    lines.push(`Plan structure updated — review full plan below.`)
+    lines.push(`Plan structure updated. Review full plan below.`)
   }
 
   return {
-    title: `Plan updated — v${version}`,
+    title: `Plan updated: v${version}`,
     lines,
   }
 }

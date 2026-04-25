@@ -98,7 +98,7 @@ export function useReportWorkflow() {
       const text = await extractPrdText(file)
       const t = text.trim()
       if (!t) {
-        setError("No text extracted from PRD — try another file.")
+        setError("No text extracted from PRD. Try another file.")
         return
       }
       setPrdText(text)
@@ -125,7 +125,7 @@ export function useReportWorkflow() {
       id: tid(),
       role: "user",
       variant: "brief",
-      content: b || "(PRD only — see attachment)",
+      content: b || "(PRD only, see attachment)",
       ...(prdFileLabel && p
         ? {
             prdAttachment: {
@@ -290,9 +290,6 @@ export function useReportWorkflow() {
    * New API session while keeping the same brief + PRD so the PM can run Generate again.
    */
   const startNewPlan = useCallback(async () => {
-    const keepBrief = brief
-    const keepPrd = prdText
-    const keepLabel = prdFileLabel
     skipAgentCacheOnceRef.current = true
     setError(null)
     try {
@@ -306,19 +303,19 @@ export function useReportWorkflow() {
       setPlanVersion(0)
       setSessionId(null)
       setMessages([])
+      setBrief("")
+      setPrdText("")
+      setPrdFileLabel(null)
       setPhase("IDLE")
       const res = await planrApiFetch("/sessions", { method: "POST" })
       if (!res.ok) throw new Error(await readError(res))
       const j = (await res.json()) as { session_id: string }
       setSessionId(j.session_id)
-      setBrief(keepBrief)
-      setPrdText(keepPrd)
-      setPrdFileLabel(keepLabel)
       void refreshSessionList()
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not start new plan")
     }
-  }, [brief, prdFileLabel, prdText, refreshSessionList])
+  }, [refreshSessionList])
 
   /** Load a persisted session from disk (sidebar). Uses the latest report in that session. */
   const switchSession = useCallback(

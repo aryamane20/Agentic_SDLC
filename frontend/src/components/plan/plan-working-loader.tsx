@@ -7,9 +7,6 @@ const COPY: Record<Mode, string> = {
   refine: "Applying your feedback in under a minute.",
 }
 
-/**
- * Single-state loading UI: no step metaphor (the model is one request; we have no streamed phases).
- */
 export function PlanWorkingLoader({
   mode,
   reduceMotion = false,
@@ -18,12 +15,12 @@ export function PlanWorkingLoader({
   reduceMotion?: boolean
 }) {
   return (
-    <div className="rounded-2xl border border-zinc-800/80 bg-zinc-950/80 px-6 py-8 text-center shadow-[0_0_0_1px_rgba(255,255,255,0.04)] backdrop-blur-md">
-      <p className="font-semibold tracking-[0.18em] text-xs text-white">PLANR</p>
-      <div className="mx-auto mt-5 h-1.5 w-full max-w-[220px] overflow-hidden rounded-full bg-zinc-800/90">
+    <div className="rounded-2xl border border-slate-200/80 bg-white/80 px-6 py-8 text-center shadow-sm backdrop-blur-md">
+      <p className="font-semibold tracking-[0.18em] text-xs text-slate-900">PLANR</p>
+      <div className="mx-auto mt-5 h-1.5 w-full max-w-[220px] overflow-hidden rounded-full bg-slate-200">
         <div
           className={cn(
-            "h-full w-[42%] rounded-full bg-zinc-300",
+            "h-full w-[42%] rounded-full bg-slate-500",
             reduceMotion
               ? "mx-auto opacity-90"
               : "animate-plan-loader-indeterminate will-change-transform"
@@ -31,10 +28,10 @@ export function PlanWorkingLoader({
           aria-hidden
         />
       </div>
-      <p className="mx-auto mt-5 max-w-sm text-sm leading-relaxed text-zinc-300">
+      <p className="mx-auto mt-5 max-w-sm text-sm leading-relaxed text-slate-600">
         {COPY[mode]}
       </p>
-      <p className="mt-3 text-xs text-zinc-500">
+      <p className="mt-3 text-xs text-slate-400">
         Working...you can leave this tab open.
       </p>
     </div>

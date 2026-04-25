@@ -48,7 +48,7 @@ function Pill({
           ? "border-emerald-500/30 bg-emerald-950/30 text-emerald-100"
           : tone === "rose"
             ? "border-rose-500/35 bg-rose-950/35 text-rose-100"
-            : "border-zinc-600/50 bg-zinc-900/60 text-zinc-200"
+            : "border-slate-600/50 bg-slate-800 text-slate-200"
   return (
     <span
       className={`inline-flex max-w-full items-center rounded-md border px-2 py-0.5 text-[11px] font-medium ${cls}`}
@@ -70,9 +70,9 @@ function Section({
   return (
     <section
       id={id}
-      className="rounded-2xl border border-zinc-800/70 bg-zinc-950/30 backdrop-blur-md"
+      className="rounded-2xl border border-slate-700/50 bg-slate-800 backdrop-blur-md"
     >
-      <h2 className="border-b border-zinc-800/60 px-4 py-3 text-sm font-semibold tracking-tight text-white">
+      <h2 className="border-b border-slate-700/50 px-4 py-3 text-sm font-semibold tracking-tight text-slate-50">
         {title}
       </h2>
       <div className="p-4">{children}</div>
@@ -89,7 +89,7 @@ function Th({
 }) {
   return (
     <th
-      className={`border-b border-zinc-700/60 bg-zinc-900/40 px-2 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-400 ${className}`}
+      className={`border-b border-slate-700/50 bg-slate-700/50 px-2 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-400 ${className}`}
     >
       {children}
     </th>
@@ -105,7 +105,7 @@ function Td({
 }) {
   return (
     <td
-      className={`border-b border-zinc-800/50 px-2 py-2 align-top text-xs text-zinc-300 ${className}`}
+      className={`border-b border-slate-700/40 px-2 py-2 align-top text-xs text-slate-300 ${className}`}
     >
       {children}
     </td>
@@ -174,7 +174,7 @@ export function PlanReportView({
       {gate?.fired ? (
         <div className="flex flex-wrap items-center gap-2">
           <Pill tone="amber">{UI_LABELS.gateBlocking}</Pill>
-          <span className="text-[11px] text-zinc-500">
+          <span className="text-[11px] text-slate-400">
             {UI_LABELS.gateBlockingHint}
           </span>
         </div>
@@ -207,17 +207,17 @@ export function PlanReportView({
           ) : null}
         </div>
         {meta?.[METADATA_TEXT_FIELDS.generatedAt] != null ? (
-          <p className="mt-2 text-xs text-zinc-500">
+          <p className="mt-2 text-xs text-slate-400">
             Generated: {str(meta[METADATA_TEXT_FIELDS.generatedAt])}
           </p>
         ) : null}
         {meta?.[METADATA_TEXT_FIELDS.sdlcRationale] != null ? (
-          <p className="mt-3 text-sm leading-relaxed text-zinc-300">
+          <p className="mt-3 text-sm leading-relaxed text-slate-300">
             {str(meta[METADATA_TEXT_FIELDS.sdlcRationale])}
           </p>
         ) : null}
         {pm.interpretation ? (
-          <p className="mt-2 text-xs leading-relaxed text-zinc-400">
+          <p className="mt-2 text-xs leading-relaxed text-slate-400">
             {pm.interpretation}
           </p>
         ) : null}
@@ -235,10 +235,10 @@ export function PlanReportView({
               if (val == null || val === "") return null
               return (
                 <div key={field}>
-                  <dt className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">
+                  <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
                     {label}
                   </dt>
-                  <dd className="mt-0.5 text-sm text-zinc-200">{str(val)}</dd>
+                  <dd className="mt-0.5 text-sm text-slate-200">{str(val)}</dd>
                 </div>
               )
             })}
@@ -247,10 +247,10 @@ export function PlanReportView({
           (understanding[PROJECT_CONTEXT_QUOTES_FIELD] as unknown[]).length >
             0 ? (
             <div className="mt-4">
-              <p className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">
                 {UI_LABELS.supportingQuotes}
               </p>
-              <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-zinc-400">
+              <ul className="mt-2 list-disc space-y-1 pl-4 text-xs text-slate-400">
                 {(
                   understanding[PROJECT_CONTEXT_QUOTES_FIELD] as unknown[]
                 ).map((q, i) => (
@@ -267,7 +267,7 @@ export function PlanReportView({
         title={PLAN_SECTIONS.assumptions.title}
       >
         {assumptionLog.length === 0 ? (
-          <p className="text-sm text-zinc-500">{UI_LABELS.emptyAssumptions}</p>
+          <p className="text-sm text-slate-400">{UI_LABELS.emptyAssumptions}</p>
         ) : (
           <div className="-mx-4 overflow-x-auto sm:mx-0">
             <table className="w-full min-w-[640px] border-collapse text-left">
@@ -286,10 +286,10 @@ export function PlanReportView({
                       : {}
                   return (
                     <tr key={str(o.id) || i}>
-                      <Td className="whitespace-nowrap font-mono text-[11px] text-zinc-400">
-                        {o.id != null ? str(o.id) : "—"}
+                      <Td className="whitespace-nowrap font-mono text-[11px] text-slate-400">
+                        {o.id != null ? str(o.id) : "-"}
                       </Td>
-                      <Td>{o.what != null ? str(o.what) : "—"}</Td>
+                      <Td>{o.what != null ? str(o.what) : "-"}</Td>
                       <Td className="max-w-[200px]">
                         {formatAssumptionWhyBasis(o)}
                       </Td>
@@ -307,7 +307,7 @@ export function PlanReportView({
 
       <Section id={PLAN_SECTIONS.plan.id} title={PLAN_SECTIONS.plan.title}>
         {!projectPlan ? (
-          <p className="text-sm text-zinc-500">{UI_LABELS.emptyPlan}</p>
+          <p className="text-sm text-slate-400">{UI_LABELS.emptyPlan}</p>
         ) : (
           <>
             <div className="flex flex-wrap gap-2">
@@ -325,15 +325,15 @@ export function PlanReportView({
             </div>
             {criticalPath &&
             Object.keys(criticalPath).some((k) => criticalPath[k] != null) ? (
-              <div className="mt-4 rounded-lg border border-zinc-800/60 bg-zinc-900/25 p-3 text-xs text-zinc-300">
-                <p className="font-medium text-zinc-200">
+              <div className="mt-4 rounded-lg border border-slate-700/50 bg-slate-700/40 p-3 text-xs text-slate-300">
+                <p className="font-medium text-slate-200">
                   {UI_LABELS.criticalPathHeading}
                 </p>
                 <ul className="mt-2 space-y-1">
                   {Object.entries(criticalPath).map(([k, v]) =>
                     v != null && str(v) !== "" ? (
                       <li key={k}>
-                        <span className="text-zinc-500">{k}: </span>
+                        <span className="text-slate-400">{k}: </span>
                         {str(v)}
                       </li>
                     ) : null
@@ -344,7 +344,7 @@ export function PlanReportView({
 
             <div className="mt-4 space-y-2">
               {phases.length === 0 ? (
-                <p className="text-sm text-zinc-500">{UI_LABELS.emptyPhases}</p>
+                <p className="text-sm text-slate-400">{UI_LABELS.emptyPhases}</p>
               ) : (
                 phases.map((ph, pi) => {
                   const p =
@@ -363,14 +363,14 @@ export function PlanReportView({
                   return (
                     <details
                       key={pi}
-                      className="group rounded-xl border border-zinc-800/60 bg-zinc-900/20 open:bg-zinc-900/30"
+                      className="group rounded-xl border border-slate-700/50 bg-slate-700/30 open:bg-slate-700/40"
                     >
-                      <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-2 gap-y-1 px-3 py-2 text-sm font-medium text-zinc-100 marker:content-none [&::-webkit-details-marker]:hidden">
-                        <span className="text-zinc-400">
+                      <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-2 gap-y-1 px-3 py-2 text-sm font-medium text-slate-100 marker:content-none [&::-webkit-details-marker]:hidden">
+                        <span className="text-slate-400">
                           Phase {str(phaseNum ?? pi + 1)}
                         </span>
                         {p[PHASE_FIELDS.name] != null ? (
-                          <span className="text-white">
+                          <span className="text-slate-50">
                             {str(p[PHASE_FIELDS.name])}
                           </span>
                         ) : null}
@@ -381,19 +381,19 @@ export function PlanReportView({
                           </Pill>
                         ) : null}
                         {p[PHASE_FIELDS.percentageOfTotal] != null ? (
-                          <span className="text-[11px] text-zinc-500">
+                          <span className="text-[11px] text-slate-400">
                             {str(p[PHASE_FIELDS.percentageOfTotal])}{" "}
                             {UI_LABELS.phaseTimelineSuffix}
                           </span>
                         ) : null}
                       </summary>
-                      <div className="border-t border-zinc-800/50 px-3 pb-3 pt-2">
+                      <div className="border-t border-slate-700/40 px-3 pb-3 pt-2">
                         {milestones.length > 0 ? (
                           <div className="mb-3">
-                            <p className="text-[11px] font-medium uppercase text-zinc-500">
+                            <p className="text-[11px] font-medium uppercase text-slate-400">
                               {UI_LABELS.milestones}
                             </p>
-                            <ul className="mt-1 list-disc pl-4 text-xs text-zinc-400">
+                            <ul className="mt-1 list-disc pl-4 text-xs text-slate-400">
                               {milestones.map((m, mi) => (
                                 <li key={mi}>{str(m)}</li>
                               ))}
@@ -401,7 +401,7 @@ export function PlanReportView({
                           </div>
                         ) : null}
                         {tasks.length === 0 ? (
-                          <p className="text-xs text-zinc-500">
+                          <p className="text-xs text-slate-400">
                             {UI_LABELS.emptyPhaseTasks}
                           </p>
                         ) : (
@@ -436,21 +436,21 @@ export function PlanReportView({
                                     flags.push("risk")
                                   return (
                                     <tr key={str(tk.id) || ti}>
-                                      <Td className="font-mono text-[11px] text-zinc-500">
-                                        {tk.id != null ? str(tk.id) : "—"}
+                                      <Td className="font-mono text-[11px] text-slate-400">
+                                        {tk.id != null ? str(tk.id) : "-"}
                                       </Td>
                                       <Td className="max-w-[220px]">
-                                        {tk.name != null ? str(tk.name) : "—"}
+                                        {tk.name != null ? str(tk.name) : "-"}
                                       </Td>
-                                      <Td className="whitespace-nowrap text-zinc-400">
+                                      <Td className="whitespace-nowrap text-slate-400">
                                         {tk.owner_role != null
                                           ? str(tk.owner_role)
-                                          : "—"}
+                                          : "-"}
                                       </Td>
                                       <Td>
                                         {tk.effort_hours != null
                                           ? str(tk.effort_hours)
-                                          : "—"}
+                                          : "-"}
                                       </Td>
                                       <Td>
                                         <div className="flex flex-wrap gap-1">
@@ -465,8 +465,8 @@ export function PlanReportView({
                                             </Pill>
                                           ))}
                                           {flags.length === 0 ? (
-                                            <span className="text-zinc-600">
-                                              —
+                                            <span className="text-slate-300">
+-
                                             </span>
                                           ) : null}
                                         </div>
@@ -490,7 +490,7 @@ export function PlanReportView({
 
       <Section id={PLAN_SECTIONS.risks.id} title={PLAN_SECTIONS.risks.title}>
         {riskRegister.length === 0 ? (
-          <p className="text-sm text-zinc-500">{UI_LABELS.emptyRisks}</p>
+          <p className="text-sm text-slate-400">{UI_LABELS.emptyRisks}</p>
         ) : (
           <div className="-mx-4 overflow-x-auto sm:mx-0">
             <table className="w-full min-w-[720px] border-collapse">
@@ -518,19 +518,19 @@ export function PlanReportView({
                   return (
                     <tr key={str(o[f.id]) || i}>
                       <Td className="font-mono text-[11px]">
-                        {str(o[f.id] ?? "—")}
+                        {str(o[f.id] ?? "-")}
                       </Td>
                       <Td className="whitespace-nowrap">
-                        {str(o[f.category] ?? "—")}
+                        {str(o[f.category] ?? "-")}
                       </Td>
                       <Td className="max-w-[240px]">
-                        {str(o[f.description] ?? "—")}
+                        {str(o[f.description] ?? "-")}
                       </Td>
                       <Td className="whitespace-nowrap text-[11px]">
-                        {pi || str(o[f.score] ?? "—")}
+                        {pi || str(o[f.score] ?? "-")}
                       </Td>
-                      <Td className="max-w-[200px] text-zinc-400">
-                        {str(o[f.mitigation] ?? "—")}
+                      <Td className="max-w-[200px] text-slate-400">
+                        {str(o[f.mitigation] ?? "-")}
                       </Td>
                     </tr>
                   )
@@ -546,7 +546,7 @@ export function PlanReportView({
         title={PLAN_SECTIONS.staffing.title}
       >
         {staffing.length === 0 ? (
-          <p className="text-sm text-zinc-500">{UI_LABELS.emptyStaffing}</p>
+          <p className="text-sm text-slate-400">{UI_LABELS.emptyStaffing}</p>
         ) : (
           <div className="-mx-4 overflow-x-auto sm:mx-0">
             <table className="w-full min-w-[640px] border-collapse">
@@ -577,16 +577,16 @@ export function PlanReportView({
                     ? (o[sf.phaseInvolvement] as unknown[])
                         .map((x) => str(x))
                         .join(", ")
-                    : "—"
+                    : "-"
                   const skills = Array.isArray(o[sf.skillsRequired])
                     ? (o[sf.skillsRequired] as unknown[])
                         .map((x) => str(x))
                         .join(", ")
-                    : "—"
+                    : "-"
                   return (
                     <tr key={str(o[sf.role]) || i}>
-                      <Td className="font-medium text-zinc-200">
-                        {str(o[sf.role] ?? "—")}
+                      <Td className="font-medium text-slate-200">
+                        {str(o[sf.role] ?? "-")}
                         {o[sf.criticalPath] === true ? (
                           <span className="ml-2 mt-1 block">
                             <Pill tone="blue">
@@ -595,22 +595,22 @@ export function PlanReportView({
                           </span>
                         ) : null}
                       </Td>
-                      <Td className="font-mono text-[11px] text-zinc-400">
+                      <Td className="font-mono text-[11px] text-slate-400">
                         {phasesInv}
                       </Td>
                       <Td>
                         {o[sf.totalHours] != null
                           ? str(o[sf.totalHours])
-                          : "—"}
+                          : "-"}
                       </Td>
                       <Td>
                         {o[sf.allocationPercent] != null
                           ? `${str(o[sf.allocationPercent])}%`
-                          : "—"}
+                          : "-"}
                       </Td>
-                      <Td className="max-w-[200px] text-zinc-400">{skills}</Td>
-                      <Td className="max-w-[180px] text-zinc-500">
-                        {str(o[sf.notes] ?? "—")}
+                      <Td className="max-w-[200px] text-slate-400">{skills}</Td>
+                      <Td className="max-w-[180px] text-slate-400">
+                        {str(o[sf.notes] ?? "-")}
                       </Td>
                     </tr>
                   )
@@ -626,7 +626,7 @@ export function PlanReportView({
           id={PLAN_SECTIONS.openQuestions.id}
           title={PLAN_SECTIONS.openQuestions.title}
         >
-          <ol className="list-decimal space-y-3 pl-5 text-sm text-zinc-300">
+          <ol className="list-decimal space-y-3 pl-5 text-sm text-slate-300">
             {openQs.map((q, i) => {
               const o =
                 q && typeof q === "object" && !Array.isArray(q)
@@ -636,7 +636,7 @@ export function PlanReportView({
               return (
                 <li key={i}>
                   <p>{str(o[fq.question] ?? o)}</p>
-                  <div className="mt-1 flex flex-wrap gap-2 text-[11px] text-zinc-500">
+                  <div className="mt-1 flex flex-wrap gap-2 text-[11px] text-slate-400">
                     {o[fq.urgency] != null ? (
                       <span>Urgency: {str(o[fq.urgency])}</span>
                     ) : null}
@@ -659,7 +659,7 @@ export function PlanReportView({
           id={PLAN_SECTIONS.viability.id}
           title={PLAN_SECTIONS.viability.title}
         >
-          <pre className="max-h-48 overflow-auto whitespace-pre-wrap rounded-lg border border-zinc-800/60 bg-zinc-900/40 p-3 text-[11px] text-zinc-400">
+          <pre className="max-h-48 overflow-auto whitespace-pre-wrap rounded-lg border border-slate-700/50 bg-slate-700/50 p-3 text-[11px] text-slate-400">
             {JSON.stringify(viability, null, 2)}
           </pre>
         </Section>

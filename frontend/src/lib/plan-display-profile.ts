@@ -212,11 +212,11 @@ export function formatAssumptionWhyBasis(o: Record<string, unknown>): string {
   const parts = [o.why, o.pmi_basis].filter(
     (x) => x != null && String(x).trim() !== ""
   )
-  return parts.map((x) => String(x)).join(" · ") || "—"
+  return parts.map((x) => String(x)).join(" · ") || "-"
 }
 
 export function formatAssumptionRiskIfWrong(o: Record<string, unknown>): string {
   if (o.risk_if_wrong != null) return String(o.risk_if_wrong)
   if (o.consequence != null) return String(o.consequence)
-  return "—"
+  return "-"
 }

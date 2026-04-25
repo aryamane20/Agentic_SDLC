@@ -15,10 +15,10 @@ function Bubble({
   return (
     <div
       className={cn(
-        "max-w-[95%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-lg",
+        "max-w-[95%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm",
         role === "user"
-          ? "ml-auto border border-zinc-700/80 bg-zinc-900/90 text-zinc-100"
-          : "mr-auto border border-zinc-700/60 bg-black/50 text-zinc-200",
+          ? "ml-auto border border-slate-200 bg-slate-800 text-slate-50"
+          : "mr-auto border border-slate-200/80 bg-white/80 text-slate-700",
         className
       )}
     >
@@ -41,12 +41,12 @@ export function PlanRefineExchange({
 
   return (
     <div className="space-y-3 py-2">
-      <p className="text-center text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+      <p className="text-center text-[10px] font-medium uppercase tracking-wider text-slate-400">
         Feedback
       </p>
       {userMsg ? (
         <Bubble role="user">
-          <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-400">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-slate-300">
             Refine
           </span>
           <p className="mt-1 whitespace-pre-wrap">{userMsg.content}</p>
@@ -54,10 +54,10 @@ export function PlanRefineExchange({
       ) : null}
       {assistantMsg ? (
         <Bubble role="assistant">
-          <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-400">
+          <p className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
             {assistantMsg.title}
           </p>
-          <ul className="mt-2 list-inside list-disc space-y-1 text-zinc-300">
+          <ul className="mt-2 list-inside list-disc space-y-1 text-slate-600">
             {assistantMsg.lines.map((line, i) => (
               <li key={i}>{line}</li>
             ))}

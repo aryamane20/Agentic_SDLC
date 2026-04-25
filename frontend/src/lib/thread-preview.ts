@@ -5,7 +5,7 @@ export function threadMessagePreview(msg: ThreadMessage): string {
   if (msg.role === "user") {
     if (msg.variant === "brief") {
       const base =
-        msg.content === "(PRD only — see attachment)"
+        msg.content === "(PRD only, see attachment)"
           ? "PRD upload"
           : msg.content.trim()
       const head = base.split(/\s+/).slice(0, 8).join(" ")

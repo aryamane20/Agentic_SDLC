@@ -96,7 +96,7 @@ export function StudioThread({
               </p>
               <p className="mt-1 text-zinc-300">
                 {msg.gateFired
-                  ? "Approval gate fired — review reasons and the full plan."
+                  ? "Approval gate fired. Review reasons and the full plan."
                   : "No blocking gate. You can refine anytime or start over."}
               </p>
             </Bubble>

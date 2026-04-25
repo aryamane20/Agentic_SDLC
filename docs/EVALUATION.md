@@ -105,7 +105,7 @@ pytest tests/p2/test_p2_refinement_replay.py -v
 **The Anthropic client and disk store are both mocked** — no tokens, no file I/O.
 
 ```bash
-pytest tests/test_hitl_flow.py tests/test_api_approval_gate.py tests/test_p2_revision_conflict.py tests/p2/ -v
+pytest tests/p2/ -v
 ```
 
 Or just:
@@ -152,7 +152,7 @@ python scripts/run_p2_e2e.py --scenario scenario-c-critical-risk --mode interact
 | Situation | What to run |
 |-----------|-------------|
 | You changed `approval_gate.py` | `pytest tests/p2/ -v` |
-| You changed a refine or reports router | `pytest tests/p2/ tests/test_hitl_flow.py tests/test_api_approval_gate.py -v` |
+| You changed a refine or reports router | `pytest tests/p2/ -v` |
 | Before a demo or release | D1–D3 + one D4 scenario on `manifest` mode |
 | After a prompt change that affects HITL | D4 scenarios A and B |
 
@@ -207,7 +207,7 @@ make test-p2-baseline
 Which runs:
 
 ```bash
-pytest tests/p2/ tests/test_hitl_flow.py tests/test_api_approval_gate.py tests/test_p2_revision_conflict.py -v
+pytest tests/p2/ -v
 ```
 
 *Aligned with gate implementation in `backend/api/services/approval_gate.py` and E2E scripts under `scripts/run_p2_e2e.py`.*

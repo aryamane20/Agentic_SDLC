@@ -65,7 +65,7 @@ function SnapshotGateBanner({
     )
   }
   return (
-    <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/35 px-4 py-3 text-sm text-zinc-300 backdrop-blur-md">
+    <div className="rounded-2xl border border-slate-700/50 bg-slate-800 px-4 py-3 text-sm text-slate-100 backdrop-blur-md">
       No blocking gate on this version.
     </div>
   )
@@ -82,7 +82,7 @@ function EarlierPlanBlock({
 }) {
   return (
     <div className="space-y-5 opacity-95">
-      <p className="text-xs font-medium text-zinc-500">
+      <p className="text-xs font-medium text-slate-400">
         Earlier version · v{snapshot.version}
       </p>
       <SnapshotGateBanner gate={snapshot.gate} reduceMotion={reduceMotion} />
@@ -171,7 +171,7 @@ export function PlanPage() {
               preview:
                 brief.trim() || prdText.trim()
                   ? (brief.trim() || "(PRD only)").slice(0, 120)
-                  : "New chat — not saved yet",
+                  : "New chat - not saved yet",
               isLocalDraft: true,
             },
           ]
@@ -181,22 +181,22 @@ export function PlanPage() {
 
   return (
     <div
-      className="min-h-dvh bg-black text-zinc-200"
+      className="min-h-dvh bg-[#f4f6f9] text-slate-800"
       style={{
         backgroundImage:
-          "radial-gradient(ellipse 140% 90% at 50% -25%, rgba(120,120,170,0.12), transparent 50%), radial-gradient(ellipse 80% 50% at 100% 50%, rgba(80,80,120,0.06), transparent 45%)",
+          "radial-gradient(ellipse 110% 55% at 65% -5%, rgba(245,195,150,0.22), transparent 50%), radial-gradient(ellipse 70% 40% at 5% 90%, rgba(200,185,230,0.12), transparent 50%)",
       }}
     >
-      <header className="sticky top-0 z-20 border-b border-zinc-800/60 bg-black/50 backdrop-blur-xl">
+      <header className="sticky top-0 z-20 border-b border-slate-200/70 bg-[#f4f6f9]/90 backdrop-blur-xl">
         <div className="flex items-center justify-between gap-4 px-4 py-3 lg:px-5">
           <Link
             to="/"
-            className="font-semibold tracking-[0.18em] text-xs text-white hover:text-zinc-200 lg:text-sm"
+            className="font-semibold tracking-[0.18em] text-xs text-slate-900 hover:text-slate-600 lg:text-sm"
           >
             PLANR
           </Link>
           <div
-            className="h-8 w-8 rounded-full border border-zinc-700/50 bg-zinc-900/50"
+            className="h-8 w-8 rounded-full border border-slate-200 bg-slate-100"
             aria-hidden
           />
         </div>
@@ -230,7 +230,7 @@ export function PlanPage() {
           <div className="relative z-[1] flex min-h-0 flex-1 flex-col">
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-44 pt-6 sm:px-8 sm:pb-48 sm:pt-10">
               {error ? (
-                <div className="mb-6 shrink-0 rounded-xl border border-red-500/40 bg-red-950/35 px-3 py-2 text-sm text-red-200">
+                <div className="mb-6 shrink-0 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
                   {agentFailed ? (
                     <>
                       The AI couldn&apos;t produce a valid plan after 3 attempts. Check your brief or{" "}
@@ -265,42 +265,28 @@ export function PlanPage() {
               {phase === "IDLE" && messages.length === 0 ? (
                 <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-2 py-8 sm:py-12">
                   <div className="mx-auto flex max-w-lg flex-col items-center text-center">
-                    <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-[1.25rem] border border-zinc-600/40 bg-zinc-900/30 shadow-[0_0_0_1px_rgba(255,255,255,0.04)] backdrop-blur-xl">
+                    <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-[1.25rem] border border-slate-200 bg-white/80 shadow-sm backdrop-blur-xl">
                       <Sparkles
-                        className="h-7 w-7 text-zinc-200"
+                        className="h-7 w-7 text-slate-500"
                         strokeWidth={1.25}
                       />
                     </div>
-                    <h1 className="text-2xl font-medium tracking-tight text-white sm:text-[1.75rem]">
+                    <h1 className="text-2xl font-medium tracking-tight text-slate-900 sm:text-[1.75rem]">
                       {!brief.trim() && !prdText.trim() && sessionSummaries.length === 0
                         ? "Start a plan"
                         : "Let\u2019s shape your plan"}
                     </h1>
-                    <p className="mt-3 text-sm leading-relaxed text-zinc-300">
+                    <p className="mt-3 text-sm leading-relaxed text-slate-500">
                       {!brief.trim() && !prdText.trim() && sessionSummaries.length === 0
                         ? "Paste a brief or upload a PRD and we\u2019ll produce a structured PM plan you can refine, approve, or export."
                         : "Add context below or attach a PRD and we\u2019ll produce a structured PM plan you can refine, approve, or re-run from the same PRD."}
                     </p>
-                    <p className="mt-2 text-xs text-zinc-400">
-                      (.txt, .md, .pdf, .docx · max 5 MB)
-                    </p>
-                    {!brief.trim() && !prdText.trim() && sessionSummaries.length === 0 ? (
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        className="mt-6"
-                        disabled={!canSubmit}
-                        onClick={() => void generate()}
-                      >
-                        Generate
-                      </Button>
-                    ) : null}
                   </div>
                 </div>
               ) : null}
 
               {phase === "IDLE" && messages.length > 0 ? (
-                <p className="mx-auto mb-4 max-w-lg text-center text-sm text-zinc-300">
+                <p className="mx-auto mb-4 max-w-lg text-center text-sm text-slate-500">
                   Edit your brief or PRD, then send to run again.
                 </p>
               ) : null}
@@ -316,6 +302,23 @@ export function PlanPage() {
 
               {showPlanStack && report && gate ? (
                 <div className="mx-auto w-full max-w-4xl space-y-10">
+                  {(() => {
+                    const briefMsg = messages[0]
+                    if (!briefMsg || briefMsg.role !== "user" || briefMsg.variant !== "brief") return null
+                    return (
+                      <div className="flex justify-end">
+                        <div className="max-w-[85%] rounded-2xl border border-slate-200 bg-slate-800 px-4 py-3 text-sm leading-relaxed text-slate-50 shadow-sm">
+                          {briefMsg.prdAttachment && (
+                            <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-slate-300">
+                              + {briefMsg.prdAttachment.filename}
+                            </p>
+                          )}
+                          <p className="whitespace-pre-wrap">{briefMsg.content}</p>
+                        </div>
+                      </div>
+                    )
+                  })()}
+
                   {planSnapshots.map((snap, j) => (
                     <EarlierPlanBlock
                       key={`snap-${snap.version}-${j}`}
@@ -328,11 +331,11 @@ export function PlanPage() {
                   <div
                     className={
                       planSnapshots.length > 0
-                        ? "space-y-5 border-t border-zinc-800/80 pt-10"
+                        ? "space-y-5 border-t border-slate-700/50 pt-10"
                         : "space-y-5"
                     }
                   >
-                    <p className="text-xs font-medium text-zinc-400">
+                    <p className="text-xs font-medium text-slate-400">
                       {planSnapshots.length > 0 ? "Current plan" : "Plan"} · v
                       {planVersion}
                     </p>
@@ -345,9 +348,9 @@ export function PlanPage() {
                         <GateAlert gate={gate} embedded />
                       </StudioShineBorder>
                     ) : (
-                      <div className="rounded-2xl border border-zinc-800/70 bg-zinc-950/35 px-4 py-3 text-sm text-zinc-300 backdrop-blur-md">
-                        No blocking gate — use Refine below to iterate, or start
-                        over to run again with the same brief and PRD.
+                      <div className="rounded-2xl border border-slate-700/50 bg-slate-800 px-4 py-3 text-sm text-slate-100 backdrop-blur-md">
+                        No blocking gate. Use Refine below to iterate, or start
+                        over to run again from scratch.
                       </div>
                     )}
 
@@ -372,22 +375,22 @@ export function PlanPage() {
 
                     {phase === "REVIEW" || phase === "APPROVED" ? (
                       <>
-                        <details className="group rounded-2xl border border-zinc-800/70 bg-zinc-950/25 backdrop-blur-md open:bg-zinc-950/35">
-                          <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-medium text-zinc-100 marker:content-none [&::-webkit-details-marker]:hidden">
+                        <details className="group rounded-2xl border border-slate-700/50 bg-slate-800 backdrop-blur-md open:bg-slate-800">
+                          <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-medium text-slate-200 marker:content-none [&::-webkit-details-marker]:hidden">
                             <ChevronDown className="h-4 w-4 shrink-0 transition group-open:rotate-180" />
                             Raw JSON
                           </summary>
-                          <pre className="max-h-[min(50vh,420px)] overflow-auto border-t border-zinc-800/70 p-3 text-[11px] leading-relaxed text-zinc-300">
+                          <pre className="max-h-[min(50vh,420px)] overflow-auto border-t border-slate-700/50 p-3 text-[11px] leading-relaxed text-slate-300">
                             {JSON.stringify(report, null, 2)}
                           </pre>
                         </details>
 
                         {phase === "REVIEW" && (
                           <div className="space-y-4">
-                            <p className="mx-auto max-w-xl text-center text-xs leading-relaxed text-zinc-500">
-                              <span className="text-zinc-300">Refine</span> — use
+                            <p className="mx-auto max-w-xl text-center text-xs leading-relaxed text-slate-400">
+                              <span className="text-slate-600">Refine</span>: use
                               the composer below for human-in-the-loop feedback.{" "}
-                              <span className="text-zinc-300">Approve</span> —
+                              <span className="text-slate-600">Approve</span>:
                               record sign-off for this plan.{" "}
                               {gateFired ? (
                                 <>
@@ -395,14 +398,12 @@ export function PlanPage() {
                                   still logs your decision.{" "}
                                 </>
                               ) : null}
-                              <span className="text-zinc-300">Start over</span> —
-                              new session with the same brief and PRD so you can
-                              generate again from scratch.
+                              <span className="text-slate-600">Start over</span>:
+                              start a fresh session from scratch.
                             </p>
                             <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-center">
                               <Button
                                 type="button"
-                                variant="secondary"
                                 disabled={busy}
                                 onClick={() => void approve()}
                               >
@@ -410,8 +411,7 @@ export function PlanPage() {
                               </Button>
                               <Button
                                 type="button"
-                                variant="ghost"
-                                className="text-zinc-300 hover:text-zinc-100"
+                                variant="outline"
                                 disabled={busy}
                                 onClick={() => void startNewPlan()}
                               >
@@ -423,13 +423,12 @@ export function PlanPage() {
 
                         {phase === "APPROVED" && (
                           <>
-                            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 px-4 py-3 text-center text-sm text-emerald-100 backdrop-blur-md">
+                            <div className="rounded-2xl border border-slate-700/50 bg-slate-800 px-4 py-3 text-center text-sm text-slate-100 backdrop-blur-md">
                               Plan approved for this session.
                             </div>
                             <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-center">
                               <Button
                                 type="button"
-                                variant="secondary"
                                 onClick={() => {
                                   void navigator.clipboard.writeText(
                                     JSON.stringify(report, null, 2)
@@ -440,7 +439,7 @@ export function PlanPage() {
                               </Button>
                               <Button
                                 type="button"
-                                variant="secondary"
+                                variant="outline"
                                 onClick={() => {
                                   const blob = new Blob(
                                     [JSON.stringify(report, null, 2)],
@@ -467,7 +466,7 @@ export function PlanPage() {
             </div>
 
             {showFloatingComposer ? (
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 bg-gradient-to-t from-black via-black/90 to-transparent pb-5 pt-16">
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 bg-gradient-to-t from-[#f4f6f9] via-[#f4f6f9]/90 to-transparent pb-5 pt-16">
                 <div className="pointer-events-auto relative flex justify-center px-4">
                   {showBriefComposer ? (
                     <PlanFloatingComposer
@@ -497,7 +496,7 @@ export function PlanPage() {
                       placeholder={REFINE_PLACEHOLDER}
                       reduceMotion={reduceMotion}
                       showPrd={false}
-                      footerHint="Enter — send · Shift+Enter — newline"
+                      footerHint="Enter to send · Shift+Enter for newline"
                     />
                   )}
                 </div>
@@ -508,7 +507,6 @@ export function PlanPage() {
               <div className="absolute bottom-6 left-0 right-0 z-10 flex justify-center px-4">
                 <Button
                   type="button"
-                  variant="outline"
                   onClick={() => void startNewPlan()}
                 >
                   Start new plan
