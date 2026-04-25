@@ -8,7 +8,12 @@ export type PersistedReportEntry = {
   report: ReportRecord
   gate: GateDTO
   report_revision?: number
-  refinements?: Array<{ feedback: string }>
+  /** Full refinement steps on server (refine output); not always sent in types from GET. */
+  refinements?: Array<{
+    feedback: string
+    report?: ReportRecord
+    gate?: GateDTO
+  }>
 }
 
 export function splitComposedSessionBrief(composed: string): {

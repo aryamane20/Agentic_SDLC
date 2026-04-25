@@ -1,14 +1,23 @@
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 import { planrApiFetch } from "@/lib/planr-user"
 import { computeReportDiff } from "@/lib/report-diff"
 import { extractPrdText } from "@/lib/prd-upload"
+import {
+  buildStashFromLiveState,
+  getSessionStash,
+  listStashedChatsForSidebar,
+  mergeStashWithServerEntry,
+  removeSessionStash,
+  stashSessionState,
+} from "@/lib/session-stash"
 import {
   buildThreadFromReportEntry,
   splitComposedSessionBrief,
   type PersistedReportEntry,
 } from "@/lib/session-hydration"
 import type {
+  ChatHistoryEntry,
   GateDTO,
   PlanVersionSnapshot,
   ReportRecord,
@@ -67,6 +76,8 @@ export function useReportWorkflow() {
   )
   const [sessionSwitching, setSessionSwitching] = useState(false)
   const [planSnapshots, setPlanSnapshots] = useState<PlanVersionSnapshot[]>([])
+  /** Sidebar rows for plans stashed in sessionStorage (drafts + switch-away state). */
+  const [stashedChats, setStashedChats] = useState<ChatHistoryEntry[]>([])
   /** After Start over / New plan, next Generate must bypass agent disk cache (same brief would replay). */
   const skipAgentCacheOnceRef = useRef(false)
   /** Server `report_revision` for optimistic locking on refine / gate decision (409 if stale). */
@@ -81,6 +92,12 @@ export function useReportWorkflow() {
     } catch {
       /* list is optional if API unreachable */
     }
+  }, [])
+
+  const refreshStashedSidebar = useCallback((apiRows: SessionSummary[]) => {
+    setStashedChats(
+      listStashedChatsForSidebar(new Set(apiRows.map((s) => s.session_id)))
+    )
   }, [])
 
   const ensureSession = useCallback(async (): Promise<string> => {
@@ -297,6 +314,8 @@ export function useReportWorkflow() {
    * New API session while keeping the same brief + PRD so the PM can run Generate again.
    */
   const startNewPlan = useCallback(async () => {
+    const dropId = sessionId
+    if (dropId) removeSessionStash(dropId)
     skipAgentCacheOnceRef.current = true
     setError(null)
     try {
@@ -322,19 +341,125 @@ export function useReportWorkflow() {
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not start new plan")
     }
-  }, [refreshSessionList])
+  }, [refreshSessionList, sessionId])
+
+  /**
+   * Remove the current session from the server (plan history) and start a new empty session.
+   * Safe if the session was never persisted (server returns 404).
+   */
+  const deleteCurrentSession = useCallback(async () => {
+    if (!sessionId) return
+    removeSessionStash(sessionId)
+    setError(null)
+    try {
+      const res = await planrApiFetch(`/sessions/${sessionId}`, {
+        method: "DELETE",
+      })
+      if (!res.ok && res.status !== 404) {
+        throw new Error(await readError(res))
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not delete")
+      return
+    }
+    await startNewPlan()
+  }, [sessionId, startNewPlan])
+
+  useEffect(() => {
+    refreshStashedSidebar(sessionSummaries)
+  }, [sessionSummaries, refreshStashedSidebar])
 
   /** Load a persisted session from disk (sidebar). Uses the latest report in that session. */
   const switchSession = useCallback(
     async (targetSessionId: string) => {
       if (!targetSessionId) return
       if (targetSessionId === sessionId) return
+      if (phase === "GENERATING" || phase === "REFINING") {
+        setError("Wait for the current step to finish before switching plans.")
+        return
+      }
       setError(null)
+      if (sessionId && sessionId !== targetSessionId) {
+        try {
+          stashSessionState(
+            buildStashFromLiveState({
+              sessionId,
+              brief,
+              prdText,
+              prdFileLabel,
+              phase,
+              report,
+              gate,
+              reportId,
+              planVersion,
+              planSnapshots,
+              messages,
+              refineText,
+              reportRevision: reportRevisionRef.current,
+              agentFailed,
+              lastError: error,
+            })
+          )
+        } catch {
+          /* quota */
+        }
+        refreshStashedSidebar(sessionSummaries)
+      }
       setSessionSwitching(true)
       setLastDiff(null)
       setRefineText("")
+      const applyStash = (s: {
+        v: 1
+        sessionId: string
+        stashedAt: number
+        brief: string
+        prdText: string
+        prdFileLabel: string | null
+        phase: WorkflowPhase
+        report: ReportRecord | null
+        gate: GateDTO | null
+        reportId: string | null
+        planVersion: number
+        planSnapshots: PlanVersionSnapshot[]
+        messages: ThreadMessage[]
+        refineText: string
+        reportRevision: number
+        agentFailed: boolean
+        lastError: string | null
+      }) => {
+        setSessionId(s.sessionId)
+        setBrief(s.brief)
+        setPrdText(s.prdText)
+        setPrdFileLabel(s.prdFileLabel)
+        setReport(s.report)
+        setGate(s.gate)
+        setReportId(s.reportId)
+        setPlanVersion(s.planVersion)
+        setPlanSnapshots(s.planSnapshots)
+        setMessages(s.messages)
+        setRefineText(s.refineText)
+        reportRevisionRef.current = s.reportRevision
+        setAgentFailed(s.agentFailed)
+        setError(s.lastError)
+        let ph: WorkflowPhase = s.phase
+        if (ph === "GENERATING" || ph === "REFINING") {
+          ph = s.report ? "REVIEW" : "IDLE"
+        }
+        setPhase(ph)
+        setLastDiff(null)
+      }
       try {
         const res = await planrApiFetch(`/sessions/${targetSessionId}`)
+        if (res.status === 404) {
+          const stash = getSessionStash(targetSessionId)
+          if (stash) {
+            applyStash(stash)
+            setAgentFailed(false)
+            void refreshSessionList()
+            return
+          }
+          throw new Error("Session not found")
+        }
         if (!res.ok) throw new Error(await readError(res))
         const state = (await res.json()) as {
           session_id: string
@@ -343,6 +468,13 @@ export function useReportWorkflow() {
         setSessionId(state.session_id)
         const reports = Array.isArray(state.reports) ? state.reports : []
         if (reports.length === 0) {
+          const stash = getSessionStash(targetSessionId)
+          if (stash) {
+            applyStash(stash)
+            setAgentFailed(false)
+            void refreshSessionList()
+            return
+          }
           setReportId(null)
           reportRevisionRef.current = 1
           setReport(null)
@@ -357,37 +489,75 @@ export function useReportWorkflow() {
           void refreshSessionList()
           return
         }
-        const entry = reports[reports.length - 1]
-        setPlanSnapshots([])
+        const entry = reports[reports.length - 1] as PersistedReportEntry
         const split = splitComposedSessionBrief(entry.brief ?? "")
         setBrief(split.brief)
         setPrdText(split.prdText)
         setPrdFileLabel(split.prdText ? "From session" : null)
         setReportId(entry.report_id)
-        reportRevisionRef.current =
+        const serverRev =
           typeof entry.report_revision === "number" ? entry.report_revision : 1
+        reportRevisionRef.current = serverRev
         setReport(entry.report as ReportRecord)
         setGate(entry.gate as GateDTO)
         const refinements = entry.refinements ?? []
         setPlanVersion(1 + refinements.length)
-        setMessages(
-          buildThreadFromReportEntry(
-            entry,
-            split.brief,
-            split.prdText,
-            split.prdText ? "From session" : null
+        const stash = getSessionStash(targetSessionId)
+        if (mergeStashWithServerEntry(stash, entry).useStash && stash) {
+          setPlanSnapshots(stash.planSnapshots)
+          setMessages(stash.messages)
+          setRefineText(stash.refineText)
+          const approved = entry.gate?.decision === "approve"
+          if (approved) {
+            setPhase("APPROVED")
+          } else {
+            let ph: WorkflowPhase = stash.phase
+            if (ph === "GENERATING" || ph === "REFINING" || ph === "APPROVED")
+              ph = "REVIEW"
+            setPhase(ph)
+          }
+          removeSessionStash(targetSessionId)
+        } else {
+          if (stash) removeSessionStash(targetSessionId)
+          setPlanSnapshots([])
+          setMessages(
+            buildThreadFromReportEntry(
+              entry,
+              split.brief,
+              split.prdText,
+              split.prdText ? "From session" : null
+            )
           )
-        )
-        const approved = entry.gate?.decision === "approve"
-        setPhase(approved ? "APPROVED" : "REVIEW")
+          const approved = entry.gate?.decision === "approve"
+          setPhase(approved ? "APPROVED" : "REVIEW")
+        }
         void refreshSessionList()
       } catch (e) {
         setError(e instanceof Error ? e.message : "Could not open session")
       } finally {
         setSessionSwitching(false)
+        refreshStashedSidebar(sessionSummaries)
       }
     },
-    [refreshSessionList, sessionId]
+    [
+      sessionId,
+      sessionSummaries,
+      phase,
+      brief,
+      prdText,
+      prdFileLabel,
+      report,
+      gate,
+      reportId,
+      planVersion,
+      planSnapshots,
+      messages,
+      refineText,
+      error,
+      agentFailed,
+      refreshSessionList,
+      refreshStashedSidebar,
+    ]
   )
 
   const effectiveInputLength = `${brief.trim()}\n${prdText.trim()}`.trim().length
@@ -426,6 +596,7 @@ export function useReportWorkflow() {
     refine,
     approve,
     startNewPlan,
+    deleteCurrentSession,
     canSubmit,
     prdText,
     prdFileLabel,
@@ -442,5 +613,6 @@ export function useReportWorkflow() {
     switchSession,
     sessionSwitching,
     planSnapshots,
+    stashedChats,
   }
 }

@@ -39,3 +39,13 @@ def get_session(
     if state is None:
         raise HTTPException(status_code=404, detail="Session not found")
     return state
+
+
+@router.delete("/{session_id}", status_code=204)
+def delete_session(
+    session_id: str,
+    user_id: str = Depends(planr_user_id),
+) -> None:
+    if not store.delete_session(user_id, session_id):
+        raise HTTPException(status_code=404, detail="Session not found")
+    return None

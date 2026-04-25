@@ -173,7 +173,7 @@ export function ParticleTextEffect({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationRef = useRef<number | undefined>(undefined)
   const particlesRef = useRef<Particle[]>([])
-  const frameCountRef = useRef(0)
+    const frameCountRef = useRef(0)
   const wordIndexRef = useRef(0)
   const mouseRef = useRef({
     x: 0,

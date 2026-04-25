@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { ChevronDown, Sparkles } from "lucide-react"
+import { ChevronDown, Sparkles, Trash2 } from "lucide-react"
 import { Link } from "react-router-dom"
 
 import { GateAlert } from "@/components/plan/gate-alert"
@@ -117,6 +117,7 @@ export function PlanPage() {
     refine,
     approve,
     startNewPlan,
+    deleteCurrentSession,
     canSubmit,
     canRefine,
     minBriefChars,
@@ -133,6 +134,7 @@ export function PlanPage() {
     clearPrd,
     planSnapshots,
     planVersion,
+    stashedChats,
   } = useReportWorkflow()
 
   // Initial session only — do not re-run when sessionId changes or "New plan" races with a second POST /sessions.
@@ -177,10 +179,13 @@ export function PlanPage() {
 
   const chatHistory = useMemo((): ChatHistoryEntry[] => {
     const fromApi = sessionSummaries
-    const inApi = sessionId
-      ? fromApi.some((s) => s.session_id === sessionId)
-      : true
-    const draft: ChatHistoryEntry[] =
+    const apiIds = new Set(fromApi.map((s) => s.session_id))
+    const inApi = sessionId ? apiIds.has(sessionId) : true
+    /** Other unsaved or browser-stashed sessions (switch-away); current row uses live brief below. */
+    const stashedNotCurrent = stashedChats.filter(
+      (c) => c.session_id !== sessionId && !apiIds.has(c.session_id)
+    )
+    const liveDraft: ChatHistoryEntry[] =
       sessionId && !inApi
         ? [
             {
@@ -195,8 +200,8 @@ export function PlanPage() {
             },
           ]
         : []
-    return [...draft, ...fromApi]
-  }, [sessionSummaries, sessionId, brief, prdText])
+    return [...liveDraft, ...stashedNotCurrent, ...fromApi]
+  }, [sessionSummaries, sessionId, brief, prdText, stashedChats])
 
   return (
     <div
@@ -409,6 +414,67 @@ export function PlanPage() {
                           </pre>
                         </details>
 
+                        <div className="space-y-2">
+                          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-center">
+                            <Button
+                              type="button"
+                              disabled={busy}
+                              onClick={() => {
+                                void navigator.clipboard.writeText(
+                                  JSON.stringify(report, null, 2)
+                                )
+                              }}
+                            >
+                              Copy JSON
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              disabled={busy}
+                              onClick={() => {
+                                const name = sessionId
+                                  ? `planr-${sessionId.slice(0, 8)}-v${planVersion}.json`
+                                  : `planr-plan-v${planVersion}.json`
+                                const blob = new Blob(
+                                  [JSON.stringify(report, null, 2)],
+                                  { type: "application/json" }
+                                )
+                                const url = URL.createObjectURL(blob)
+                                const a = document.createElement("a")
+                                a.href = url
+                                a.download = name
+                                a.click()
+                                URL.revokeObjectURL(url)
+                              }}
+                            >
+                              Download JSON
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              disabled={busy}
+                              className="border-red-300 text-red-700 hover:bg-red-50"
+                              onClick={() => {
+                                if (
+                                  !window.confirm(
+                                    "Delete this plan from your history? This cannot be undone."
+                                  )
+                                ) {
+                                  return
+                                }
+                                void deleteCurrentSession()
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" aria-hidden />
+                              Delete plan
+                            </Button>
+                          </div>
+                          <p className="text-center text-xs text-slate-500">
+                            Export works before approve. Delete removes this chat
+                            from the server and starts a new empty session.
+                          </p>
+                        </div>
+
                         {phase === "REVIEW" && (
                           <div className="space-y-4">
                             <p className="mx-auto max-w-xl text-center text-xs leading-relaxed text-slate-400">
@@ -446,41 +512,9 @@ export function PlanPage() {
                         )}
 
                         {phase === "APPROVED" && (
-                          <>
-                            <div className="rounded-2xl border border-slate-700/50 bg-slate-800 px-4 py-3 text-center text-sm text-slate-100 backdrop-blur-md">
-                              Plan approved for this session.
-                            </div>
-                            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-center">
-                              <Button
-                                type="button"
-                                onClick={() => {
-                                  void navigator.clipboard.writeText(
-                                    JSON.stringify(report, null, 2)
-                                  )
-                                }}
-                              >
-                                Copy JSON
-                              </Button>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => {
-                                  const blob = new Blob(
-                                    [JSON.stringify(report, null, 2)],
-                                    { type: "application/json" }
-                                  )
-                                  const url = URL.createObjectURL(blob)
-                                  const a = document.createElement("a")
-                                  a.href = url
-                                  a.download = "plan.json"
-                                  a.click()
-                                  URL.revokeObjectURL(url)
-                                }}
-                              >
-                                Download JSON
-                              </Button>
-                            </div>
-                          </>
+                          <div className="rounded-2xl border border-slate-700/50 bg-slate-800 px-4 py-3 text-center text-sm text-slate-100 backdrop-blur-md">
+                            Plan approved for this session.
+                          </div>
                         )}
                       </>
                     ) : null}

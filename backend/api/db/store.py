@@ -125,6 +125,21 @@ def list_session_summaries(user_id: str, limit: int = 50) -> list[SessionSummary
     return out
 
 
+def delete_session(user_id: str, session_id: str) -> bool:
+    """Remove persisted session file(s) for this user. Returns True if a file was removed."""
+    any_removed = False
+    path = _session_path(user_id, session_id)
+    if path.exists():
+        path.unlink()
+        any_removed = True
+    if _normalize_user(user_id) == "anonymous":
+        leg = _legacy_flat_path(session_id)
+        if leg.exists():
+            leg.unlink()
+            any_removed = True
+    return any_removed
+
+
 def find_report_session(
     user_id: str, report_id: str
 ) -> Optional[tuple[str, int]]:
