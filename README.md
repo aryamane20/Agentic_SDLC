@@ -1,5 +1,5 @@
 
-# PLANR — Project 1
+# PLANR
 ### Course: Vibe Coding to Agent Engineering (Spring 2026)
 ### Student: Arya Mane | Role: Developer/PM
 
