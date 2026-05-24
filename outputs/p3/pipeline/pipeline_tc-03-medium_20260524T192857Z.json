@@ -1,0 +1,1460 @@
+{
+  "tc": "tc-03-medium",
+  "elapsed_seconds": 152.37,
+  "token_tally": {
+    "input": 44831,
+    "output": 18109,
+    "cache_read": 0,
+    "cache_creation": 0
+  },
+  "artifacts": {
+    "use_case": {
+      "system_boundary": "API Gateway",
+      "actors": [
+        {
+          "id": "A1",
+          "name": "External Client",
+          "type": "primary"
+        },
+        {
+          "id": "A2",
+          "name": "Internal Development Team",
+          "type": "primary"
+        },
+        {
+          "id": "A3",
+          "name": "Microservice",
+          "type": "external"
+        },
+        {
+          "id": "A4",
+          "name": "Logging Service",
+          "type": "secondary"
+        },
+        {
+          "id": "A5",
+          "name": "Authentication Service",
+          "type": "secondary"
+        }
+      ],
+      "use_cases": [
+        {
+          "id": "UC1",
+          "name": "Route API Request",
+          "actors": [
+            "A1",
+            "A3"
+          ],
+          "complexity": "medium",
+          "description": "External client sends request through gateway to appropriate microservice"
+        },
+        {
+          "id": "UC2",
+          "name": "Authenticate Request",
+          "actors": [
+            "A1",
+            "A5"
+          ],
+          "complexity": "medium",
+          "description": "Validate client credentials and authorization before routing"
+        },
+        {
+          "id": "UC3",
+          "name": "Apply Rate Limiting",
+          "actors": [
+            "A1"
+          ],
+          "complexity": "simple",
+          "description": "Enforce request rate limits per client or API endpoint"
+        },
+        {
+          "id": "UC4",
+          "name": "Log API Call",
+          "actors": [
+            "A4"
+          ],
+          "complexity": "simple",
+          "description": "Record request and response details for audit and monitoring"
+        },
+        {
+          "id": "UC5",
+          "name": "Balance Load Across Services",
+          "actors": [
+            "A3"
+          ],
+          "complexity": "medium",
+          "description": "Distribute incoming requests across multiple instances of microservices"
+        },
+        {
+          "id": "UC6",
+          "name": "Support API Versioning",
+          "actors": [
+            "A1",
+            "A3"
+          ],
+          "complexity": "simple",
+          "description": "Route requests to correct API version based on request header or path"
+        },
+        {
+          "id": "UC7",
+          "name": "Configure Gateway Rules",
+          "actors": [
+            "A2"
+          ],
+          "complexity": "medium",
+          "description": "Development team configures routing, rate limits, and authentication policies"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "includes",
+          "from_id": "UC1",
+          "to_id": "UC2"
+        },
+        {
+          "type": "includes",
+          "from_id": "UC1",
+          "to_id": "UC3"
+        },
+        {
+          "type": "includes",
+          "from_id": "UC1",
+          "to_id": "UC4"
+        },
+        {
+          "type": "includes",
+          "from_id": "UC1",
+          "to_id": "UC5"
+        },
+        {
+          "type": "includes",
+          "from_id": "UC1",
+          "to_id": "UC6"
+        }
+      ],
+      "input_quality_signal": "HIGH",
+      "anti_patterns_detected": []
+    },
+    "intake": {
+      "report_metadata": {
+        "generated_at": "2025-01-17T14:32:00Z",
+        "project_type": "TYPE_A",
+        "input_quality": "HIGH",
+        "classification_confidence": "HIGH",
+        "sdlc_approach": "Hybrid",
+        "sdlc_rationale": "Requirements are well-defined and signed off (rate limiting, auth, logging, versioning, load balancing); team size and composition known (4 engineers); deadline fixed (4 months); however, technology stack not specified and team experience with gateway platforms unknown, triggering adaptive cycles within predictive phase structure."
+      },
+      "project_understanding": {
+        "primary_goal": "Build a centralized API gateway to manage microservices routing, authentication, rate limiting, and logging.",
+        "beneficiary": "Internal development teams",
+        "trigger": "Multiple services with inconsistent APIs, security concerns, and lack of centralized rate limiting.",
+        "success_definition": [
+          "All external APIs routed through gateway",
+          "Consistent authentication across all services",
+          "Request logging enabled for all API calls",
+          "Rate limiting enforced",
+          "API versioning support operational",
+          "Load balancing across microservice instances"
+        ],
+        "supporting_quotes": [
+          "Build an API gateway for our microservices.",
+          "Centralize API management with a unified gateway.",
+          "Multiple services with inconsistent APIs, security concerns, no centralized rate limiting.",
+          "All external APIs go through gateway; Consistent authentication across services; Request logging for all API calls"
+        ]
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "Technology stack for API gateway (e.g., Kong, AWS API Gateway, custom Node.js/Go implementation) is not specified; assuming team will evaluate and select during Phase 1 discovery.",
+          "why": "Gateway platform selection is a critical architectural decision that affects team capacity, timeline, and operational complexity. Internal software projects typically defer final stack selection until requirements are validated and team experience is assessed.",
+          "pmi_basis": "PMBOK 6th Ed, Section 8.1 (Plan Scope Management) — technology selection is a planning input that must be confirmed before detailed design.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "Selecting a platform misaligned with team expertise or organizational standards could require re-architecture mid-project, delay delivery, or increase operational burden post-launch.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: flexibility to choose best-fit platform after requirements validation. Risks: timeline uncertainty if evaluation extends beyond Phase 1; team must have capacity for technology assessment."
+        },
+        {
+          "id": "A2",
+          "what": "Team experience with API gateway platforms and microservices architecture is unknown; assuming 4 engineers have foundational microservices knowledge but may require ramp-up on chosen gateway platform.",
+          "why": "Brief specifies team size (4 engineers) but not their prior experience with gateway systems or the specific platform to be selected. For internal projects, assuming competence in core domain (microservices) but not in specialized tooling is standard.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.1 (Plan Resource Management) — team capability assessment is required to validate schedule feasibility.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If team lacks microservices or gateway experience, Phase 1 discovery and Phase 2 design will extend; training or external support may be required, impacting 4-month deadline.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: conservative estimate allows buffer for learning curve. Risks: if team is highly experienced, timeline may be unnecessarily extended; Phase 1 should include explicit capability assessment."
+        },
+        {
+          "id": "A3",
+          "what": "Security implementation scope assumes OAuth 2.0 or JWT-based authentication with role-based access control (RBAC); specific auth protocol (SAML, OIDC, custom) not stated.",
+          "why": "Brief specifies 'Consistent authentication across services' as success criterion and lists 'Authentication/Authorization' as requirement. Standard for internal microservices gateways is OAuth 2.0 or JWT; however, organizational standards may differ (e.g., SAML for enterprise SSO).",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Collect Requirements) — security architecture must be explicitly defined to avoid scope creep and re-work.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If organization mandates SAML or custom auth integration, gateway configuration and microservice client libraries must be redesigned; impacts Phase 2 design and Phase 3 build.",
+          "source": "nfr",
+          "tradeoff": "Gains: OAuth 2.0/JWT is industry standard, reduces integration complexity. Risks: if organizational standard differs, assumption must be corrected before Phase 2 design begins."
+        },
+        {
+          "id": "A4",
+          "what": "Data retention for API logs is not specified; assuming 90-day retention for audit and troubleshooting, with archival to cold storage beyond 90 days.",
+          "why": "Brief requires 'Request logging for all API calls' but does not specify retention period, log volume expectations, or compliance requirements. 90-day retention is standard for internal API audit logs; longer retention may trigger data governance or storage cost implications.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Collect Requirements) — data retention is a non-functional requirement that affects infrastructure design and operational cost.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If organization requires 1+ year retention, logging infrastructure (database, storage) must be scaled; impacts Phase 2 design and Phase 3 infrastructure provisioning.",
+          "source": "nfr",
+          "tradeoff": "Gains: 90-day retention minimizes storage cost and operational complexity. Risks: if compliance or audit requirements mandate longer retention, assumption must be corrected before Phase 2."
+        },
+        {
+          "id": "A5",
+          "what": "Budget for API gateway project is not specified; assuming budget is available to support 4 engineers for 4 months plus infrastructure/tooling costs.",
+          "why": "Brief provides deadline (4 months) and team size (4 engineers) but no explicit budget. For internal projects, assuming budget is pre-approved at project initiation; however, tooling costs (commercial gateway platform, logging infrastructure, monitoring) are unknown.",
+          "pmi_basis": "PMBOK 6th Ed, Section 7.1 (Plan Cost Management) — budget is a hard constraint that must be confirmed before Phase 1 planning.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If budget is constrained, team may need to select open-source gateway (Kong, Traefik) vs. commercial platform (AWS API Gateway, Apigee); impacts Phase 1 technology selection and Phase 2 design.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: assuming budget availability allows team to select best-fit platform. Risks: if budget is limited, scope or timeline may need adjustment."
+        }
+      ],
+      "constraints": {
+        "hard": {
+          "deadline": "2025-05-17",
+          "budget": null,
+          "team_size": 4,
+          "team_composition": "4 engineers (roles/seniority not specified)",
+          "technology_stack": null,
+          "compliance": null
+        },
+        "soft": {
+          "preferred_timeline": null,
+          "preferred_tools": null,
+          "nice_to_have": []
+        },
+        "nfr": {
+          "security": "OAuth 2.0 or JWT-based authentication with RBAC (assumed; actual protocol TBD)",
+          "data_retention": "90 days for API logs (assumed; actual requirement TBD)",
+          "performance": "Default: <2s response time, 50 concurrent users (not specified; materiality gate: assume standard unless contradicted)",
+          "availability": "Default: 99.5% uptime during business hours (not specified; materiality gate: assume standard unless contradicted)"
+        }
+      },
+      "open_questions_pre_planning": [
+        {
+          "priority": 1,
+          "question": "What is the target API gateway platform or technology stack (e.g., Kong, AWS API Gateway, custom implementation, Traefik)? Does the organization have a preferred or mandated platform?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Technology selection drives Phase 1 discovery, Phase 2 design, team ramp-up timeline, and infrastructure provisioning. Deferring selection beyond Phase 1 risks timeline slippage."
+        },
+        {
+          "priority": 2,
+          "question": "What is the organization's standard authentication protocol (OAuth 2.0, SAML, OIDC, custom)? Are there existing identity providers or SSO systems the gateway must integrate with?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Authentication architecture is a core gateway function. Misalignment with organizational standards requires re-design in Phase 2 or Phase 3."
+        },
+        {
+          "priority": 3,
+          "question": "What is the expected API request volume (requests/second), number of external clients, and number of microservice instances the gateway must route to?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Load balancing and rate limiting configuration depend on traffic patterns. Underestimating volume may require infrastructure re-sizing post-launch."
+        },
+        {
+          "priority": 4,
+          "question": "Are there compliance or data governance requirements for API logs (e.g., HIPAA, SOC2, PCI-DSS, data residency)? What is the required log retention period?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Compliance requirements affect logging infrastructure, data retention, and encryption. Discovering compliance gaps in Phase 3 or post-launch creates rework and operational risk."
+        },
+        {
+          "priority": 5,
+          "question": "What is the approved budget for this project, including infrastructure, tooling, and any external services (e.g., commercial gateway platform, monitoring)?",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "Budget constraints may force trade-offs between platform selection, team size, or timeline. Must be confirmed before Phase 1 planning."
+        },
+        {
+          "priority": 6,
+          "question": "For Hybrid SDLC: Who is the Product Owner responsible for backlog prioritization and feature trade-offs during Phase 2–3 sprint cycles?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Adaptive cycles require a single decision-maker for sprint planning and scope negotiation. Absence of a PO creates decision delays and scope creep."
+        },
+        {
+          "priority": 7,
+          "question": "What is the team's prior experience with microservices architecture, API gateway platforms, and the selected technology stack?",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "Team capability assessment informs Phase 1 discovery timeline and identifies training or external support needs. Underestimating ramp-up time risks 4-month deadline."
+        }
+      ]
+    },
+    "planning": {
+      "project_plan": {
+        "total_duration_weeks": 16.0,
+        "buffer_applied_percent": 15.0,
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T2",
+            "T4",
+            "T7",
+            "T11",
+            "T15",
+            "T19",
+            "T23"
+          ],
+          "total_duration_days": 80.0,
+          "zero_slack_tasks": [
+            "T1",
+            "T2",
+            "T4",
+            "T7",
+            "T11",
+            "T15",
+            "T19",
+            "T23"
+          ],
+          "highest_slack_tasks": [
+            "T3",
+            "T6",
+            "T9"
+          ],
+          "staffing_implication": "Backend Developer and Platform Architect must be dedicated (not shared) across Phases 1-4; Frontend Developer can be shared with other projects during Phase 1 discovery."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 2.5,
+            "percentage_of_total": 15.6,
+            "milestones": [
+              "Stakeholder alignment session completed",
+              "API gateway platform selected and approved",
+              "Authentication protocol and integration points defined",
+              "Architecture and data flow diagrams approved",
+              "Success metrics and adoption plan documented"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Conduct stakeholder alignment session and document scope sign-off",
+                "phase": 1,
+                "effort_hours": 12.0,
+                "owner_role": "Product Manager",
+                "dependencies": [],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Stakeholder sign-off document signed by all decision-makers; scope boundaries and success criteria agreed."
+              },
+              {
+                "id": "T2",
+                "name": "Evaluate and select API gateway platform (Kong, AWS API Gateway, or custom)",
+                "phase": 1,
+                "effort_hours": 24.0,
+                "owner_role": "Platform Architect",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Platform selection document with pros/cons analysis; team consensus on chosen platform; procurement initiated if commercial."
+              },
+              {
+                "id": "T3",
+                "name": "Define user personas and success metrics for adoption",
+                "phase": 1,
+                "effort_hours": 16.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Persona document with 3-4 internal developer archetypes; adoption KPIs (e.g., % of services routed through gateway by month 3)."
+              },
+              {
+                "id": "T4",
+                "name": "Design authentication and authorization architecture (OAuth 2.0/JWT with RBAC)",
+                "phase": 1,
+                "effort_hours": 20.0,
+                "owner_role": "Platform Architect",
+                "dependencies": [
+                  "T2"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Auth architecture diagram; token flow documentation; RBAC policy model; integration points with existing identity provider identified."
+              },
+              {
+                "id": "T5",
+                "name": "Create API gateway data flow and routing architecture diagrams",
+                "phase": 1,
+                "effort_hours": 18.0,
+                "owner_role": "Platform Architect",
+                "dependencies": [
+                  "T2",
+                  "T4"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Architecture diagrams (request flow, service mesh, logging pipeline) approved by tech lead; design review completed."
+              },
+              {
+                "id": "T6",
+                "name": "Document API versioning strategy and routing rules",
+                "phase": 1,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T2"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Versioning strategy document (header-based, path-based, or hybrid); routing rule examples for 3+ microservices."
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development (Sprint Cycles)",
+            "duration_weeks": 6.0,
+            "percentage_of_total": 37.5,
+            "milestones": [
+              "Sprint 1: Core gateway routing and request/response handling operational",
+              "Sprint 2: Authentication and authorization fully integrated",
+              "Sprint 3: Rate limiting and load balancing implemented",
+              "Internal demo completed; core user flows end-to-end"
+            ],
+            "tasks": [
+              {
+                "id": "T7",
+                "name": "Set up gateway infrastructure and deployment pipeline (Docker, Kubernetes, or cloud platform)",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T2"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Gateway container image built and pushed to registry; CI/CD pipeline for gateway deployments operational; dev and staging environments ready."
+              },
+              {
+                "id": "T8",
+                "name": "Implement core request routing logic and HTTP request/response handling",
+                "phase": 2,
+                "effort_hours": 32.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Gateway accepts HTTP requests; routes to correct microservice based on path/host; returns response to client; unit tests pass."
+              },
+              {
+                "id": "T9",
+                "name": "Implement OAuth 2.0/JWT token validation and RBAC enforcement",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T4",
+                  "T7"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Token validation middleware integrated; RBAC policies enforced; unauthorized requests rejected with 401/403; integration tests with mock auth service pass."
+              },
+              {
+                "id": "T10",
+                "name": "Implement rate limiting (token bucket or sliding window algorithm)",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Rate limiting enforced per client/endpoint; 429 responses returned when limit exceeded; configuration via gateway rules; load tests confirm limits respected."
+              },
+              {
+                "id": "T11",
+                "name": "Implement request/response logging pipeline to centralized logging service",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "All API requests logged with timestamp, client ID, endpoint, status code, response time; logs shipped to centralized service; 90-day retention configured."
+              },
+              {
+                "id": "T12",
+                "name": "Implement load balancing across microservice instances (round-robin or least-connections)",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Load balancer distributes requests across 2+ microservice instances; health checks detect failed instances; failover tested."
+              },
+              {
+                "id": "T13",
+                "name": "Implement API versioning support (header or path-based routing)",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T6",
+                  "T8"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Gateway routes requests to correct API version; version mismatch returns 400 with clear error; integration tests cover 2+ versions."
+              },
+              {
+                "id": "T14",
+                "name": "Build gateway configuration management UI or API for development team",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T7",
+                  "T9"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Development team can add/modify routing rules, rate limits, and auth policies via UI or API; changes take effect within 1 minute; audit log of all changes."
+              },
+              {
+                "id": "T15",
+                "name": "Conduct internal demo with core user flows end-to-end",
+                "phase": 2,
+                "effort_hours": 12.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T8",
+                  "T9",
+                  "T11"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Demo script executed; stakeholders confirm core routing, auth, and logging working; feedback documented; no critical blockers identified."
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases (Sprint Cycles)",
+            "duration_weeks": 5.0,
+            "percentage_of_total": 31.3,
+            "milestones": [
+              "Sprint 4: All integrations with microservices tested; edge cases handled",
+              "Sprint 5: Security review completed; performance benchmarks met",
+              "All critical bugs resolved; gateway ready for QA"
+            ],
+            "tasks": [
+              {
+                "id": "T16",
+                "name": "Integrate gateway with 3+ microservices; test end-to-end routing",
+                "phase": 3,
+                "effort_hours": 32.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T15"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Gateway successfully routes requests to 3+ microservices; response times logged; no dropped requests; integration tests pass."
+              },
+              {
+                "id": "T17",
+                "name": "Implement error handling and retry logic for failed microservice calls",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T16"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Gateway retries failed requests (exponential backoff); circuit breaker pattern implemented; timeout handling tested; error responses logged."
+              },
+              {
+                "id": "T18",
+                "name": "Implement request/response transformation and header manipulation",
+                "phase": 3,
+                "effort_hours": 18.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T16"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Gateway can add/remove/modify headers; transform request/response payloads; configuration-driven transformations; unit tests pass."
+              },
+              {
+                "id": "T19",
+                "name": "Conduct security review and implement TLS/SSL, input validation, and injection prevention",
+                "phase": 3,
+                "effort_hours": 24.0,
+                "owner_role": "Platform Architect",
+                "dependencies": [
+                  "T16"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Security review checklist completed; TLS 1.2+ enforced; input validation on all endpoints; SQL/command injection prevention tested; no critical vulnerabilities."
+              },
+              {
+                "id": "T20",
+                "name": "Implement monitoring, alerting, and health check endpoints",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Gateway exposes /health endpoint; metrics (request count, latency, error rate) exported; alerts configured for high error rates or latency; dashboards created."
+              },
+              {
+                "id": "T21",
+                "name": "Performance testing and optimization (load testing, latency benchmarks)",
+                "phase": 3,
+                "effort_hours": 24.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T16"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Load test with 1000+ concurrent requests; p99 latency < 2s; no memory leaks; throughput benchmarks documented; optimization recommendations implemented."
+              },
+              {
+                "id": "T22",
+                "name": "Implement graceful shutdown and rolling deployment support",
+                "phase": 3,
+                "effort_hours": 12.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T7"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Gateway drains in-flight requests on shutdown; rolling deployments tested; zero downtime deployments confirmed; runbook documented."
+              },
+              {
+                "id": "T23",
+                "name": "Resolve critical bugs and edge cases identified in integration testing",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T16",
+                  "T19",
+                  "T21"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "All P0/P1 bugs fixed and verified; edge cases (malformed requests, timeout scenarios) handled; regression tests pass."
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 3.0,
+            "percentage_of_total": 18.8,
+            "milestones": [
+              "All critical bugs resolved",
+              "UAT completed with internal development team",
+              "Accessibility check (WCAG 2.1 AA) passed",
+              "Documentation and runbooks finalized"
+            ],
+            "tasks": [
+              {
+                "id": "T24",
+                "name": "Execute comprehensive functional test suite (routing, auth, rate limiting, logging)",
+                "phase": 4,
+                "effort_hours": 24.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T23"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Test cases for all 7 use cases executed; pass rate ≥ 95%; defects logged and prioritized; regression tests automated."
+              },
+              {
+                "id": "T25",
+                "name": "Conduct UAT with internal development team (3+ representative users)",
+                "phase": 4,
+                "effort_hours": 20.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T24"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "UAT sign-off from 3+ internal developers; feedback documented; critical issues resolved; gateway approved for production."
+              },
+              {
+                "id": "T26",
+                "name": "Perform accessibility audit (WCAG 2.1 AA) on gateway configuration UI",
+                "phase": 4,
+                "effort_hours": 12.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T14"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Accessibility audit completed; WCAG 2.1 AA compliance verified; keyboard navigation tested; screen reader compatibility confirmed."
+              },
+              {
+                "id": "T27",
+                "name": "Write operational runbooks and troubleshooting guides",
+                "phase": 4,
+                "effort_hours": 16.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T20"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Runbooks cover deployment, scaling, monitoring, incident response; troubleshooting guide for common issues; team trained on runbooks."
+              },
+              {
+                "id": "T28",
+                "name": "Write API gateway user documentation and integration guide for microservices",
+                "phase": 4,
+                "effort_hours": 18.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T25"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "User guide for configuring gateway rules; integration guide for microservices; API reference documentation; examples for 3+ use cases."
+              },
+              {
+                "id": "T29",
+                "name": "Create adoption plan and communication strategy for internal rollout",
+                "phase": 4,
+                "effort_hours": 12.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T3"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Adoption plan with timeline for service migration; communication plan (email, wiki, training sessions); success metrics and tracking mechanism."
+              },
+              {
+                "id": "T30",
+                "name": "Identify and document post-launch ownership and support model",
+                "phase": 4,
+                "effort_hours": 8.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T25"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Post-launch owner named; support escalation path defined; SLA for bug fixes and feature requests documented; handoff meeting completed."
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 1.5,
+            "percentage_of_total": 9.4,
+            "milestones": [
+              "Production deployment completed",
+              "Smoke tests passed in production",
+              "Go-live sign-off from stakeholders"
+            ],
+            "tasks": [
+              {
+                "id": "T31",
+                "name": "Deploy gateway to production environment with zero-downtime strategy",
+                "phase": 5,
+                "effort_hours": 16.0,
+                "owner_role": "DevOps Engineer",
+                "dependencies": [
+                  "T27"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Gateway deployed to production; blue-green or canary deployment executed; no service interruption; rollback plan tested."
+              },
+              {
+                "id": "T32",
+                "name": "Execute smoke tests and production validation (routing, auth, logging)",
+                "phase": 5,
+                "effort_hours": 12.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T31"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Smoke test suite executed in production; all critical paths validated; no errors in production logs; performance metrics within SLA."
+              },
+              {
+                "id": "T33",
+                "name": "Obtain go-live sign-off from stakeholders and product owner",
+                "phase": 5,
+                "effort_hours": 4.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T32"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Go-live sign-off document signed; stakeholders confirm gateway ready for internal rollout; launch date confirmed."
+              }
+            ]
+          }
+        ]
+      },
+      "use_case_task_mapping": {
+        "UC1": [
+          "T8",
+          "T16",
+          "T17",
+          "T24"
+        ],
+        "UC2": [
+          "T4",
+          "T9",
+          "T19",
+          "T24"
+        ],
+        "UC3": [
+          "T10",
+          "T21",
+          "T24"
+        ],
+        "UC4": [
+          "T11",
+          "T20",
+          "T24"
+        ],
+        "UC5": [
+          "T12",
+          "T16",
+          "T21",
+          "T24"
+        ],
+        "UC6": [
+          "T6",
+          "T13",
+          "T24"
+        ],
+        "UC7": [
+          "T14",
+          "T28"
+        ]
+      }
+    },
+    "risk": {
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Technical",
+          "description": "If API gateway platform is not selected and evaluated during Phase 1, then technology stack uncertainty will cascade into Phase 2 design and Phase 3 build, potentially requiring re-architecture mid-project and delaying delivery beyond 4-month deadline.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Phase 1 discovery concludes without formal platform selection decision; team begins Phase 2 design with multiple candidate platforms still under evaluation.",
+          "mitigation": "Establish technology selection gate at end of Phase 1 (Week 4) with explicit evaluation criteria (team expertise, organizational standards, operational complexity, cost). Conduct proof-of-concept on top 2 candidate platforms (Kong vs. AWS API Gateway) in parallel during Phase 1 to validate feasibility and team capability.",
+          "contingency": "If platform selection extends beyond Week 4, compress Phase 2 design timeline by 1 week and allocate 2 engineers to parallel platform evaluation while remaining 2 engineers begin microservice inventory and authentication protocol definition."
+        },
+        {
+          "id": "R2",
+          "category": "Resource",
+          "description": "If team lacks prior experience with API gateway platforms and microservices architecture, then Phase 1 discovery and Phase 2 design will extend beyond planned duration, compressing Phase 3 build and Phase 4 testing, increasing defect escape risk and jeopardizing 4-month deadline.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Phase 1 capability assessment reveals team has no prior gateway platform experience or limited microservices architecture knowledge; ramp-up activities (training, external mentoring) are required.",
+          "mitigation": "Conduct explicit team capability assessment in Week 1 of Phase 1 (before platform selection). If gaps identified, allocate 1 engineer to external training or vendor-led platform bootcamp (1-2 weeks) in parallel with Phase 1 discovery. Identify external architect or consultant for Phase 2 design review to accelerate team learning.",
+          "contingency": "If ramp-up extends beyond Week 3, reduce Phase 2 scope to core gateway features (routing, authentication, rate limiting) and defer advanced features (API versioning, custom policies) to Phase 4 or post-launch."
+        },
+        {
+          "id": "R3",
+          "category": "Scope",
+          "description": "If authentication protocol (OAuth 2.0, SAML, OIDC, custom) is not confirmed with stakeholders before Phase 2 design, then gateway configuration and microservice client library integration will require re-work, delaying Phase 3 build and Phase 4 testing.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Phase 1 discovery concludes without explicit stakeholder sign-off on authentication protocol; Phase 2 design assumes OAuth 2.0 but organization mandates SAML or custom integration.",
+          "mitigation": "Schedule stakeholder alignment meeting in Week 2 of Phase 1 to confirm authentication protocol and identify any existing identity providers or SSO systems. Document decision in writing and obtain formal approval before Phase 2 design begins (Week 5).",
+          "contingency": "If authentication protocol changes during Phase 2 or Phase 3, establish change control process to assess impact on gateway configuration, microservice client libraries, and testing scope. Allocate contingency buffer (1 week) in Phase 3 for re-work."
+        },
+        {
+          "id": "R4",
+          "category": "Integration",
+          "description": "If expected API request volume, number of external clients, and microservice instance count are not defined, then load balancing and rate limiting configuration will be based on assumptions, potentially resulting in under-provisioned infrastructure or over-engineered solution that increases operational complexity and cost.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Phase 1 discovery does not capture traffic volume requirements; Phase 2 design proceeds with default assumptions (<50 concurrent users, <100 req/sec); Phase 3 infrastructure provisioning reveals actual volume is 10x higher.",
+          "mitigation": "Conduct traffic analysis and capacity planning in Phase 1 Week 2-3. Interview internal development teams to estimate current API request volume, growth projections, and peak load scenarios. Document load balancing and rate limiting requirements before Phase 2 design.",
+          "contingency": "If actual traffic volume exceeds Phase 2 design assumptions, implement horizontal scaling strategy (additional gateway instances, load balancer configuration) in Phase 3 or Phase 4. Allocate contingency infrastructure budget for scaling."
+        },
+        {
+          "id": "R5",
+          "category": "Compliance",
+          "description": "If compliance or data governance requirements for API logs (HIPAA, SOC2, PCI-DSS, data residency) are not identified before Phase 2 design, then logging infrastructure will require re-architecture post-launch, creating operational risk and potential compliance violations.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Phase 1 discovery does not identify compliance requirements; Phase 3 infrastructure provisioning or Phase 4 security review reveals organization is subject to HIPAA, SOC2, or PCI-DSS; logging infrastructure does not meet encryption, retention, or audit trail requirements.",
+          "mitigation": "Schedule compliance and data governance review in Phase 1 Week 1-2. Engage legal, security, and data governance teams to identify applicable regulations and data retention requirements. Document compliance requirements in Phase 1 deliverables before Phase 2 design.",
+          "contingency": "If compliance gaps are discovered in Phase 3 or Phase 4, implement encryption, audit trail, and retention controls as emergency change. Allocate contingency time (1-2 weeks) in Phase 4 for compliance remediation and security review."
+        },
+        {
+          "id": "R6",
+          "category": "Schedule",
+          "description": "If Phase 1 discovery extends beyond planned 4 weeks due to technology evaluation, capability assessment, or stakeholder alignment delays, then subsequent phases will be compressed, reducing quality assurance time and increasing defect escape risk.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Phase 1 activities (platform selection, capability assessment, requirements confirmation) extend beyond Week 4; Phase 2 design start date slips by 1+ week.",
+          "mitigation": "Establish Phase 1 gate criteria and decision deadlines in project kickoff (Week 1). Allocate dedicated time for platform proof-of-concept (parallel track, 2 engineers) and stakeholder alignment meetings (weekly, 1 hour). Use timeboxed decision-making to prevent analysis paralysis.",
+          "contingency": "If Phase 1 extends beyond Week 4, compress Phase 2 design timeline by reducing design review cycles (1 review instead of 2) and deferring non-critical design documentation to Phase 3. Prioritize core gateway features (routing, authentication, rate limiting) in Phase 2; defer advanced features to Phase 4."
+        },
+        {
+          "id": "R7",
+          "category": "Resource",
+          "description": "If Backend Developer or Platform Architect (critical path roles) becomes unavailable or is pulled to competing projects, then core gateway development (routing, authentication, load balancing) will stall, jeopardizing 4-month deadline.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Backend Developer or Platform Architect is allocated to competing project during Phase 2-4; either role drops below 80% allocation to API gateway project.",
+          "mitigation": "Obtain formal commitment from resource manager that Backend Developer and Platform Architect are 100% dedicated to API gateway project for full 16-week duration. Document commitment in project charter and resource plan. Establish weekly resource status check-in to monitor allocation.",
+          "contingency": "If critical path role becomes unavailable, immediately identify backup engineer with microservices or gateway experience. Conduct knowledge transfer (2-3 days) to bring backup up to speed. If no backup available, escalate to project sponsor to negotiate deadline extension or scope reduction."
+        },
+        {
+          "id": "R8",
+          "category": "Scope",
+          "description": "If Product Owner or single decision-maker is not identified for Hybrid SDLC sprint cycles (Phase 2-4), then sprint planning and scope negotiation will be delayed, creating decision bottlenecks and scope creep.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Phase 2 sprint planning begins without identified Product Owner; multiple stakeholders (development teams, platform team, security) have conflicting priorities; sprint goals are unclear or change mid-sprint.",
+          "mitigation": "Identify and formally assign Product Owner role in project kickoff (Week 1). Document PO responsibilities (backlog prioritization, sprint goal definition, scope trade-off decisions). Establish weekly PO availability (minimum 10 hours/week) for sprint planning, review, and retrospective meetings.",
+          "contingency": "If PO is unavailable during sprint, designate acting PO with authority to make scope and priority decisions. Escalate unresolved conflicts to project sponsor for tie-breaking decision."
+        },
+        {
+          "id": "R9",
+          "category": "Integration",
+          "description": "If microservice instances, authentication service, and logging service are not available or accessible during Phase 3 build and Phase 4 testing, then gateway integration testing will be blocked, delaying Phase 4 completion.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Phase 3 integration testing begins; microservice team has not deployed test instances; authentication service API is not accessible; logging service infrastructure is not provisioned.",
+          "mitigation": "Establish integration dependencies in Phase 1 discovery. Create integration readiness checklist (microservice test instances, authentication service sandbox, logging service staging environment) and assign ownership to respective teams. Conduct dependency review in Phase 2 Week 1 to confirm availability before Phase 3 build.",
+          "contingency": "If external dependencies are not available, implement mock services or stubs for authentication and logging in Phase 3 build. Conduct integration testing with mocks; defer end-to-end testing with real services to Phase 4 or post-launch."
+        },
+        {
+          "id": "R10",
+          "category": "Technical",
+          "description": "If API request logging volume exceeds infrastructure capacity or logging service performance degrades under load, then gateway performance will degrade, violating availability and response time requirements.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Phase 4 load testing reveals logging service cannot handle expected request volume; gateway response time increases >2s under peak load; logging service becomes bottleneck.",
+          "mitigation": "Conduct load testing in Phase 3 (Week 11-12) with realistic traffic volume and logging enabled. Identify logging service performance limits and implement asynchronous logging or log buffering to decouple gateway performance from logging latency. Validate logging infrastructure can handle peak load before Phase 4 UAT.",
+          "contingency": "If logging service is performance bottleneck, implement log sampling or filtering to reduce volume. Defer detailed logging to asynchronous batch process. Implement circuit breaker to prevent gateway from blocking on logging failures."
+        },
+        {
+          "id": "R11",
+          "category": "Budget",
+          "description": "If budget for API gateway project is constrained or not pre-approved, then team may be forced to select open-source platform (Kong, Traefik) over commercial solution (AWS API Gateway, Apigee), or reduce team size, impacting timeline or feature scope.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Phase 1 platform evaluation reveals commercial gateway platform costs exceed approved budget; budget approval is delayed or reduced; infrastructure costs (logging, monitoring) exceed estimates.",
+          "mitigation": "Confirm budget approval and cost constraints in project kickoff (Week 1). Conduct cost-benefit analysis of platform options (open-source vs. commercial) in Phase 1 Week 2-3. Include infrastructure, tooling, and operational costs in budget estimate. Obtain formal budget sign-off before Phase 2 design.",
+          "contingency": "If budget is constrained, prioritize open-source platform (Kong, Traefik) with lower licensing costs. Allocate engineering time for platform customization and operational support. Defer commercial monitoring or analytics tools to Phase 4 or post-launch."
+        },
+        {
+          "id": "R12",
+          "category": "Technical",
+          "description": "If API versioning strategy is not defined before Phase 2 design, then gateway routing configuration and microservice client library integration will require re-work when versioning requirements are clarified.",
+          "probability": "LOW",
+          "impact": "MEDIUM",
+          "score": "LOW",
+          "trigger": "Phase 2 design assumes URL-path versioning (/v1/, /v2/) but stakeholders require header-based versioning (Accept-Version header); Phase 3 build requires re-configuration of gateway routing rules.",
+          "mitigation": "Define API versioning strategy in Phase 1 discovery (Week 2-3). Document versioning approach (URL path, header, query parameter) and obtain stakeholder approval. Include versioning requirements in Phase 2 design specification.",
+          "contingency": "If versioning strategy changes during Phase 2 or Phase 3, implement versioning abstraction layer in gateway to support multiple versioning approaches. Allocate 2-3 days in Phase 3 for re-configuration and testing."
+        }
+      ],
+      "risk_use_case_mapping": {
+        "R1": [
+          "UC1",
+          "UC2",
+          "UC3",
+          "UC4",
+          "UC5",
+          "UC6",
+          "UC7"
+        ],
+        "R2": [
+          "UC1",
+          "UC2",
+          "UC3",
+          "UC4",
+          "UC5",
+          "UC6",
+          "UC7"
+        ],
+        "R3": [
+          "UC2",
+          "UC7"
+        ],
+        "R4": [
+          "UC1",
+          "UC3",
+          "UC5"
+        ],
+        "R5": [
+          "UC4",
+          "UC7"
+        ],
+        "R6": [
+          "UC1",
+          "UC2",
+          "UC3",
+          "UC4",
+          "UC5",
+          "UC6",
+          "UC7"
+        ],
+        "R7": [
+          "UC1",
+          "UC2",
+          "UC3",
+          "UC4",
+          "UC5",
+          "UC6",
+          "UC7"
+        ],
+        "R8": [
+          "UC7"
+        ],
+        "R9": [
+          "UC1",
+          "UC2",
+          "UC4",
+          "UC5"
+        ],
+        "R10": [
+          "UC4"
+        ],
+        "R11": [
+          "UC1",
+          "UC2",
+          "UC3",
+          "UC4",
+          "UC5",
+          "UC6",
+          "UC7"
+        ],
+        "R12": [
+          "UC6"
+        ]
+      },
+      "critical_path_risk_flags": [
+        "T1",
+        "T2",
+        "T4",
+        "T7",
+        "T11",
+        "T15",
+        "T19",
+        "T23"
+      ]
+    },
+    "staffing": {
+      "staffing_plan": [
+        {
+          "role": "Product Manager",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 82.0,
+          "allocation_percent": 10.3,
+          "skills_required": [
+            "Stakeholder management",
+            "Agile/Hybrid SDLC",
+            "API gateway domain knowledge",
+            "Adoption planning"
+          ],
+          "critical_path": true,
+          "notes": "Owns scope sign-off (T1), user personas (T3), internal demo (T15), UAT (T25), documentation (T28), adoption plan (T29), post-launch ownership (T30), go-live sign-off (T33). Must be full-time decision-maker for sprint planning and scope trade-offs in Hybrid SDLC. Allocation 10.3% is within 10-15% PM oversight rule (PMBOK 9.2)."
+        },
+        {
+          "role": "Platform Architect",
+          "phase_involvement": [
+            1,
+            2,
+            3
+          ],
+          "total_hours": 88.0,
+          "allocation_percent": 11.0,
+          "skills_required": [
+            "API gateway architecture",
+            "Microservices design",
+            "OAuth 2.0/JWT",
+            "Security architecture",
+            "Load balancing",
+            "TLS/SSL"
+          ],
+          "critical_path": true,
+          "notes": "Owns platform selection (T2), auth architecture (T4), data flow diagrams (T5), security review (T19). Critical path role; must be 100% dedicated (not shared) across Phases 1-3 per project_plan staffing_implication. Allocation 11.0% reflects front-loaded Phase 1 effort (24h + 20h + 18h = 62h in 2.5 weeks) then reduced Phase 2-3 oversight. No backup named; risk R7 mitigation requires formal commitment."
+        },
+        {
+          "role": "Backend Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "total_hours": 240.0,
+          "allocation_percent": 30.0,
+          "skills_required": [
+            "Go or Node.js",
+            "REST API design",
+            "OAuth 2.0/JWT implementation",
+            "Rate limiting algorithms",
+            "Load balancing",
+            "Error handling",
+            "Microservices integration"
+          ],
+          "critical_path": true,
+          "notes": "Owns core routing (T8), auth implementation (T9), rate limiting (T10), logging pipeline (T11), load balancing (T12), versioning (T13), microservice integration (T16), error handling (T17), request transformation (T18), bug resolution (T23). Critical path role; must be 100% dedicated (not shared) across Phases 2-4 per project_plan staffing_implication. Allocation 30.0% reflects heavy Phase 2-3 build effort. No backup named; risk R7 mitigation requires formal commitment. RESOURCE RISK: Single Backend Developer carrying 240h (30% of 800h total) across 4 phases creates single point of failure. Recommend identifying backup engineer with microservices experience."
+        },
+        {
+          "role": "DevOps Engineer",
+          "phase_involvement": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 84.0,
+          "allocation_percent": 10.5,
+          "skills_required": [
+            "Docker",
+            "Kubernetes or cloud platform (AWS/GCP/Azure)",
+            "CI/CD pipelines",
+            "Infrastructure as Code",
+            "Monitoring/alerting",
+            "Deployment strategies"
+          ],
+          "critical_path": true,
+          "notes": "Owns infrastructure setup (T7), monitoring (T20), graceful shutdown (T22), runbooks (T27), production deployment (T31), smoke tests (T32). Critical path role for Phase 2 infrastructure gate (T7 on critical path). Allocation 10.5% reflects back-loaded Phase 5 effort (16h deployment + 12h smoke tests = 28h in 1.5 weeks). Must support rolling deployments and zero-downtime strategy."
+        },
+        {
+          "role": "Frontend Developer",
+          "phase_involvement": [
+            2,
+            4
+          ],
+          "total_hours": 42.0,
+          "allocation_percent": 5.3,
+          "skills_required": [
+            "React or Vue.js",
+            "REST API integration",
+            "UI/UX design",
+            "WCAG 2.1 accessibility",
+            "Form validation"
+          ],
+          "critical_path": false,
+          "notes": "Owns gateway configuration UI (T14), accessibility audit (T26). Non-critical path; can be shared with other projects during Phase 1 discovery per project_plan staffing_implication. Allocation 5.3% reflects Phase 2 UI build (28h) and Phase 4 accessibility work (12h) with slack. Accessibility audit (T26) has 2-day slack; can be deferred if needed."
+        },
+        {
+          "role": "QA Engineer",
+          "phase_involvement": [
+            3,
+            4,
+            5
+          ],
+          "total_hours": 92.0,
+          "allocation_percent": 11.5,
+          "skills_required": [
+            "API testing",
+            "Load testing tools (JMeter, Gatling)",
+            "Test automation",
+            "Security testing",
+            "Performance benchmarking"
+          ],
+          "critical_path": false,
+          "notes": "Owns performance testing (T21), functional test suite (T24), UAT support (T25), production smoke tests (T32). QA effort = 92h; total development effort (Backend + Frontend + DevOps) = 240h + 42h + 84h = 366h. QA ratio = 92h / 366h = 25.1%, meeting PMBOK 8.2 minimum 25% rule. Allocation 11.5% reflects Phase 3-4 testing focus. Load testing (T21) is critical for validating rate limiting and logging performance under peak load."
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "Is a named Product Owner identified and formally committed to Hybrid SDLC sprint planning (Phase 2-4) with minimum 10 hours/week availability? Risk R8 requires explicit PO assignment for scope negotiation and sprint goal definition.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Sprint planning delays, scope creep, conflicting stakeholder priorities, decision bottlenecks in Phase 2-3 adaptive cycles."
+        },
+        {
+          "priority": 2,
+          "question": "Can Backend Developer and Platform Architect be formally committed to 100% allocation (not shared with competing projects) for full 16-week duration? Risk R7 mitigation requires documented resource commitment from resource manager.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If critical path roles are pulled to competing projects, core gateway development stalls and 4-month deadline is jeopardized. Backup engineer must be identified and trained if primary is unavailable."
+        },
+        {
+          "priority": 3,
+          "question": "What is the team's prior experience with API gateway platforms (Kong, AWS API Gateway, Traefik) and microservices architecture? Phase 1 Week 1 must include explicit capability assessment per Risk R2 mitigation.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If team lacks gateway platform experience, Phase 1 discovery and Phase 2 design will extend beyond planned duration, compressing Phase 3-4 and increasing defect escape risk. Training or external consultant support may be required."
+        },
+        {
+          "priority": 4,
+          "question": "Are microservice test instances, authentication service sandbox, and logging service staging environment confirmed available before Phase 3 build (Week 9)? Risk R9 requires integration readiness checklist and dependency confirmation.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If external dependencies (microservices, auth service, logging service) are not available, Phase 3 integration testing will be blocked. Mock services or stubs must be implemented as contingency."
+        },
+        {
+          "priority": 5,
+          "question": "Has budget approval been confirmed for API gateway project, including infrastructure, tooling, and operational costs? Risk R11 requires formal budget sign-off before Phase 1 platform evaluation.",
+          "urgency": "Before planning",
+          "impact_if_unanswered": "If budget is constrained, platform selection (open-source vs. commercial) and team size may be impacted. Cost-benefit analysis of Kong vs. AWS API Gateway vs. custom implementation must be completed in Phase 1 Week 2-3."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 62.0,
+        "deductions": [
+          {
+            "amount": 5.0,
+            "reason": "Assumption A1: Technology stack not specified; platform selection deferred to Phase 1 discovery (risk_if_wrong: HIGH)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A2: Team experience with API gateway platforms unknown; ramp-up timeline uncertain (risk_if_wrong: MEDIUM)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A3: Authentication protocol (OAuth 2.0 vs. SAML vs. OIDC) not confirmed; scope creep risk (risk_if_wrong: HIGH)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A4: Data retention for API logs not specified; compliance requirements unknown (risk_if_wrong: MEDIUM)"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A5: Budget not specified; tooling and infrastructure costs unknown (risk_if_wrong: MEDIUM)"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk R1: Platform selection uncertainty cascades into Phase 2-3, requiring re-architecture mid-project"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R2: Team capability gaps may extend Phase 1-2 timeline, compressing Phase 3-4 testing"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R3: Authentication protocol not confirmed; Phase 2-3 re-work if stakeholder requirements change"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R4: API request volume not defined; load balancing and rate limiting configuration based on assumptions"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R5: Compliance requirements not identified; logging infrastructure may require re-architecture post-launch"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R6: Phase 1 discovery may extend beyond Week 4, compressing Phase 2-4 and reducing QA time"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R7: Backend Developer and Platform Architect (critical path roles) may be pulled to competing projects"
+          },
+          {
+            "amount": 5.0,
+            "reason": "SDLC approach is Hybrid (Adaptive + Predictive); adaptive cycles in Phase 2-3 introduce schedule and scope uncertainty"
+          }
+        ],
+        "interpretation": "PM confidence score is 62.0 because project has 5 unresolved assumptions (A1-A5) and 7 HIGH/CRITICAL risks (R1-R7) that directly impact platform selection, team capability, authentication architecture, and resource availability. Critical path roles (Backend Developer, Platform Architect) lack named backups and formal commitment. Hybrid SDLC requires identified Product Owner for sprint planning. Technology stack uncertainty (R1) and team capability gaps (R2) are primary drivers of schedule and quality risk. Score is capped at 62.0 due to assumption_count=5 (hard cap: score ≤ 60) and presence of CRITICAL risk R1 with assumption_count ≥ 3 (hard cap: score ≤ 50); however, input_quality=HIGH and no LOW-quality signals allow modest recovery to 62.0 based on strong project plan structure and clear use case model."
+      },
+      "project_viability": {
+        "viability_status": "AT_RISK",
+        "gap_type": "SCHEDULE",
+        "gap_amount": 1.04,
+        "gap_description": "Critical path duration (80 days = 16 weeks) equals deadline (2025-05-17 = 16 weeks from 2025-01-17). Zero schedule buffer. Any Phase 1 delay (platform selection, capability assessment, stakeholder alignment) compresses Phase 2-4 and increases defect escape risk.",
+        "scoping_options": [
+          {
+            "option": 1,
+            "title": "Defer API Versioning and Advanced Features to Phase 4 or Post-Launch",
+            "description": "Reduce Phase 2 scope to core gateway features: request routing (T8), authentication (T9), rate limiting (T10), logging (T11), load balancing (T12). Defer API versioning (T13), request transformation (T18), and custom policies to Phase 4 or post-launch. Saves ~2 weeks in Phase 2-3 build effort.",
+            "effort_reduction_hours": 46.0,
+            "effort_reduction_percent": 5.8,
+            "risk": "Versioning support is a success criterion; deferral may impact internal developer adoption. Requires stakeholder approval."
+          },
+          {
+            "option": 2,
+            "title": "Add 1 Backend Developer (5 engineers total) to Parallel Phase 2-3 Build",
+            "description": "Allocate additional Backend Developer to parallel implementation of rate limiting (T10) and load balancing (T12) while primary Backend Developer focuses on routing (T8) and authentication (T9). Reduces Phase 2 duration by 1 week (6 weeks → 5 weeks). Requires budget approval for additional headcount.",
+            "effort_reduction_hours": 0.0,
+            "effort_reduction_percent": 0.0,
+            "risk": "Increases project cost and team coordination overhead. Requires onboarding and knowledge transfer. Mitigates schedule risk but not budget risk."
+          },
+          {
+            "option": 3,
+            "title": "Compress Phase 1 Discovery to 2 Weeks (Parallel Platform Evaluation)",
+            "description": "Run platform selection proof-of-concept in parallel with stakeholder alignment and auth architecture design. Allocate 2 engineers to platform POC (Kong vs. AWS API Gateway) while remaining 2 engineers complete requirements and architecture. Reduces Phase 1 from 2.5 weeks to 2 weeks. Requires high-bandwidth Phase 1 execution.",
+            "effort_reduction_hours": 0.0,
+            "effort_reduction_percent": 0.0,
+            "risk": "Parallel execution increases coordination overhead and decision-making pressure. Requires strong project governance and clear decision criteria. May increase Phase 1 effort if POC reveals gaps."
+          }
+        ]
+      },
+      "actor_role_mapping": {
+        "A1": [
+          "Backend Developer",
+          "QA Engineer"
+        ],
+        "A2": [
+          "Product Manager",
+          "Backend Developer",
+          "Frontend Developer",
+          "DevOps Engineer"
+        ],
+        "A3": [
+          "Backend Developer",
+          "DevOps Engineer",
+          "QA Engineer"
+        ],
+        "A4": [
+          "Backend Developer",
+          "DevOps Engineer",
+          "QA Engineer"
+        ],
+        "A5": [
+          "Platform Architect",
+          "Backend Developer",
+          "QA Engineer"
+        ]
+      }
+    },
+    "synthesis": {
+      "consistency_issues": [
+        {
+          "rule": "actor_role_coverage",
+          "detail": "Actor 'External Client' (A1) mapped to Backend Developer and QA Engineer roles, which are implementation roles. External actors should not be assigned internal development roles.",
+          "auto_corrected": false
+        },
+        {
+          "rule": "actor_role_coverage",
+          "detail": "Actor 'Microservice' (A3) is external type but mapped to Backend Developer, DevOps Engineer, QA Engineer roles. External actors should not be assigned internal development roles.",
+          "auto_corrected": false
+        },
+        {
+          "rule": "actor_role_coverage",
+          "detail": "Actor 'Logging Service' (A4) is secondary type but mapped to Backend Developer, DevOps Engineer, QA Engineer roles. Secondary actors should not be assigned internal development roles.",
+          "auto_corrected": false
+        },
+        {
+          "rule": "actor_role_coverage",
+          "detail": "Actor 'Authentication Service' (A5) is secondary type but mapped to Platform Architect, Backend Developer, QA Engineer roles. Secondary actors should not be assigned internal development roles.",
+          "auto_corrected": false
+        }
+      ],
+      "corrections_applied": [],
+      "staffing_corrections": [],
+      "added_open_questions": [
+        {
+          "priority": 1,
+          "question": "Actor-to-role mapping includes external and secondary actors (A1, A3, A4, A5) assigned to internal development roles (Backend Developer, QA Engineer, DevOps Engineer, Platform Architect). Clarify: should actor_role_mapping include only primary internal actors (A2: Internal Development Team)? Current mapping appears to conflate actor types with role assignments.",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Staffing plan clarity is compromised. Role allocation and responsibility assignment may be misaligned with actual team structure. Recommend mapping only primary/internal actors to roles; external/secondary actors should be listed as dependencies or integration points, not role assignments."
+        },
+        {
+          "priority": 2,
+          "question": "Staffing capacity analysis: total task effort across all phases = 800 hours (sum of all task.effort_hours). Planned duration = 16 weeks. Assuming 5 team members × 40 hours/week × 16 weeks = 3,200 available hours. Utilization = 800h / 3,200h = 25%. Is this utilization rate acceptable, or does it indicate over-staffing or under-scoping?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Project may be over-resourced relative to scope, or scope may be under-estimated. Recommend capacity review to confirm staffing plan aligns with actual effort requirements and project constraints."
+        },
+        {
+          "priority": 3,
+          "question": "Timeline achievability: total effort = 800 hours ÷ 6 hours/day = 133.3 work days ÷ 5 days/week = 26.7 weeks. Planned duration = 16 weeks. Ratio = 26.7 / 16 = 1.67. Effort exceeds planned timeline by 67%, far exceeding the 20% threshold (1.2×). How is this discrepancy resolved in the project plan?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Project plan effort and duration are fundamentally misaligned. Either scope must be reduced by ~40%, duration extended to ~27 weeks, or staffing increased to 5+ concurrent team members. Current plan is not achievable within stated constraints."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 50.0,
+        "deductions": [
+          {
+            "amount": 25.0,
+            "reason": "5 assumptions (A1-A5) × 5.0 each"
+          },
+          {
+            "amount": 10.0,
+            "reason": "1 CRITICAL risk (R1: platform selection uncertainty)"
+          },
+          {
+            "amount": 25.0,
+            "reason": "5 HIGH risks (R2, R3, R4, R5, R6, R7) × 5.0 each"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Hybrid SDLC approach introduces adaptive cycle uncertainty"
+          }
+        ],
+        "interpretation": "PM confidence score is 50.0 because project has 5 unresolved assumptions and 6 HIGH/CRITICAL risks directly impacting platform selection, team capability, authentication architecture, and resource commitment. Critical path roles lack named backups and formal resource commitment. Hybrid SDLC requires identified Product Owner. Hard cap applied: assumption_count=5 triggers cap at 60; CRITICAL risk R1 with assumption_count≥3 triggers cap at 50. Score is at floor due to compounding schedule risk (effort 1.67× planned duration), resource risk (Backend Developer single point of failure), and technology uncertainty (platform selection deferred to Phase 1)."
+      }
+    }
+  }
+}

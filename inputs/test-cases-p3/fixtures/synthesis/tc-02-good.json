@@ -1,4 +1,5 @@
 {
+<<<<<<< Updated upstream
   "consistency_issues": [
     {
       "rule": "actor_role_coverage",
@@ -6,14 +7,30 @@
       "auto_corrected": false
     }
   ],
+=======
+  "consistency_issues": [],
+>>>>>>> Stashed changes
   "corrections_applied": [],
   "staffing_corrections": [],
   "added_open_questions": [
     {
       "priority": 1,
+<<<<<<< Updated upstream
       "question": "Staffing capacity analysis: total effort across all tasks is 598 hours (99.7 work days ≈ 19.9 weeks). Planned duration is 12 weeks. Effort-to-duration ratio is 1.66x planned timeline. Confirm whether staffing plan (4 FTE equivalent) is sufficient to deliver all 40 tasks within 12-week deadline, or defer lower-priority tasks to Phase 4+.",
       "urgency": "Before build",
       "impact_if_unanswered": "If staffing capacity is insufficient, critical path tasks will slip, pushing launch past 2025-04-10 deadline. Phase 2-3 sprint velocity may be unachievable with current team size."
+=======
+      "question": "Use case UC7 (Receive Alert Notification) has no internal actor coverage — A4 (PagerDuty) is external. Verify that UC7 task ownership (T17, T18, T25) is assigned to Backend Developer and QA Engineer roles.",
+      "urgency": "Before build",
+      "impact_if_unanswered": "UC7 may lack clear internal ownership for alert notification implementation and testing; Backend Developer and QA Engineer must be explicitly accountable for T17, T18, T25."
+    },
+    {
+      "rule": "use_case_task_coverage",
+      "priority": 2,
+      "question": "Staffing capacity may not cover project scope within planned timeline. Total effort: 600 hours = 100 work days = 20 weeks. Planned duration: 12 weeks. Effort-to-duration ratio: 1.67x (exceeds 1.2x threshold).",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Project scope may be unachievable within 12-week deadline with current staffing (4 people). Recommend scope reduction, timeline extension, or additional staffing."
+>>>>>>> Stashed changes
     }
   ],
   "pm_confidence_score": {
@@ -33,11 +50,19 @@
       },
       {
         "amount": 10.0,
+<<<<<<< Updated upstream
         "reason": "CRITICAL risk R1 (authorization scope not validated; 2-3 week re-architecture risk)"
       },
       {
         "amount": 10.0,
         "reason": "CRITICAL risk R2 (alert latency requirements unclear; 2-3 week event-driven pivot risk)"
+=======
+        "reason": "CRITICAL risk R1 (authorization scope re-architecture 2-3 weeks)"
+      },
+      {
+        "amount": 10.0,
+        "reason": "CRITICAL risk R2 (alert latency event-driven architecture 2-3 weeks)"
+>>>>>>> Stashed changes
       },
       {
         "amount": 10.0,
@@ -45,6 +70,7 @@
       },
       {
         "amount": 5.0,
+<<<<<<< Updated upstream
         "reason": "HIGH risk R4 (Product Owner role not assigned; scope dispute risk)"
       },
       {
@@ -65,5 +91,27 @@
       }
     ],
     "interpretation": "PM confidence score is 62.0 because three CRITICAL risks (R1, R2, R3) remain unmitigated pre-Phase 2, each with 2-3 week re-architecture consequences, combined with three HIGH resource risks (R4, R7, R8) and three assumptions requiring stakeholder validation. Hybrid SDLC adds coordination overhead. Staffing capacity analysis reveals 1.66x effort-to-duration ratio, indicating potential schedule pressure if all tasks are executed as planned."
+=======
+        "reason": "HIGH risk R4 (Product Owner role not assigned)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R7 (Backend Developer unavailable; critical path delay)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R8 (PM unavailable; sprint cycle stall)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Hybrid SDLC coordination overhead"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Effort-to-duration ratio 1.67x exceeds 1.2x threshold; capacity risk"
+      }
+    ],
+    "interpretation": "PM confidence score is 62.0 because three CRITICAL risks (R1, R2, R3) remain unmitigated pre-Phase 2, each with 2-3 week re-architecture consequences, combined with three HIGH resource risks (R4, R7, R8), three assumptions requiring stakeholder validation, Hybrid SDLC coordination overhead, and effort-to-duration ratio indicating staffing capacity may not cover scope within 12-week deadline."
+>>>>>>> Stashed changes
   }
 }

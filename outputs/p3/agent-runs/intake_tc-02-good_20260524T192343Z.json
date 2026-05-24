@@ -1,0 +1,134 @@
+{
+  "agent": "intake",
+  "tc": "tc-02-good",
+  "artifact": {
+    "report_metadata": {
+      "generated_at": "2025-01-10T14:32:00Z",
+      "project_type": "TYPE_B",
+      "input_quality": "HIGH",
+      "classification_confidence": "HIGH",
+      "sdlc_approach": "Hybrid",
+      "sdlc_rationale": "Deadline fixed (3 months) and requirements well-defined with signed-off success metrics, but team composition (3 devs + 1 PM for 40 users across two teams) and real-time data refresh complexity warrant sprint-based validation cycles within predictive phase structure."
+    },
+    "project_understanding": {
+      "primary_goal": "Add real-time reporting and alerting capabilities to the existing customer analytics dashboard to eliminate manual report generation.",
+      "beneficiary": "Customer Success Team (15 people) and Sales Team (25 people)",
+      "trigger": "CSMs spending 10 hours/week on manual report generation; leadership mandate for automation.",
+      "success_definition": [
+        "CSMs can create custom reports in < 5 minutes",
+        "90% of scheduled reports delivered on time",
+        "Alert response time < 1 hour"
+      ],
+      "supporting_quotes": [
+        "Customer success managers are spending 10 hours/week manually generating reports. Leadership wants automated dashboards.",
+        "Add real-time reporting and alerting capabilities to our existing customer analytics dashboard.",
+        "CSMs can create custom reports in < 5 minutes; 90% of scheduled reports delivered on time; Alert response time < 1 hour"
+      ]
+    },
+    "assumption_log": [
+      {
+        "id": "A1",
+        "what": "Security implementation assumes SSO is the sole authentication mechanism; no additional role-based access control (RBAC) or data-level permissions required beyond SSO group membership.",
+        "why": "Input specifies 'Must integrate with existing authentication (SSO)' but does not detail authorization scope. For internal tools with two known beneficiary teams, SSO group-based access is standard default.",
+        "pmi_basis": "PMBOK 6th Ed, Section 8.1 (Quality Planning); security scope is a quality attribute that affects architecture if wrong.",
+        "risk_if_wrong": "HIGH",
+        "consequence": "If granular RBAC or data-level permissions are required (e.g., CSMs see only their customers, Sales see only their accounts), authentication layer must be re-architected post-build, delaying launch by 2–3 weeks.",
+        "source": "hard_constraint",
+        "tradeoff": "Gains: Faster build using SSO group membership for access control. Risks: If fine-grained authorization is required, re-architecture needed; team must validate with stakeholders before Phase 2."
+      },
+      {
+        "id": "A2",
+        "what": "Data retention policy of 2 years applies to all customer analytics data; no separate retention tiers (e.g., raw events vs. aggregated reports) or compliance-driven deletion workflows required.",
+        "why": "Input states '2 years' but does not specify scope (all data, reports only, raw events only) or deletion mechanism. For internal analytics, uniform 2-year retention with automated purge is standard.",
+        "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Scope Definition); data retention is a non-functional requirement affecting storage architecture and compliance.",
+        "risk_if_wrong": "MEDIUM",
+        "consequence": "If compliance requires tiered retention (e.g., PII purged at 1 year, aggregates at 2 years) or audit trails preserved longer, database schema and purge job must be redesigned, adding 1–2 weeks to Phase 2.",
+        "source": "nfr",
+        "tradeoff": "Gains: Simpler schema and purge automation using uniform 2-year TTL. Risks: If tiered retention or compliance audit trails required, re-design needed; validate with Legal/Compliance before Phase 2."
+      },
+      {
+        "id": "A3",
+        "what": "Real-time data refresh every 15 minutes is acceptable latency for all KPI widgets; no sub-minute refresh or streaming data requirements.",
+        "why": "Input specifies '15 minutes' as refresh interval. For internal dashboards used by CSMs and Sales (not real-time trading or incident response), 15-minute batches are standard and reduce infrastructure complexity.",
+        "pmi_basis": "PMBOK 6th Ed, Section 6.4 (Schedule Development); latency assumption affects batch job design and infrastructure.",
+        "risk_if_wrong": "MEDIUM",
+        "consequence": "If stakeholders require sub-5-minute refresh for alert-driven workflows, batch architecture must shift to event-driven streaming (Kafka/Kinesis), adding 2–3 weeks and increasing infrastructure cost by ~30%.",
+        "source": "nfr",
+        "tradeoff": "Gains: Simpler batch-based ETL using cron jobs; lower infrastructure cost. Risks: If sub-minute latency required, streaming architecture needed; validate refresh SLA with CSM/Sales leads before Phase 2."
+      }
+    ],
+    "constraints": {
+      "hard": {
+        "deadline": "2025-04-10",
+        "budget": null,
+        "team_size": 4,
+        "team_composition": "3 developers, 1 product manager",
+        "technology_stack": "Frontend: React; Backend: Python/Django; Database: PostgreSQL; Alerting: PagerDuty integration",
+        "compliance": "Data retention: 2 years; SSO authentication required"
+      },
+      "soft": {
+        "preferred_timeline": null,
+        "preferred_tools": null,
+        "nice_to_have": []
+      },
+      "nfr": {
+        "security": "SSO authentication integration; authorization scope TBD (see A1)",
+        "data_retention": "2 years (scope and tiering TBD; see A2)",
+        "performance": "Custom report generation < 5 minutes (user-facing); 15-minute dashboard refresh interval",
+        "availability": null
+      }
+    },
+    "open_questions_pre_planning": [
+      {
+        "priority": 1,
+        "question": "Who is the Product Owner responsible for backlog prioritization and sprint-level scope decisions during Phase 2–3?",
+        "urgency": "Before build",
+        "impact_if_unanswered": "Hybrid SDLC requires a single PO to manage sprint backlog and validate working software with stakeholders; without clear ownership, sprint cycles will stall on scope disputes."
+      },
+      {
+        "priority": 2,
+        "question": "Does the existing dashboard have a data warehouse or reporting database, or will custom reports query the production OLTP database?",
+        "urgency": "Before build",
+        "impact_if_unanswered": "Query performance and data freshness architecture depend on this; if production DB is used, report queries may impact operational performance, requiring caching or ETL layer design."
+      },
+      {
+        "priority": 3,
+        "question": "Are there granular authorization requirements (e.g., CSMs see only their customers, Sales see only their accounts), or is team-level access via SSO groups sufficient?",
+        "urgency": "Before build",
+        "impact_if_unanswered": "Assumption A1 defaults to SSO group-based access; if row-level security or customer-scoped filtering is required, authentication/authorization layer must be re-architected."
+      },
+      {
+        "priority": 4,
+        "question": "What is the expected volume of scheduled reports (daily, weekly, monthly) and concurrent users during peak usage?",
+        "urgency": "Before build",
+        "impact_if_unanswered": "Email scheduling and alert notification infrastructure (PagerDuty integration) must handle peak load; without volume estimates, job queue and notification service capacity cannot be sized."
+      },
+      {
+        "priority": 5,
+        "question": "Is the 2-year data retention policy uniform across all data types (raw events, aggregated reports, audit logs), or are there tiered retention requirements?",
+        "urgency": "Before build",
+        "impact_if_unanswered": "Assumption A2 defaults to uniform 2-year retention; if compliance or audit requirements mandate longer retention for logs or shorter for PII, database schema and purge automation must be redesigned."
+      },
+      {
+        "priority": 6,
+        "question": "What is the acceptable latency for alert notifications (e.g., must PagerDuty alert fire within 5 minutes of threshold breach, or is 15-minute batch acceptable)?",
+        "urgency": "Before build",
+        "impact_if_unanswered": "Assumption A3 defaults to 15-minute batch refresh; if sub-5-minute alert latency is required, event-driven architecture (Kafka/Kinesis) must replace batch jobs, adding 2–3 weeks and infrastructure cost."
+      },
+      {
+        "priority": 7,
+        "question": "Is there a budget constraint, or is the 3-month deadline the primary constraint?",
+        "urgency": "Before planning",
+        "impact_if_unanswered": "Budget unknown; if infrastructure or third-party service costs (e.g., PagerDuty, email service) are constrained, cost-optimization decisions (e.g., batch vs. streaming, caching strategy) must be made early."
+      }
+    ]
+  },
+  "raw_output": "",
+  "parse_failed": false,
+  "attempts": 1,
+  "input_tokens": 3353,
+  "output_tokens": 2303,
+  "cache_read_tokens": 0,
+  "cache_creation_tokens": 0,
+  "elapsed_seconds": 21.82
+}

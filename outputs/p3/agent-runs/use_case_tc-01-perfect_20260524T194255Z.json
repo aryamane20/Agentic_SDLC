@@ -1,0 +1,150 @@
+{
+  "agent": "use_case",
+  "tc": "tc-01-perfect",
+  "artifact": {
+    "system_boundary": "Employee Onboarding Portal",
+    "actors": [
+      {
+        "id": "A1",
+        "name": "New Hire",
+        "type": "primary"
+      },
+      {
+        "id": "A2",
+        "name": "HR Administrator",
+        "type": "primary"
+      },
+      {
+        "id": "A3",
+        "name": "IT Administrator",
+        "type": "primary"
+      },
+      {
+        "id": "A4",
+        "name": "Workday",
+        "type": "external"
+      },
+      {
+        "id": "A5",
+        "name": "Azure AD",
+        "type": "external"
+      },
+      {
+        "id": "A6",
+        "name": "E-signature Service",
+        "type": "external"
+      }
+    ],
+    "use_cases": [
+      {
+        "id": "UC1",
+        "name": "Complete Onboarding Checklist",
+        "actors": [
+          "A1"
+        ],
+        "complexity": "medium",
+        "description": "New hire views and tracks all required onboarding tasks with due dates"
+      },
+      {
+        "id": "UC2",
+        "name": "Submit Required Documents",
+        "actors": [
+          "A1"
+        ],
+        "complexity": "medium",
+        "description": "New hire uploads and e-signs I-9, W-4, and direct deposit forms"
+      },
+      {
+        "id": "UC3",
+        "name": "Review Team Introduction",
+        "actors": [
+          "A1"
+        ],
+        "complexity": "simple",
+        "description": "New hire views team member profiles with photos and roles"
+      },
+      {
+        "id": "UC4",
+        "name": "Provision IT Accounts",
+        "actors": [
+          "A3"
+        ],
+        "complexity": "complex",
+        "description": "IT administrator or system automatically creates email, Slack, and SaaS tool accounts for new hire"
+      },
+      {
+        "id": "UC5",
+        "name": "Monitor Onboarding Progress",
+        "actors": [
+          "A2"
+        ],
+        "complexity": "simple",
+        "description": "HR administrator views dashboard of new hire task completion and document submission status"
+      },
+      {
+        "id": "UC6",
+        "name": "Retrieve Employee Data",
+        "actors": [
+          "A4"
+        ],
+        "complexity": "simple",
+        "description": "System fetches new hire information from Workday to pre-populate onboarding forms"
+      },
+      {
+        "id": "UC7",
+        "name": "Authenticate via SSO",
+        "actors": [
+          "A1"
+        ],
+        "complexity": "simple",
+        "description": "New hire logs in using Azure AD credentials"
+      },
+      {
+        "id": "UC8",
+        "name": "Collect E-signatures",
+        "actors": [
+          "A1"
+        ],
+        "complexity": "simple",
+        "description": "New hire electronically signs required documents via integrated e-signature service"
+      }
+    ],
+    "relationships": [
+      {
+        "type": "includes",
+        "from_id": "UC1",
+        "to_id": "UC2"
+      },
+      {
+        "type": "includes",
+        "from_id": "UC1",
+        "to_id": "UC3"
+      },
+      {
+        "type": "includes",
+        "from_id": "UC2",
+        "to_id": "UC8"
+      },
+      {
+        "type": "includes",
+        "from_id": "UC1",
+        "to_id": "UC7"
+      },
+      {
+        "type": "includes",
+        "from_id": "UC4",
+        "to_id": "UC6"
+      }
+    ],
+    "input_quality_signal": "HIGH",
+    "anti_patterns_detected": []
+  },
+  "raw_output": "",
+  "parse_failed": false,
+  "attempts": 1,
+  "input_tokens": 1677,
+  "output_tokens": 975,
+  "cache_read_tokens": 0,
+  "cache_creation_tokens": 0,
+  "elapsed_seconds": 5.67
+}

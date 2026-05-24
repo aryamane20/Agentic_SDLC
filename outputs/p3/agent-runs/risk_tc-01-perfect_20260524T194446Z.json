@@ -1,0 +1,272 @@
+{
+  "agent": "risk",
+  "tc": "tc-01-perfect",
+  "artifact": {
+    "risk_register": [
+      {
+        "id": "R1",
+        "category": "Compliance",
+        "description": "If SOC 2 Type II audit is required before June 30, 2026 launch (vs. post-launch), then Phase 3 will require 4–8 weeks of audit preparation, evidence collection, and remediation, pushing launch past the fixed deadline and consuming contingency budget.",
+        "probability": "HIGH",
+        "impact": "HIGH",
+        "score": "CRITICAL",
+        "trigger": "Stakeholder clarifies that SOC 2 Type II audit must be completed and passed before launch, not post-launch",
+        "mitigation": "Obtain written clarification from compliance/legal stakeholder before Phase 2 begins on whether Type II audit is pre-launch or post-launch; if pre-launch, allocate 4–8 weeks in Phase 3 schedule and budget for audit preparation and evidence collection",
+        "contingency": "If audit scope is confirmed as pre-launch during Phase 2, immediately compress Phase 3 functional testing window and defer non-critical features to post-launch; engage SOC 2 auditor by week 16 to begin evidence collection in parallel with development"
+      },
+      {
+        "id": "R2",
+        "category": "Integration",
+        "description": "If Workday API sandbox environment is unavailable, undocumented, or requires custom development not covered by standard vendor support, then Phase 2 integration work will slip 2–4 weeks, compressing Phase 3 testing window and risking June 30 deadline.",
+        "probability": "HIGH",
+        "impact": "HIGH",
+        "score": "CRITICAL",
+        "trigger": "Phase 2 begins and Workday API sandbox is not accessible, documentation is incomplete, or vendor indicates custom development is required",
+        "mitigation": "Before Phase 2 kickoff, validate Workday API sandbox access, review API documentation completeness, and confirm with Workday vendor that standard OAuth/REST integration is supported without custom development; document SLA and support contact",
+        "contingency": "If Workday API is unavailable or requires custom work, immediately escalate to Workday account manager for expedited support; identify alternative data import method (e.g., CSV upload, manual data entry) as fallback for Phase 2; compress Phase 3 testing by deferring non-critical Workday integrations to post-launch"
+      },
+      {
+        "id": "R3",
+        "category": "Integration",
+        "description": "If e-signature service vendor has not been selected and contracted before Phase 1 ends, then vendor procurement and onboarding will consume 2–3 weeks in Phase 1, compressing Phase 2 development window and delaying UC2 (Submit Required Documents) implementation.",
+        "probability": "HIGH",
+        "impact": "MEDIUM",
+        "score": "HIGH",
+        "trigger": "Phase 1 week 2 and e-signature vendor is not yet selected, contract not signed, or API documentation not available",
+        "mitigation": "Assign vendor selection and procurement ownership in Phase 1 kickoff (PM or Procurement); evaluate DocuSign, Adobe Sign, and equivalent services against integration requirements and cost; complete vendor selection and contract signature by Phase 1 week 2; request API sandbox access and documentation immediately upon contract signature",
+        "contingency": "If vendor selection slips past Phase 1 week 2, defer e-signature integration to Phase 2 sprint 2 and implement manual document upload + HR review as interim solution for Phase 2 sprint 1; prioritize e-signature API integration in Phase 2 sprint 2 to unblock UC2 testing"
+      },
+      {
+        "id": "R4",
+        "category": "Resource",
+        "description": "If Backend Developer or Frontend Developer is pulled off project for competing priorities or becomes unavailable, then critical path tasks (T1, T3, T5, T8, T12, T16, T20, T24, T28, T31) will slip, compressing Phase 3 and risking June 30 deadline; team size of 4 with 2 developers leaves no backup capacity.",
+        "probability": "MEDIUM",
+        "impact": "HIGH",
+        "score": "HIGH",
+        "trigger": "Either Backend Developer or Frontend Developer is reassigned to another project, takes unplanned leave, or is unavailable for >1 week during Phases 2–4",
+        "mitigation": "Secure written commitment from development manager that both Backend Developer and Frontend Developer are 100% allocated to this project for full 26-week duration with no competing priorities; document in project charter; establish weekly check-in with dev manager to confirm allocation status",
+        "contingency": "If either developer becomes unavailable, immediately escalate to development manager and project sponsor for resource replacement; identify and onboard backup developer from same team within 1 week; compress Phase 2 scope by deferring non-critical features (e.g., chat with HR bot, mobile app) to post-launch"
+      },
+      {
+        "id": "R5",
+        "category": "Technical",
+        "description": "If team lacks prior experience with Azure AD SSO (OAuth 2.0 / OpenID Connect), then authentication implementation in Phase 2 will require 1–2 weeks of learning and ramp-up, consuming contingency and compressing Phase 3 testing window.",
+        "probability": "MEDIUM",
+        "impact": "HIGH",
+        "score": "HIGH",
+        "trigger": "Phase 2 sprint 1 begins and Backend Developer or Frontend Developer indicates unfamiliarity with Azure AD or OAuth 2.0 implementation patterns",
+        "mitigation": "Before Phase 2 kickoff, confirm team experience with Azure AD and OAuth 2.0 in pre-project assessment; if experience is limited, allocate 3–5 days in Phase 1 for team training on Azure AD SSO patterns and sandbox testing; document team capability in project charter",
+        "contingency": "If team lacks Azure AD experience during Phase 2, allocate 1–2 weeks for guided learning and proof-of-concept; engage Azure AD specialist or contractor for 1–2 weeks to accelerate implementation; defer non-critical authentication features (e.g., multi-factor authentication) to post-launch"
+      },
+      {
+        "id": "R6",
+        "category": "Scope",
+        "description": "If Product Owner is not assigned or is unavailable for timely backlog prioritization and stakeholder feedback during Phase 2–3 sprints, then sprint planning will stall, stakeholder feedback loops will be delayed, and Phase 3 testing will be compressed.",
+        "probability": "MEDIUM",
+        "impact": "HIGH",
+        "score": "HIGH",
+        "trigger": "Phase 2 sprint 1 planning begins and Product Owner is not identified, or PO is allocated <50% to project and unavailable for sprint ceremonies",
+        "mitigation": "Assign dedicated Product Owner before Phase 1 ends; confirm PO is allocated ≥50% to project for full 26-week duration; document PO responsibilities in project charter (backlog prioritization, sprint planning, stakeholder feedback, acceptance criteria definition); schedule weekly PO sync with PM and development team",
+        "contingency": "If PO becomes unavailable during Phase 2–3, immediately escalate to project sponsor and identify backup PO from business stakeholder team; establish daily standup with backup PO to maintain sprint momentum; defer non-critical features to post-launch to reduce backlog prioritization burden"
+      },
+      {
+        "id": "R7",
+        "category": "Scope",
+        "description": "If IT account provisioning scope is not clearly defined (email only vs. email + Slack + SaaS tools), then Phase 2 integration complexity will be underestimated, Phase 3 testing scope will be unclear, and UC4 (Provision IT Accounts) may be incomplete at launch.",
+        "probability": "MEDIUM",
+        "impact": "MEDIUM",
+        "score": "MEDIUM",
+        "trigger": "Phase 1 requirements review and stakeholders cannot agree on which systems must be auto-provisioned (email, Slack, SaaS tools) vs. manual setup",
+        "mitigation": "Before Phase 2 begins, obtain written definition of 'IT account setup automated' from IT Administrator and HR stakeholder; list specific systems (email, Slack, SaaS tools) that must be auto-provisioned; define MVP scope (e.g., email + Slack) vs. post-launch scope (e.g., additional SaaS tools); document in requirements traceability matrix",
+        "contingency": "If scope is unclear during Phase 2, implement email provisioning as MVP in Phase 2 sprint 1; defer Slack and SaaS tool provisioning to Phase 2 sprint 2 or Phase 3 based on stakeholder priority; use feature flags to enable/disable provisioning integrations at launch"
+      },
+      {
+        "id": "R8",
+        "category": "Scope",
+        "description": "If data retention requirement for onboarding documents exceeds 7-year IRS standard or includes state-specific rules, then database schema and archival strategy must be redesigned in Phase 2, consuming 1–2 weeks of development time and compressing Phase 3.",
+        "probability": "MEDIUM",
+        "impact": "MEDIUM",
+        "score": "MEDIUM",
+        "trigger": "Phase 1 requirements review and HR/Legal stakeholder specifies retention requirement >7 years or state-specific retention rules (e.g., California, New York)",
+        "mitigation": "Before Phase 2 begins, obtain written data retention policy from HR and Legal stakeholders; confirm 7-year IRS standard is sufficient or identify any state-specific or company-specific retention rules; document in non-functional requirements; design database schema and archival strategy in Phase 1 to accommodate confirmed retention policy",
+        "contingency": "If retention requirement is longer than 7 years or includes state-specific rules, implement tiered storage strategy (hot storage for <7 years, cold storage for 7+ years) in Phase 2; defer advanced archival features (e.g., encryption key rotation, compliance reporting) to post-launch"
+      },
+      {
+        "id": "R9",
+        "category": "Technical",
+        "description": "If external e-signature service API is rate-limited or has availability SLA <99.5%, then high-volume document signing during peak onboarding periods may fail or be delayed, affecting UC2 (Submit Required Documents) and UC8 (Collect E-signatures).",
+        "probability": "MEDIUM",
+        "impact": "MEDIUM",
+        "score": "MEDIUM",
+        "trigger": "Phase 2 integration testing and e-signature service experiences rate limiting, downtime, or SLA breach during load testing",
+        "mitigation": "Before Phase 2 integration begins, review e-signature vendor SLA and rate limits; confirm SLA ≥99.5% uptime and rate limits support expected peak load (e.g., 50 concurrent signings); implement request queuing and retry logic in Phase 2 to handle rate limiting gracefully; design fallback to manual document upload if e-signature service is unavailable",
+        "contingency": "If e-signature service is unavailable or rate-limited during Phase 3 testing, implement manual document upload + HR review as fallback; queue signing requests and retry with exponential backoff; escalate to e-signature vendor for SLA breach investigation and remediation"
+      },
+      {
+        "id": "R10",
+        "category": "Integration",
+        "description": "If Azure AD tenant configuration, group policies, or security settings are not aligned with portal requirements, then SSO integration (UC7) may fail or require security policy changes that delay Phase 2 implementation.",
+        "probability": "MEDIUM",
+        "impact": "MEDIUM",
+        "score": "MEDIUM",
+        "trigger": "Phase 2 sprint 1 and Backend Developer attempts to configure Azure AD app registration and discovers tenant policies block required OAuth scopes or require additional security approvals",
+        "mitigation": "Before Phase 2 begins, coordinate with Azure AD administrator to review tenant configuration, group policies, and security settings; confirm OAuth 2.0 / OpenID Connect is enabled and required scopes are available; obtain pre-approval for any security policy changes needed for SSO integration; document Azure AD configuration in Phase 1",
+        "contingency": "If Azure AD policies block SSO integration, escalate to Azure AD administrator and security team for policy exception or change request; implement alternative authentication method (e.g., username/password with MFA) as interim solution; defer advanced SSO features (e.g., conditional access, device compliance) to post-launch"
+      },
+      {
+        "id": "R11",
+        "category": "Schedule",
+        "description": "If Phase 1 requirements clarification (open questions Q1–Q6) extends beyond week 2, then Phase 2 kickoff will slip, compressing Phase 2 development window and risking Phase 3 testing and June 30 deadline.",
+        "probability": "MEDIUM",
+        "impact": "MEDIUM",
+        "score": "MEDIUM",
+        "trigger": "Phase 1 week 2 and stakeholders have not provided written answers to open questions Q1 (SOC 2 scope), Q2 (e-signature vendor), Q3 (Product Owner), Q4 (data retention), Q5 (Workday API), Q6 (IT account scope)",
+        "mitigation": "Assign ownership of each open question to specific stakeholder in Phase 1 kickoff; set hard deadline of Phase 1 week 2 for written answers; schedule stakeholder review meeting in Phase 1 week 1 to discuss questions and set expectations; escalate unanswered questions to project sponsor by Phase 1 week 2 end",
+        "contingency": "If stakeholders cannot answer questions by Phase 1 week 2, proceed with Phase 2 kickoff using documented assumptions (A1–A5) and defer clarification to Phase 2 sprint 1; flag assumptions as high-risk and plan for scope adjustment if assumptions are invalidated"
+      },
+      {
+        "id": "R12",
+        "category": "Budget",
+        "description": "If scope creep occurs from nice-to-have features (chat with HR bot, mobile app, LMS integration) being prioritized as must-haves, then Phase 2–3 development will consume additional budget and time, risking June 30 deadline and $80,000 budget.",
+        "probability": "MEDIUM",
+        "impact": "MEDIUM",
+        "score": "MEDIUM",
+        "trigger": "Phase 2 sprint planning and stakeholders request that nice-to-have features (chat bot, mobile app, LMS integration) be included in MVP scope",
+        "mitigation": "Before Phase 2 begins, establish clear change control process and document nice-to-have features as post-launch backlog; require written change request and sponsor approval for any scope additions; track scope changes and budget impact in project dashboard; communicate MVP scope clearly to all stakeholders in Phase 1 kickoff",
+        "contingency": "If scope creep occurs during Phase 2, evaluate impact on schedule and budget; defer nice-to-have features to post-launch release; use feature flags to enable/disable features at launch; escalate scope change to project sponsor for approval and budget adjustment"
+      },
+      {
+        "id": "R13",
+        "category": "Technical",
+        "description": "If performance requirements for portal (page load time, form submission latency, dashboard query performance) are not defined, then Phase 3 testing may reveal performance issues that require Phase 2 rework, consuming contingency and risking launch deadline.",
+        "probability": "MEDIUM",
+        "impact": "MEDIUM",
+        "score": "MEDIUM",
+        "trigger": "Phase 3 performance testing and portal page load time exceeds acceptable threshold (e.g., >3 seconds) or dashboard queries timeout under expected load",
+        "mitigation": "Before Phase 2 begins, define performance requirements (page load time, form submission latency, dashboard query performance, concurrent user capacity); document in non-functional requirements; implement performance monitoring and load testing in Phase 2 to validate requirements early; establish performance baselines in Phase 2 sprint 1",
+        "contingency": "If Phase 3 testing reveals performance issues, implement caching (Redis), database query optimization, and frontend code splitting in Phase 3; defer advanced performance features (e.g., real-time notifications, advanced analytics) to post-launch"
+      },
+      {
+        "id": "R14",
+        "category": "Compliance",
+        "description": "If audit logging and data access controls required for SOC 2 compliance are not implemented in Phase 2, then Phase 3 will require rework to add compliance features, consuming contingency and risking launch deadline.",
+        "probability": "LOW",
+        "impact": "HIGH",
+        "score": "MEDIUM",
+        "trigger": "Phase 2 sprint 2 and Backend Developer has not implemented audit logging for document uploads, data access, and user actions required for SOC 2 compliance",
+        "mitigation": "Before Phase 2 begins, define SOC 2 compliance requirements (audit logging, data access controls, encryption, access management); document in non-functional requirements; allocate Phase 2 sprint 1 to implement audit logging framework and data access controls; validate compliance implementation in Phase 2 sprint 2 before Phase 3 begins",
+        "contingency": "If compliance features are incomplete in Phase 2, allocate Phase 3 sprint 1 to complete audit logging and access controls; engage SOC 2 auditor in Phase 3 sprint 1 to identify gaps and remediation; defer advanced compliance features (e.g., encryption key rotation, compliance reporting) to post-launch"
+      },
+      {
+        "id": "R15",
+        "category": "Resource",
+        "description": "If UX Designer is not available for Phase 2–3 user testing and design iteration, then portal UX may not meet new hire expectations, affecting success metric 'New hire satisfaction survey score > 4/5' and requiring post-launch rework.",
+        "probability": "LOW",
+        "impact": "MEDIUM",
+        "score": "LOW",
+        "trigger": "Phase 2 sprint 1 and UX Designer is unavailable for user testing, design iteration, or accessibility review",
+        "mitigation": "Confirm UX Designer is allocated ≥50% to project for Phases 1–3; schedule user testing sessions in Phase 2 sprint 2 and Phase 3 sprint 1 to validate UX against new hire expectations; document design decisions and accessibility compliance in Phase 1",
+        "contingency": "If UX Designer becomes unavailable, engage external UX contractor for user testing and design iteration; defer advanced UX features (e.g., mobile responsiveness, accessibility enhancements) to post-launch"
+      }
+    ],
+    "risk_use_case_mapping": {
+      "R1": [
+        "UC2",
+        "UC8"
+      ],
+      "R2": [
+        "UC6"
+      ],
+      "R3": [
+        "UC2",
+        "UC8"
+      ],
+      "R4": [
+        "UC1",
+        "UC2",
+        "UC3",
+        "UC4",
+        "UC5",
+        "UC6",
+        "UC7",
+        "UC8"
+      ],
+      "R5": [
+        "UC7"
+      ],
+      "R6": [
+        "UC1",
+        "UC2",
+        "UC3",
+        "UC4",
+        "UC5",
+        "UC6",
+        "UC7",
+        "UC8"
+      ],
+      "R7": [
+        "UC4"
+      ],
+      "R8": [
+        "UC2"
+      ],
+      "R9": [
+        "UC2",
+        "UC8"
+      ],
+      "R10": [
+        "UC7"
+      ],
+      "R11": [
+        "UC1",
+        "UC2",
+        "UC3",
+        "UC4",
+        "UC5",
+        "UC6",
+        "UC7",
+        "UC8"
+      ],
+      "R12": [
+        "UC1",
+        "UC2",
+        "UC3",
+        "UC4",
+        "UC5"
+      ],
+      "R13": [
+        "UC1",
+        "UC5"
+      ],
+      "R14": [
+        "UC2",
+        "UC6"
+      ],
+      "R15": [
+        "UC1",
+        "UC2",
+        "UC3"
+      ]
+    },
+    "critical_path_risk_flags": [
+      "T1",
+      "T3",
+      "T5",
+      "T8",
+      "T12",
+      "T16",
+      "T20",
+      "T24",
+      "T28",
+      "T31"
+    ]
+  },
+  "raw_output": "",
+  "parse_failed": false,
+  "attempts": 1,
+  "input_tokens": 6496,
+  "output_tokens": 4838,
+  "cache_read_tokens": 0,
+  "cache_creation_tokens": 0,
+  "elapsed_seconds": 43.75
+}

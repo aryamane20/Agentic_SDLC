@@ -1,0 +1,158 @@
+{
+  "agent": "use_case",
+  "tc": "tc-02-good",
+  "artifact": {
+    "system_boundary": "Customer Analytics Dashboard",
+    "actors": [
+      {
+        "id": "A1",
+        "name": "Customer Success Manager",
+        "type": "primary"
+      },
+      {
+        "id": "A2",
+        "name": "Sales Team Member",
+        "type": "primary"
+      },
+      {
+        "id": "A3",
+        "name": "SSO Authentication Service",
+        "type": "external"
+      },
+      {
+        "id": "A4",
+        "name": "PagerDuty",
+        "type": "external"
+      },
+      {
+        "id": "A5",
+        "name": "Email Service",
+        "type": "secondary"
+      }
+    ],
+    "use_cases": [
+      {
+        "id": "UC1",
+        "name": "Authenticate User",
+        "actors": [
+          "A1",
+          "A2",
+          "A3"
+        ],
+        "complexity": "simple",
+        "description": "User logs in via SSO to access the dashboard"
+      },
+      {
+        "id": "UC2",
+        "name": "View Dashboard",
+        "actors": [
+          "A1",
+          "A2"
+        ],
+        "complexity": "simple",
+        "description": "User views real-time KPI widgets and customer analytics"
+      },
+      {
+        "id": "UC3",
+        "name": "Create Custom Report",
+        "actors": [
+          "A1",
+          "A2"
+        ],
+        "complexity": "medium",
+        "description": "User defines custom date ranges, metrics, and filters to generate a report"
+      },
+      {
+        "id": "UC4",
+        "name": "Export Report",
+        "actors": [
+          "A1",
+          "A2"
+        ],
+        "complexity": "simple",
+        "description": "User exports report to PDF or CSV format"
+      },
+      {
+        "id": "UC5",
+        "name": "Schedule Report Delivery",
+        "actors": [
+          "A1",
+          "A2"
+        ],
+        "complexity": "medium",
+        "description": "User configures automated email delivery of reports on a recurring schedule"
+      },
+      {
+        "id": "UC6",
+        "name": "Configure Alert",
+        "actors": [
+          "A1",
+          "A2"
+        ],
+        "complexity": "medium",
+        "description": "User sets threshold-based alerts on KPIs and notification channels"
+      },
+      {
+        "id": "UC7",
+        "name": "Receive Alert Notification",
+        "actors": [
+          "A4"
+        ],
+        "complexity": "simple",
+        "description": "System sends alert to PagerDuty when threshold is breached"
+      },
+      {
+        "id": "UC8",
+        "name": "Refresh Dashboard Data",
+        "actors": [
+          "A1",
+          "A2"
+        ],
+        "complexity": "simple",
+        "description": "System updates dashboard widgets with latest data every 15 minutes"
+      }
+    ],
+    "relationships": [
+      {
+        "type": "includes",
+        "from_id": "UC2",
+        "to_id": "UC1"
+      },
+      {
+        "type": "includes",
+        "from_id": "UC3",
+        "to_id": "UC1"
+      },
+      {
+        "type": "includes",
+        "from_id": "UC4",
+        "to_id": "UC3"
+      },
+      {
+        "type": "includes",
+        "from_id": "UC5",
+        "to_id": "UC3"
+      },
+      {
+        "type": "includes",
+        "from_id": "UC6",
+        "to_id": "UC1"
+      },
+      {
+        "type": "includes",
+        "from_id": "UC7",
+        "to_id": "UC6"
+      }
+    ],
+    "input_quality_signal": "HIGH",
+    "anti_patterns_detected": []
+  },
+  "raw_output": "",
+  "parse_failed": false,
+  "attempts": 1,
+  "input_tokens": 1468,
+  "output_tokens": 976,
+  "cache_read_tokens": 0,
+  "cache_creation_tokens": 0,
+  "elapsed_seconds": 5.44
+}

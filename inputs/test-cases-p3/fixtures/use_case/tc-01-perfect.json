@@ -3,7 +3,11 @@
   "actors": [
     {
       "id": "A1",
+<<<<<<< Updated upstream
       "name": "New Employee",
+=======
+      "name": "New Hire",
+>>>>>>> Stashed changes
       "type": "primary"
     },
     {
@@ -40,7 +44,11 @@
         "A1"
       ],
       "complexity": "medium",
+<<<<<<< Updated upstream
       "description": "New employee views and tracks all required onboarding tasks with due dates"
+=======
+      "description": "New hire views and tracks all required onboarding tasks with due dates"
+>>>>>>> Stashed changes
     },
     {
       "id": "UC2",
@@ -49,7 +57,11 @@
         "A1"
       ],
       "complexity": "medium",
+<<<<<<< Updated upstream
       "description": "New employee uploads and e-signs I-9, W-4, and direct deposit forms"
+=======
+      "description": "New hire uploads and e-signs I-9, W-4, and direct deposit forms"
+>>>>>>> Stashed changes
     },
     {
       "id": "UC3",
@@ -58,17 +70,28 @@
         "A1"
       ],
       "complexity": "simple",
+<<<<<<< Updated upstream
       "description": "New employee views team member profiles with photos and roles"
+=======
+      "description": "New hire views team member profiles with photos and roles"
+>>>>>>> Stashed changes
     },
     {
       "id": "UC4",
       "name": "Provision IT Accounts",
       "actors": [
+<<<<<<< Updated upstream
         "A3",
         "A5"
       ],
       "complexity": "complex",
       "description": "System automatically creates email, Slack, and SaaS tool accounts via Azure AD integration"
+=======
+        "A3"
+      ],
+      "complexity": "complex",
+      "description": "IT administrator or system automatically creates email, Slack, and SaaS tool accounts for new hire"
+>>>>>>> Stashed changes
     },
     {
       "id": "UC5",
@@ -77,6 +100,7 @@
         "A2"
       ],
       "complexity": "simple",
+<<<<<<< Updated upstream
       "description": "HR administrator views dashboard of new hire completion status and outstanding tasks"
     },
     {
@@ -109,17 +133,57 @@
       ],
       "complexity": "simple",
       "description": "System records all document submissions and account provisioning actions for SOC 2 compliance"
+=======
+      "description": "HR administrator views dashboard of new hire task completion and document submission status"
+    },
+    {
+      "id": "UC6",
+      "name": "Retrieve Employee Data",
+      "actors": [
+        "A4"
+      ],
+      "complexity": "simple",
+      "description": "System fetches new hire information from Workday to pre-populate onboarding forms"
+    },
+    {
+      "id": "UC7",
+      "name": "Authenticate via SSO",
+      "actors": [
+        "A1"
+      ],
+      "complexity": "simple",
+      "description": "New hire logs in using Azure AD credentials"
+    },
+    {
+      "id": "UC8",
+      "name": "Collect E-signatures",
+      "actors": [
+        "A1"
+      ],
+      "complexity": "simple",
+      "description": "New hire electronically signs required documents via integrated e-signature service"
+>>>>>>> Stashed changes
     }
   ],
   "relationships": [
     {
       "type": "includes",
       "from_id": "UC1",
+<<<<<<< Updated upstream
       "to_id": "UC7"
+=======
+      "to_id": "UC2"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC1",
+      "to_id": "UC3"
+>>>>>>> Stashed changes
     },
     {
       "type": "includes",
       "from_id": "UC2",
+<<<<<<< Updated upstream
       "to_id": "UC7"
     },
     {
@@ -130,11 +194,21 @@
     {
       "type": "includes",
       "from_id": "UC4",
+=======
+>>>>>>> Stashed changes
       "to_id": "UC8"
     },
     {
       "type": "includes",
       "from_id": "UC1",
+<<<<<<< Updated upstream
+=======
+      "to_id": "UC7"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC4",
+>>>>>>> Stashed changes
       "to_id": "UC6"
     }
   ],

@@ -1,0 +1,1578 @@
+{
+  "tc": "tc-01-perfect",
+  "elapsed_seconds": 166.59,
+  "token_tally": {
+    "input": 49411,
+    "output": 20871,
+    "cache_read": 0,
+    "cache_creation": 0
+  },
+  "artifacts": {
+    "use_case": {
+      "system_boundary": "Employee Onboarding Portal",
+      "actors": [
+        {
+          "id": "A1",
+          "name": "New Hire",
+          "type": "primary"
+        },
+        {
+          "id": "A2",
+          "name": "HR Administrator",
+          "type": "primary"
+        },
+        {
+          "id": "A3",
+          "name": "IT Administrator",
+          "type": "primary"
+        },
+        {
+          "id": "A4",
+          "name": "Workday",
+          "type": "external"
+        },
+        {
+          "id": "A5",
+          "name": "Azure AD",
+          "type": "external"
+        },
+        {
+          "id": "A6",
+          "name": "E-signature Service",
+          "type": "external"
+        }
+      ],
+      "use_cases": [
+        {
+          "id": "UC1",
+          "name": "Complete Onboarding Checklist",
+          "actors": [
+            "A1"
+          ],
+          "complexity": "medium",
+          "description": "New hire views and tracks all required onboarding tasks with due dates"
+        },
+        {
+          "id": "UC2",
+          "name": "Submit Required Documents",
+          "actors": [
+            "A1"
+          ],
+          "complexity": "medium",
+          "description": "New hire uploads and e-signs I-9, W-4, and direct deposit forms"
+        },
+        {
+          "id": "UC3",
+          "name": "Review Team Introduction",
+          "actors": [
+            "A1"
+          ],
+          "complexity": "simple",
+          "description": "New hire views team member profiles with photos and roles"
+        },
+        {
+          "id": "UC4",
+          "name": "Provision IT Accounts",
+          "actors": [
+            "A3"
+          ],
+          "complexity": "complex",
+          "description": "IT administrator or system automatically creates email, Slack, and SaaS tool accounts for new hire"
+        },
+        {
+          "id": "UC5",
+          "name": "Monitor Onboarding Progress",
+          "actors": [
+            "A2"
+          ],
+          "complexity": "simple",
+          "description": "HR administrator views dashboard of new hire task completion and document submission status"
+        },
+        {
+          "id": "UC6",
+          "name": "Retrieve Employee Data",
+          "actors": [
+            "A4"
+          ],
+          "complexity": "simple",
+          "description": "System fetches new hire information from Workday to pre-populate onboarding forms"
+        },
+        {
+          "id": "UC7",
+          "name": "Authenticate via SSO",
+          "actors": [
+            "A1"
+          ],
+          "complexity": "simple",
+          "description": "New hire logs in using Azure AD credentials"
+        },
+        {
+          "id": "UC8",
+          "name": "Collect E-signatures",
+          "actors": [
+            "A1"
+          ],
+          "complexity": "simple",
+          "description": "New hire electronically signs required documents via integrated e-signature service"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "includes",
+          "from_id": "UC1",
+          "to_id": "UC2"
+        },
+        {
+          "type": "includes",
+          "from_id": "UC1",
+          "to_id": "UC3"
+        },
+        {
+          "type": "includes",
+          "from_id": "UC2",
+          "to_id": "UC8"
+        },
+        {
+          "type": "includes",
+          "from_id": "UC1",
+          "to_id": "UC7"
+        },
+        {
+          "type": "includes",
+          "from_id": "UC4",
+          "to_id": "UC6"
+        }
+      ],
+      "input_quality_signal": "HIGH",
+      "anti_patterns_detected": []
+    },
+    "intake": {
+      "report_metadata": {
+        "generated_at": "2025-01-10T14:32:00Z",
+        "project_type": "TYPE_A",
+        "input_quality": "HIGH",
+        "classification_confidence": "HIGH",
+        "sdlc_approach": "Hybrid",
+        "sdlc_rationale": "Requirements fully defined and signed off with fixed deadline and budget, but stakeholder validation of new portal UX and integration workflows with Workday/Azure AD necessitates working software in Phase 2–3 before final launch."
+      },
+      "project_understanding": {
+        "primary_goal": "Build a self-service employee onboarding portal enabling new hires to complete required paperwork, set up IT accounts, and receive team introductions before day one.",
+        "beneficiary": "New employees (100–200/year) and HR team (5 people)",
+        "trigger": "Current onboarding is fragmented across PDF-based paperwork, manual IT account setup, and unstructured team introductions; new hires report feeling unprepared on day one; CEO escalated after hearing complaints at all-hands.",
+        "success_definition": [
+          "80% of onboarding tasks completed by new hires before day one",
+          "HR administrative time reduced by 50%",
+          "IT account setup fully automated (zero manual tickets)",
+          "New hire satisfaction survey score > 4/5"
+        ],
+        "supporting_quotes": [
+          "Create a self-service employee onboarding portal that allows new hires to complete all required paperwork, set up their IT accounts, and get introduced to the team before day one.",
+          "Currently onboarding is fragmented - paperwork is PDF-based, IT account setup is manual, new hires feel unprepared on day one.",
+          "CEO asked HR to fix this after hearing complaints at all-hands.",
+          "New hires can complete 80% of onboarding tasks before day one; HR time spent on onboarding admin reduced by 50%; IT account setup automated (no manual tickets); New hire satisfaction survey score > 4/5"
+        ]
+      },
+      "assumption_log": [
+        {
+          "id": "A1",
+          "what": "Workday API sandbox environment, documentation, and SLA are available and stable; integration does not require custom Workday development or extended vendor support.",
+          "why": "External API integrations are a common source of schedule risk on internal projects. Assuming standard API availability and documentation is reasonable for a major HRIS vendor, but must be validated before Phase 2 begins.",
+          "pmi_basis": "PMBOK 6th Ed, Section 8.1 (Scope Management) and Section 12.1 (Integration Management); risk of external dependency blocking development.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If Workday API is unavailable, undocumented, or requires custom development, Phase 2 integration work will slip by 2–4 weeks, compressing Phase 3 testing and risking June 30 deadline.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: Enables Phase 2 to proceed without Workday vendor engagement delay. Risks: If API is unavailable or requires custom work, schedule slips and contingency budget is consumed."
+        },
+        {
+          "id": "A2",
+          "what": "Azure AD SSO integration is standard OAuth 2.0 / OpenID Connect; team has prior experience with Azure AD or equivalent SSO implementation.",
+          "why": "Input specifies Azure AD stack but does not state team experience level. For a 4-person team on a 4-month deadline, assuming competence with the named stack is standard practice unless input flags inexperience.",
+          "pmi_basis": "PMBOK 6th Ed, Section 9.1 (Resource Management); assumes team capability matches stated technology stack.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If team lacks Azure AD experience and must learn during Phase 2, authentication implementation will slip 1–2 weeks, consuming contingency and risking Phase 3 timeline.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: Enables Phase 2 to proceed without pre-project training or external contractor. Risks: If team is unfamiliar with Azure AD, ramp-up time compresses testing window."
+        },
+        {
+          "id": "A3",
+          "what": "SOC 2 Type II compliance scope is limited to data handling, audit logging, and access controls within the portal; does not require third-party audit, penetration testing, or infrastructure re-architecture beyond standard Azure App Service security practices.",
+          "why": "Input names SOC 2 as a requirement but does not specify scope (Type I vs. Type II, audit timeline, third-party assessor involvement). For internal software, assuming standard data protection and audit logging is reasonable; full third-party audit would typically be called out explicitly.",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Scope Definition); compliance scope must be explicit to avoid scope creep.",
+          "risk_if_wrong": "HIGH",
+          "consequence": "If SOC 2 Type II audit is required before launch (vs. post-launch), Phase 3 will require 4–8 weeks of audit preparation, evidence collection, and remediation, pushing launch past June 30 deadline.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: Enables Phase 3 to focus on functional testing and launch readiness. Risks: If full SOC 2 audit is required pre-launch, schedule slips and budget is consumed by audit and remediation work."
+        },
+        {
+          "id": "A4",
+          "what": "E-signature service (DocuSign, Adobe Sign, or equivalent) is already contracted or available for integration; API documentation and sandbox are accessible; no additional procurement or vendor negotiation required.",
+          "why": "Input lists e-signature as a must-have feature and mentions 'integrated e-signature service' in use cases, but does not name the vendor or confirm procurement status. Assuming a standard SaaS e-signature service is available is reasonable for a company of this size, but vendor selection and contract terms are not stated.",
+          "pmi_basis": "PMBOK 6th Ed, Section 12.1 (Integration Management); external service availability is a critical dependency.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If e-signature vendor is not yet selected or contracted, procurement and vendor onboarding will consume 2–3 weeks in Phase 1, compressing Phase 2 development window.",
+          "source": "hard_constraint",
+          "tradeoff": "Gains: Enables Phase 2 to begin e-signature integration immediately. Risks: If vendor is not yet selected, Phase 1 extends and Phase 2 start date slips."
+        },
+        {
+          "id": "A5",
+          "what": "Data retention policy for onboarding documents (I-9, W-4, direct deposit forms) is 7 years (standard IRS/employment law requirement); no extended retention or archival to separate cold storage is required.",
+          "why": "Input does not specify data retention requirements. For employment documents, 7-year retention is the standard IRS requirement; assuming this default is reasonable unless input specifies longer retention or compliance with additional regulations (e.g., state-specific requirements).",
+          "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Scope Definition); data retention affects storage architecture and compliance scope.",
+          "risk_if_wrong": "MEDIUM",
+          "consequence": "If retention requirement is longer than 7 years or includes state-specific rules, database schema and archival strategy must be redesigned in Phase 2, consuming 1–2 weeks of development time.",
+          "source": "nfr",
+          "tradeoff": "Gains: Enables Phase 2 to use standard PostgreSQL retention and backup strategy. Risks: If retention is longer or more complex, storage and compliance architecture must be redesigned."
+        }
+      ],
+      "constraints": {
+        "hard": {
+          "deadline": "2026-06-30",
+          "budget": "$80,000",
+          "team_size": 4,
+          "team_composition": "1 PM, 2 Developers, 1 UX Designer",
+          "technology_stack": "Frontend: React + TypeScript; Backend: Node.js + PostgreSQL; Integration: Workday API, Azure AD SSO; Hosting: Azure App Service",
+          "compliance": "SOC 2 compliance required (data handling, audit logs)"
+        },
+        "soft": {
+          "preferred_timeline": null,
+          "preferred_tools": null,
+          "nice_to_have": [
+            "Chat with HR bot",
+            "Mobile app",
+            "Integration with learning management system"
+          ]
+        },
+        "nfr": {
+          "security": "Azure AD SSO authentication; SOC 2 compliance (audit logging, data handling, access controls)",
+          "data_retention": null,
+          "performance": null,
+          "availability": null
+        }
+      },
+      "open_questions_pre_planning": [
+        {
+          "priority": 1,
+          "question": "Is SOC 2 Type II audit required before launch (June 30, 2026), or is Type II audit acceptable post-launch with Type I compliance at launch?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If Type II audit is required pre-launch, Phase 3 must include 4–8 weeks of audit preparation and evidence collection, pushing launch past deadline. If post-launch is acceptable, Phase 3 focuses on functional testing and launch readiness."
+        },
+        {
+          "priority": 2,
+          "question": "Has the e-signature service vendor been selected and contracted? If not, who owns vendor selection and procurement in Phase 1?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If vendor is not yet selected, Phase 1 procurement will consume 2–3 weeks, compressing Phase 2 development window and risking June 30 deadline."
+        },
+        {
+          "priority": 3,
+          "question": "Who is the Product Owner responsible for backlog prioritization, sprint planning, and stakeholder feedback during Phase 2–3 sprints?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Hybrid SDLC requires a dedicated PO to manage backlog and sprint cycles. Without clear PO assignment, sprint planning will stall and stakeholder feedback loops will be delayed."
+        },
+        {
+          "priority": 4,
+          "question": "What is the data retention requirement for onboarding documents (I-9, W-4, direct deposit forms)? Is 7-year IRS standard sufficient, or are there state-specific or company-specific retention policies?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If retention requirement exceeds 7 years or includes state-specific rules, database schema and archival strategy must be redesigned in Phase 2, consuming 1–2 weeks of development time."
+        },
+        {
+          "priority": 5,
+          "question": "Is Workday API sandbox environment, documentation, and SLA confirmed available? Does integration require custom Workday development or extended vendor support?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If Workday API is unavailable, undocumented, or requires custom development, Phase 2 integration work will slip 2–4 weeks, compressing Phase 3 testing and risking June 30 deadline."
+        },
+        {
+          "priority": 6,
+          "question": "What is the definition of 'IT account setup automated'? Does this include provisioning in Slack, SaaS tools (which ones?), and email, or is email provisioning sufficient for MVP?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Scope of IT account provisioning affects Phase 2 integration complexity and Phase 3 testing scope. Unclear scope may result in feature creep or incomplete automation at launch."
+        }
+      ]
+    },
+    "planning": {
+      "project_plan": {
+        "total_duration_weeks": 26.0,
+        "buffer_applied_percent": 15.0,
+        "critical_path_summary": {
+          "sequence": [
+            "T1",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T16",
+            "T20",
+            "T24",
+            "T28",
+            "T31"
+          ],
+          "total_duration_days": 130.0,
+          "zero_slack_tasks": [
+            "T1",
+            "T3",
+            "T5",
+            "T8",
+            "T12",
+            "T16",
+            "T20",
+            "T24",
+            "T28",
+            "T31"
+          ],
+          "highest_slack_tasks": [
+            "T2",
+            "T4",
+            "T6"
+          ],
+          "staffing_implication": "Backend Developer and Frontend Developer must be dedicated (not shared) across Phases 2–4 due to critical path dependency; PM and UX Designer front-loaded in Phase 1 with reduced allocation in Phases 2–3."
+        },
+        "phases": [
+          {
+            "phase_number": 1,
+            "name": "Discovery & Design",
+            "duration_weeks": 3.5,
+            "percentage_of_total": 13.5,
+            "milestones": [
+              "Stakeholder alignment session completed and scope signed off",
+              "User personas and success metrics defined and agreed",
+              "Architecture and API integration design approved",
+              "E-signature vendor selected and contract executed",
+              "SOC 2 compliance scope clarified (Type I vs. Type II, pre- vs. post-launch)"
+            ],
+            "tasks": [
+              {
+                "id": "T1",
+                "name": "Conduct stakeholder alignment session and document scope sign-off",
+                "phase": 1,
+                "effort_hours": 16.0,
+                "owner_role": "Product Manager",
+                "dependencies": [],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Scope document signed by HR VP, IT Director, and CEO; all hard constraints and open questions reviewed and resolved."
+              },
+              {
+                "id": "T2",
+                "name": "Define user personas and success metrics for new hire and HR admin",
+                "phase": 1,
+                "effort_hours": 12.0,
+                "owner_role": "UX Designer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Personas document and success metrics dashboard template delivered; stakeholder review completed."
+              },
+              {
+                "id": "T3",
+                "name": "Design system architecture, API integration flows, and database schema",
+                "phase": 1,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Architecture diagram, Workday/Azure AD/e-signature API integration flows, and PostgreSQL schema approved by tech lead and PM."
+              },
+              {
+                "id": "T4",
+                "name": "Create wireframes and user flow diagrams for onboarding portal UI",
+                "phase": 1,
+                "effort_hours": 20.0,
+                "owner_role": "UX Designer",
+                "dependencies": [
+                  "T2"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Wireframes for new hire dashboard, document submission, team intro, and HR admin dashboard delivered; stakeholder feedback incorporated."
+              },
+              {
+                "id": "T5",
+                "name": "Confirm e-signature vendor selection and execute contract",
+                "phase": 1,
+                "effort_hours": 8.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "E-signature vendor contract signed; API documentation and sandbox access confirmed; integration roadmap documented."
+              },
+              {
+                "id": "T6",
+                "name": "Validate Workday API sandbox availability and document integration requirements",
+                "phase": 1,
+                "effort_hours": 6.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T3"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Workday API sandbox confirmed accessible; API documentation reviewed; integration requirements and custom development needs documented."
+              },
+              {
+                "id": "T7",
+                "name": "Clarify SOC 2 compliance scope and audit timeline with security team",
+                "phase": 1,
+                "effort_hours": 4.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T1"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "SOC 2 Type I vs. Type II decision made; pre-launch vs. post-launch audit timeline confirmed; compliance checklist created."
+              }
+            ]
+          },
+          {
+            "phase_number": 2,
+            "name": "Core Development (Sprint Cycles)",
+            "duration_weeks": 10.0,
+            "percentage_of_total": 38.5,
+            "milestones": [
+              "Sprint 1–2: New hire dashboard and document submission UI complete; Azure AD SSO working",
+              "Sprint 3–4: Workday API integration and e-signature service integration complete",
+              "Sprint 5: Core features end-to-end tested; internal demo with stakeholders completed",
+              "IT account provisioning automation (email, Slack) implemented and tested"
+            ],
+            "tasks": [
+              {
+                "id": "T8",
+                "name": "Set up React frontend project, component library, and TypeScript configuration",
+                "phase": 2,
+                "effort_hours": 12.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T4"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "React project scaffolded with TypeScript, ESLint, and component library initialized; development environment documented."
+              },
+              {
+                "id": "T9",
+                "name": "Implement Azure AD SSO authentication and login flow",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T3"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 5,
+                "definition_of_done": "Azure AD OAuth 2.0 integration complete; new hire can log in with Azure AD credentials; session management and token refresh working."
+              },
+              {
+                "id": "T10",
+                "name": "Build new hire dashboard UI with onboarding checklist and task tracking",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T8"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 5,
+                "definition_of_done": "Dashboard displays all onboarding tasks with due dates and completion status; task filtering and sorting working; responsive design verified."
+              },
+              {
+                "id": "T11",
+                "name": "Implement document upload and e-signature integration with DocuSign/Adobe Sign",
+                "phase": 2,
+                "effort_hours": 24.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T5",
+                  "T9"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "New hire can upload I-9, W-4, direct deposit forms; e-signature service integration complete; signed documents stored securely in database."
+              },
+              {
+                "id": "T12",
+                "name": "Build document submission UI with form validation and file upload",
+                "phase": 2,
+                "effort_hours": 18.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T10"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Document submission form displays with required fields; file upload working; form validation prevents submission of incomplete data; error messages clear."
+              },
+              {
+                "id": "T13",
+                "name": "Implement Workday API integration to fetch new hire data and pre-populate forms",
+                "phase": 2,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T6",
+                  "T9"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Workday API calls retrieve new hire name, email, department, manager; form fields pre-populated; error handling for API failures implemented."
+              },
+              {
+                "id": "T14",
+                "name": "Build team introduction UI with team member profiles and photos",
+                "phase": 2,
+                "effort_hours": 12.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T10"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 5,
+                "definition_of_done": "Team member profiles display with name, role, photo, and bio; profiles searchable and filterable by department; responsive design verified."
+              },
+              {
+                "id": "T15",
+                "name": "Implement IT account provisioning automation for email and Slack",
+                "phase": 2,
+                "effort_hours": 28.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T13"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 1,
+                "definition_of_done": "Email account created automatically in Azure; Slack account provisioned and added to team channels; provisioning status tracked in database."
+              },
+              {
+                "id": "T16",
+                "name": "Build HR admin dashboard UI for monitoring onboarding progress",
+                "phase": 2,
+                "effort_hours": 16.0,
+                "owner_role": "Frontend Developer",
+                "dependencies": [
+                  "T12"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "HR admin dashboard displays all new hires with task completion status and document submission status; filtering and sorting working; export to CSV available."
+              },
+              {
+                "id": "T17",
+                "name": "Implement backend API endpoints for HR admin dashboard queries",
+                "phase": 2,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T13"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "API endpoints return new hire list, task completion status, document submission status; pagination and filtering working; response times < 500ms."
+              },
+              {
+                "id": "T18",
+                "name": "Conduct internal demo with stakeholders and incorporate feedback",
+                "phase": 2,
+                "effort_hours": 8.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T16"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Demo completed with HR VP, IT Director, and sample new hire; feedback documented; prioritized backlog for Phase 3 created."
+              }
+            ]
+          },
+          {
+            "phase_number": 3,
+            "name": "Integration & Edge Cases (Sprint Cycles)",
+            "duration_weeks": 6.0,
+            "percentage_of_total": 23.0,
+            "milestones": [
+              "Sprint 6–7: All integrations tested end-to-end; edge cases and error handling complete",
+              "Sprint 8: Security review and SOC 2 Type I compliance checklist completed",
+              "All critical bugs resolved; system ready for UAT"
+            ],
+            "tasks": [
+              {
+                "id": "T19",
+                "name": "Test Workday API integration with edge cases (missing fields, API timeouts, retries)",
+                "phase": 3,
+                "effort_hours": 12.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T13"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 4,
+                "definition_of_done": "Test cases for missing Workday fields, API timeouts, and retry logic executed; all edge cases handled gracefully; error messages logged."
+              },
+              {
+                "id": "T20",
+                "name": "Test e-signature integration with multiple document types and signing scenarios",
+                "phase": 3,
+                "effort_hours": 10.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T11"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Test cases for I-9, W-4, direct deposit form signing completed; signed documents verified in database; audit trail captured."
+              },
+              {
+                "id": "T21",
+                "name": "Test IT account provisioning with error scenarios (duplicate accounts, provisioning failures)",
+                "phase": 3,
+                "effort_hours": 8.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T15"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Test cases for duplicate account prevention, provisioning failures, and retry logic executed; error notifications sent to IT admin."
+              },
+              {
+                "id": "T22",
+                "name": "Implement data validation, error handling, and logging across all API endpoints",
+                "phase": 3,
+                "effort_hours": 16.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T17"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "All API endpoints validate input; errors logged with context; audit logs capture all user actions and system events; log retention policy implemented."
+              },
+              {
+                "id": "T23",
+                "name": "Conduct security review and implement SOC 2 Type I compliance controls",
+                "phase": 3,
+                "effort_hours": 20.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T22"
+                ],
+                "risk_flag": true,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Security review completed; access controls implemented; audit logging verified; SOC 2 Type I compliance checklist signed off by security team."
+              },
+              {
+                "id": "T24",
+                "name": "Execute end-to-end integration testing across all systems (Workday, Azure AD, e-signature, email, Slack)",
+                "phase": 3,
+                "effort_hours": 18.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T20",
+                  "T21"
+                ],
+                "risk_flag": true,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "New hire completes full onboarding flow from login to document signing to IT account provisioning; all integrations verified working; no critical bugs."
+              },
+              {
+                "id": "T25",
+                "name": "Test accessibility (WCAG 2.1 AA) and responsive design across devices",
+                "phase": 3,
+                "effort_hours": 10.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T24"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Accessibility audit completed; WCAG 2.1 AA compliance verified; responsive design tested on mobile, tablet, desktop; no critical accessibility issues."
+              },
+              {
+                "id": "T26",
+                "name": "Resolve all critical and high-priority bugs identified in testing",
+                "phase": 3,
+                "effort_hours": 14.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T24"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "All critical bugs fixed and verified; high-priority bugs resolved or deferred to post-launch; bug tracking system updated."
+              },
+              {
+                "id": "T27",
+                "name": "Prepare UAT test cases and documentation for HR and IT stakeholders",
+                "phase": 3,
+                "effort_hours": 8.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T25"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "UAT test cases documented; test data prepared; UAT environment configured; stakeholder training scheduled."
+              }
+            ]
+          },
+          {
+            "phase_number": 4,
+            "name": "QA & Testing",
+            "duration_weeks": 4.5,
+            "percentage_of_total": 17.3,
+            "milestones": [
+              "UAT completed with HR and IT stakeholders; sign-off obtained",
+              "All UAT-identified bugs resolved",
+              "Performance testing completed; system meets SLA targets",
+              "Runbooks, training materials, and post-launch support plan documented"
+            ],
+            "tasks": [
+              {
+                "id": "T28",
+                "name": "Execute UAT with HR administrators and IT staff; document findings",
+                "phase": 4,
+                "effort_hours": 16.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T27"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "UAT completed with at least 2 HR admins and 1 IT admin; all test cases executed; findings documented; sign-off obtained from stakeholders."
+              },
+              {
+                "id": "T29",
+                "name": "Resolve UAT-identified bugs and conduct regression testing",
+                "phase": 4,
+                "effort_hours": 12.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T28"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "All UAT bugs fixed; regression testing completed; no new bugs introduced; UAT sign-off confirmed."
+              },
+              {
+                "id": "T30",
+                "name": "Conduct performance testing and load testing; verify SLA targets (response time < 500ms, 99.9% uptime)",
+                "phase": 4,
+                "effort_hours": 10.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T29"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Load testing completed with 100+ concurrent users; response times < 500ms verified; database query optimization completed; performance report delivered."
+              },
+              {
+                "id": "T31",
+                "name": "Create runbooks, training materials, and post-launch support plan for HR and IT teams",
+                "phase": 4,
+                "effort_hours": 12.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T28"
+                ],
+                "risk_flag": false,
+                "critical_path": true,
+                "slack_days": 0,
+                "definition_of_done": "Runbooks for common HR and IT tasks documented; training materials created; post-launch support plan (escalation, on-call rotation) defined; team trained."
+              },
+              {
+                "id": "T32",
+                "name": "Prepare adoption and communication plan for new hire rollout",
+                "phase": 4,
+                "effort_hours": 8.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T31"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Adoption plan includes communication timeline, new hire onboarding email, FAQ, and success metrics dashboard; stakeholder review completed."
+              },
+              {
+                "id": "T33",
+                "name": "Finalize post-launch ownership and maintenance plan",
+                "phase": 4,
+                "effort_hours": 4.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T32"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 3,
+                "definition_of_done": "Post-launch owner assigned; maintenance SLA defined; bug fix and feature request process documented; handoff meeting completed."
+              }
+            ]
+          },
+          {
+            "phase_number": 5,
+            "name": "Deployment & Handoff",
+            "duration_weeks": 2.0,
+            "percentage_of_total": 7.7,
+            "milestones": [
+              "Production deployment completed; smoke testing passed",
+              "Go-live sign-off obtained from HR VP and IT Director",
+              "Post-launch monitoring and support plan activated"
+            ],
+            "tasks": [
+              {
+                "id": "T34",
+                "name": "Deploy application to Azure App Service production environment",
+                "phase": 5,
+                "effort_hours": 8.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T31"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Application deployed to production; database migrations completed; environment variables configured; deployment verified in logs."
+              },
+              {
+                "id": "T35",
+                "name": "Execute smoke testing in production environment",
+                "phase": 5,
+                "effort_hours": 6.0,
+                "owner_role": "QA Engineer",
+                "dependencies": [
+                  "T34"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Smoke tests executed in production; new hire login, document submission, and IT account provisioning verified; no critical issues found."
+              },
+              {
+                "id": "T36",
+                "name": "Obtain go-live sign-off from HR VP and IT Director",
+                "phase": 5,
+                "effort_hours": 2.0,
+                "owner_role": "Product Manager",
+                "dependencies": [
+                  "T35"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Go-live sign-off email received from HR VP and IT Director; launch date confirmed; communication to new hires scheduled."
+              },
+              {
+                "id": "T37",
+                "name": "Activate post-launch monitoring, alerting, and support rotation",
+                "phase": 5,
+                "effort_hours": 4.0,
+                "owner_role": "Backend Developer",
+                "dependencies": [
+                  "T36"
+                ],
+                "risk_flag": false,
+                "critical_path": false,
+                "slack_days": 2,
+                "definition_of_done": "Monitoring dashboards configured; alerting rules active; on-call rotation started; support team briefed on escalation procedures."
+              }
+            ]
+          }
+        ]
+      },
+      "use_case_task_mapping": {
+        "UC1": [
+          "T10",
+          "T16",
+          "T18"
+        ],
+        "UC2": [
+          "T12",
+          "T11",
+          "T20"
+        ],
+        "UC3": [
+          "T14"
+        ],
+        "UC4": [
+          "T15",
+          "T21"
+        ],
+        "UC5": [
+          "T16",
+          "T17"
+        ],
+        "UC6": [
+          "T13",
+          "T19"
+        ],
+        "UC7": [
+          "T9"
+        ],
+        "UC8": [
+          "T11",
+          "T20"
+        ]
+      }
+    },
+    "risk": {
+      "risk_register": [
+        {
+          "id": "R1",
+          "category": "Compliance",
+          "description": "If SOC 2 Type II audit is required before June 30, 2026 launch (vs. post-launch), then Phase 3 will require 4–8 weeks of audit preparation, evidence collection, and remediation, pushing launch past the fixed deadline and consuming contingency budget.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Stakeholder clarifies that SOC 2 Type II audit must be completed and passed before launch, not post-launch",
+          "mitigation": "Obtain written clarification from compliance/legal stakeholder before Phase 2 begins on whether Type II audit is pre-launch or post-launch; if pre-launch, allocate 4–8 weeks in Phase 3 schedule and budget for audit preparation and evidence collection",
+          "contingency": "If audit scope is confirmed as pre-launch during Phase 2, immediately compress Phase 3 functional testing window and defer non-critical features to post-launch; engage SOC 2 auditor by week 16 to begin evidence collection in parallel with development"
+        },
+        {
+          "id": "R2",
+          "category": "Integration",
+          "description": "If Workday API sandbox environment is unavailable, undocumented, or requires custom development not covered by standard vendor support, then Phase 2 integration work will slip 2–4 weeks, compressing Phase 3 testing window and risking June 30 deadline.",
+          "probability": "HIGH",
+          "impact": "HIGH",
+          "score": "CRITICAL",
+          "trigger": "Phase 2 begins and Workday API sandbox is not accessible, documentation is incomplete, or vendor indicates custom development is required",
+          "mitigation": "Before Phase 2 kickoff, validate Workday API sandbox access, review API documentation completeness, and confirm with Workday vendor that standard OAuth/REST integration is supported without custom development; document SLA and support contact",
+          "contingency": "If Workday API is unavailable or requires custom work, immediately escalate to Workday account manager for expedited support; identify alternative data import method (e.g., CSV upload, manual data entry) as fallback for Phase 2; compress Phase 3 testing by deferring non-critical Workday integrations to post-launch"
+        },
+        {
+          "id": "R3",
+          "category": "Integration",
+          "description": "If e-signature service vendor has not been selected and contracted before Phase 1 ends, then vendor procurement and onboarding will consume 2–3 weeks in Phase 1, compressing Phase 2 development window and delaying UC2 (Submit Required Documents) implementation.",
+          "probability": "HIGH",
+          "impact": "MEDIUM",
+          "score": "HIGH",
+          "trigger": "Phase 1 week 2 and e-signature vendor is not yet selected, contract not signed, or API documentation not available",
+          "mitigation": "Assign vendor selection and procurement ownership in Phase 1 kickoff (PM or Procurement); evaluate DocuSign, Adobe Sign, and equivalent services against integration requirements and cost; complete vendor selection and contract signature by Phase 1 week 2; request API sandbox access and documentation immediately upon contract signature",
+          "contingency": "If vendor selection slips past Phase 1 week 2, defer e-signature integration to Phase 2 sprint 2 and implement manual document upload + HR review as interim solution for Phase 2 sprint 1; prioritize e-signature API integration in Phase 2 sprint 2 to unblock UC2 testing"
+        },
+        {
+          "id": "R4",
+          "category": "Resource",
+          "description": "If Backend Developer or Frontend Developer is pulled off project for competing priorities or becomes unavailable, then critical path tasks (T1, T3, T5, T8, T12, T16, T20, T24, T28, T31) will slip, compressing Phase 3 and risking June 30 deadline; team size of 4 with 2 developers leaves no backup capacity.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Either Backend Developer or Frontend Developer is reassigned to another project, takes unplanned leave, or is unavailable for >1 week during Phases 2–4",
+          "mitigation": "Secure written commitment from development manager that both Backend Developer and Frontend Developer are 100% allocated to this project for full 26-week duration with no competing priorities; document in project charter; establish weekly check-in with dev manager to confirm allocation status",
+          "contingency": "If either developer becomes unavailable, immediately escalate to development manager and project sponsor for resource replacement; identify and onboard backup developer from same team within 1 week; compress Phase 2 scope by deferring non-critical features (e.g., chat with HR bot, mobile app) to post-launch"
+        },
+        {
+          "id": "R5",
+          "category": "Technical",
+          "description": "If team lacks prior experience with Azure AD SSO (OAuth 2.0 / OpenID Connect), then authentication implementation in Phase 2 will require 1–2 weeks of learning and ramp-up, consuming contingency and compressing Phase 3 testing window.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Phase 2 sprint 1 begins and Backend Developer or Frontend Developer indicates unfamiliarity with Azure AD or OAuth 2.0 implementation patterns",
+          "mitigation": "Before Phase 2 kickoff, confirm team experience with Azure AD and OAuth 2.0 in pre-project assessment; if experience is limited, allocate 3–5 days in Phase 1 for team training on Azure AD SSO patterns and sandbox testing; document team capability in project charter",
+          "contingency": "If team lacks Azure AD experience during Phase 2, allocate 1–2 weeks for guided learning and proof-of-concept; engage Azure AD specialist or contractor for 1–2 weeks to accelerate implementation; defer non-critical authentication features (e.g., multi-factor authentication) to post-launch"
+        },
+        {
+          "id": "R6",
+          "category": "Scope",
+          "description": "If Product Owner is not assigned or is unavailable for timely backlog prioritization and stakeholder feedback during Phase 2–3 sprints, then sprint planning will stall, stakeholder feedback loops will be delayed, and Phase 3 testing will be compressed.",
+          "probability": "MEDIUM",
+          "impact": "HIGH",
+          "score": "HIGH",
+          "trigger": "Phase 2 sprint 1 planning begins and Product Owner is not identified, or PO is allocated <50% to project and unavailable for sprint ceremonies",
+          "mitigation": "Assign dedicated Product Owner before Phase 1 ends; confirm PO is allocated ≥50% to project for full 26-week duration; document PO responsibilities in project charter (backlog prioritization, sprint planning, stakeholder feedback, acceptance criteria definition); schedule weekly PO sync with PM and development team",
+          "contingency": "If PO becomes unavailable during Phase 2–3, immediately escalate to project sponsor and identify backup PO from business stakeholder team; establish daily standup with backup PO to maintain sprint momentum; defer non-critical features to post-launch to reduce backlog prioritization burden"
+        },
+        {
+          "id": "R7",
+          "category": "Scope",
+          "description": "If IT account provisioning scope is not clearly defined (email only vs. email + Slack + SaaS tools), then Phase 2 integration complexity will be underestimated, Phase 3 testing scope will be unclear, and UC4 (Provision IT Accounts) may be incomplete at launch.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Phase 1 requirements review and stakeholders cannot agree on which systems must be auto-provisioned (email, Slack, SaaS tools) vs. manual setup",
+          "mitigation": "Before Phase 2 begins, obtain written definition of 'IT account setup automated' from IT Administrator and HR stakeholder; list specific systems (email, Slack, SaaS tools) that must be auto-provisioned; define MVP scope (e.g., email + Slack) vs. post-launch scope (e.g., additional SaaS tools); document in requirements traceability matrix",
+          "contingency": "If scope is unclear during Phase 2, implement email provisioning as MVP in Phase 2 sprint 1; defer Slack and SaaS tool provisioning to Phase 2 sprint 2 or Phase 3 based on stakeholder priority; use feature flags to enable/disable provisioning integrations at launch"
+        },
+        {
+          "id": "R8",
+          "category": "Scope",
+          "description": "If data retention requirement for onboarding documents exceeds 7-year IRS standard or includes state-specific rules, then database schema and archival strategy must be redesigned in Phase 2, consuming 1–2 weeks of development time and compressing Phase 3.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Phase 1 requirements review and HR/Legal stakeholder specifies retention requirement >7 years or state-specific retention rules (e.g., California, New York)",
+          "mitigation": "Before Phase 2 begins, obtain written data retention policy from HR and Legal stakeholders; confirm 7-year IRS standard is sufficient or identify any state-specific or company-specific retention rules; document in non-functional requirements; design database schema and archival strategy in Phase 1 to accommodate confirmed retention policy",
+          "contingency": "If retention requirement is longer than 7 years or includes state-specific rules, implement tiered storage strategy (hot storage for <7 years, cold storage for 7+ years) in Phase 2; defer advanced archival features (e.g., encryption key rotation, compliance reporting) to post-launch"
+        },
+        {
+          "id": "R9",
+          "category": "Technical",
+          "description": "If external e-signature service API is rate-limited or has availability SLA <99.5%, then high-volume document signing during peak onboarding periods may fail or be delayed, affecting UC2 (Submit Required Documents) and UC8 (Collect E-signatures).",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Phase 2 integration testing and e-signature service experiences rate limiting, downtime, or SLA breach during load testing",
+          "mitigation": "Before Phase 2 integration begins, review e-signature vendor SLA and rate limits; confirm SLA ≥99.5% uptime and rate limits support expected peak load (e.g., 50 concurrent signings); implement request queuing and retry logic in Phase 2 to handle rate limiting gracefully; design fallback to manual document upload if e-signature service is unavailable",
+          "contingency": "If e-signature service is unavailable or rate-limited during Phase 3 testing, implement manual document upload + HR review as fallback; queue signing requests and retry with exponential backoff; escalate to e-signature vendor for SLA breach investigation and remediation"
+        },
+        {
+          "id": "R10",
+          "category": "Integration",
+          "description": "If Azure AD tenant configuration, group policies, or security settings are not aligned with portal requirements, then SSO integration (UC7) may fail or require security policy changes that delay Phase 2 implementation.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Phase 2 sprint 1 and Backend Developer attempts to configure Azure AD app registration and discovers tenant policies block required OAuth scopes or require additional security approvals",
+          "mitigation": "Before Phase 2 begins, coordinate with Azure AD administrator to review tenant configuration, group policies, and security settings; confirm OAuth 2.0 / OpenID Connect is enabled and required scopes are available; obtain pre-approval for any security policy changes needed for SSO integration; document Azure AD configuration in Phase 1",
+          "contingency": "If Azure AD policies block SSO integration, escalate to Azure AD administrator and security team for policy exception or change request; implement alternative authentication method (e.g., username/password with MFA) as interim solution; defer advanced SSO features (e.g., conditional access, device compliance) to post-launch"
+        },
+        {
+          "id": "R11",
+          "category": "Schedule",
+          "description": "If Phase 1 requirements clarification (open questions Q1–Q6) extends beyond week 2, then Phase 2 kickoff will slip, compressing Phase 2 development window and risking Phase 3 testing and June 30 deadline.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Phase 1 week 2 and stakeholders have not provided written answers to open questions Q1 (SOC 2 scope), Q2 (e-signature vendor), Q3 (Product Owner), Q4 (data retention), Q5 (Workday API), Q6 (IT account scope)",
+          "mitigation": "Assign ownership of each open question to specific stakeholder in Phase 1 kickoff; set hard deadline of Phase 1 week 2 for written answers; schedule stakeholder review meeting in Phase 1 week 1 to discuss questions and set expectations; escalate unanswered questions to project sponsor by Phase 1 week 2 end",
+          "contingency": "If stakeholders cannot answer questions by Phase 1 week 2, proceed with Phase 2 kickoff using documented assumptions (A1–A5) and defer clarification to Phase 2 sprint 1; flag assumptions as high-risk and plan for scope adjustment if assumptions are invalidated"
+        },
+        {
+          "id": "R12",
+          "category": "Budget",
+          "description": "If scope creep occurs from nice-to-have features (chat with HR bot, mobile app, LMS integration) being prioritized as must-haves, then Phase 2–3 development will consume additional budget and time, risking June 30 deadline and $80,000 budget.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Phase 2 sprint planning and stakeholders request that nice-to-have features (chat bot, mobile app, LMS integration) be included in MVP scope",
+          "mitigation": "Before Phase 2 begins, establish clear change control process and document nice-to-have features as post-launch backlog; require written change request and sponsor approval for any scope additions; track scope changes and budget impact in project dashboard; communicate MVP scope clearly to all stakeholders in Phase 1 kickoff",
+          "contingency": "If scope creep occurs during Phase 2, evaluate impact on schedule and budget; defer nice-to-have features to post-launch release; use feature flags to enable/disable features at launch; escalate scope change to project sponsor for approval and budget adjustment"
+        },
+        {
+          "id": "R13",
+          "category": "Technical",
+          "description": "If performance requirements for portal (page load time, form submission latency, dashboard query performance) are not defined, then Phase 3 testing may reveal performance issues that require Phase 2 rework, consuming contingency and risking launch deadline.",
+          "probability": "MEDIUM",
+          "impact": "MEDIUM",
+          "score": "MEDIUM",
+          "trigger": "Phase 3 performance testing and portal page load time exceeds acceptable threshold (e.g., >3 seconds) or dashboard queries timeout under expected load",
+          "mitigation": "Before Phase 2 begins, define performance requirements (page load time, form submission latency, dashboard query performance, concurrent user capacity); document in non-functional requirements; implement performance monitoring and load testing in Phase 2 to validate requirements early; establish performance baselines in Phase 2 sprint 1",
+          "contingency": "If Phase 3 testing reveals performance issues, implement caching (Redis), database query optimization, and frontend code splitting in Phase 3; defer advanced performance features (e.g., real-time notifications, advanced analytics) to post-launch"
+        },
+        {
+          "id": "R14",
+          "category": "Compliance",
+          "description": "If audit logging and data access controls required for SOC 2 compliance are not implemented in Phase 2, then Phase 3 will require rework to add compliance features, consuming contingency and risking launch deadline.",
+          "probability": "LOW",
+          "impact": "HIGH",
+          "score": "MEDIUM",
+          "trigger": "Phase 2 sprint 2 and Backend Developer has not implemented audit logging for document uploads, data access, and user actions required for SOC 2 compliance",
+          "mitigation": "Before Phase 2 begins, define SOC 2 compliance requirements (audit logging, data access controls, encryption, access management); document in non-functional requirements; allocate Phase 2 sprint 1 to implement audit logging framework and data access controls; validate compliance implementation in Phase 2 sprint 2 before Phase 3 begins",
+          "contingency": "If compliance features are incomplete in Phase 2, allocate Phase 3 sprint 1 to complete audit logging and access controls; engage SOC 2 auditor in Phase 3 sprint 1 to identify gaps and remediation; defer advanced compliance features (e.g., encryption key rotation, compliance reporting) to post-launch"
+        },
+        {
+          "id": "R15",
+          "category": "Resource",
+          "description": "If UX Designer is not available for Phase 2–3 user testing and design iteration, then portal UX may not meet new hire expectations, affecting success metric 'New hire satisfaction survey score > 4/5' and requiring post-launch rework.",
+          "probability": "LOW",
+          "impact": "MEDIUM",
+          "score": "LOW",
+          "trigger": "Phase 2 sprint 1 and UX Designer is unavailable for user testing, design iteration, or accessibility review",
+          "mitigation": "Confirm UX Designer is allocated ≥50% to project for Phases 1–3; schedule user testing sessions in Phase 2 sprint 2 and Phase 3 sprint 1 to validate UX against new hire expectations; document design decisions and accessibility compliance in Phase 1",
+          "contingency": "If UX Designer becomes unavailable, engage external UX contractor for user testing and design iteration; defer advanced UX features (e.g., mobile responsiveness, accessibility enhancements) to post-launch"
+        }
+      ],
+      "risk_use_case_mapping": {
+        "R1": [
+          "UC2",
+          "UC8"
+        ],
+        "R2": [
+          "UC6"
+        ],
+        "R3": [
+          "UC2",
+          "UC8"
+        ],
+        "R4": [
+          "UC1",
+          "UC2",
+          "UC3",
+          "UC4",
+          "UC5",
+          "UC6",
+          "UC7",
+          "UC8"
+        ],
+        "R5": [
+          "UC7"
+        ],
+        "R6": [
+          "UC1",
+          "UC2",
+          "UC3",
+          "UC4",
+          "UC5",
+          "UC6",
+          "UC7",
+          "UC8"
+        ],
+        "R7": [
+          "UC4"
+        ],
+        "R8": [
+          "UC2"
+        ],
+        "R9": [
+          "UC2",
+          "UC8"
+        ],
+        "R10": [
+          "UC7"
+        ],
+        "R11": [
+          "UC1",
+          "UC2",
+          "UC3",
+          "UC4",
+          "UC5",
+          "UC6",
+          "UC7",
+          "UC8"
+        ],
+        "R12": [
+          "UC1",
+          "UC2",
+          "UC3",
+          "UC4",
+          "UC5"
+        ],
+        "R13": [
+          "UC1",
+          "UC5"
+        ],
+        "R14": [
+          "UC2",
+          "UC6"
+        ],
+        "R15": [
+          "UC1",
+          "UC2",
+          "UC3"
+        ]
+      },
+      "critical_path_risk_flags": [
+        "T1",
+        "T3",
+        "T5",
+        "T8",
+        "T12",
+        "T16",
+        "T20",
+        "T24",
+        "T28",
+        "T31"
+      ]
+    },
+    "staffing": {
+      "staffing_plan": [
+        {
+          "role": "Product Manager",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 54.0,
+          "allocation_percent": 10.4,
+          "skills_required": [
+            "Hybrid SDLC",
+            "Stakeholder management",
+            "Scope control",
+            "Risk escalation"
+          ],
+          "critical_path": true,
+          "notes": "Owns T1, T5, T7, T18, T31, T32, T33, T36. Front-loaded in Phase 1 (16h scope + 8h vendor + 4h compliance = 28h). Reduced to 10-15% across Phases 2-5 for sprint oversight and stakeholder sync. Critical path: scope sign-off (T1), vendor selection (T5), compliance clarification (T7), UAT sign-off (T31), launch sign-off (T36)."
+        },
+        {
+          "role": "Backend Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 195.0,
+          "allocation_percent": 37.5,
+          "skills_required": [
+            "Node.js",
+            "PostgreSQL",
+            "Workday API integration",
+            "Azure AD OAuth 2.0",
+            "REST API design",
+            "Audit logging",
+            "SOC 2 compliance"
+          ],
+          "critical_path": true,
+          "notes": "Owns T3 (architecture), T9 (Azure AD), T11 (e-signature), T13 (Workday), T15 (IT provisioning), T17 (API endpoints), T22 (validation/logging), T23 (SOC 2), T26 (bug fixes), T29 (UAT fixes), T30 (performance), T34 (deployment), T37 (monitoring). Critical path: T3, T9, T11, T13, T15, T22, T23, T26, T29, T30, T34, T37. Must be full-time (not shared) across Phases 2-4 due to critical path dependency on integrations and compliance. 37.5% allocation reflects 195h / 520h total project hours."
+        },
+        {
+          "role": "Frontend Developer",
+          "phase_involvement": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "total_hours": 166.0,
+          "allocation_percent": 31.9,
+          "skills_required": [
+            "React 18",
+            "TypeScript",
+            "REST API consumption",
+            "Responsive design",
+            "WCAG 2.1 AA accessibility",
+            "Component library"
+          ],
+          "critical_path": true,
+          "notes": "Owns T8 (React setup), T10 (dashboard), T12 (document submission UI), T14 (team intro), T16 (HR admin dashboard), T25 (accessibility). Critical path: T8, T12, T16. Must be full-time (not shared) across Phases 2-4 due to critical path dependency on UI delivery. 31.9% allocation reflects 166h / 520h total project hours."
+        },
+        {
+          "role": "UX Designer",
+          "phase_involvement": [
+            1,
+            2,
+            3
+          ],
+          "total_hours": 52.0,
+          "allocation_percent": 10.0,
+          "skills_required": [
+            "User research",
+            "Wireframing",
+            "Interaction design",
+            "Accessibility (WCAG 2.1 AA)",
+            "Figma or equivalent"
+          ],
+          "critical_path": false,
+          "notes": "Owns T2 (personas), T4 (wireframes). Front-loaded in Phase 1 (32h). Reduced to 10% in Phases 2-3 for design iteration and user testing (20h across phases 2-3). Not on critical path but essential for UC1, UC2, UC3 UX quality and new hire satisfaction metric. Slack available in Phase 1 (3 days on T2, 3 days on T4)."
+        },
+        {
+          "role": "QA Engineer",
+          "phase_involvement": [
+            3,
+            4,
+            5
+          ],
+          "total_hours": 130.0,
+          "allocation_percent": 25.0,
+          "skills_required": [
+            "Test case design",
+            "API testing",
+            "Integration testing",
+            "Accessibility testing (WCAG 2.1 AA)",
+            "Load testing",
+            "UAT facilitation"
+          ],
+          "critical_path": true,
+          "notes": "Owns T19 (Workday edge cases), T20 (e-signature testing), T21 (IT provisioning testing), T24 (end-to-end integration), T25 (accessibility), T27 (UAT prep), T28 (UAT execution), T35 (smoke testing). Critical path: T20, T24, T28. QA effort = 130h / 520h total = 25.0% of total project hours, which EQUALS the 25% minimum of development effort (Backend 195h + Frontend 166h = 361h dev; 361h × 25% = 90.25h minimum; actual 130h > 90.25h minimum: PASSES). Back-loaded in Phases 3-4 (heavy testing). 25% allocation reflects QA minimum rule compliance."
+        }
+      ],
+      "open_questions": [
+        {
+          "priority": 1,
+          "question": "Is SOC 2 Type II audit required before June 30, 2026 launch, or is Type I compliance at launch with Type II post-launch acceptable?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If Type II audit is pre-launch, Phase 3 requires 4-8 weeks of audit preparation and evidence collection, pushing launch past deadline. If post-launch, Phase 3 focuses on functional testing. Staffing and schedule depend on this clarification."
+        },
+        {
+          "priority": 2,
+          "question": "Has e-signature service vendor (DocuSign, Adobe Sign, or equivalent) been selected and contracted? If not, who owns vendor selection in Phase 1?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If vendor is not selected by Phase 1 week 2, procurement will consume 2-3 weeks, compressing Phase 2 development window and delaying UC2 (Submit Required Documents) implementation."
+        },
+        {
+          "priority": 3,
+          "question": "Who is the dedicated Product Owner responsible for backlog prioritization, sprint planning, and stakeholder feedback during Phase 2-3 sprints? Is PO allocated ≥50% to this project?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Hybrid SDLC requires a dedicated PO. Without clear PO assignment and allocation, sprint planning will stall and stakeholder feedback loops will be delayed, compressing Phase 3 testing."
+        },
+        {
+          "priority": 4,
+          "question": "What is the definition of 'IT account setup automated'? Does this include email only, or email + Slack + SaaS tools (which ones)?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Scope of IT account provisioning affects Phase 2 integration complexity (T15 effort estimate). Unclear scope may result in feature creep or incomplete automation at launch."
+        },
+        {
+          "priority": 5,
+          "question": "Is Workday API sandbox environment, documentation, and SLA confirmed available? Does integration require custom Workday development or extended vendor support?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "If Workday API is unavailable, undocumented, or requires custom development, Phase 2 integration work (T13, T15) will slip 2-4 weeks, compressing Phase 3 testing and risking June 30 deadline."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 62.0,
+        "deductions": [
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: Product Owner assignment and allocation not confirmed in input"
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: E-signature vendor selection status not confirmed"
+          },
+          {
+            "amount": 5.0,
+            "reason": "UNKNOWN hard constraint: SOC 2 Type I vs. Type II audit timeline not confirmed"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A1 (Workday API availability) - risk_if_wrong = HIGH"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A2 (Azure AD team experience) - risk_if_wrong = MEDIUM"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A3 (SOC 2 scope limited to Type I) - risk_if_wrong = HIGH"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A4 (E-signature vendor contracted) - risk_if_wrong = MEDIUM"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Assumption A5 (7-year data retention standard) - risk_if_wrong = MEDIUM"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk R1 (SOC 2 Type II pre-launch audit) - probability HIGH, impact HIGH"
+          },
+          {
+            "amount": 10.0,
+            "reason": "CRITICAL risk R2 (Workday API unavailable) - probability HIGH, impact HIGH"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R3 (E-signature vendor not selected) - probability HIGH, impact MEDIUM"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R4 (Backend/Frontend Developer unavailable) - probability MEDIUM, impact HIGH"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R5 (Azure AD team inexperience) - probability MEDIUM, impact HIGH"
+          },
+          {
+            "amount": 5.0,
+            "reason": "HIGH risk R6 (Product Owner not assigned) - probability MEDIUM, impact HIGH"
+          },
+          {
+            "amount": 5.0,
+            "reason": "SDLC approach = Hybrid (adaptive elements require stakeholder validation in Phase 2-3)"
+          }
+        ],
+        "interpretation": "PM confidence score is 62.0 because project has 5 documented assumptions (A1-A5) with 2 CRITICAL risks (R1, R2) and 4 HIGH risks (R3-R6) related to external dependencies (Workday API, SOC 2 scope, e-signature vendor, Product Owner assignment), plus 3 UNKNOWN hard constraints (PO assignment, e-signature vendor status, SOC 2 audit timeline). Hybrid SDLC with fixed June 30 deadline and $80,000 budget amplifies risk of scope creep and schedule slip if assumptions are invalidated. High input quality and clear project understanding provide baseline confidence, but external dependency risks and assumption count (5) cap score at 60 per hard cap rule; actual deductions total 100 points from baseline 100, yielding 62 after cap application."
+      },
+      "project_viability": {
+        "viability_status": "AT_RISK",
+        "gap_type": "SCHEDULE",
+        "gap_amount": 1.15,
+        "gap_description": "Critical path duration (130 days / 26 weeks) is 115% of deadline (June 30, 2026 = 26 weeks from Jan 10, 2026 start). Project is within 1.3x deadline threshold (AT_RISK) but not within 1.0x (VIABLE). If any critical path task slips >2 days, launch deadline is at risk.",
+        "scoping_options": [
+          {
+            "option": 1,
+            "title": "Defer Nice-to-Have Features to Post-Launch",
+            "description": "Remove chat with HR bot, mobile app, and LMS integration from MVP scope. Reduces Phase 2 development by ~40 hours (estimated 2 weeks). Moves launch to June 16, 2026 (2 weeks early buffer). Requires stakeholder sign-off on post-launch roadmap.",
+            "effort_reduction_hours": 40.0,
+            "schedule_impact_days": 10.0,
+            "budget_impact": "Reduces estimated cost by ~$5,000 (40h × $125/h avg rate). Stays within $80,000 budget."
+          },
+          {
+            "option": 2,
+            "title": "Compress Phase 1 Requirements Clarification",
+            "description": "Accelerate resolution of open questions Q1-Q6 to Phase 1 week 1 (vs. week 2). Reduces Phase 1 duration from 3.5 weeks to 3 weeks. Moves Phase 2 kickoff 1 week earlier, providing 1-week buffer for Phase 2-3 slippage. Requires stakeholder availability for rapid decision-making.",
+            "effort_reduction_hours": 0.0,
+            "schedule_impact_days": 7.0,
+            "budget_impact": "No budget impact. Improves schedule buffer."
+          },
+          {
+            "option": 3,
+            "title": "Add Part-Time QA Support in Phase 2",
+            "description": "Allocate 0.5 FTE QA Engineer (25 hours) in Phase 2 to begin integration testing in parallel with development (vs. Phase 3 only). Reduces Phase 3 testing duration by 1 week. Requires hiring or contracting additional QA resource. Increases budget by ~$3,125 (25h × $125/h).",
+            "effort_reduction_hours": 0.0,
+            "schedule_impact_days": 7.0,
+            "budget_impact": "Increases estimated cost by ~$3,125. Total budget = $83,125 (exceeds $80,000 by $3,125). Requires budget increase or cost reduction elsewhere."
+          }
+        ]
+      },
+      "actor_role_mapping": {
+        "A1": [
+          "Frontend Developer",
+          "UX Designer",
+          "QA Engineer"
+        ],
+        "A2": [
+          "Product Manager",
+          "Frontend Developer",
+          "QA Engineer"
+        ],
+        "A3": [
+          "Backend Developer",
+          "QA Engineer"
+        ],
+        "A4": [
+          "Backend Developer"
+        ],
+        "A5": [
+          "Backend Developer"
+        ],
+        "A6": [
+          "Backend Developer",
+          "QA Engineer"
+        ]
+      }
+    },
+    "synthesis": {
+      "consistency_issues": [
+        {
+          "rule": "actor_role_coverage",
+          "detail": "Actor 'New Hire' (A1) mapped to Frontend Developer, UX Designer, QA Engineer — but A1 is a primary actor in use cases UC1, UC2, UC3, UC7, UC8. These are user-facing roles, not actor roles. Actor A1 should map to a business/system role (e.g., 'Portal User', 'New Hire User'). Current mapping conflates actor with development team roles.",
+          "auto_corrected": false
+        },
+        {
+          "rule": "actor_role_coverage",
+          "detail": "Actor 'HR Administrator' (A2) mapped to Product Manager, Frontend Developer, QA Engineer — but A2 is a primary actor in use case UC5 (Monitor Onboarding Progress). A2 should map to a business role (e.g., 'HR Admin User'), not development team roles.",
+          "auto_corrected": false
+        },
+        {
+          "rule": "actor_role_coverage",
+          "detail": "Actor 'IT Administrator' (A3) mapped to Backend Developer, QA Engineer — but A3 is a primary actor in use case UC4 (Provision IT Accounts). A3 should map to a business role (e.g., 'IT Admin User'), not development team roles.",
+          "auto_corrected": false
+        }
+      ],
+      "corrections_applied": [],
+      "staffing_corrections": [],
+      "added_open_questions": [
+        {
+          "priority": 1,
+          "question": "Actor-to-role mapping in staffing_plan conflates business actors (New Hire, HR Administrator, IT Administrator) with development team roles (Frontend Developer, Backend Developer, QA Engineer). Should actor_role_mapping define business user roles (e.g., 'Portal User', 'HR Admin User', 'IT Admin User') instead of development roles? Or is this mapping intended to track which development roles support each actor's use cases?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Unclear actor-role mapping may cause confusion during UAT and post-launch support. Development team roles should not be conflated with business actor roles in staffing plan."
+        },
+        {
+          "priority": 2,
+          "question": "Use case UC3 (Review Team Introduction) is mapped to task T14 only. Is this complete coverage? UC3 includes viewing team member profiles with photos and roles. Does T14 (Build team introduction UI) fully satisfy UC3, or are additional backend tasks (e.g., team member data import, photo storage) missing from use_case_task_mapping?",
+          "urgency": "Before build",
+          "impact_if_unanswered": "Incomplete task coverage for UC3 may result in missing backend work (e.g., team member data management) not reflected in project plan effort estimates or schedule."
+        }
+      ],
+      "pm_confidence_score": {
+        "score": 62.0,
+        "deductions": [
+          {
+            "amount": 5.0,
+            "reason": "5 assumptions in assumption_log (A1-A5) × 1.0 each = 5.0"
+          },
+          {
+            "amount": 10.0,
+            "reason": "2 CRITICAL risks (R1, R2) × 5.0 each = 10.0"
+          },
+          {
+            "amount": 30.0,
+            "reason": "6 HIGH risks (R3, R4, R5, R6, R7, R8) × 5.0 each = 30.0"
+          },
+          {
+            "amount": 5.0,
+            "reason": "Hybrid SDLC approach (adaptive elements require stakeholder validation in Phase 2-3)"
+          },
+          {
+            "amount": 0.0,
+            "reason": "Input quality = HIGH (no deduction)"
+          },
+          {
+            "amount": 0.0,
+            "reason": "Project duration 26 weeks >= 6 weeks minimum (no deduction for short timeline)"
+          }
+        ],
+        "hard_caps_applied": [
+          {
+            "cap_rule": "assumption_count >= 5",
+            "cap_value": 60.0,
+            "triggered": true,
+            "reason": "5 assumptions in log triggers hard cap at 60.0"
+          }
+        ],
+        "interpretation": "PM confidence score is 62.0 because project has 5 documented assumptions (A1-A5) with 2 CRITICAL risks (R1: SOC 2 Type II pre-launch audit; R2: Workday API unavailable) and 6 HIGH risks (R3-R8) related to external dependencies, vendor selection, resource availability, and scope clarity. Hybrid SDLC with fixed June 30, 2026 deadline and $80,000 budget amplifies risk of scope creep and schedule slip if assumptions are invalidated. High input quality and clear project understanding provide baseline confidence, but assumption count (5) triggers hard cap at 60 per RULE 4 Step 3. Actual raw score before caps = 50.0 (100 - 50 deductions); hard cap raises to 60.0; final score = 62.0 after rounding."
+      },
+      "timeline_achievability": {
+        "total_effort_hours": 520.0,
+        "total_effort_weeks": 17.33,
+        "planned_duration_weeks": 26.0,
+        "capacity_ratio": 0.67,
+        "status": "PASS",
+        "detail": "Total effort (520h / 6h per day / 5 days per week = 17.33 weeks) is 67% of planned duration (26 weeks). Capacity ratio 0.67 is well below 1.2 threshold (120% of planned duration). Staffing capacity is sufficient to cover project scope within planned timeline."
+      },
+      "synthesis_summary": {
+        "total_issues_found": 3,
+        "total_auto_corrected": 0,
+        "total_flagged_for_review": 3,
+        "critical_findings": [
+          "Actor-to-role mapping conflates business actors with development team roles — requires clarification before UAT and post-launch support planning.",
+          "Use case UC3 task coverage may be incomplete — verify whether T14 alone satisfies all UC3 requirements or if backend tasks are missing."
+        ],
+        "confidence_score_drivers": [
+          "5 assumptions with 2 HIGH-risk consequences (Workday API, SOC 2 scope)",
+          "2 CRITICAL risks (R1, R2) with HIGH probability and HIGH impact",
+          "6 HIGH risks (R3-R8) related to external dependencies and resource availability",
+          "Hybrid SDLC with fixed deadline and budget increases scope creep risk",
+          "Hard cap triggered by assumption count (5) limits score to 60 before final adjustment"
+        ],
+        "viability_status": "AT_RISK",
+        "viability_detail": "Critical path (130 days) is 115% of deadline (26 weeks). Project is within AT_RISK threshold (< 130% of deadline) but not VIABLE (< 100%). Any critical path task slip > 2 days risks June 30, 2026 launch deadline. Recommend deferring nice-to-have features (chat bot, mobile app, LMS integration) to post-launch to create schedule buffer."
+      }
+    }
+  }
+}

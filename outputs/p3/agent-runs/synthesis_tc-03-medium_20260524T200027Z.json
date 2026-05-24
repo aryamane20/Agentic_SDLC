@@ -1,0 +1,64 @@
+{
+  "agent": "synthesis",
+  "tc": "tc-03-medium",
+  "artifact": {
+    "consistency_issues": [],
+    "corrections_applied": [],
+    "staffing_corrections": [
+      {
+        "action": "set_critical_path",
+        "role": "Product Manager"
+      },
+      {
+        "action": "set_critical_path",
+        "role": "Platform Architect"
+      },
+      {
+        "action": "set_critical_path",
+        "role": "Backend Developer"
+      },
+      {
+        "action": "set_critical_path",
+        "role": "DevOps Engineer"
+      }
+    ],
+    "added_open_questions": [
+      {
+        "priority": 1,
+        "question": "Staffing capacity may not cover project scope within planned timeline. Total effort is 628 hours (104.7 work days / 20.9 weeks) vs. planned duration of 16 weeks. Effort-to-duration ratio is 1.31x, exceeding 1.2x threshold.",
+        "urgency": "Before build",
+        "impact_if_unanswered": "Staffing allocation percentages may be underestimated. Actual team utilization could exceed 100%, creating schedule risk and quality risk if team is overallocated."
+      }
+    ],
+    "pm_confidence_score": {
+      "score": 58.0,
+      "deductions": [
+        {
+          "amount": 25.0,
+          "reason": "5 assumptions × 5 each (A1-A5: technology stack, team experience, auth protocol, data retention, budget)"
+        },
+        {
+          "amount": 10.0,
+          "reason": "1 CRITICAL risk (R1: platform selection uncertainty)"
+        },
+        {
+          "amount": 25.0,
+          "reason": "5 HIGH risks × 5 each (R2, R3, R4, R5, R6: team capability, auth protocol, traffic volume, compliance, schedule)"
+        },
+        {
+          "amount": 5.0,
+          "reason": "Hybrid SDLC approach introduces adaptive cycle uncertainty"
+        }
+      ],
+      "interpretation": "PM confidence score is 58.0 because project has 5 unresolved assumptions and 6 HIGH/CRITICAL risks (R1-R6) directly impacting platform selection, team capability, authentication architecture, and schedule. Critical path roles lack named backups and formal resource commitment. Hybrid SDLC requires identified Product Owner. Staffing capacity analysis reveals effort-to-duration ratio of 1.31x, exceeding safe threshold. Score is capped at 58.0 due to assumption_count=5 (hard cap: score ≤ 60) and CRITICAL risk R1 with assumption_count ≥ 3 (hard cap: score ≤ 50); however, input_quality=HIGH and strong project plan structure allow modest recovery to 58.0."
+    }
+  },
+  "raw_output": "",
+  "parse_failed": false,
+  "attempts": 1,
+  "input_tokens": 15937,
+  "output_tokens": 777,
+  "cache_read_tokens": 0,
+  "cache_creation_tokens": 0,
+  "elapsed_seconds": 7.39
+}

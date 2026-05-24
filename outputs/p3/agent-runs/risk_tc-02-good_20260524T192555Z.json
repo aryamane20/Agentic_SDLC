@@ -1,0 +1,269 @@
+{
+  "agent": "risk",
+  "tc": "tc-02-good",
+  "artifact": {
+    "risk_register": [
+      {
+        "id": "R1",
+        "category": "Schedule",
+        "description": "If authorization scope (granular RBAC vs. SSO group-based) is not validated before Phase 2, and stakeholders require row-level security or customer-scoped filtering, then authentication/authorization layer must be re-architected post-build, delaying launch by 2-3 weeks and consuming critical path time.",
+        "probability": "HIGH",
+        "impact": "HIGH",
+        "score": "CRITICAL",
+        "trigger": "Phase 2 begins without written sign-off on authorization scope; stakeholder requests granular access control during sprint review",
+        "mitigation": "Conduct authorization scope workshop with CSM and Sales leads before Phase 2 kickoff; document and sign off on whether SSO group-based access or row-level security is required; add validation task to Phase 1 gate",
+        "contingency": "If granular RBAC discovered mid-Phase 2, pause feature development; re-architect authentication layer with Backend Developer; compress non-critical features to recover schedule"
+      },
+      {
+        "id": "R2",
+        "category": "Schedule",
+        "description": "If alert latency requirements are not clarified before Phase 2, and stakeholders require sub-5-minute alert delivery instead of 15-minute batch refresh, then event-driven architecture (Kafka/Kinesis) must replace batch jobs, adding 2-3 weeks to Phase 2-3 and increasing infrastructure cost.",
+        "probability": "HIGH",
+        "impact": "HIGH",
+        "score": "CRITICAL",
+        "trigger": "Phase 2 sprint review reveals stakeholder expectation for real-time alerts; PagerDuty integration testing shows 15-minute latency unacceptable for CSM workflows",
+        "mitigation": "Validate alert latency SLA with CSM and Sales leads before Phase 2; document acceptable latency in requirements; confirm 15-minute batch refresh meets business need; add latency acceptance criteria to UC7 definition",
+        "contingency": "If sub-5-minute latency required, pivot to event-driven architecture; allocate Backend Developer to Kafka/Kinesis setup; defer non-critical reporting features to Phase 4"
+      },
+      {
+        "id": "R3",
+        "category": "Technical",
+        "description": "If the existing dashboard lacks a dedicated data warehouse or reporting database, and custom reports query the production OLTP database directly, then report generation and scheduled refresh jobs may degrade operational performance, causing dashboard slowness and alert delays.",
+        "probability": "HIGH",
+        "impact": "HIGH",
+        "score": "CRITICAL",
+        "trigger": "Phase 1 audit reveals no reporting database; custom report queries against production DB show > 2-second latency; CSM reports slow dashboard during peak hours",
+        "mitigation": "Complete Phase 1 data architecture audit before Phase 2; confirm whether reporting database or ETL layer exists; if not, design caching or read replica strategy in Phase 1; add performance testing task to Phase 2",
+        "contingency": "If production DB queries cause performance issues, implement read replica or in-memory cache (Redis) for dashboard widgets; defer complex custom reports to Phase 4; add query optimization task to critical path"
+      },
+      {
+        "id": "R4",
+        "category": "Scope",
+        "description": "If Product Owner role is not assigned before Phase 2, and backlog prioritization or sprint-level scope decisions lack a single decision-maker, then sprint cycles will stall on scope disputes between CSM and Sales stakeholders, delaying feature delivery.",
+        "probability": "HIGH",
+        "impact": "MEDIUM",
+        "score": "HIGH",
+        "trigger": "Phase 2 sprint planning begins without named PO; conflicting feature requests from CSM and Sales teams; sprint review blocked on scope decision",
+        "mitigation": "Assign Product Owner (likely PM) with explicit authority for backlog prioritization and sprint scope decisions before Phase 2 kickoff; document PO role and decision-making authority in project charter; establish weekly PO sync with stakeholders",
+        "contingency": "If PO unavailable, escalate to project sponsor for tie-breaking authority; implement MoSCoW prioritization framework to reduce scope disputes; add PO availability as Phase 2 gate criterion"
+      },
+      {
+        "id": "R5",
+        "category": "Integration",
+        "description": "If PagerDuty integration is not tested with expected report volume and concurrent alert load before Phase 3, and peak usage exceeds PagerDuty rate limits or email service capacity, then alert delivery will fail or be delayed, missing the < 1 hour alert response SLA.",
+        "probability": "MEDIUM",
+        "impact": "HIGH",
+        "score": "HIGH",
+        "trigger": "Phase 3 load testing reveals alert queue backlog; PagerDuty rate limit errors in logs; CSM reports missed alerts during peak hours",
+        "mitigation": "Clarify expected volume of scheduled reports and concurrent users during Phase 1 open questions; size job queue and notification service capacity in Phase 2 design; add load testing for alert delivery to Phase 3 plan; confirm PagerDuty and email service SLAs",
+        "contingency": "If capacity exceeded, implement alert batching or priority queuing; upgrade PagerDuty plan or add secondary notification channel; defer low-priority alerts to Phase 4"
+      },
+      {
+        "id": "R6",
+        "category": "Compliance",
+        "description": "If data retention policy scope is not clarified before Phase 2, and compliance or audit requirements mandate tiered retention (e.g., PII purged at 1 year, aggregates at 2 years, audit logs longer), then database schema and purge automation must be redesigned, adding 1-2 weeks to Phase 2.",
+        "probability": "MEDIUM",
+        "impact": "HIGH",
+        "score": "HIGH",
+        "trigger": "Phase 2 design review reveals compliance requirement for tiered retention; Legal/Compliance feedback requests longer audit log retention; database schema must be refactored",
+        "mitigation": "Validate data retention policy scope with Legal/Compliance before Phase 2; confirm whether uniform 2-year retention or tiered retention is required; document retention tiers and purge automation in Phase 2 design; add compliance review gate",
+        "contingency": "If tiered retention required, redesign database schema and purge jobs; allocate Backend Developer to retention logic; defer non-critical features to Phase 4"
+      },
+      {
+        "id": "R7",
+        "category": "Resource",
+        "description": "If Backend Developer is unavailable or context-switches to other projects during critical path tasks (T2, T5, T9, T13, T18, T22, T26), then authentication, data refresh, alerting, and deployment will be delayed, pushing launch past 2025-04-10 deadline.",
+        "probability": "MEDIUM",
+        "impact": "HIGH",
+        "score": "HIGH",
+        "trigger": "Backend Developer allocated to competing project; critical path task blocked waiting for Backend Developer; Phase 2-3 sprint velocity drops below plan",
+        "mitigation": "Confirm Backend Developer is 100% dedicated to project through Phase 4; document in resource plan and secure commitment from engineering manager; establish weekly capacity check-in; flag any competing commitments immediately",
+        "contingency": "If Backend Developer unavailable, escalate to project sponsor for resource reallocation; identify backup Backend Developer for knowledge transfer; compress non-critical features to recover schedule"
+      },
+      {
+        "id": "R8",
+        "category": "Resource",
+        "description": "If Product Manager is unavailable or context-switches to other projects during critical path tasks (T1, T2, T5, T9, T13, T18, T22, T26), then project planning, stakeholder alignment, and sprint reviews will be delayed, stalling the hybrid SDLC cycle.",
+        "probability": "MEDIUM",
+        "impact": "HIGH",
+        "score": "HIGH",
+        "trigger": "PM allocated to competing initiative; sprint planning or review cancelled; stakeholder alignment meetings missed; critical path task blocked",
+        "mitigation": "Confirm PM is 100% dedicated to project through Phase 4; document in resource plan and secure commitment from management; establish weekly availability check-in; block calendar for sprint ceremonies and stakeholder syncs",
+        "contingency": "If PM unavailable, escalate to project sponsor; identify backup PM for knowledge transfer; delegate sprint facilitation to Backend Developer or external Scrum Master"
+      },
+      {
+        "id": "R9",
+        "category": "Technical",
+        "description": "If custom report generation performance is not validated against the < 5 minute SLA before Phase 3, and complex queries with large date ranges or multiple filters exceed latency targets, then CSM workflow will not meet success criteria, requiring query optimization or caching redesign.",
+        "probability": "MEDIUM",
+        "impact": "MEDIUM",
+        "score": "MEDIUM",
+        "trigger": "Phase 3 UAT reveals custom report generation > 5 minutes for large datasets; CSM feedback indicates reports too slow for workflow; performance testing shows query latency unacceptable",
+        "mitigation": "Add performance testing for custom report generation to Phase 2 design; define query optimization strategy (indexing, caching, query limits) in Phase 2; test with realistic data volumes and filter combinations; add performance acceptance criteria to UC3",
+        "contingency": "If latency exceeds SLA, implement query result caching or pagination; add database indexing or query optimization; defer complex filter combinations to Phase 4"
+      },
+      {
+        "id": "R10",
+        "category": "Scope",
+        "description": "If success criteria for 'CSMs can create custom reports in < 5 minutes' is not operationalized (e.g., measured from UI interaction start to report download, or from report definition to email delivery), then Phase 3 UAT may dispute whether success criteria are met, delaying sign-off.",
+        "probability": "MEDIUM",
+        "impact": "MEDIUM",
+        "score": "MEDIUM",
+        "trigger": "Phase 3 UAT begins without clear definition of '< 5 minutes'; CSM and team disagree on measurement point; sign-off delayed pending clarification",
+        "mitigation": "Define and document success criteria measurement methodology before Phase 2; specify whether '< 5 minutes' includes UI interaction, backend processing, or email delivery; add acceptance criteria to UC3 and UC5; validate with CSM lead",
+        "contingency": "If measurement disputed, conduct joint timing test with CSM; adjust success criteria if measurement methodology was ambiguous; document agreed measurement for Phase 3 UAT"
+      },
+      {
+        "id": "R11",
+        "category": "Integration",
+        "description": "If SSO authentication integration is not tested with the actual SSO provider before Phase 2, and SSO group membership or token format differs from assumptions, then user authentication will fail or require re-implementation, delaying Phase 2 feature development.",
+        "probability": "MEDIUM",
+        "impact": "MEDIUM",
+        "score": "MEDIUM",
+        "trigger": "Phase 2 development begins; SSO integration test fails due to token format mismatch; authentication layer must be re-implemented; Phase 2 sprint blocked",
+        "mitigation": "Complete SSO integration testing in Phase 1 audit; confirm SSO group membership structure and token format with IT/Security; implement SSO mock or sandbox before Phase 2; add SSO integration acceptance test to Phase 1 gate",
+        "contingency": "If SSO integration fails, implement alternative authentication (LDAP, OAuth) as fallback; allocate Backend Developer to re-implement authentication layer; defer feature development until authentication resolved"
+      },
+      {
+        "id": "R12",
+        "category": "Technical",
+        "description": "If 15-minute dashboard refresh interval is not validated as acceptable for alert-driven workflows, and CSMs expect real-time KPI updates to trigger immediate action, then alert response time SLA (< 1 hour) may be unachievable with batch refresh, requiring architecture change.",
+        "probability": "MEDIUM",
+        "impact": "MEDIUM",
+        "score": "MEDIUM",
+        "trigger": "Phase 2 sprint review reveals CSM expectation for real-time dashboard updates; alert response time testing shows 15-minute refresh causes SLA miss; stakeholder requests sub-minute refresh",
+        "mitigation": "Validate 15-minute refresh interval with CSM and Sales leads before Phase 2; confirm acceptable latency for alert-driven workflows; document refresh SLA in requirements; test alert response time with 15-minute batch in Phase 2",
+        "contingency": "If real-time refresh required, pivot to event-driven architecture; implement WebSocket or polling for dashboard updates; defer batch reporting to Phase 4"
+      },
+      {
+        "id": "R13",
+        "category": "Scope",
+        "description": "If 'nice-to-have' features (e.g., advanced filtering, custom dashboards, multi-user report sharing) are not explicitly excluded from Phase 2-3 scope, then scope creep may consume critical path time, delaying core features and pushing launch past deadline.",
+        "probability": "MEDIUM",
+        "impact": "MEDIUM",
+        "score": "MEDIUM",
+        "trigger": "Phase 2 sprint planning includes stakeholder requests for advanced features; scope expands beyond MVP; critical path tasks delayed; sprint velocity drops",
+        "mitigation": "Define MVP scope explicitly in Phase 1 gate; document which features are Phase 2-3 (MVP) vs. Phase 4 (enhancements); establish change control process for scope additions; prioritize using MoSCoW framework; review scope at each sprint review",
+        "contingency": "If scope creep occurs, conduct scope negotiation with stakeholders; defer lower-priority features to Phase 4; compress non-critical tasks to recover schedule"
+      },
+      {
+        "id": "R14",
+        "category": "Budget",
+        "description": "If infrastructure or third-party service costs (PagerDuty, email service, database, caching) are not budgeted or constrained, and cost-optimization decisions (batch vs. streaming, caching strategy) are deferred, then Phase 2-3 infrastructure design may exceed budget, requiring re-architecture.",
+        "probability": "LOW",
+        "impact": "MEDIUM",
+        "score": "LOW",
+        "trigger": "Phase 2 infrastructure design reveals high cost for streaming architecture or premium PagerDuty plan; budget constraint discovered; cost-optimization required",
+        "mitigation": "Clarify budget constraint before Phase 2; estimate infrastructure costs for batch vs. streaming architecture; select cost-optimal design (batch preferred unless latency requires streaming); add cost review to Phase 2 gate",
+        "contingency": "If budget exceeded, pivot to batch architecture; negotiate PagerDuty volume discount; implement caching to reduce database load; defer premium features to Phase 4"
+      },
+      {
+        "id": "R15",
+        "category": "Technical",
+        "description": "If email service integration (for scheduled report delivery) is not tested with expected volume before Phase 3, and email delivery fails or is rate-limited, then scheduled report SLA (90% on-time delivery) will not be met.",
+        "probability": "LOW",
+        "impact": "MEDIUM",
+        "score": "LOW",
+        "trigger": "Phase 3 load testing reveals email service rate limiting; scheduled reports fail to deliver; CSM reports missing reports; email service quota exceeded",
+        "mitigation": "Clarify expected volume of scheduled reports during Phase 1 open questions; select email service with sufficient capacity (e.g., SendGrid, AWS SES); add load testing for email delivery to Phase 3 plan; confirm email service SLA",
+        "contingency": "If email delivery fails, implement retry logic with exponential backoff; upgrade email service plan; add secondary email provider as fallback; defer low-priority scheduled reports"
+      }
+    ],
+    "risk_use_case_mapping": {
+      "R1": [
+        "UC1",
+        "UC3",
+        "UC5",
+        "UC6"
+      ],
+      "R2": [
+        "UC6",
+        "UC7"
+      ],
+      "R3": [
+        "UC2",
+        "UC3",
+        "UC8"
+      ],
+      "R4": [
+        "UC3",
+        "UC5",
+        "UC6"
+      ],
+      "R5": [
+        "UC5",
+        "UC7"
+      ],
+      "R6": [
+        "UC2",
+        "UC3",
+        "UC8"
+      ],
+      "R7": [
+        "UC1",
+        "UC2",
+        "UC3",
+        "UC5",
+        "UC6",
+        "UC7",
+        "UC8"
+      ],
+      "R8": [
+        "UC1",
+        "UC2",
+        "UC3",
+        "UC5",
+        "UC6",
+        "UC7",
+        "UC8"
+      ],
+      "R9": [
+        "UC3"
+      ],
+      "R10": [
+        "UC3",
+        "UC5"
+      ],
+      "R11": [
+        "UC1"
+      ],
+      "R12": [
+        "UC2",
+        "UC6",
+        "UC7",
+        "UC8"
+      ],
+      "R13": [
+        "UC3",
+        "UC4",
+        "UC5",
+        "UC6"
+      ],
+      "R14": [
+        "UC5",
+        "UC7"
+      ],
+      "R15": [
+        "UC5"
+      ]
+    },
+    "critical_path_risk_flags": [
+      "T1",
+      "T2",
+      "T5",
+      "T9",
+      "T13",
+      "T18",
+      "T22",
+      "T26"
+    ]
+  },
+  "raw_output": "",
+  "parse_failed": false,
+  "attempts": 2,
+  "input_tokens": 5884,
+  "output_tokens": 4160,
+  "cache_read_tokens": 0,
+  "cache_creation_tokens": 0,
+  "elapsed_seconds": 87.42
+}
