@@ -1,0 +1,217 @@
+{
+  "staffing_plan": [
+    {
+      "role": "Product Manager",
+      "phase_involvement": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "total_hours": 78.0,
+      "allocation_percent": 13.0,
+      "skills_required": [
+        "Hybrid SDLC facilitation",
+        "Stakeholder alignment",
+        "Sprint planning",
+        "Backlog prioritization",
+        "UAT coordination"
+      ],
+      "critical_path": true,
+      "notes": "PM is critical path owner for T2, T4, T30, T31, T34, T35. Must be 100% dedicated (not shared) through Phase 4. Allocation 13% of 600 total project hours meets PMBOK 9.2 PM oversight rule (10-15%). No backup specified; projects >3 months require named backup — flagged as Resource Risk R8."
+    },
+    {
+      "role": "Backend Developer",
+      "phase_involvement": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "total_hours": 280.0,
+      "allocation_percent": 46.7,
+      "skills_required": [
+        "Python/Django",
+        "PostgreSQL",
+        "REST API design",
+        "ETL/batch job design",
+        "PagerDuty API integration",
+        "Security review",
+        "DevOps/deployment"
+      ],
+      "critical_path": true,
+      "notes": "Backend Developer owns critical path tasks T1, T5, T9, T13, T18, T22, T26. Must be 100% dedicated (not shared) through Phase 4. Allocation 46.7% reflects heavy Phase 2-3 load (core development, integration, security). No backup specified; projects >3 months require named backup — flagged as Resource Risk R7. Single person covering multiple critical roles (architecture, development, security, deployment); overlap flagged as Resource Risk."
+    },
+    {
+      "role": "Frontend Developer",
+      "phase_involvement": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "total_hours": 90.0,
+      "allocation_percent": 15.0,
+      "skills_required": [
+        "React 18",
+        "TypeScript",
+        "REST API consumption",
+        "UI/UX implementation",
+        "Responsive design"
+      ],
+      "critical_path": false,
+      "notes": "Frontend Developer owns T7, T11, T15, T19 (UI forms and components). Phase 1 audit work (T7) has 2-day slack; not on critical path. Allocation 15% allows capacity for other projects. No critical path backup required."
+    },
+    {
+      "role": "QA Engineer",
+      "phase_involvement": [
+        3,
+        4,
+        5
+      ],
+      "total_hours": 150.0,
+      "allocation_percent": 25.0,
+      "skills_required": [
+        "Automated testing",
+        "Regression test design",
+        "Load testing",
+        "UAT coordination",
+        "SQL for data validation"
+      ],
+      "critical_path": true,
+      "notes": "QA Engineer owns critical path task T22 (regression test execution). Total QA hours (150) = 25% of total dev hours (280 Backend + 90 Frontend = 370), meeting PMBOK 8.2 minimum QA allocation rule. Phase 3-4 heavy involvement (testing, UAT, smoke tests). No backup specified; projects >3 months require named backup — flagged as Resource Risk."
+    },
+    {
+      "role": "Solution Architect",
+      "phase_involvement": [
+        1
+      ],
+      "total_hours": 16.0,
+      "allocation_percent": 2.7,
+      "skills_required": [
+        "System architecture review",
+        "Data architecture design",
+        "Regression risk assessment",
+        "Technology stack evaluation"
+      ],
+      "critical_path": true,
+      "notes": "Solution Architect owns T1 (audit existing dashboard). Phase 1 only; front-loaded role. Allocation 2.7% reflects short engagement. Critical path task but Phase 1 gate; no ongoing backup required."
+    }
+  ],
+  "open_questions": [
+    {
+      "priority": 1,
+      "question": "Is a named backup Backend Developer available for critical path tasks (T1, T5, T9, T13, T18, T22, T26) if primary is unavailable? Projects >3 months require backup per PMBOK 9.2.",
+      "urgency": "Before build",
+      "impact_if_unanswered": "If Backend Developer unavailable mid-project, critical path tasks (authentication, data refresh, alerting, deployment) will stall, pushing launch past 2025-04-10 deadline. Risk R7 escalates to CRITICAL."
+    },
+    {
+      "priority": 2,
+      "question": "Is a named backup Product Manager available for critical path tasks (T2, T4, T30, T31, T34, T35) if primary is unavailable? Projects >3 months require backup per PMBOK 9.2.",
+      "urgency": "Before build",
+      "impact_if_unanswered": "If PM unavailable mid-project, sprint planning, stakeholder alignment, and UAT coordination will stall, blocking hybrid SDLC cycle. Risk R8 escalates to CRITICAL."
+    },
+    {
+      "priority": 3,
+      "question": "Is a named backup QA Engineer available for critical path task T22 (regression test execution) if primary is unavailable? Projects >3 months require backup per PMBOK 9.2.",
+      "urgency": "Before build",
+      "impact_if_unanswered": "If QA Engineer unavailable during Phase 3, regression testing will be delayed, blocking Phase 3 gate and pushing launch past deadline."
+    },
+    {
+      "priority": 4,
+      "question": "Can Backend Developer realistically cover Solution Architect role (T1 audit) in addition to core development tasks, or is a separate Solution Architect required for Phase 1?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "If Backend Developer must own both T1 (audit) and T5 (data architecture design) with zero slack, Phase 1 critical path may compress further. Clarify whether Solution Architect is a separate hire or Backend Developer can absorb audit work."
+    },
+    {
+      "priority": 5,
+      "question": "What is the expected volume of scheduled reports (daily, weekly, monthly) and concurrent users during peak usage? Required to size job queue, email service, and PagerDuty capacity.",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Without volume estimates, Phase 2 design cannot size infrastructure for report scheduling (T13, T14) and alert delivery (T17, T18). Risk R5 (integration capacity) remains unmitigated."
+    }
+  ],
+  "pm_confidence_score": {
+    "score": 62.0,
+    "deductions": [
+      {
+        "amount": 5.0,
+        "reason": "Assumption A1 (SSO group-based access sufficient; no granular RBAC required)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Assumption A2 (uniform 2-year data retention; no tiered retention required)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Assumption A3 (15-minute batch refresh acceptable; no sub-minute streaming required)"
+      },
+      {
+        "amount": 10.0,
+        "reason": "CRITICAL risk R1 (authorization scope not validated; re-architecture risk 2-3 weeks)"
+      },
+      {
+        "amount": 10.0,
+        "reason": "CRITICAL risk R2 (alert latency requirements unclear; event-driven architecture risk 2-3 weeks)"
+      },
+      {
+        "amount": 10.0,
+        "reason": "CRITICAL risk R3 (production DB performance risk; no reporting database confirmed)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R4 (Product Owner role not assigned; scope dispute risk)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R7 (Backend Developer unavailable; critical path delay risk)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R8 (PM unavailable; sprint cycle stall risk)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Hybrid SDLC approach requires sprint-based validation cycles; higher coordination overhead"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Stakeholder sign-off not explicitly mentioned in input; UAT sign-off required in Phase 4"
+      }
+    ],
+    "interpretation": "PM confidence score is 62.0 because three CRITICAL risks (R1, R2, R3) remain unmitigated pre-Phase 2, each with 2-3 week re-architecture consequences, combined with three HIGH resource risks (R4, R7, R8) and three assumptions requiring stakeholder validation. Hybrid SDLC adds coordination overhead. Score capped at 62 due to assumption count (3) and CRITICAL risk count (3); no hard cap applies, but deductions reflect high uncertainty in authorization scope, alert latency, and data architecture decisions."
+  },
+  "project_viability": {
+    "viability_status": "AT_RISK",
+    "gap_type": "SCHEDULE",
+    "gap_amount": 0.0,
+    "gap_description": "Critical path duration is 56 days (8 weeks); deadline is 2025-04-10 (12 weeks from 2025-01-10). Project fits within deadline (56 days < 84 days), but three CRITICAL risks (R1, R2, R3) each carry 2-3 week re-architecture consequences. If any CRITICAL risk materializes, critical path extends to 70-84 days, consuming buffer and pushing launch to deadline or beyond. Viability is AT_RISK pending mitigation of R1, R2, R3 before Phase 2.",
+    "scoping_options": null
+  },
+  "actor_role_mapping": {
+    "A1": [
+      "Frontend Developer",
+      "Backend Developer",
+      "QA Engineer",
+      "Product Manager"
+    ],
+    "A2": [
+      "Frontend Developer",
+      "Backend Developer",
+      "QA Engineer",
+      "Product Manager"
+    ],
+    "A3": [
+      "Backend Developer",
+      "Solution Architect"
+    ],
+    "A4": [
+      "Backend Developer",
+      "QA Engineer"
+    ],
+    "A5": [
+      "Backend Developer"
+    ]
+  }
+}

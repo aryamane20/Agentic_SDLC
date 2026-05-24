@@ -1,0 +1,145 @@
+{
+  "report_metadata": {
+    "generated_at": "2025-01-10T14:32:00Z",
+    "project_type": "TYPE_A",
+    "input_quality": "HIGH",
+    "classification_confidence": "HIGH",
+    "sdlc_approach": "Hybrid",
+    "sdlc_rationale": "Requirements fully defined and signed off with fixed deadline and budget, but stakeholder validation of document workflows and IT provisioning automation warrants sprint cycles in execution phase."
+  },
+  "project_understanding": {
+    "primary_goal": "Build a self-service employee onboarding portal enabling new hires to complete required paperwork, provision IT accounts, and receive team introductions before day one.",
+    "beneficiary": "New employees (100–200/year) and HR team (5 people)",
+    "trigger": "Current onboarding is fragmented across PDF-based paperwork, manual IT account setup, and unstructured team introductions; new hires report feeling unprepared on day one; CEO escalated after hearing complaints at all-hands meeting.",
+    "success_definition": [
+      "80% of onboarding tasks completed by new hires before day one",
+      "50% reduction in HR administrative time spent on onboarding",
+      "100% automation of IT account setup (zero manual tickets)",
+      "New hire satisfaction survey score > 4.0/5.0"
+    ],
+    "supporting_quotes": [
+      "Create a self-service employee onboarding portal that allows new hires to complete all required paperwork, set up their IT accounts, and get introduced to the team before day one.",
+      "Currently onboarding is fragmented - paperwork is PDF-based, IT account setup is manual, new hires feel unprepared on day one.",
+      "New hires can complete 80% of onboarding tasks before day one",
+      "HR time spent on onboarding admin reduced by 50%",
+      "IT account setup automated (no manual tickets)"
+    ]
+  },
+  "assumption_log": [
+    {
+      "id": "A1",
+      "what": "Data retention policy: employee onboarding records (documents, audit logs, personal data) retained for 7 years post-employment per standard HR compliance practice.",
+      "why": "SOC 2 compliance is explicitly required; audit logs are mandated by use case UC8. Standard HR data retention aligns with employment law and tax record requirements. Input does not specify retention period.",
+      "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Collect Requirements); SOC 2 Trust Service Criteria CC6.1 (Logical and Physical Access Controls)",
+      "risk_if_wrong": "HIGH",
+      "consequence": "If retention period is shorter, archived documents may be deleted prematurely, creating compliance violations and audit failures. If longer, storage costs and data minimization obligations increase unexpectedly.",
+      "source": "nfr",
+      "tradeoff": "Gains: defensible compliance posture, predictable storage architecture, audit trail integrity. Risks: if actual policy is shorter, re-architect data lifecycle; if longer, re-budget storage and implement additional purge controls."
+    },
+    {
+      "id": "A2",
+      "what": "Authentication and authorization: Azure AD SSO is the sole authentication mechanism; no local password management or multi-factor authentication (MFA) beyond Azure AD defaults.",
+      "why": "Input specifies 'Azure AD for SSO' and UC7 names Azure AD as actor. SOC 2 compliance is required. Standard practice for internal tools is to delegate auth to corporate identity provider. Input does not specify MFA requirement or fallback auth.",
+      "pmi_basis": "PMBOK 6th Ed, Section 8.1 (Plan Quality Management); SOC 2 Trust Service Criteria CC6.2 (Prior to Issue of System Credentials)",
+      "risk_if_wrong": "MEDIUM",
+      "consequence": "If MFA is mandated by security policy, authentication flow must be re-architected and user experience redesigned. If fallback auth (local password) is required for service account or emergency access, additional credential storage and rotation logic needed.",
+      "source": "nfr",
+      "tradeoff": "Gains: simplified auth implementation, reduced credential management overhead, alignment with corporate SSO. Risks: if MFA is mandatory, re-architect auth layer; if fallback required, add credential vault and rotation automation."
+    },
+    {
+      "id": "A3",
+      "what": "Workday API availability and documentation: Workday API is production-ready, documented, and accessible in sandbox environment for development and testing.",
+      "why": "Input names Workday as external actor and UC6 requires 'System retrieves new employee information from Workday.' No mention of API maturity, sandbox access, or SLA. Standard assumption for enterprise HR systems is that APIs are stable and documented.",
+      "pmi_basis": "PMBOK 6th Ed, Section 8.2 (Perform Quality Assurance); Risk Management Knowledge Area (external dependency risk)",
+      "risk_if_wrong": "MEDIUM",
+      "consequence": "If Workday API is undocumented, in beta, or requires custom development, integration timeline extends 2–4 weeks and may require Workday professional services engagement, increasing budget.",
+      "source": "hard_constraint",
+      "tradeoff": "Gains: predictable integration timeline, no Workday vendor lock-in for custom work, standard development velocity. Risks: if API is immature or unavailable, delay integration phase and increase cost."
+    },
+    {
+      "id": "A4",
+      "what": "E-signature service (UC2) is a third-party SaaS provider (e.g., DocuSign, Adobe Sign) with existing enterprise contract or procurement pathway; not custom-built.",
+      "why": "Input lists 'E-signature Service' as external actor but does not name provider or specify build vs. buy. Standard practice for internal tools is to integrate existing SaaS rather than build custom e-signature.",
+      "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Collect Requirements); Make-or-Buy Analysis",
+      "risk_if_wrong": "MEDIUM",
+      "consequence": "If custom e-signature must be built, scope increases significantly (cryptographic signing, legal compliance, audit trail), timeline extends 4–6 weeks, and budget increases $15–25K.",
+      "source": "scope",
+      "tradeoff": "Gains: faster delivery, reduced scope, leverages vendor compliance certifications. Risks: if custom build required, re-scope and re-budget; if vendor contract unavailable, procurement delay."
+    }
+  ],
+  "constraints": {
+    "hard": {
+      "deadline": "2026-06-30",
+      "budget": "$80,000",
+      "team_size": 4,
+      "team_composition": "1 PM, 2 Developers, 1 UX Designer",
+      "technology_stack": "Frontend: React + TypeScript; Backend: Node.js + PostgreSQL; Integration: Workday API, Azure AD SSO; Hosting: Azure App Service",
+      "compliance": "SOC 2 compliance required (audit logs, data handling, access controls)"
+    },
+    "soft": {
+      "preferred_timeline": null,
+      "preferred_tools": null,
+      "nice_to_have": [
+        "Chat with HR bot",
+        "Mobile app",
+        "Integration with learning management system"
+      ]
+    },
+    "nfr": {
+      "security": "Azure AD SSO authentication; SOC 2 compliance; audit logging for all document submissions and account provisioning actions",
+      "data_retention": null,
+      "performance": null,
+      "availability": null
+    }
+  },
+  "open_questions_pre_planning": [
+    {
+      "priority": 1,
+      "question": "Who is the Product Owner responsible for backlog prioritization and sprint-level scope decisions during execution (Phase 2–3)?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Hybrid SDLC requires a single decision-maker for sprint backlog refinement; absence of named PO creates decision bottleneck and delays sprint planning."
+    },
+    {
+      "priority": 2,
+      "question": "What is the exact scope of IT account provisioning automation (UC4)? Which SaaS tools and systems must be provisioned, and are APIs available for all of them?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "If manual provisioning is required for any tool, automation scope is incomplete and success metric 'zero manual tickets' cannot be met; may require re-scoping or manual fallback."
+    },
+    {
+      "priority": 3,
+      "question": "Is Workday API access (sandbox and production) already provisioned, and is API documentation available to the development team?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "If API access is not yet provisioned or documentation is unavailable, integration phase (Phase 2) is blocked; timeline risk of 2–4 weeks."
+    },
+    {
+      "priority": 4,
+      "question": "Which e-signature service provider is approved or contracted (DocuSign, Adobe Sign, etc.), and is integration documentation available?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "If provider is not yet selected or contracted, procurement delay blocks UC2 implementation; if custom build is required, scope and budget increase significantly."
+    },
+    {
+      "priority": 5,
+      "question": "What is the data retention and deletion policy for employee onboarding records (documents, audit logs, personal data) post-employment?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "If retention policy differs from 7-year assumption, data lifecycle architecture must be redesigned; affects storage, archival, and compliance controls."
+    },
+    {
+      "priority": 6,
+      "question": "Is multi-factor authentication (MFA) required by corporate security policy, or is Azure AD SSO default authentication sufficient?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "If MFA is mandatory, authentication flow and UX must be redesigned; if fallback auth is required, credential management layer must be added."
+    },
+    {
+      "priority": 7,
+      "question": "What is the expected performance baseline for the portal (response time, concurrent users, document upload size limits)?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "If performance requirements exceed standard defaults (2s response, 50 concurrent users), infrastructure and caching architecture must be re-designed."
+    },
+    {
+      "priority": 8,
+      "question": "What is the required system availability SLA (e.g., 99.5% uptime during business hours, 24/7 availability)?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "If availability requirement exceeds standard business-hours SLA, disaster recovery and failover architecture must be implemented, increasing complexity and cost."
+    }
+  ]
+}

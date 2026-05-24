@@ -1,0 +1,717 @@
+{
+  "project_plan": {
+    "total_duration_weeks": 12.0,
+    "buffer_applied_percent": 15.0,
+    "critical_path_summary": {
+      "sequence": [
+        "T1",
+        "T2",
+        "T5",
+        "T9",
+        "T13",
+        "T18",
+        "T22",
+        "T26"
+      ],
+      "total_duration_days": 56.0,
+      "zero_slack_tasks": [
+        "T1",
+        "T2",
+        "T5",
+        "T9",
+        "T13",
+        "T18",
+        "T22",
+        "T26"
+      ],
+      "highest_slack_tasks": [
+        "T3",
+        "T4",
+        "T7"
+      ],
+      "staffing_implication": "Backend Developer and Product Manager must be dedicated (not shared) across Phases 1–4; Frontend Developer can absorb Phase 1 audit work with 2 days slack."
+    },
+    "phases": [
+      {
+        "phase_number": 1,
+        "name": "Discovery & Design",
+        "duration_weeks": 1.5,
+        "percentage_of_total": 12.5,
+        "milestones": [
+          "Existing dashboard audit completed",
+          "Regression risk assessment documented",
+          "Data architecture decision (OLTP vs. warehouse) finalized",
+          "Authorization scope validated with stakeholders",
+          "Requirements finalized and signed off"
+        ],
+        "tasks": [
+          {
+            "id": "T1",
+            "name": "Audit existing dashboard architecture and identify regression risks",
+            "phase": 1,
+            "effort_hours": 16.0,
+            "owner_role": "Solution Architect",
+            "dependencies": [],
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Audit report documents current system components, data flow, existing test coverage, and 5+ regression risk areas with mitigation strategies."
+          },
+          {
+            "id": "T2",
+            "name": "Validate authorization scope with Product Manager and stakeholders",
+            "phase": 1,
+            "effort_hours": 8.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T1"
+            ],
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Written confirmation from CSM and Sales leads on whether SSO group-based access (Assumption A1) is sufficient or row-level security required; signed off by Product Manager."
+          },
+          {
+            "id": "T3",
+            "name": "Document backward compatibility requirements for existing features",
+            "phase": 1,
+            "effort_hours": 6.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T1"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Compatibility matrix lists all existing dashboard features and specifies which must remain unchanged during new feature rollout."
+          },
+          {
+            "id": "T4",
+            "name": "Validate data retention and tiering requirements with Legal/Compliance",
+            "phase": 1,
+            "effort_hours": 4.0,
+            "owner_role": "Product Manager",
+            "dependencies": [],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 3,
+            "definition_of_done": "Written confirmation from Legal/Compliance on whether uniform 2-year retention (Assumption A2) applies to all data types or tiered retention required; signed off."
+          },
+          {
+            "id": "T5",
+            "name": "Design data architecture for custom reports and refresh strategy",
+            "phase": 1,
+            "effort_hours": 20.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T1",
+              "T2"
+            ],
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Architecture document specifies whether custom reports query OLTP or warehouse, batch refresh frequency (15-min default per A3), caching strategy, and query performance targets."
+          },
+          {
+            "id": "T6",
+            "name": "Create detailed API specification for custom report generation endpoint",
+            "phase": 1,
+            "effort_hours": 12.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T5"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "OpenAPI 3.0 spec documents request/response schema, query parameters (date range, metrics, filters), error codes, and rate limits for report generation."
+          },
+          {
+            "id": "T7",
+            "name": "Design UI mockups for custom report builder and alert configuration",
+            "phase": 1,
+            "effort_hours": 14.0,
+            "owner_role": "Frontend Developer",
+            "dependencies": [
+              "T2"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Figma/Sketch mockups show custom report builder (date range, metric selection, filters), alert threshold UI, and schedule delivery form; reviewed and approved by Product Manager."
+          }
+        ]
+      },
+      {
+        "phase_number": 2,
+        "name": "Core Development (Sprint Cycles)",
+        "duration_weeks": 4.5,
+        "percentage_of_total": 37.5,
+        "milestones": [
+          "Sprint 1: Authentication and dashboard data refresh working",
+          "Sprint 2: Custom report generation API complete",
+          "Sprint 3: Report export (PDF/CSV) and scheduling backend complete",
+          "Sprint 4: Alert configuration and PagerDuty integration complete",
+          "Core features implemented and internal demo completed"
+        ],
+        "tasks": [
+          {
+            "id": "T8",
+            "name": "Implement SSO authentication integration with existing auth service",
+            "phase": 2,
+            "effort_hours": 16.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T2"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 3,
+            "definition_of_done": "SSO login flow works end-to-end; user session tokens validated; group membership extracted and stored in session context."
+          },
+          {
+            "id": "T9",
+            "name": "Build 15-minute batch ETL job to refresh dashboard data",
+            "phase": 2,
+            "effort_hours": 24.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T5"
+            ],
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Cron job runs every 15 minutes; pulls latest data from source (OLTP or warehouse per T5 decision); updates dashboard cache; logs execution time and row counts."
+          },
+          {
+            "id": "T10",
+            "name": "Implement custom report query builder backend (date range, metrics, filters)",
+            "phase": 2,
+            "effort_hours": 32.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T6",
+              "T9"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "API endpoint accepts report parameters; constructs and executes SQL query; returns results in < 5 minutes for typical CSM use case (30-day range, 5 metrics)."
+          },
+          {
+            "id": "T11",
+            "name": "Build custom report UI form (date range, metric selection, filters)",
+            "phase": 2,
+            "effort_hours": 20.0,
+            "owner_role": "Frontend Developer",
+            "dependencies": [
+              "T7",
+              "T8"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "React form component renders metric checkboxes, date picker, filter dropdowns; submits to T10 API; displays loading state and results table."
+          },
+          {
+            "id": "T12",
+            "name": "Implement PDF and CSV export for reports",
+            "phase": 2,
+            "effort_hours": 12.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T10"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Export endpoint generates PDF (with branding) and CSV; includes report metadata (date range, filters applied); file downloads in < 10 seconds."
+          },
+          {
+            "id": "T13",
+            "name": "Build report scheduling backend (cron job, email queue, delivery logic)",
+            "phase": 2,
+            "effort_hours": 28.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T10",
+              "T12"
+            ],
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Scheduled reports stored in database; cron job triggers at configured times; report generated and queued for email delivery; delivery status tracked."
+          },
+          {
+            "id": "T14",
+            "name": "Implement email delivery integration (SMTP or third-party service)",
+            "phase": 2,
+            "effort_hours": 8.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T13"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Email service sends scheduled reports with PDF/CSV attachment; delivery logs recorded; bounce/failure handling implemented."
+          },
+          {
+            "id": "T15",
+            "name": "Build report scheduling UI (frequency, recipients, delivery time)",
+            "phase": 2,
+            "effort_hours": 16.0,
+            "owner_role": "Frontend Developer",
+            "dependencies": [
+              "T7",
+              "T13"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "React form allows users to select report, set frequency (daily/weekly/monthly), add recipients, choose delivery time; submits to T13 API."
+          },
+          {
+            "id": "T16",
+            "name": "Implement alert threshold configuration backend",
+            "phase": 2,
+            "effort_hours": 20.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T5"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "API stores alert rules (metric, threshold, operator, notification channel); validation ensures thresholds are numeric and channels are valid."
+          },
+          {
+            "id": "T17",
+            "name": "Build alert evaluation engine (periodic check against thresholds)",
+            "phase": 2,
+            "effort_hours": 24.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T16",
+              "T9"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Cron job runs every 15 minutes; evaluates all active alerts against latest dashboard data; triggers notification if threshold breached; deduplicates repeated alerts."
+          },
+          {
+            "id": "T18",
+            "name": "Integrate PagerDuty for alert notifications",
+            "phase": 2,
+            "effort_hours": 12.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T17"
+            ],
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Alert engine calls PagerDuty API to create incidents; incident includes metric name, threshold, current value, and dashboard link; API key stored securely."
+          },
+          {
+            "id": "T19",
+            "name": "Build alert configuration UI (threshold, metric, notification channel)",
+            "phase": 2,
+            "effort_hours": 14.0,
+            "owner_role": "Frontend Developer",
+            "dependencies": [
+              "T7",
+              "T16"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "React form allows users to select metric, set threshold value, choose operator (>, <, =), select notification channel (PagerDuty, email); submits to T16 API."
+          },
+          {
+            "id": "T20",
+            "name": "Implement feature flag strategy for gradual rollout",
+            "phase": 2,
+            "effort_hours": 8.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T8"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 3,
+            "definition_of_done": "Feature flags control visibility of custom reports, scheduling, and alerts; flags can be toggled per user or team without code deployment."
+          }
+        ]
+      },
+      {
+        "phase_number": 3,
+        "name": "Integration & Edge Cases (Sprint Cycles)",
+        "duration_weeks": 2.5,
+        "percentage_of_total": 20.8,
+        "milestones": [
+          "Sprint 5: Regression test suite passes; all integrations tested",
+          "Sprint 6: Edge cases handled; performance benchmarks met",
+          "All integrations tested and security review completed"
+        ],
+        "tasks": [
+          {
+            "id": "T21",
+            "name": "Build regression test suite for existing dashboard features",
+            "phase": 3,
+            "effort_hours": 20.0,
+            "owner_role": "QA Engineer",
+            "dependencies": [
+              "T3"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Automated test suite covers all existing dashboard widgets, filters, and exports; baseline performance metrics recorded; tests run in < 10 minutes."
+          },
+          {
+            "id": "T22",
+            "name": "Execute full regression test pass against existing features",
+            "phase": 3,
+            "effort_hours": 16.0,
+            "owner_role": "QA Engineer",
+            "dependencies": [
+              "T21",
+              "T20"
+            ],
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "All regression tests pass; no new failures introduced; performance metrics within 5% of baseline; defects logged and triaged."
+          },
+          {
+            "id": "T23",
+            "name": "Test custom report generation with edge cases (large date ranges, many metrics)",
+            "phase": 3,
+            "effort_hours": 12.0,
+            "owner_role": "QA Engineer",
+            "dependencies": [
+              "T10",
+              "T11"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Reports generated for 2-year date range, 20+ metrics, complex filters; execution time logged; timeout and memory limits validated."
+          },
+          {
+            "id": "T24",
+            "name": "Test report scheduling and email delivery at scale (100+ scheduled reports)",
+            "phase": 3,
+            "effort_hours": 10.0,
+            "owner_role": "QA Engineer",
+            "dependencies": [
+              "T13",
+              "T14"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "100 scheduled reports created; delivery job runs without queue overflow; all emails delivered within 5 minutes of scheduled time; no duplicates."
+          },
+          {
+            "id": "T25",
+            "name": "Test alert evaluation and PagerDuty integration under load",
+            "phase": 3,
+            "effort_hours": 12.0,
+            "owner_role": "QA Engineer",
+            "dependencies": [
+              "T17",
+              "T18"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "50+ alerts evaluated every 15 minutes; PagerDuty incidents created correctly; alert deduplication prevents duplicate incidents; latency < 2 minutes."
+          },
+          {
+            "id": "T26",
+            "name": "Conduct security review and penetration testing",
+            "phase": 3,
+            "effort_hours": 16.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T18",
+              "T22"
+            ],
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Security review covers authentication, authorization, SQL injection, XSS, CSRF, data exposure; penetration test report generated; critical findings remediated."
+          },
+          {
+            "id": "T27",
+            "name": "Document rollback plan for new features",
+            "phase": 3,
+            "effort_hours": 6.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T20"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Rollback procedure documents how to disable custom reports, scheduling, and alerts via feature flags; tested in staging environment."
+          },
+          {
+            "id": "T28",
+            "name": "Performance comparison: new features vs. baseline",
+            "phase": 3,
+            "effort_hours": 8.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T22"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Report compares dashboard load time, report generation time, and alert evaluation latency before and after new features; variance < 10%."
+          }
+        ]
+      },
+      {
+        "phase_number": 4,
+        "name": "QA & Testing",
+        "duration_weeks": 2.5,
+        "percentage_of_total": 20.8,
+        "milestones": [
+          "UAT with CSM and Sales teams completed",
+          "All critical bugs resolved",
+          "Documentation and runbooks written",
+          "Training materials prepared"
+        ],
+        "tasks": [
+          {
+            "id": "T29",
+            "name": "Prepare UAT environment and test data",
+            "phase": 4,
+            "effort_hours": 12.0,
+            "owner_role": "QA Engineer",
+            "dependencies": [
+              "T26"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "UAT environment mirrors production; test data includes 6 months of sample customer analytics; 10 pre-configured test reports and alerts ready."
+          },
+          {
+            "id": "T30",
+            "name": "Conduct UAT with Customer Success Team (5 users, 2 days)",
+            "phase": 4,
+            "effort_hours": 16.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T29"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "5 CSMs test custom reports, scheduling, and alerts; feedback documented; critical issues logged; sign-off obtained on core workflows."
+          },
+          {
+            "id": "T31",
+            "name": "Conduct UAT with Sales Team (5 users, 2 days)",
+            "phase": 4,
+            "effort_hours": 16.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T29"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "5 Sales reps test custom reports, scheduling, and alerts; feedback documented; critical issues logged; sign-off obtained on core workflows."
+          },
+          {
+            "id": "T32",
+            "name": "Triage and fix critical bugs from UAT",
+            "phase": 4,
+            "effort_hours": 20.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T30",
+              "T31"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "All P0 and P1 bugs fixed and verified; regression tests pass; UAT sign-off obtained from both teams."
+          },
+          {
+            "id": "T33",
+            "name": "Write API documentation and developer runbook",
+            "phase": 4,
+            "effort_hours": 12.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T26"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "API docs include endpoint specs, authentication, error codes, rate limits; runbook covers deployment, monitoring, troubleshooting, and rollback."
+          },
+          {
+            "id": "T34",
+            "name": "Write user documentation and quick-start guide",
+            "phase": 4,
+            "effort_hours": 10.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T32"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "User guide covers custom report creation, scheduling, alert configuration with screenshots; quick-start guide (1 page) for new users."
+          },
+          {
+            "id": "T35",
+            "name": "Create training materials and record demo video",
+            "phase": 4,
+            "effort_hours": 8.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T34"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Training deck covers all new features; 10-minute demo video recorded; materials shared with CSM and Sales leads for internal training."
+          },
+          {
+            "id": "T36",
+            "name": "Set up monitoring and alerting for production dashboard",
+            "phase": 4,
+            "effort_hours": 10.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T26"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Monitoring covers API latency, error rates, batch job execution, email delivery, PagerDuty integration; alerts configured for SLA breaches."
+          },
+          {
+            "id": "T37",
+            "name": "Prepare data retention and purge automation",
+            "phase": 4,
+            "effort_hours": 8.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T4"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Purge job deletes data older than 2 years (per A2); runs monthly; logs retention policy compliance; tested in staging."
+          }
+        ]
+      },
+      {
+        "phase_number": 5,
+        "name": "Deployment & Handoff",
+        "duration_weeks": 0.9,
+        "percentage_of_total": 7.5,
+        "milestones": [
+          "Production deployment completed",
+          "Smoke testing in production passed",
+          "Go-live sign-off obtained"
+        ],
+        "tasks": [
+          {
+            "id": "T38",
+            "name": "Deploy to production (feature flags disabled initially)",
+            "phase": 5,
+            "effort_hours": 8.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T36"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Code deployed to production; feature flags for custom reports, scheduling, alerts set to OFF; database migrations applied; no errors in logs."
+          },
+          {
+            "id": "T39",
+            "name": "Execute smoke tests in production",
+            "phase": 5,
+            "effort_hours": 6.0,
+            "owner_role": "QA Engineer",
+            "dependencies": [
+              "T38"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Smoke tests verify SSO login, dashboard load, existing features work; no critical errors; performance metrics within SLA."
+          },
+          {
+            "id": "T40",
+            "name": "Enable feature flags and monitor for 2 hours",
+            "phase": 5,
+            "effort_hours": 4.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T39"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Feature flags enabled for custom reports, scheduling, alerts; monitoring dashboard shows no errors; error rate < 0.1%; go-live sign-off obtained."
+          }
+        ]
+      }
+    ]
+  },
+  "use_case_task_mapping": {
+    "UC1": [
+      "T2",
+      "T8"
+    ],
+    "UC2": [
+      "T9",
+      "T20",
+      "T21",
+      "T22"
+    ],
+    "UC3": [
+      "T6",
+      "T10",
+      "T11",
+      "T23"
+    ],
+    "UC4": [
+      "T12",
+      "T24"
+    ],
+    "UC5": [
+      "T13",
+      "T14",
+      "T15",
+      "T24"
+    ],
+    "UC6": [
+      "T16",
+      "T19"
+    ],
+    "UC7": [
+      "T17",
+      "T18",
+      "T25"
+    ],
+    "UC8": [
+      "T9",
+      "T17"
+    ]
+  }
+}

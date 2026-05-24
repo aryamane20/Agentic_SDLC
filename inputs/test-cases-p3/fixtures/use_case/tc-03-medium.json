@@ -1,0 +1,127 @@
+{
+  "system_boundary": "API Gateway",
+  "actors": [
+    {
+      "id": "A1",
+      "name": "External Client",
+      "type": "primary"
+    },
+    {
+      "id": "A2",
+      "name": "Internal Development Team",
+      "type": "primary"
+    },
+    {
+      "id": "A3",
+      "name": "Microservice",
+      "type": "external"
+    },
+    {
+      "id": "A4",
+      "name": "Logging Service",
+      "type": "secondary"
+    },
+    {
+      "id": "A5",
+      "name": "Authentication Service",
+      "type": "secondary"
+    }
+  ],
+  "use_cases": [
+    {
+      "id": "UC1",
+      "name": "Route API Request",
+      "actors": [
+        "A1",
+        "A3"
+      ],
+      "complexity": "medium",
+      "description": "External client sends request through gateway to appropriate microservice"
+    },
+    {
+      "id": "UC2",
+      "name": "Authenticate Request",
+      "actors": [
+        "A1",
+        "A5"
+      ],
+      "complexity": "medium",
+      "description": "Validate client credentials and authorization before routing"
+    },
+    {
+      "id": "UC3",
+      "name": "Apply Rate Limiting",
+      "actors": [
+        "A1"
+      ],
+      "complexity": "simple",
+      "description": "Enforce request rate limits per client or API endpoint"
+    },
+    {
+      "id": "UC4",
+      "name": "Log API Call",
+      "actors": [
+        "A4"
+      ],
+      "complexity": "simple",
+      "description": "Record request and response details for audit and monitoring"
+    },
+    {
+      "id": "UC5",
+      "name": "Balance Load Across Services",
+      "actors": [
+        "A3"
+      ],
+      "complexity": "medium",
+      "description": "Distribute incoming requests across multiple instances of microservices"
+    },
+    {
+      "id": "UC6",
+      "name": "Support API Versioning",
+      "actors": [
+        "A1",
+        "A3"
+      ],
+      "complexity": "simple",
+      "description": "Route requests to correct API version based on request header or path"
+    },
+    {
+      "id": "UC7",
+      "name": "Configure Gateway Rules",
+      "actors": [
+        "A2"
+      ],
+      "complexity": "medium",
+      "description": "Development team configures routing, rate limits, and authentication policies"
+    }
+  ],
+  "relationships": [
+    {
+      "type": "includes",
+      "from_id": "UC1",
+      "to_id": "UC2"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC1",
+      "to_id": "UC3"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC1",
+      "to_id": "UC4"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC1",
+      "to_id": "UC5"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC1",
+      "to_id": "UC6"
+    }
+  ],
+  "input_quality_signal": "HIGH",
+  "anti_patterns_detected": []
+}

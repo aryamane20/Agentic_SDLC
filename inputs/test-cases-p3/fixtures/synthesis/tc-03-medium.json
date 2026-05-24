@@ -1,0 +1,68 @@
+{
+  "consistency_issues": [
+    {
+      "rule": "actor_role_coverage",
+      "detail": "Actor 'External Client' (A1) mapped to Backend Developer and QA Engineer roles, which are implementation roles. External actors should not be assigned internal development roles.",
+      "auto_corrected": false
+    },
+    {
+      "rule": "actor_role_coverage",
+      "detail": "Actor 'Microservice' (A3) is external type but mapped to Backend Developer, DevOps Engineer, QA Engineer roles. External actors should not be assigned internal development roles.",
+      "auto_corrected": false
+    },
+    {
+      "rule": "actor_role_coverage",
+      "detail": "Actor 'Logging Service' (A4) is secondary type but mapped to Backend Developer, DevOps Engineer, QA Engineer roles. Secondary actors should not be assigned internal development roles.",
+      "auto_corrected": false
+    },
+    {
+      "rule": "actor_role_coverage",
+      "detail": "Actor 'Authentication Service' (A5) is secondary type but mapped to Platform Architect, Backend Developer, QA Engineer roles. Secondary actors should not be assigned internal development roles.",
+      "auto_corrected": false
+    }
+  ],
+  "corrections_applied": [],
+  "staffing_corrections": [],
+  "added_open_questions": [
+    {
+      "priority": 1,
+      "question": "Actor-to-role mapping includes external and secondary actors (A1, A3, A4, A5) assigned to internal development roles (Backend Developer, QA Engineer, DevOps Engineer, Platform Architect). Clarify: should actor_role_mapping include only primary internal actors (A2: Internal Development Team)? Current mapping appears to conflate actor types with role assignments.",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Staffing plan clarity is compromised. Role allocation and responsibility assignment may be misaligned with actual team structure. Recommend mapping only primary/internal actors to roles; external/secondary actors should be listed as dependencies or integration points, not role assignments."
+    },
+    {
+      "priority": 2,
+      "question": "Staffing capacity analysis: total task effort across all phases = 800 hours (sum of all task.effort_hours). Planned duration = 16 weeks. Assuming 5 team members × 40 hours/week × 16 weeks = 3,200 available hours. Utilization = 800h / 3,200h = 25%. Is this utilization rate acceptable, or does it indicate over-staffing or under-scoping?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Project may be over-resourced relative to scope, or scope may be under-estimated. Recommend capacity review to confirm staffing plan aligns with actual effort requirements and project constraints."
+    },
+    {
+      "priority": 3,
+      "question": "Timeline achievability: total effort = 800 hours ÷ 6 hours/day = 133.3 work days ÷ 5 days/week = 26.7 weeks. Planned duration = 16 weeks. Ratio = 26.7 / 16 = 1.67. Effort exceeds planned timeline by 67%, far exceeding the 20% threshold (1.2×). How is this discrepancy resolved in the project plan?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Project plan effort and duration are fundamentally misaligned. Either scope must be reduced by ~40%, duration extended to ~27 weeks, or staffing increased to 5+ concurrent team members. Current plan is not achievable within stated constraints."
+    }
+  ],
+  "pm_confidence_score": {
+    "score": 50.0,
+    "deductions": [
+      {
+        "amount": 25.0,
+        "reason": "5 assumptions (A1-A5) × 5.0 each"
+      },
+      {
+        "amount": 10.0,
+        "reason": "1 CRITICAL risk (R1: platform selection uncertainty)"
+      },
+      {
+        "amount": 25.0,
+        "reason": "5 HIGH risks (R2, R3, R4, R5, R6, R7) × 5.0 each"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Hybrid SDLC approach introduces adaptive cycle uncertainty"
+      }
+    ],
+    "interpretation": "PM confidence score is 50.0 because project has 5 unresolved assumptions and 6 HIGH/CRITICAL risks directly impacting platform selection, team capability, authentication architecture, and resource commitment. Critical path roles lack named backups and formal resource commitment. Hybrid SDLC requires identified Product Owner. Hard cap applied: assumption_count=5 triggers cap at 60; CRITICAL risk R1 with assumption_count≥3 triggers cap at 50. Score is at floor due to compounding schedule risk (effort 1.67× planned duration), resource risk (Backend Developer single point of failure), and technology uncertainty (platform selection deferred to Phase 1)."
+  }
+}

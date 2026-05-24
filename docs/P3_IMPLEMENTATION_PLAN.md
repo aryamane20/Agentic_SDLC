@@ -22,7 +22,7 @@ Raw Brief
   ↓ checkpoint
 [Intake Agent]     Haiku, ~3500 tokens prompt, no KB   ← gate: >5 assumptions or LOW quality
   ↓ checkpoint
-[Planning]  [Risk]  Sonnet / Haiku — run in PARALLEL via asyncio.gather
+[Planning]  [Risk]  Haiku / Haiku — run in PARALLEL via asyncio.gather
   ↓ both checkpoint
 [Staffing Agent]   Haiku, ~1200 tokens prompt, staffing KB only (~3KB)
   ↓ checkpoint
@@ -41,18 +41,18 @@ runs on the final assembled report unchanged.
 
 ### 1. Pipeline & Architecture
 
-**Model selection by task complexity**
+**Model selection — all agents use Haiku**
 | Agent | Model | Reason |
 |---|---|---|
 | Use Case | Haiku | Simple extraction — actors, UCs, relationships from structured text |
 | Intake | Haiku | Classification + constraint extraction — pattern matching, not reasoning |
-| Planning | Sonnet | WBS decomposition requires multi-step reasoning across dependencies |
+| Planning | Haiku | WBS decomposition — focused prompt + KB slice keeps context small enough for Haiku |
 | Risk | Haiku | Checklist application against known patterns — fast lookup |
 | Staffing | Haiku | Rule enforcement (80%/25%/10-15% caps) — arithmetic, not reasoning |
-| Synthesis | Sonnet | Cross-artifact consistency check requires holding 5 artifacts in mind simultaneously |
+| Synthesis | Haiku | Consistency check + final assembly — all agents use Haiku for cost and latency uniformity |
 
-Never use Sonnet when Haiku can meet quality bar. The Planning+Risk parallel step means
-Sonnet (Planning) and Haiku (Risk) run simultaneously — no Sonnet latency penalty for Risk.
+All 6 agents use Haiku. This is the lowest-latency, lowest-cost configuration.
+If output quality is insufficient on eval, upgrade individual agents to Sonnet selectively.
 
 **Merge micro-decisions** — Intake runs all 4 steps (extract → classify → constraints → assumptions)
 in one single prompt call, not 4 sequential calls. Same for Staffing (allocation + viability in
@@ -222,13 +222,13 @@ None has the 8-step overview — only its own steps + partial output contract.
 `agent/agents/__init__.py` + one file per agent. Each overrides `_build_user_message()` and
 calls `super().__init__(agent_name=..., prompt_path=..., model=..., max_tokens=...)`.
 
-Model assignments:
+Model assignments (all Haiku):
 - `UseCaseAgent` → Haiku, max_tokens=2000
 - `IntakeAgent` → Haiku, max_tokens=4000
-- `PlanningAgent` → Sonnet, max_tokens=6000
+- `PlanningAgent` → Haiku, max_tokens=6000
 - `RiskAgent` → Haiku, max_tokens=3000
 - `StaffingAgent` → Haiku, max_tokens=4000
-- `SynthesisAgent` → Sonnet, max_tokens=6000
+- `SynthesisAgent` → Haiku, max_tokens=6000
 
 ### Step 5 — `agent/rag_client.py`
 `KBRetriever` class. Interface designed for Pinecone swap later:

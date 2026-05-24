@@ -1,0 +1,143 @@
+{
+  "system_boundary": "Employee Onboarding Portal",
+  "actors": [
+    {
+      "id": "A1",
+      "name": "New Employee",
+      "type": "primary"
+    },
+    {
+      "id": "A2",
+      "name": "HR Administrator",
+      "type": "primary"
+    },
+    {
+      "id": "A3",
+      "name": "IT Administrator",
+      "type": "primary"
+    },
+    {
+      "id": "A4",
+      "name": "Workday",
+      "type": "external"
+    },
+    {
+      "id": "A5",
+      "name": "Azure AD",
+      "type": "external"
+    },
+    {
+      "id": "A6",
+      "name": "E-signature Service",
+      "type": "external"
+    }
+  ],
+  "use_cases": [
+    {
+      "id": "UC1",
+      "name": "Complete Onboarding Checklist",
+      "actors": [
+        "A1"
+      ],
+      "complexity": "medium",
+      "description": "New employee views and tracks all required onboarding tasks with due dates"
+    },
+    {
+      "id": "UC2",
+      "name": "Submit Required Documents",
+      "actors": [
+        "A1"
+      ],
+      "complexity": "medium",
+      "description": "New employee uploads and e-signs I-9, W-4, and direct deposit forms"
+    },
+    {
+      "id": "UC3",
+      "name": "Review Team Introduction",
+      "actors": [
+        "A1"
+      ],
+      "complexity": "simple",
+      "description": "New employee views team member profiles with photos and roles"
+    },
+    {
+      "id": "UC4",
+      "name": "Provision IT Accounts",
+      "actors": [
+        "A3",
+        "A5"
+      ],
+      "complexity": "complex",
+      "description": "System automatically creates email, Slack, and SaaS tool accounts via Azure AD integration"
+    },
+    {
+      "id": "UC5",
+      "name": "Monitor Onboarding Progress",
+      "actors": [
+        "A2"
+      ],
+      "complexity": "simple",
+      "description": "HR administrator views dashboard of new hire completion status and outstanding tasks"
+    },
+    {
+      "id": "UC6",
+      "name": "Collect Employee Data",
+      "actors": [
+        "A2",
+        "A4"
+      ],
+      "complexity": "simple",
+      "description": "System retrieves new employee information from Workday to pre-populate portal"
+    },
+    {
+      "id": "UC7",
+      "name": "Authenticate User",
+      "actors": [
+        "A1",
+        "A2",
+        "A3",
+        "A5"
+      ],
+      "complexity": "simple",
+      "description": "User logs in via Azure AD SSO"
+    },
+    {
+      "id": "UC8",
+      "name": "Generate Audit Logs",
+      "actors": [
+        "A2"
+      ],
+      "complexity": "simple",
+      "description": "System records all document submissions and account provisioning actions for SOC 2 compliance"
+    }
+  ],
+  "relationships": [
+    {
+      "type": "includes",
+      "from_id": "UC1",
+      "to_id": "UC7"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC2",
+      "to_id": "UC7"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC2",
+      "to_id": "UC8"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC4",
+      "to_id": "UC8"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC1",
+      "to_id": "UC6"
+    }
+  ],
+  "input_quality_signal": "HIGH",
+  "anti_patterns_detected": []
+}

@@ -1,0 +1,221 @@
+{
+  "risk_register": [
+    {
+      "id": "R1",
+      "category": "Technical",
+      "description": "If API gateway platform is not selected and evaluated during Phase 1, then technology stack uncertainty will cascade into Phase 2 design and Phase 3 build, potentially requiring re-architecture mid-project and delaying delivery beyond 4-month deadline.",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "score": "CRITICAL",
+      "trigger": "Phase 1 discovery concludes without formal platform selection decision; team begins Phase 2 design with multiple candidate platforms still under evaluation.",
+      "mitigation": "Establish technology selection gate at end of Phase 1 (Week 4) with explicit evaluation criteria (team expertise, organizational standards, operational complexity, cost). Conduct proof-of-concept on top 2 candidate platforms (Kong vs. AWS API Gateway) in parallel during Phase 1 to validate feasibility and team capability.",
+      "contingency": "If platform selection extends beyond Week 4, compress Phase 2 design timeline by 1 week and allocate 2 engineers to parallel platform evaluation while remaining 2 engineers begin microservice inventory and authentication protocol definition."
+    },
+    {
+      "id": "R2",
+      "category": "Resource",
+      "description": "If team lacks prior experience with API gateway platforms and microservices architecture, then Phase 1 discovery and Phase 2 design will extend beyond planned duration, compressing Phase 3 build and Phase 4 testing, increasing defect escape risk and jeopardizing 4-month deadline.",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "score": "HIGH",
+      "trigger": "Phase 1 capability assessment reveals team has no prior gateway platform experience or limited microservices architecture knowledge; ramp-up activities (training, external mentoring) are required.",
+      "mitigation": "Conduct explicit team capability assessment in Week 1 of Phase 1 (before platform selection). If gaps identified, allocate 1 engineer to external training or vendor-led platform bootcamp (1-2 weeks) in parallel with Phase 1 discovery. Identify external architect or consultant for Phase 2 design review to accelerate team learning.",
+      "contingency": "If ramp-up extends beyond Week 3, reduce Phase 2 scope to core gateway features (routing, authentication, rate limiting) and defer advanced features (API versioning, custom policies) to Phase 4 or post-launch."
+    },
+    {
+      "id": "R3",
+      "category": "Scope",
+      "description": "If authentication protocol (OAuth 2.0, SAML, OIDC, custom) is not confirmed with stakeholders before Phase 2 design, then gateway configuration and microservice client library integration will require re-work, delaying Phase 3 build and Phase 4 testing.",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "score": "CRITICAL",
+      "trigger": "Phase 1 discovery concludes without explicit stakeholder sign-off on authentication protocol; Phase 2 design assumes OAuth 2.0 but organization mandates SAML or custom integration.",
+      "mitigation": "Schedule stakeholder alignment meeting in Week 2 of Phase 1 to confirm authentication protocol and identify any existing identity providers or SSO systems. Document decision in writing and obtain formal approval before Phase 2 design begins (Week 5).",
+      "contingency": "If authentication protocol changes during Phase 2 or Phase 3, establish change control process to assess impact on gateway configuration, microservice client libraries, and testing scope. Allocate contingency buffer (1 week) in Phase 3 for re-work."
+    },
+    {
+      "id": "R4",
+      "category": "Integration",
+      "description": "If expected API request volume, number of external clients, and microservice instance count are not defined, then load balancing and rate limiting configuration will be based on assumptions, potentially resulting in under-provisioned infrastructure or over-engineered solution that increases operational complexity and cost.",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "score": "HIGH",
+      "trigger": "Phase 1 discovery does not capture traffic volume requirements; Phase 2 design proceeds with default assumptions (<50 concurrent users, <100 req/sec); Phase 3 infrastructure provisioning reveals actual volume is 10x higher.",
+      "mitigation": "Conduct traffic analysis and capacity planning in Phase 1 Week 2-3. Interview internal development teams to estimate current API request volume, growth projections, and peak load scenarios. Document load balancing and rate limiting requirements before Phase 2 design.",
+      "contingency": "If actual traffic volume exceeds Phase 2 design assumptions, implement horizontal scaling strategy (additional gateway instances, load balancer configuration) in Phase 3 or Phase 4. Allocate contingency infrastructure budget for scaling."
+    },
+    {
+      "id": "R5",
+      "category": "Compliance",
+      "description": "If compliance or data governance requirements for API logs (HIPAA, SOC2, PCI-DSS, data residency) are not identified before Phase 2 design, then logging infrastructure will require re-architecture post-launch, creating operational risk and potential compliance violations.",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "score": "HIGH",
+      "trigger": "Phase 1 discovery does not identify compliance requirements; Phase 3 infrastructure provisioning or Phase 4 security review reveals organization is subject to HIPAA, SOC2, or PCI-DSS; logging infrastructure does not meet encryption, retention, or audit trail requirements.",
+      "mitigation": "Schedule compliance and data governance review in Phase 1 Week 1-2. Engage legal, security, and data governance teams to identify applicable regulations and data retention requirements. Document compliance requirements in Phase 1 deliverables before Phase 2 design.",
+      "contingency": "If compliance gaps are discovered in Phase 3 or Phase 4, implement encryption, audit trail, and retention controls as emergency change. Allocate contingency time (1-2 weeks) in Phase 4 for compliance remediation and security review."
+    },
+    {
+      "id": "R6",
+      "category": "Schedule",
+      "description": "If Phase 1 discovery extends beyond planned 4 weeks due to technology evaluation, capability assessment, or stakeholder alignment delays, then subsequent phases will be compressed, reducing quality assurance time and increasing defect escape risk.",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "score": "HIGH",
+      "trigger": "Phase 1 activities (platform selection, capability assessment, requirements confirmation) extend beyond Week 4; Phase 2 design start date slips by 1+ week.",
+      "mitigation": "Establish Phase 1 gate criteria and decision deadlines in project kickoff (Week 1). Allocate dedicated time for platform proof-of-concept (parallel track, 2 engineers) and stakeholder alignment meetings (weekly, 1 hour). Use timeboxed decision-making to prevent analysis paralysis.",
+      "contingency": "If Phase 1 extends beyond Week 4, compress Phase 2 design timeline by reducing design review cycles (1 review instead of 2) and deferring non-critical design documentation to Phase 3. Prioritize core gateway features (routing, authentication, rate limiting) in Phase 2; defer advanced features to Phase 4."
+    },
+    {
+      "id": "R7",
+      "category": "Resource",
+      "description": "If Backend Developer or Platform Architect (critical path roles) becomes unavailable or is pulled to competing projects, then core gateway development (routing, authentication, load balancing) will stall, jeopardizing 4-month deadline.",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "score": "HIGH",
+      "trigger": "Backend Developer or Platform Architect is allocated to competing project during Phase 2-4; either role drops below 80% allocation to API gateway project.",
+      "mitigation": "Obtain formal commitment from resource manager that Backend Developer and Platform Architect are 100% dedicated to API gateway project for full 16-week duration. Document commitment in project charter and resource plan. Establish weekly resource status check-in to monitor allocation.",
+      "contingency": "If critical path role becomes unavailable, immediately identify backup engineer with microservices or gateway experience. Conduct knowledge transfer (2-3 days) to bring backup up to speed. If no backup available, escalate to project sponsor to negotiate deadline extension or scope reduction."
+    },
+    {
+      "id": "R8",
+      "category": "Scope",
+      "description": "If Product Owner or single decision-maker is not identified for Hybrid SDLC sprint cycles (Phase 2-4), then sprint planning and scope negotiation will be delayed, creating decision bottlenecks and scope creep.",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "score": "MEDIUM",
+      "trigger": "Phase 2 sprint planning begins without identified Product Owner; multiple stakeholders (development teams, platform team, security) have conflicting priorities; sprint goals are unclear or change mid-sprint.",
+      "mitigation": "Identify and formally assign Product Owner role in project kickoff (Week 1). Document PO responsibilities (backlog prioritization, sprint goal definition, scope trade-off decisions). Establish weekly PO availability (minimum 10 hours/week) for sprint planning, review, and retrospective meetings.",
+      "contingency": "If PO is unavailable during sprint, designate acting PO with authority to make scope and priority decisions. Escalate unresolved conflicts to project sponsor for tie-breaking decision."
+    },
+    {
+      "id": "R9",
+      "category": "Integration",
+      "description": "If microservice instances, authentication service, and logging service are not available or accessible during Phase 3 build and Phase 4 testing, then gateway integration testing will be blocked, delaying Phase 4 completion.",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "score": "MEDIUM",
+      "trigger": "Phase 3 integration testing begins; microservice team has not deployed test instances; authentication service API is not accessible; logging service infrastructure is not provisioned.",
+      "mitigation": "Establish integration dependencies in Phase 1 discovery. Create integration readiness checklist (microservice test instances, authentication service sandbox, logging service staging environment) and assign ownership to respective teams. Conduct dependency review in Phase 2 Week 1 to confirm availability before Phase 3 build.",
+      "contingency": "If external dependencies are not available, implement mock services or stubs for authentication and logging in Phase 3 build. Conduct integration testing with mocks; defer end-to-end testing with real services to Phase 4 or post-launch."
+    },
+    {
+      "id": "R10",
+      "category": "Technical",
+      "description": "If API request logging volume exceeds infrastructure capacity or logging service performance degrades under load, then gateway performance will degrade, violating availability and response time requirements.",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "score": "MEDIUM",
+      "trigger": "Phase 4 load testing reveals logging service cannot handle expected request volume; gateway response time increases >2s under peak load; logging service becomes bottleneck.",
+      "mitigation": "Conduct load testing in Phase 3 (Week 11-12) with realistic traffic volume and logging enabled. Identify logging service performance limits and implement asynchronous logging or log buffering to decouple gateway performance from logging latency. Validate logging infrastructure can handle peak load before Phase 4 UAT.",
+      "contingency": "If logging service is performance bottleneck, implement log sampling or filtering to reduce volume. Defer detailed logging to asynchronous batch process. Implement circuit breaker to prevent gateway from blocking on logging failures."
+    },
+    {
+      "id": "R11",
+      "category": "Budget",
+      "description": "If budget for API gateway project is constrained or not pre-approved, then team may be forced to select open-source platform (Kong, Traefik) over commercial solution (AWS API Gateway, Apigee), or reduce team size, impacting timeline or feature scope.",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "score": "MEDIUM",
+      "trigger": "Phase 1 platform evaluation reveals commercial gateway platform costs exceed approved budget; budget approval is delayed or reduced; infrastructure costs (logging, monitoring) exceed estimates.",
+      "mitigation": "Confirm budget approval and cost constraints in project kickoff (Week 1). Conduct cost-benefit analysis of platform options (open-source vs. commercial) in Phase 1 Week 2-3. Include infrastructure, tooling, and operational costs in budget estimate. Obtain formal budget sign-off before Phase 2 design.",
+      "contingency": "If budget is constrained, prioritize open-source platform (Kong, Traefik) with lower licensing costs. Allocate engineering time for platform customization and operational support. Defer commercial monitoring or analytics tools to Phase 4 or post-launch."
+    },
+    {
+      "id": "R12",
+      "category": "Technical",
+      "description": "If API versioning strategy is not defined before Phase 2 design, then gateway routing configuration and microservice client library integration will require re-work when versioning requirements are clarified.",
+      "probability": "LOW",
+      "impact": "MEDIUM",
+      "score": "LOW",
+      "trigger": "Phase 2 design assumes URL-path versioning (/v1/, /v2/) but stakeholders require header-based versioning (Accept-Version header); Phase 3 build requires re-configuration of gateway routing rules.",
+      "mitigation": "Define API versioning strategy in Phase 1 discovery (Week 2-3). Document versioning approach (URL path, header, query parameter) and obtain stakeholder approval. Include versioning requirements in Phase 2 design specification.",
+      "contingency": "If versioning strategy changes during Phase 2 or Phase 3, implement versioning abstraction layer in gateway to support multiple versioning approaches. Allocate 2-3 days in Phase 3 for re-configuration and testing."
+    }
+  ],
+  "risk_use_case_mapping": {
+    "R1": [
+      "UC1",
+      "UC2",
+      "UC3",
+      "UC4",
+      "UC5",
+      "UC6",
+      "UC7"
+    ],
+    "R2": [
+      "UC1",
+      "UC2",
+      "UC3",
+      "UC4",
+      "UC5",
+      "UC6",
+      "UC7"
+    ],
+    "R3": [
+      "UC2",
+      "UC7"
+    ],
+    "R4": [
+      "UC1",
+      "UC3",
+      "UC5"
+    ],
+    "R5": [
+      "UC4",
+      "UC7"
+    ],
+    "R6": [
+      "UC1",
+      "UC2",
+      "UC3",
+      "UC4",
+      "UC5",
+      "UC6",
+      "UC7"
+    ],
+    "R7": [
+      "UC1",
+      "UC2",
+      "UC3",
+      "UC4",
+      "UC5",
+      "UC6",
+      "UC7"
+    ],
+    "R8": [
+      "UC7"
+    ],
+    "R9": [
+      "UC1",
+      "UC2",
+      "UC4",
+      "UC5"
+    ],
+    "R10": [
+      "UC4"
+    ],
+    "R11": [
+      "UC1",
+      "UC2",
+      "UC3",
+      "UC4",
+      "UC5",
+      "UC6",
+      "UC7"
+    ],
+    "R12": [
+      "UC6"
+    ]
+  },
+  "critical_path_risk_flags": [
+    "T1",
+    "T2",
+    "T4",
+    "T7",
+    "T11",
+    "T15",
+    "T19",
+    "T23"
+  ]
+}
