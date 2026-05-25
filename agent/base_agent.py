@@ -118,13 +118,10 @@ class BaseAgent:
         """
         return isinstance(parsed, dict) and len(parsed) >= 1 and not parsed.get("parse_error")
 
-<<<<<<< Updated upstream
-=======
     def _post_process_artifact(self, artifact: dict) -> dict:
         """Optional post-processing after successful parse. Subclasses override."""
         return artifact
 
->>>>>>> Stashed changes
     # ------------------------------------------------------------------
     # JSON extraction (battle-tested logic from PMAgent, relaxed for partials)
     # ------------------------------------------------------------------
@@ -226,11 +223,8 @@ class BaseAgent:
             "cache_creation_tokens": getattr(usage, "cache_creation_input_tokens", 0),
         }
         artifact = self._extract_json(raw)
-<<<<<<< Updated upstream
-=======
         if not artifact.get("parse_error"):
             artifact = self._post_process_artifact(artifact)
->>>>>>> Stashed changes
         return artifact, tokens
 
     # ------------------------------------------------------------------

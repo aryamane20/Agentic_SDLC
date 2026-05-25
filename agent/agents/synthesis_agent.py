@@ -18,8 +18,6 @@ class SynthesisAgent(BaseAgent):
     def _is_valid_artifact(self, parsed: dict) -> bool:
         return isinstance(parsed, dict) and "pm_confidence_score" in parsed
 
-<<<<<<< Updated upstream
-=======
     def _post_process_artifact(self, artifact: dict) -> dict:
         """Strip PASS-condition log entries from consistency_issues.
 
@@ -46,7 +44,6 @@ class SynthesisAgent(BaseAgent):
         artifact["consistency_issues"] = filtered
         return artifact
 
->>>>>>> Stashed changes
     def _build_user_message(self, context: dict) -> str:
         use_case = context.get("use_case_model", {})
         brief = context.get("structured_brief", {})
