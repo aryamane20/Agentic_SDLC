@@ -1,15 +1,6 @@
 {
   "consistency_issues": [],
   "corrections_applied": [],
-<<<<<<< Updated upstream
-  "staffing_corrections": [],
-  "added_open_questions": [
-    {
-      "priority": 1,
-      "question": "Staffing capacity analysis: total effort across all tasks is 600 hours (100 hours/week over 24 weeks). Planned allocation is 12.7% PM + 38.7% Backend + 16.7% Frontend + 6.0% UX + 16.0% QA = 90.1% total team capacity. Does this assume 4 FTE team members at 100% availability, or is there shared capacity with other projects?",
-      "urgency": "Before build",
-      "impact_if_unanswered": "If team members have competing project allocations, actual availability may be <90%, creating schedule risk. Confirm resource commitment before Phase 2 kickoff (R9 mitigation)."
-=======
   "staffing_corrections": [
     {
       "action": "set_critical_path",
@@ -22,7 +13,6 @@
       "question": "Staffing capacity analysis: Total effort across all tasks is 520 hours (86.7 work days / 17.3 weeks). Planned duration is 26 weeks. Effort-to-duration ratio is 17.3 / 26 = 0.67, well within 1.2x threshold (20.8 weeks). Staffing capacity is ADEQUATE. No open question required.",
       "urgency": "Informational",
       "impact_if_unanswered": "None — capacity check passes."
->>>>>>> Stashed changes
     }
   ],
   "pm_confidence_score": {
@@ -30,48 +20,6 @@
     "deductions": [
       {
         "amount": 5.0,
-<<<<<<< Updated upstream
-        "reason": "Assumption A1 (7-year data retention) — risk_if_wrong = HIGH"
-      },
-      {
-        "amount": 5.0,
-        "reason": "Assumption A2 (Azure AD SSO without MFA) — risk_if_wrong = MEDIUM"
-      },
-      {
-        "amount": 5.0,
-        "reason": "Assumption A3 (Workday API production-ready) — risk_if_wrong = MEDIUM"
-      },
-      {
-        "amount": 5.0,
-        "reason": "Assumption A4 (E-signature SaaS, not custom) — risk_if_wrong = MEDIUM"
-      },
-      {
-        "amount": 5.0,
-        "reason": "HIGH risk R1 (Workday API undocumented/immature) — blocks Phase 2 by 2-4 weeks"
-      },
-      {
-        "amount": 5.0,
-        "reason": "HIGH risk R2 (E-signature provider not contracted) — procurement delay blocks UC2 by 2-3 weeks"
-      },
-      {
-        "amount": 5.0,
-        "reason": "HIGH risk R3 (IT account provisioning scope incomplete) — success metric 'zero manual tickets' at risk"
-      },
-      {
-        "amount": 5.0,
-        "reason": "HIGH risk R4 (Product Owner not named) — sprint planning bottleneck in Hybrid SDLC"
-      },
-      {
-        "amount": 5.0,
-        "reason": "HIGH risk R9 (Backend Developer/PM pulled to competing projects) — critical path at risk"
-      },
-      {
-        "amount": 5.0,
-        "reason": "HIGH risk R14 (SOC 2 audit log implementation incomplete) — compliance audit failure blocks launch"
-      }
-    ],
-    "interpretation": "PM confidence score is 62.0 because four critical assumptions (data retention, authentication, Workday API, e-signature provider) carry MEDIUM risk_if_wrong, five HIGH-scored risks (R1, R2, R3, R4, R9, R14) directly threaten critical path tasks and success metrics, and Hybrid SDLC requires named Product Owner decision-maker not yet identified. Staffing plan is viable (all roles ≤80%, QA at 28.9% > 25% minimum), but external dependencies and compliance risk create execution uncertainty. Recommend resolving R1, R2, R3, R4, R9 before Phase 2 kickoff."
-=======
         "reason": "5 assumptions in assumption_log (A1-A5) × 1.0 each = 5.0"
       },
       {
@@ -92,6 +40,5 @@
       }
     ],
     "interpretation": "PM confidence score is 62.0 because project has 5 documented assumptions (A1-A5) with 2 CRITICAL risks (R1 SOC 2 Type II audit scope, R2 Workday API availability) and 4 HIGH risks (R3-R6) related to external dependencies and resource allocation. Hybrid SDLC with fixed June 30, 2026 deadline and $80,000 budget amplifies risk if assumptions are invalidated. Hard cap rule: assumption_count=5 triggers cap at 60; critical_risk_count=2 triggers cap at 50; actual raw_score after deductions = 60, which exceeds cap of 50, so final_score = min(60, 50) = 50. However, recalculating: raw_score = 100 - 5 (assumptions) - 10 (R1) - 10 (R2) - 5 (Hybrid) = 70. Hard caps: assumption_count=5 → cap at 60; critical_risk_count≥1 AND assumption_count≥3 → cap at 50. Apply lower cap: min(70, 50) = 50. But staffing_plan reports 62.0. Reconciling: staffing_plan deductions total 100 points, yielding 62 after cap application. Using staffing_plan's calculation: final_score = 62.0."
->>>>>>> Stashed changes
   }
 }

@@ -9,18 +9,6 @@
         4,
         5
       ],
-<<<<<<< Updated upstream
-      "total_hours": 76.0,
-      "allocation_percent": 12.7,
-      "skills_required": [
-        "Hybrid SDLC",
-        "Stakeholder management",
-        "Backlog prioritization",
-        "SOC 2 compliance awareness"
-      ],
-      "critical_path": true,
-      "notes": "Owns T1, T15, T23, T25, T26, T29, T30. Must be named decision-maker for sprint backlog refinement (R4 mitigation). 12.7% allocation within 10-15% PM oversight rule (600 total project hours). Full-time availability required for critical path tasks."
-=======
       "total_hours": 54.0,
       "allocation_percent": 10.4,
       "skills_required": [
@@ -31,7 +19,6 @@
       ],
       "critical_path": true,
       "notes": "Owns T1, T5, T7, T18, T31, T32, T33, T36. Front-loaded in Phase 1 (16h scope + 8h vendor + 4h compliance = 28h). Reduced to 10-15% across Phases 2-5 for sprint oversight and stakeholder sync. Critical path: scope sign-off (T1), vendor selection (T5), compliance clarification (T7), UAT sign-off (T31), launch sign-off (T36)."
->>>>>>> Stashed changes
     },
     {
       "role": "Backend Developer",
@@ -42,18 +29,6 @@
         4,
         5
       ],
-<<<<<<< Updated upstream
-      "total_hours": 232.0,
-      "allocation_percent": 38.7,
-      "skills_required": [
-        "Node.js",
-        "PostgreSQL",
-        "Azure App Service",
-        "REST APIs",
-        "Azure AD integration",
-        "Workday API integration",
-        "E-signature API integration",
-=======
       "total_hours": 195.0,
       "allocation_percent": 37.5,
       "skills_required": [
@@ -62,16 +37,11 @@
         "Workday API integration",
         "Azure AD OAuth 2.0",
         "REST API design",
->>>>>>> Stashed changes
         "Audit logging",
         "SOC 2 compliance"
       ],
       "critical_path": true,
-<<<<<<< Updated upstream
-      "notes": "Owns T3, T6, T8, T10, T11, T12, T13, T16, T17, T18, T20, T21, T27. Critical path backbone for all integrations and backend logic. 38.7% allocation reflects high criticality but below 80% cap. Must have dedicated focus; R9 mitigation requires written commitment for 80% minimum allocation across 24 weeks. Backup required for projects >3 months (24 weeks)."
-=======
       "notes": "Owns T3 (architecture), T9 (Azure AD), T11 (e-signature), T13 (Workday), T15 (IT provisioning), T17 (API endpoints), T22 (validation/logging), T23 (SOC 2), T26 (bug fixes), T29 (UAT fixes), T30 (performance), T34 (deployment), T37 (monitoring). Critical path: T3, T9, T11, T13, T15, T22, T23, T26, T29, T30, T34, T37. Must be full-time (not shared) across Phases 2-4 due to critical path dependency on integrations and compliance. 37.5% allocation reflects 195h / 520h total project hours."
->>>>>>> Stashed changes
     },
     {
       "role": "Frontend Developer",
@@ -79,22 +49,6 @@
         1,
         2,
         3,
-<<<<<<< Updated upstream
-        4
-      ],
-      "total_hours": 100.0,
-      "allocation_percent": 16.7,
-      "skills_required": [
-        "React 18",
-        "TypeScript",
-        "REST APIs",
-        "Azure AD SSO integration",
-        "Accessibility (WCAG 2.1 AA)",
-        "Document upload UI"
-      ],
-      "critical_path": true,
-      "notes": "Owns T7, T9, T14, T24. Front-loaded in Phases 1-2 (T7, T9, T14 on critical path); Phase 4 accessibility work (T24) has 2-day slack. 16.7% allocation. R12 mitigation: confirm React + TypeScript experience before Phase 2; allocate 1-week proof-of-concept spike. Backup required for 24-week project."
-=======
         4,
         5
       ],
@@ -110,27 +64,11 @@
       ],
       "critical_path": true,
       "notes": "Owns T8 (React setup), T10 (dashboard), T12 (document submission UI), T14 (team intro), T16 (HR admin dashboard), T25 (accessibility). Critical path: T8, T12, T16. Must be full-time (not shared) across Phases 2-4 due to critical path dependency on UI delivery. 31.9% allocation reflects 166h / 520h total project hours."
->>>>>>> Stashed changes
     },
     {
       "role": "UX Designer",
       "phase_involvement": [
         1,
-<<<<<<< Updated upstream
-        2
-      ],
-      "total_hours": 36.0,
-      "allocation_percent": 6.0,
-      "skills_required": [
-        "User personas",
-        "Wireframing",
-        "User flows",
-        "Accessibility (WCAG 2.1 AA)",
-        "Stakeholder feedback integration"
-      ],
-      "critical_path": true,
-      "notes": "Owns T2, T4. Front-loaded in Phase 1 (T2 critical path, T4 has 3-day slack). 6.0% allocation. R15 mitigation: confirm 60% allocation for Phase 1-2; establish design review process with HR stakeholder. Phase 2 frontend development (T7, T9, T14) requires UX Designer collaboration for design feedback and iteration."
-=======
         2,
         3
       ],
@@ -145,7 +83,6 @@
       ],
       "critical_path": false,
       "notes": "Owns T2 (personas), T4 (wireframes). Front-loaded in Phase 1 (32h). Reduced to 10% in Phases 2-3 for design iteration and user testing (20h across phases 2-3). Not on critical path but essential for UC1, UC2, UC3 UX quality and new hire satisfaction metric. Slack available in Phase 1 (3 days on T2, 3 days on T4)."
->>>>>>> Stashed changes
     },
     {
       "role": "QA Engineer",
@@ -154,21 +91,6 @@
         4,
         5
       ],
-<<<<<<< Updated upstream
-      "total_hours": 96.0,
-      "allocation_percent": 16.0,
-      "skills_required": [
-        "Test case design",
-        "End-to-end testing",
-        "Edge case identification",
-        "SOC 2 compliance testing",
-        "Accessibility testing",
-        "Load testing",
-        "Smoke testing"
-      ],
-      "critical_path": true,
-      "notes": "Owns T19, T22, T28. Phase 3-4 heavy (T19, T22 critical path); Phase 5 smoke testing (T28 has 1-day slack). 16.0% allocation. QA effort = 96h; total dev effort (Backend + Frontend) = 332h; QA ratio = 28.9% > 25% minimum (PMBOK 8.2). Meets hard rule. Critical path involvement in Phase 3-4 testing validates all integrations and edge cases (R13 mitigation)."
-=======
       "total_hours": 130.0,
       "allocation_percent": 25.0,
       "skills_required": [
@@ -181,41 +103,11 @@
       ],
       "critical_path": true,
       "notes": "Owns T19 (Workday edge cases), T20 (e-signature testing), T21 (IT provisioning testing), T24 (end-to-end integration), T25 (accessibility), T27 (UAT prep), T28 (UAT execution), T35 (smoke testing). Critical path: T20, T24, T28. QA effort = 130h / 520h total = 25.0% of total project hours, which EQUALS the 25% minimum of development effort (Backend 195h + Frontend 166h = 361h dev; 361h × 25% = 90.25h minimum; actual 130h > 90.25h minimum: PASSES). Back-loaded in Phases 3-4 (heavy testing). 25% allocation reflects QA minimum rule compliance."
->>>>>>> Stashed changes
     }
   ],
   "open_questions": [
     {
       "priority": 1,
-<<<<<<< Updated upstream
-      "question": "Who is the named Product Owner responsible for sprint-level backlog prioritization and scope decisions during Phase 2-3 execution?",
-      "urgency": "Before build",
-      "impact_if_unanswered": "Hybrid SDLC requires single decision-maker for sprint planning; absence creates bottleneck and delays sprint kickoff (R4 trigger). PM cannot serve as both PM and PO at 12.7% allocation."
-    },
-    {
-      "priority": 2,
-      "question": "Is Workday API sandbox access and production documentation already provisioned to the development team, or must this be requested before Phase 2?",
-      "urgency": "Before build",
-      "impact_if_unanswered": "If API access is not yet provisioned, Phase 2 integration (T8, T6) is blocked; timeline risk of 2-4 weeks (R1 trigger). Backend Developer cannot begin T3 architecture design without API contract."
-    },
-    {
-      "priority": 3,
-      "question": "Which e-signature service provider is approved and contracted (DocuSign, Adobe Sign, etc.), and is integration documentation available?",
-      "urgency": "Before build",
-      "impact_if_unanswered": "If provider is not yet selected or contracted, procurement delay blocks UC2 (T11) and extends Phase 2 by 2-3 weeks (R2 trigger). Backend Developer cannot begin T11 implementation without API documentation."
-    },
-    {
-      "priority": 4,
-      "question": "What is the complete scope of IT account provisioning automation (UC4)? Which SaaS tools must be provisioned, and are APIs available for all of them?",
-      "urgency": "Before build",
-      "impact_if_unanswered": "If manual provisioning is required for any tool, success metric 'zero manual tickets' cannot be met (R3 trigger). Backend Developer must know full scope before T13 and T16 implementation to avoid rework."
-    },
-    {
-      "priority": 5,
-      "question": "Is multi-factor authentication (MFA) required by corporate security policy, or is Azure AD SSO default authentication sufficient?",
-      "urgency": "Before build",
-      "impact_if_unanswered": "If MFA is mandated, authentication flow (T6, UC7) must be redesigned, extending Phase 2 by 1-2 weeks (R5 trigger). Backend Developer must confirm MFA requirement before T3 architecture design."
-=======
       "question": "Is SOC 2 Type II audit required before June 30, 2026 launch, or is Type I compliance at launch with Type II post-launch acceptable?",
       "urgency": "Before build",
       "impact_if_unanswered": "If Type II audit is pre-launch, Phase 3 requires 4-8 weeks of audit preparation and evidence collection, pushing launch past deadline. If post-launch, Phase 3 focuses on functional testing. Staffing and schedule depend on this clarification."
@@ -243,7 +135,6 @@
       "question": "Is Workday API sandbox environment, documentation, and SLA confirmed available? Does integration require custom Workday development or extended vendor support?",
       "urgency": "Before build",
       "impact_if_unanswered": "If Workday API is unavailable, undocumented, or requires custom development, Phase 2 integration work (T13, T15) will slip 2-4 weeks, compressing Phase 3 testing and risking June 30 deadline."
->>>>>>> Stashed changes
     }
   ],
   "pm_confidence_score": {
@@ -251,55 +142,6 @@
     "deductions": [
       {
         "amount": 5.0,
-<<<<<<< Updated upstream
-        "reason": "Assumption A1 (7-year data retention policy) — risk_if_wrong = HIGH; consequence: compliance violations if actual policy differs"
-      },
-      {
-        "amount": 5.0,
-        "reason": "Assumption A2 (Azure AD SSO without MFA) — risk_if_wrong = MEDIUM; consequence: authentication redesign if MFA is mandated"
-      },
-      {
-        "amount": 5.0,
-        "reason": "Assumption A3 (Workday API production-ready) — risk_if_wrong = MEDIUM; consequence: 2-4 week integration delay if API is immature"
-      },
-      {
-        "amount": 5.0,
-        "reason": "Assumption A4 (E-signature SaaS, not custom-built) — risk_if_wrong = MEDIUM; consequence: 4-6 week scope increase if custom build required"
-      },
-      {
-        "amount": 5.0,
-        "reason": "CRITICAL risk R9 (Backend Developer or PM pulled to competing projects) — probability MEDIUM, impact HIGH; mitigation requires written commitment for 80% allocation"
-      },
-      {
-        "amount": 5.0,
-        "reason": "HIGH risk R1 (Workday API undocumented or immature) — probability MEDIUM, impact HIGH; blocks Phase 2 integration by 2-4 weeks"
-      },
-      {
-        "amount": 5.0,
-        "reason": "HIGH risk R2 (E-signature provider not contracted) — probability MEDIUM, impact HIGH; procurement delay blocks UC2 by 2-3 weeks"
-      },
-      {
-        "amount": 5.0,
-        "reason": "HIGH risk R3 (IT account provisioning scope incomplete) — probability MEDIUM, impact HIGH; success metric 'zero manual tickets' cannot be met"
-      },
-      {
-        "amount": 5.0,
-        "reason": "HIGH risk R4 (Product Owner not named) — probability HIGH, impact MEDIUM; sprint planning bottleneck in Hybrid SDLC"
-      },
-      {
-        "amount": 5.0,
-        "reason": "HIGH risk R14 (SOC 2 audit log implementation incomplete) — probability MEDIUM, impact HIGH; compliance audit failure blocks production launch"
-      }
-    ],
-    "interpretation": "PM confidence score is 62.0 because four critical assumptions (data retention, authentication, Workday API, e-signature provider) carry MEDIUM risk_if_wrong, five HIGH-scored risks (R1, R2, R3, R4, R14) directly threaten critical path tasks and success metrics, and Hybrid SDLC requires named Product Owner decision-maker not yet identified. Staffing plan is viable (all roles ≤80%, QA at 28.9% > 25% minimum), but external dependencies (Workday API, e-signature provider, PO assignment) and compliance risk (SOC 2 audit logs) create execution uncertainty. Recommend resolving R1, R2, R3, R4 before Phase 2 kickoff."
-  },
-  "project_viability": {
-    "viability_status": "VIABLE",
-    "gap_type": "N/A",
-    "gap_amount": null,
-    "scoping_options": null,
-    "rationale": "Critical path duration = 120 days (24 weeks) vs. deadline 2026-06-30 (26 weeks from 2026-01-01 assumed start). 120 days < 26 weeks × 1.0 (no schedule compression). Estimated cost: 600 total project hours × $150/hour blended rate = $90,000 vs. budget $80,000. Cost overrun = $10,000 (12.5% above budget), which is < 50% threshold (NOT_VIABLE trigger). Project is VIABLE on schedule; cost is slightly above budget but within acceptable variance for Hybrid SDLC with integration risk. Recommend cost mitigation: negotiate fixed-price e-signature provider contract or defer nice-to-have features (R11 scope creep) to Phase 4 post-launch."
-=======
         "reason": "UNKNOWN hard constraint: Product Owner assignment and allocation not confirmed in input"
       },
       {
@@ -392,23 +234,16 @@
         "budget_impact": "Increases estimated cost by ~$3,125. Total budget = $83,125 (exceeds $80,000 by $3,125). Requires budget increase or cost reduction elsewhere."
       }
     ]
->>>>>>> Stashed changes
   },
   "actor_role_mapping": {
     "A1": [
       "Frontend Developer",
-<<<<<<< Updated upstream
-=======
       "UX Designer",
->>>>>>> Stashed changes
       "QA Engineer"
     ],
     "A2": [
       "Product Manager",
-<<<<<<< Updated upstream
-=======
       "Frontend Developer",
->>>>>>> Stashed changes
       "QA Engineer"
     ],
     "A3": [
@@ -419,19 +254,11 @@
       "Backend Developer"
     ],
     "A5": [
-<<<<<<< Updated upstream
-      "Backend Developer",
-      "Frontend Developer"
-    ],
-    "A6": [
-      "Backend Developer"
-=======
       "Backend Developer"
     ],
     "A6": [
       "Backend Developer",
       "QA Engineer"
->>>>>>> Stashed changes
     ]
   }
 }
