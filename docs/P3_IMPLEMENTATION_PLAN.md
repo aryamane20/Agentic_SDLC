@@ -80,11 +80,12 @@ For production: us-east-1 (AWS) or us-central1 (GCP) matches Anthropic's primary
 
 **Async throughout** — `AsyncAnthropic` client in `BaseAgent.run_async()`, `async def` on
 the FastAPI route, `asyncio.gather()` for the parallel step. No `time.sleep()` or blocking
-I/O anywhere in the hot path. Checkpoint writes use `tempfile` + atomic replace (non-blocking).
+I/O anywhere in the hot path.
 
-**Native client, no framework overhead** — Direct `anthropic` Python SDK, not LangChain or
-similar. Frameworks add per-call overhead (middleware, callback chains) that accumulates
-across 6 agents.
+**LangGraph for orchestration** — `StateGraph` handles node sequencing, conditional intake
+gate, and checkpoint/resume. `AsyncSqliteSaver` writes state after every node with zero
+custom persistence code. Refinement re-entry uses `aupdate_state(as_node=X)` + `ainvoke(None)`
+to replay only the downstream nodes — no hand-rolled routing logic.
 
 ### 3. User Perception (Frontend)
 
@@ -239,37 +240,118 @@ Model assignments (all Haiku):
 - Others → None (no KB needed)
 - `_filter_templates_for_type(project_type)` → keyword-slice by TYPE_X header
 
-### Step 6 — `agent/orchestrator.py`
-`PipelineOrchestrator` class with:
-- `async run(raw_brief, session_id, user_id, resume_from_stage=None) -> PipelineResult`
-- `async refine(section, feedback, session_id, user_id, current_artifacts) -> PipelineResult`
-- `_checkpoint(user_id, session_id, stage, data)` — writes to `sessions/_checkpoints/`
-- `_load_checkpoints(user_id, session_id, up_to_stage) -> dict` — loads stages up to given stage
-- `_check_intake_gate(structured_brief) -> Optional[str]` — >5 assumptions or LOW quality signal
+### Step 6a — `agent/pm_confidence.py` (new)
+Pure Python module — no LLM, fully testable in isolation.
 
-Parallel execution pattern:
 ```python
-plan_task = asyncio.create_task(self.planning_agent.run_async(context={...}))
-risk_task  = asyncio.create_task(self.risk_agent.run_async(context={...}))
-plan_result, risk_result = await asyncio.gather(plan_task, risk_task)
+def compute_confidence(
+    assumption_count: int,
+    high_risk_count: int,
+    critical_risk_count: int,
+    unknown_constraints: int,
+    input_quality: str,          # "HIGH" | "MEDIUM" | "LOW" | None
+    sdlc_approach: str,          # "Waterfall" | "Hybrid" | "Adaptive"
+    project_type: str,           # "TYPE_A" … "TYPE_F"
+    total_duration_weeks: float,
+) -> dict:                       # {score: float, deductions: [...], interpretation: str}
 ```
 
-Refinement routing (which agents re-run based on feedback target):
-| Feedback section | Re-run from |
-|---|---|
-| `pm_confidence_score` | synthesis only |
-| `staffing_plan`, `open_questions` | staffing → synthesis |
-| `risk_register` | risk → staffing → synthesis |
-| `project_plan` | planning → (risk + planning parallel) → staffing → synthesis |
-| `assumption_log`, `project_understanding` | intake → all downstream |
+Implements the exact 4-step formula from `synthesis_v1.0.txt` (deductions → raw_score → hard caps → floor).
+Called inside `synthesis_node` after the LLM returns. The LLM-generated `deductions` text and
+`interpretation` string are kept; only the numeric `score` is replaced with the Python result.
 
-### Step 7 — Modify `backend/api/db/store.py`
-Add 3 functions following the exact atomic write pattern (`tempfile.mkstemp` + replace):
-- `save_checkpoint(user_id, session_id, stage, data)` — writes to `sessions/_checkpoints/`
-- `load_checkpoint(user_id, session_id, stage) -> Optional[dict]`
-- `delete_checkpoints(user_id, session_id)` — called after successful pipeline completion
+### Step 6b — `agent/orchestrator.py`
+**LangGraph `StateGraph`** with `AsyncSqliteSaver` checkpointer.
 
-Checkpoint path: `sessions/_checkpoints/{user_id}/{session_id}/{stage}.json`
+#### PipelineState TypedDict
+```python
+class PipelineState(TypedDict):
+    raw_brief: str
+    session_id: str
+    user_id: str
+    use_case_artifact:     Optional[dict]
+    intake_artifact:       Optional[dict]
+    planning_artifact:     Optional[dict]
+    risk_artifact:         Optional[dict]
+    staffing_artifact:     Optional[dict]
+    synthesis_artifact:    Optional[dict]
+    token_tally:           dict            # accumulated with operator.add across nodes
+    intake_gate_triggered: bool
+    intake_gate_reason:    Optional[str]
+```
+
+#### Graph topology
+```
+START → use_case_node → intake_node →(gate?)→ planning_risk_node → staffing_node → synthesis_node → END
+                                         ↓ "interrupt"
+                                        END
+```
+
+5 nodes (Planning and Risk combined into one to keep the graph simple):
+
+| Node | Description |
+|------|-------------|
+| `use_case_node` | Runs UseCaseAgent async |
+| `intake_node` | Runs IntakeAgent async |
+| `planning_risk_node` | `asyncio.gather(PlanningAgent, RiskAgent)` — parallel inside one node |
+| `staffing_node` | Runs StaffingAgent async |
+| `synthesis_node` | Runs SynthesisAgent async, then calls `compute_confidence()` to replace numeric score |
+
+#### Intake gate — conditional edge (not a node)
+```python
+def intake_gate_router(state: PipelineState) -> Literal["continue", "interrupt"]:
+    brief = state["intake_artifact"]
+    assumptions = len(brief.get("assumption_log", []))
+    quality = brief.get("input_quality_signal", "HIGH")
+    if assumptions > 5 or quality == "LOW":
+        return "interrupt"   # END — API surfaces gate_triggered to frontend
+    return "continue"        # → planning_risk_node
+```
+
+#### Checkpointing — `AsyncSqliteSaver`
+```python
+checkpointer = AsyncSqliteSaver.from_conn_string("sessions/p3_checkpoints.db")
+graph = build_graph().compile(checkpointer=checkpointer)
+```
+Thread ID = `"{user_id}:{session_id}"`. State is saved automatically after every node.
+Replaces all file-based checkpoint logic — no custom save/load functions needed.
+
+#### Refinement routing — `aupdate_state` + `ainvoke`
+```python
+REFINEMENT_TARGETS: dict[str, tuple[str, list[str]]] = {
+    "pm_confidence_score":  ("staffing_node",      ["synthesis_artifact"]),
+    "staffing_plan":        ("planning_risk_node",  ["staffing_artifact", "synthesis_artifact"]),
+    "open_questions":       ("planning_risk_node",  ["staffing_artifact", "synthesis_artifact"]),
+    "risk_register":        ("intake_node",         ["planning_artifact", "risk_artifact",
+                                                     "staffing_artifact", "synthesis_artifact"]),
+    "project_plan":         ("intake_node",         ["planning_artifact", "risk_artifact",
+                                                     "staffing_artifact", "synthesis_artifact"]),
+    "assumption_log":       ("use_case_node",       ["intake_artifact", "planning_artifact",
+                                                     "risk_artifact", "staffing_artifact",
+                                                     "synthesis_artifact"]),
+}
+
+async def refine(self, section: str, session_id: str, user_id: str, ...) -> PipelineResult:
+    as_node, fields = REFINEMENT_TARGETS[section]
+    config = {"configurable": {"thread_id": f"{user_id}:{session_id}"}}
+    # Rewind graph to after `as_node`, clearing all downstream artifacts
+    await self._graph.aupdate_state(config, {f: None for f in fields}, as_node=as_node)
+    # Resume — only downstream nodes re-run
+    final_state = await self._graph.ainvoke(None, config)
+    return _assemble_result(final_state)
+```
+
+#### `PipelineOrchestrator` class interface
+- `async run(raw_brief, session_id, user_id) -> PipelineResult`
+- `async refine(section, session_id, user_id, feedback) -> PipelineResult`
+- `async delete_run(session_id, user_id)` — deletes SQLite thread (called on explicit retry or expiry)
+
+### Step 7 — Modify `backend/api/db/store.py` (simplified)
+LangGraph's `AsyncSqliteSaver` handles save/load. Only one new function needed:
+- `delete_p3_checkpoint(user_id, session_id)` — deletes the LangGraph thread entry from
+  `sessions/p3_checkpoints.db` so a clean retry can start from scratch.
+
+No `save_checkpoint` / `load_checkpoint` file functions needed.
 
 ### Step 8 — Modify `backend/api/routers/reports.py`
 Minimal change (3 lines):
@@ -294,27 +376,28 @@ Use Case Agent calls `use_case_json_to_drawio_xml()` after parsing its LLM outpu
 stores `diagram_xml` in the artifact. PNG rendering is best-effort (None on failure).
 
 ### Step 10 — `tests/p3/`
-Follow the exact `unittest.mock.patch` pattern from `tests/p2/`. Mock targets:
-- `agent.agents.intake_agent.IntakeAgent.run_async` (for orchestrator tests)
-- `agent.orchestrator.PipelineOrchestrator.run` (for route tests)
-- `backend.api.db.store.save_checkpoint` (for checkpoint tests)
+Follow the exact `unittest.mock.patch` pattern from `tests/p2/`. Key mock targets:
+- `agent.agents.intake_agent.IntakeAgent.run_async` — for orchestrator node tests
+- `agent.orchestrator.PipelineOrchestrator.run` — for route-level tests
+- LangGraph checkpointer: use `MemorySaver` (in-memory) in all tests instead of `AsyncSqliteSaver`
+  so tests are isolated, stateless, and need no temp files
 
-Files:
 ```
 tests/p3/__init__.py
-tests/p3/conftest.py              # mock_use_case_result, mock_structured_brief fixtures
-tests/p3/test_partial_schemas.py  # pure Pydantic validation, no mocks
-tests/p3/test_base_agent.py       # run/run_async with mock_anthropic_client
+tests/p3/conftest.py                    # mock artifacts, MemorySaver fixture, mock_anthropic_client
+tests/p3/test_partial_schemas.py        # pure Pydantic validation, no mocks
+tests/p3/test_pm_confidence.py          # arithmetic correctness — no mocks, pure function tests
+tests/p3/test_base_agent.py             # run/run_async with mock_anthropic_client
 tests/p3/test_use_case_agent.py
 tests/p3/test_intake_agent.py
 tests/p3/test_planning_agent.py
 tests/p3/test_risk_agent.py
 tests/p3/test_staffing_agent.py
 tests/p3/test_synthesis_agent.py
-tests/p3/test_orchestrator_pipeline.py  # full pipeline happy path, mocked agents
-tests/p3/test_checkpoint_resume.py       # gate fires → resume from checkpoint
-tests/p3/test_p3_refinement_routing.py  # section → correct agents re-run
-tests/p3/test_drawio_generator.py        # deterministic XML, no LLM
+tests/p3/test_orchestrator_pipeline.py  # full pipeline happy path, all agents mocked
+tests/p3/test_intake_gate.py            # gate fires (>5 assumptions) → state.intake_gate_triggered
+tests/p3/test_p3_refinement_routing.py  # all 5 REFINEMENT_TARGETS → correct as_node + fields cleared
+tests/p3/test_drawio_generator.py       # deterministic XML output, no LLM
 ```
 
 Also add `make test-p3` to Makefile: `pytest tests/p3/ -v`
@@ -326,7 +409,8 @@ Also add `make test-p3` to Makefile: `pytest tests/p3/ -v`
 **New files:**
 - `schemas/partial_schemas.py`
 - `agent/base_agent.py`
-- `agent/orchestrator.py`
+- `agent/pm_confidence.py`        ← NEW: pure Python confidence score (testable in isolation)
+- `agent/orchestrator.py`         ← LangGraph StateGraph + PipelineOrchestrator
 - `agent/rag_client.py`
 - `agent/drawio_generator.py`
 - `agent/agents/__init__.py`
@@ -345,7 +429,7 @@ Also add `make test-p3` to Makefile: `pytest tests/p3/ -v`
 - `tests/p3/` (12 files)
 
 **Modified files:**
-- `backend/api/db/store.py` — add 3 checkpoint functions
+- `backend/api/db/store.py` — add `delete_p3_checkpoint()` only (LangGraph handles save/load)
 - `backend/api/routers/reports.py` — replace agent.run with orchestrator.run, make async
 - `Makefile` — add `make test-p3`
 
@@ -374,10 +458,19 @@ Also add `make test-p3` to Makefile: `pytest tests/p3/ -v`
 ## Key Risks
 
 1. **Synthesis context bloat** — all 5 artifacts in one call can reach 12,000+ input tokens.
-   Test with tc-09 and tc-10 (largest inputs) before shipping. Set `max_tokens=6000` for Synthesis.
+   Test with tc-09 and tc-10 (largest inputs) before shipping. Set `max_tokens=8192` for Synthesis.
 2. **Prompt quality for split agents** — each focused prompt needs its own eval run
    (`make eval-generate` with the new orchestrator) before committing. Intake is the critical path.
 3. **Async in FastAPI** — `generate_report` must be `async def`; verify no sync blocking calls
-   remain inside the orchestrator (Anthropic `AsyncAnthropic` client required for `run_async()`).
-4. **Cache invalidation** — checkpoints from a failed run must be cleaned up before a retry.
-   `delete_checkpoints()` must be called on both success and explicit retry, not just success.
+   remain inside the orchestrator (`AsyncAnthropic` client required for all `run_async()` calls).
+4. **LangGraph SQLite thread cleanup** — threads from failed/abandoned runs accumulate in
+   `p3_checkpoints.db`. `delete_p3_checkpoint()` must be called on both success and explicit
+   retry, not just success. Add a TTL cleanup job or periodic purge for abandoned threads.
+5. **LangGraph refinement rewind** — `aupdate_state(as_node=X)` rewinds to after node X.
+   If X is `"intake_node"`, the graph resumes from `planning_risk_node`. Verify the correct
+   `as_node` for each refinement target — using the wrong node name silently re-runs too much
+   or too little. Cover all 5 `REFINEMENT_TARGETS` cases in `test_p3_refinement_routing.py`.
+6. **pm_confidence.py score vs LLM score** — the Python score replaces only the numeric value;
+   the LLM-generated deductions text and interpretation may reference the wrong number after
+   replacement. Add a post-replacement check to update the `interpretation` string with the
+   correct final score.
