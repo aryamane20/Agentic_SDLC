@@ -1,0 +1,189 @@
+{
+  "risk_register": [
+    {
+      "id": "R1",
+      "category": "Resource",
+      "description": "If the Full-Stack Developer becomes unavailable (illness, emergency, departure), the project will stall because they are the sole developer on the critical path with no dedicated backup, and the contractor backup is not pre-assigned or on standby.",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "score": "HIGH",
+      "trigger": "Developer absence notification; unplanned leave; contractor unavailable when needed",
+      "mitigation": "Assign contractor backup as secondary on all critical path tasks (T3, T5, T8, T11, T14) before Phase 2 kickoff; conduct knowledge transfer sessions on architecture and database schema in Week 1.",
+      "contingency": "Activate contractor immediately; PM escalates to CFO/IT Manager for timeline adjustment if contractor ramp-up exceeds 3 days."
+    },
+    {
+      "id": "R2",
+      "category": "Resource",
+      "description": "If the PM (50% allocation) is pulled to competing priorities, critical path decisions (scope trade-offs, stakeholder sign-offs, integration approvals) will be delayed, causing schedule slip on T1, T2, T3, T5, T8, T11, T14, T17, T20.",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "score": "HIGH",
+      "trigger": "PM context-switch to another project; unplanned meeting load; stakeholder escalation requiring PM time outside project",
+      "mitigation": "Secure written commitment from CFO/IT Manager that PM is protected at 50% minimum for 11.5 weeks; establish weekly 1-hour decision gate with CFO/IT/Finance to prevent ad-hoc interruptions.",
+      "contingency": "Escalate to CFO immediately if PM allocation drops below 40%; defer non-critical scope items to post-launch."
+    },
+    {
+      "id": "R3",
+      "category": "Technical",
+      "description": "If Azure AD SSO integration fails or requires undocumented configuration, UC1 (Authenticate User) will be blocked, preventing all downstream use cases (UC2–UC7) from functioning.",
+      "probability": "LOW",
+      "impact": "HIGH",
+      "score": "MEDIUM",
+      "trigger": "SSO library incompatibility with Azure AD tenant; token refresh failure in testing; permission scope mismatch",
+      "mitigation": "Conduct SSO proof-of-concept in Week 1 (T1) using existing company Azure AD tenant and library; document all configuration steps and test token lifecycle (login, refresh, logout).",
+      "contingency": "If PoC fails, escalate to IT Security for alternative auth method (SAML, OAuth2 fallback) or Azure AD support engagement; add 1 week to schedule."
+    },
+    {
+      "id": "R4",
+      "category": "Integration",
+      "description": "If SendGrid email service experiences rate limiting, downtime, or API schema change, managers will not receive approval notifications (UC5, UC6), breaking the approval workflow.",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "score": "MEDIUM",
+      "trigger": "SendGrid API rate limit exceeded; service outage; API version deprecation notice",
+      "mitigation": "Implement email queue with retry logic (exponential backoff) in backend; set SendGrid rate limit to 80% of plan capacity; monitor SendGrid status page weekly.",
+      "contingency": "If SendGrid is unavailable, fall back to in-app notification badge; notify managers via Slack; restore email delivery within 4 hours of service recovery."
+    },
+    {
+      "id": "R5",
+      "category": "Technical",
+      "description": "If Azure Blob Storage upload fails or receipt images are corrupted, employees cannot submit complete expense claims (UC2), blocking the entire submission workflow.",
+      "probability": "LOW",
+      "impact": "HIGH",
+      "score": "MEDIUM",
+      "trigger": "Blob Storage connection timeout; image upload failure; storage quota exceeded; encryption key rotation issue",
+      "mitigation": "Implement client-side image validation (size, format, EXIF) before upload; add server-side retry logic with exponential backoff; monitor storage quota monthly; test encryption key rotation in staging.",
+      "contingency": "If upload fails, display user-friendly error with retry button; log failure to admin dashboard; escalate to Azure support if quota exceeded."
+    },
+    {
+      "id": "R6",
+      "category": "Scope",
+      "description": "If the Product Owner authority is not formally confirmed with CFO/IT Manager before build, scope creep or decision delays will occur when stakeholders request changes or clarifications during Phases 2–4.",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "score": "HIGH",
+      "trigger": "Stakeholder requests feature outside original scope; PM unable to make trade-off decision; conflicting priorities from CFO vs. IT vs. Finance",
+      "mitigation": "Conduct formal kickoff meeting (Week 1, T1) with CFO, IT Manager, and Finance Lead; document PM's authority to approve/reject scope changes in writing; establish change control process (any change requires CFO approval).",
+      "contingency": "If scope change requested, PM escalates to CFO with impact analysis (schedule, budget, resource); defer to post-launch if impact exceeds 5% of timeline."
+    },
+    {
+      "id": "R7",
+      "category": "Schedule",
+      "description": "If testing (Phase 4, T17–T20) reveals critical defects in approval workflow or CSV export, rework will consume contingency buffer and risk missing Q3 payroll cycle deadline.",
+      "probability": "MEDIUM",
+      "impact": "HIGH",
+      "score": "HIGH",
+      "trigger": "UAT finds approval notification not sent; CSV export missing approved expenses; data loss in concurrent submissions; performance < 2 seconds",
+      "mitigation": "Implement automated regression tests for UC5, UC6, UC7 in Phase 3 (T14–T16); conduct load testing with 60 concurrent users in Week 9; schedule UAT with 2-week buffer before go-live.",
+      "contingency": "If critical defect found in UAT, activate contractor for parallel rework; extend go-live by 1 week if necessary; escalate to CFO for payroll cycle impact."
+    },
+    {
+      "id": "R8",
+      "category": "Compliance",
+      "description": "If data retention or encryption requirements are not validated with Legal/IT Security before deployment, the system may not meet company policy or regulatory audit requirements, requiring post-launch remediation.",
+      "probability": "LOW",
+      "impact": "HIGH",
+      "score": "MEDIUM",
+      "trigger": "Legal audit finds retention policy not enforced; IT Security discovers encryption not enabled; compliance review fails",
+      "mitigation": "Confirm with Legal and IT Security in Week 1 that 7-year retention and Azure Blob encryption-at-rest meet all requirements; document approval in writing; implement automated retention policy in database (delete records after 7 years).",
+      "contingency": "If policy mismatch found, implement corrective controls immediately; conduct re-audit before go-live; escalate to CFO if remediation impacts schedule."
+    },
+    {
+      "id": "R9",
+      "category": "Technical",
+      "description": "If performance testing reveals page load > 2 seconds or system cannot support 60 concurrent users, UC2 (Submit Expense Claim) and UC7 (Export Monthly Report) will fail during peak usage (month-end), causing user frustration and data loss.",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "score": "MEDIUM",
+      "trigger": "Load test shows response time > 2 seconds; database query timeout; Azure App Service CPU > 80%; concurrent user limit exceeded",
+      "mitigation": "Conduct load testing in Week 9 (T16) with 60 concurrent users; profile database queries and optimize slow queries; implement caching for read-heavy operations (UC3, UC4); set up Application Insights monitoring.",
+      "contingency": "If performance fails, optimize database indexes and queries; scale Azure App Service tier if necessary; defer non-critical features to post-launch."
+    },
+    {
+      "id": "R10",
+      "category": "Integration",
+      "description": "If the internal UI component library is not compatible with React + TypeScript or requires custom styling, frontend development (UC2, UC3, UC4, UC5, UC6) will be delayed by rework or custom component development.",
+      "probability": "LOW",
+      "impact": "MEDIUM",
+      "score": "LOW",
+      "trigger": "Component library missing required components; TypeScript types not available; styling conflicts with design system",
+      "mitigation": "Audit component library compatibility with React + TypeScript in Week 1 (T1); identify any missing components and plan custom development; document component usage guidelines for developer.",
+      "contingency": "If library is incompatible, develop custom components or use alternative library; add 2–3 days to Phase 2 (T3–T7) if rework required."
+    }
+  ],
+  "risk_use_case_mapping": {
+    "R1": [
+      "UC1",
+      "UC2",
+      "UC3",
+      "UC4",
+      "UC5",
+      "UC6",
+      "UC7"
+    ],
+    "R2": [
+      "UC1",
+      "UC2",
+      "UC3",
+      "UC4",
+      "UC5",
+      "UC6",
+      "UC7"
+    ],
+    "R3": [
+      "UC1",
+      "UC2",
+      "UC3",
+      "UC4",
+      "UC5",
+      "UC6",
+      "UC7"
+    ],
+    "R4": [
+      "UC5",
+      "UC6"
+    ],
+    "R5": [
+      "UC2"
+    ],
+    "R6": [
+      "UC2",
+      "UC3",
+      "UC4",
+      "UC5",
+      "UC6",
+      "UC7"
+    ],
+    "R7": [
+      "UC5",
+      "UC6",
+      "UC7"
+    ],
+    "R8": [
+      "UC2",
+      "UC7"
+    ],
+    "R9": [
+      "UC2",
+      "UC7"
+    ],
+    "R10": [
+      "UC2",
+      "UC3",
+      "UC4",
+      "UC5",
+      "UC6"
+    ]
+  },
+  "critical_path_risk_flags": [
+    "T1",
+    "T2",
+    "T3",
+    "T5",
+    "T8",
+    "T11",
+    "T14",
+    "T17",
+    "T20"
+  ]
+}

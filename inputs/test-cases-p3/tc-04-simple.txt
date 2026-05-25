@@ -1,0 +1,73 @@
+# TC-04: Simple Input - Internal Expense Report System
+
+## Project Request
+
+We need to replace our current spreadsheet-based expense reporting process with a simple
+internal web application. This is an internal tool for a 60-person professional services firm.
+
+**Primary Goal:** Build an internal expense submission and approval portal that replaces
+our current Google Sheets workflow. Employees submit expenses; their direct manager approves
+or rejects; Finance downloads a monthly CSV for reimbursement processing.
+
+**Beneficiary:** All 60 employees (submitters) and 8 managers (approvers) and 2 Finance staff
+
+**Trigger:** The Google Sheets process breaks down when more than 3 people edit simultaneously,
+causing data loss. We had two payroll errors last quarter from corrupted expense data.
+CFO has approved budget and asked IT to own the solution.
+
+**Success Definition:**
+- Employees can submit an expense claim in under 2 minutes
+- Managers can approve/reject with one click from email notification
+- Finance can export the full monthly report as CSV without manual aggregation
+- Zero data-loss incidents after go-live
+
+**Deadline:** 10 weeks from project kickoff (firm, tied to Q3 payroll cycle start)
+
+**Budget:** $28,000 (fully approved by CFO, no additional sign-off required)
+
+**Team:** 3 people, all confirmed and available for the full project duration:
+- 1 Project Manager / Product Owner (internal, 50% allocation — PM is the designated Product Owner with authority to make scope decisions)
+- 1 Full-Stack Developer (internal, 100% allocation — this is their only active project for the entire 10 weeks; backup plan is available via 1-week contractor onboarding if needed)
+- 1 QA Analyst (internal, 50% allocation)
+
+**Technology Stack (already decided, matches existing company standards):**
+- Frontend: React + TypeScript (same stack as existing internal tools — no new learning curve)
+- Backend: Node.js + PostgreSQL (already running on company infrastructure — DBA has confirmed capacity)
+- Auth: Existing Azure AD SSO — reuse current company library, Developer has integrated it twice before (estimated 1 day)
+- Hosting: Company's existing Azure App Service (already provisioned, IT Manager has confirmed quota)
+- Email notifications: SendGrid (company account active, 500/day free tier confirmed sufficient for 60 employees)
+
+**Constraints:**
+- Hard: 10-week deadline, $28,000 budget, team of 3, use existing Azure infrastructure
+- Soft: Follow existing internal UI component library for visual consistency
+- Non-functional: Page load < 2 seconds, support 60 concurrent users max
+
+**Data Policy (pre-approved by Legal):**
+- Expense records and receipt images retained for 7 years per company accounting policy (already documented in the company data retention schedule, no new approval required)
+- Receipt images stored in Azure Blob Storage with existing company encryption-at-rest policy applied (no new security review needed — identical setup to the HR portal already in production)
+- No PII beyond employee names and reimbursement amounts; no external data sharing
+
+**Compliance Requirements:** None beyond standard internal security policy (already reviewed and approved by IT Security for this project scope)
+
+**Stakeholders:**
+- CFO (sponsor — has signed off on budget, timeline, and scope document)
+- IT Manager (technical owner — has reviewed and approved stack decision in writing)
+- Finance Lead (primary user for CSV export — has provided written requirements)
+- Legal (has confirmed data retention policy applies as-is, no changes needed)
+
+**Must-have Features:**
+- Submit expense (amount, category, date, receipt photo upload, description)
+- Manager approval queue (approve / reject with comment)
+- Email notification to employee on decision
+- Finance monthly export (CSV: employee, date, category, amount, status)
+- Employee expense history view (last 6 months)
+
+**Out of scope (explicitly agreed and signed off):**
+- Integration with accounting software (manual CSV import by Finance is acceptable)
+- Mobile native app (responsive web is sufficient)
+- Multi-currency (USD only)
+- Automated reimbursement (Finance handles payment manually)
+
+**Known risks already mitigated:**
+- Developer single-point-of-failure: mitigated by contractor backup plan and 10-week timeline with 1-week buffer in Phase 4
+- Azure AD SSO complexity: mitigated by Developer's prior experience and 2-day time-box in plan

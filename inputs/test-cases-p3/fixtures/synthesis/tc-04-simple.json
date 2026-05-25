@@ -1,0 +1,31 @@
+{
+  "consistency_issues": [
+    {
+      "rule": "pm_confidence_score",
+      "detail": "Recomputed from scratch using exact counts: assumption_count=0, high_risk_count=4 (R1, R2, R6, R7), critical_risk_count=0, unknown_constraints=0, input_quality=HIGH, sdlc_approach=Predictive, project_type=TYPE_A, total_duration_weeks=11.5 (≥6). Raw score calculation: 100.0 - (5.0×4 HIGH risks) - 0 (no assumptions) - 0 (input HIGH) - 0 (no CRITICAL) - 0 (Predictive) - 0 (duration ≥6) = 80.0. No hard caps triggered. Final score = 80.0.",
+      "auto_corrected": true
+    }
+  ],
+  "corrections_applied": [
+    "Recomputed PM confidence score from 72.0 to 80.0 based on exact risk and assumption counts per Rule 4 arithmetic."
+  ],
+  "staffing_corrections": [],
+  "added_open_questions": [
+    {
+      "priority": 1,
+      "question": "Staffing capacity analysis: Total effort across all tasks = 534 hours (8 weeks at 6h/day, 5 days/week). Planned duration = 11.5 weeks. Effort-to-duration ratio = 8.0 / 11.5 = 0.70 (well below 1.2 threshold). Capacity is sufficient.",
+      "urgency": "Before build",
+      "impact_if_unanswered": "No impact — capacity check passes Rule 5."
+    }
+  ],
+  "pm_confidence_score": {
+    "score": 80.0,
+    "deductions": [
+      {
+        "amount": 20.0,
+        "reason": "4 HIGH risks (R1, R2, R6, R7) × 5.0 each"
+      }
+    ],
+    "interpretation": "PM confidence score is 80.0 because input quality is HIGH, SDLC is Predictive with full scope sign-off, team has direct stack experience, and no assumptions or unknown constraints exist. Four HIGH risks (developer absence, PM context-switch, scope authority, testing defects) reduce confidence by 20 points. Mitigation success on contractor pre-assignment, PM protection, formal scope control, and QA resourcing will determine execution confidence."
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "system_boundary": "Internal Expense Report System",
+  "actors": [
+    {
+      "id": "A1",
+      "name": "Employee",
+      "type": "primary"
+    },
+    {
+      "id": "A2",
+      "name": "Manager",
+      "type": "primary"
+    },
+    {
+      "id": "A3",
+      "name": "Finance Staff",
+      "type": "primary"
+    },
+    {
+      "id": "A4",
+      "name": "Azure AD SSO",
+      "type": "external"
+    },
+    {
+      "id": "A5",
+      "name": "SendGrid Email Service",
+      "type": "external"
+    },
+    {
+      "id": "A6",
+      "name": "Azure Blob Storage",
+      "type": "secondary"
+    }
+  ],
+  "use_cases": [
+    {
+      "id": "UC1",
+      "name": "Authenticate User",
+      "actors": [
+        "A1",
+        "A2",
+        "A3",
+        "A4"
+      ],
+      "complexity": "simple",
+      "description": "User logs in via Azure AD SSO to access the system"
+    },
+    {
+      "id": "UC2",
+      "name": "Submit Expense Claim",
+      "actors": [
+        "A1",
+        "A6"
+      ],
+      "complexity": "medium",
+      "description": "Employee submits expense with amount, category, date, receipt photo, and description"
+    },
+    {
+      "id": "UC3",
+      "name": "View Expense History",
+      "actors": [
+        "A1"
+      ],
+      "complexity": "simple",
+      "description": "Employee views their submitted expenses from the last 6 months"
+    },
+    {
+      "id": "UC4",
+      "name": "Review Approval Queue",
+      "actors": [
+        "A2"
+      ],
+      "complexity": "simple",
+      "description": "Manager views pending expense claims awaiting approval or rejection"
+    },
+    {
+      "id": "UC5",
+      "name": "Approve Expense Claim",
+      "actors": [
+        "A2",
+        "A5"
+      ],
+      "complexity": "simple",
+      "description": "Manager approves an expense claim and sends notification to employee"
+    },
+    {
+      "id": "UC6",
+      "name": "Reject Expense Claim",
+      "actors": [
+        "A2",
+        "A5"
+      ],
+      "complexity": "simple",
+      "description": "Manager rejects an expense claim with comment and sends notification to employee"
+    },
+    {
+      "id": "UC7",
+      "name": "Export Monthly Report",
+      "actors": [
+        "A3"
+      ],
+      "complexity": "simple",
+      "description": "Finance staff exports all approved expenses for the month as CSV for reimbursement processing"
+    }
+  ],
+  "relationships": [
+    {
+      "type": "includes",
+      "from_id": "UC2",
+      "to_id": "UC1"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC3",
+      "to_id": "UC1"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC4",
+      "to_id": "UC1"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC5",
+      "to_id": "UC1"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC6",
+      "to_id": "UC1"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC7",
+      "to_id": "UC1"
+    }
+  ],
+  "input_quality_signal": "HIGH",
+  "anti_patterns_detected": []
+}

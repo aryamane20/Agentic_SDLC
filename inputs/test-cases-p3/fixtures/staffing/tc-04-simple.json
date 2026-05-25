@@ -1,0 +1,205 @@
+{
+  "staffing_plan": [
+    {
+      "role": "Product Manager",
+      "phase_involvement": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "total_hours": 60.0,
+      "allocation_percent": 10.3,
+      "skills_required": [
+        "Stakeholder management",
+        "Scope control",
+        "Decision-making authority",
+        "Risk escalation"
+      ],
+      "critical_path": true,
+      "notes": "Owns T1, T2, T4, T11, T14, T18, T20, T23, T24. Must be protected at 50% minimum per risk mitigation R2. Critical path tasks require full-time focus during decision gates. No context-switching allowed."
+    },
+    {
+      "role": "Full-Stack Developer",
+      "phase_involvement": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "total_hours": 414.0,
+      "allocation_percent": 71.0,
+      "skills_required": [
+        "React 18",
+        "TypeScript",
+        "Node.js",
+        "PostgreSQL",
+        "Azure App Service",
+        "Azure AD SSO integration",
+        "Azure Blob Storage API",
+        "REST API design",
+        "CI/CD pipelines",
+        "GitHub Actions"
+      ],
+      "critical_path": true,
+      "notes": "Owns T3, T5, T6, T7, T8, T9, T10, T12, T13, T19, T21, T22. Sole developer on critical path with HIGH resource risk (R1). CONTRACTOR BACKUP REQUIRED: assign secondary on T3, T5, T8, T11, T14 before Phase 2 kickoff. Knowledge transfer on architecture and schema mandatory in Week 1. Cannot exceed 80% allocation; contractor covers overflow and provides redundancy."
+    },
+    {
+      "role": "QA Analyst",
+      "phase_involvement": [
+        3,
+        4
+      ],
+      "total_hours": 70.0,
+      "allocation_percent": 12.0,
+      "skills_required": [
+        "Test plan design",
+        "Concurrent load testing",
+        "Integration testing",
+        "UAT facilitation",
+        "Regression testing",
+        "Azure AD SSO testing",
+        "SendGrid email validation",
+        "Blob Storage upload testing"
+      ],
+      "critical_path": true,
+      "notes": "Owns T15, T16, T17. QA effort = 70h; Dev effort (Full-Stack) = 414h. QA ratio = 70/414 = 16.9%. BELOW 25% minimum per PMBOK 8.2. RISK ADDED: QA under-allocation flagged as HIGH in risk register. Recommend increasing QA to 103.5h (25% of 414h) by adding dedicated QA resource at 50% allocation across Phases 3-4, or extending QA Analyst to 80% in Phase 4. Current 50% internal allocation insufficient for concurrent load testing (T15) and comprehensive test plan (T17)."
+    },
+    {
+      "role": "QA Engineer (Recommended Addition)",
+      "phase_involvement": [
+        3,
+        4
+      ],
+      "total_hours": 80.0,
+      "allocation_percent": 13.7,
+      "skills_required": [
+        "Load testing tools",
+        "Performance profiling",
+        "Automated test frameworks",
+        "Data integrity validation",
+        "Concurrent user simulation"
+      ],
+      "critical_path": false,
+      "notes": "ASSUMPTION: Adding dedicated QA resource to meet 25% rule. If unavailable, QA Analyst must increase to 80% in Phase 4 (T17, T21 rework cycle). This role covers T15 (concurrent load testing) and supports T17 (comprehensive test plan). Brings total QA effort to 150h (36% of dev), exceeding 25% minimum. Flag in open_questions if budget does not accommodate."
+    },
+    {
+      "role": "Contractor Full-Stack Developer (Backup)",
+      "phase_involvement": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "total_hours": 120.0,
+      "allocation_percent": 20.6,
+      "skills_required": [
+        "React 18",
+        "TypeScript",
+        "Node.js",
+        "PostgreSQL",
+        "Azure ecosystem",
+        "Knowledge transfer readiness"
+      ],
+      "critical_path": true,
+      "notes": "REQUIRED per risk mitigation R1. Secondary on critical path tasks T3, T5, T8, T11, T14. Must be on standby (not active) during Phases 1-2; activated immediately if primary developer unavailable. Requires Week 1 knowledge transfer on architecture, schema, and CI/CD pipeline. Budget impact: ~$15,000 (estimated 120h @ $125/h contractor rate). Confirm availability and pre-assignment before Phase 2 kickoff."
+    }
+  ],
+  "open_questions": [
+    {
+      "priority": 1,
+      "question": "Is a dedicated QA Engineer (80h, ~$12,000) available to meet the 25% QA-to-dev effort ratio (PMBOK 8.2)? Current QA Analyst at 50% covers only 16.9% of dev effort.",
+      "urgency": "Before build",
+      "impact_if_unanswered": "QA under-allocation will increase risk of critical defects in approval workflow (UC5, UC6) and CSV export (UC7) escaping to UAT, consuming contingency buffer and risking Q3 payroll deadline. Load testing (T15) and comprehensive test plan (T17) will be under-resourced."
+    },
+    {
+      "priority": 2,
+      "question": "Is the contractor Full-Stack Developer pre-assigned and on standby for Phases 1-5, with confirmed availability for immediate activation if primary developer is unavailable?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Risk R1 (developer absence) will escalate to CRITICAL. Project will stall with no backup. Contingency plan (activate contractor) will fail if contractor is not pre-committed. Escalation to CFO for timeline adjustment will be unavoidable."
+    },
+    {
+      "priority": 3,
+      "question": "Has the PM's 50% allocation been formally protected in writing by CFO/IT Manager, with a commitment to shield from competing priorities for 11.5 weeks?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Risk R2 (PM context-switch) will materialize. Critical path decisions (T1, T2, T3, T5, T8, T11, T14, T17, T20) will be delayed. Scope creep and stakeholder conflicts will consume schedule buffer. Weekly decision gate (1 hour with CFO/IT/Finance) must be scheduled and protected."
+    },
+    {
+      "priority": 4,
+      "question": "Does the $28,000 budget include contractor backup (estimated $15,000 for 120h) and additional QA Engineer (estimated $12,000 for 80h), or must staffing be reduced to fit existing budget?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "If budget does not accommodate contractor + additional QA, staffing plan must be revised: either reduce QA to 50% (accepting QA under-allocation risk) or eliminate contractor backup (accepting developer absence risk R1). Trade-off decision required from CFO before Phase 1 kickoff."
+    },
+    {
+      "priority": 5,
+      "question": "Is the internal UI component library confirmed compatible with React 18 + TypeScript, or will custom component development be required?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Risk R10 (component library incompatibility) will delay frontend development (T7, T9) by 2-3 days if rework is needed. Audit in Week 1 (T1) is mandatory to prevent Phase 2 schedule slip."
+    }
+  ],
+  "pm_confidence_score": {
+    "score": 72.0,
+    "deductions": [
+      {
+        "amount": 5.0,
+        "reason": "One HIGH resource risk (R1: developer absence with no pre-assigned backup)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "One HIGH resource risk (R2: PM context-switch to competing priorities)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "One HIGH scope risk (R6: Product Owner authority not formally confirmed)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "One HIGH schedule risk (R7: critical defects in testing consuming contingency buffer)"
+      },
+      {
+        "amount": 3.0,
+        "reason": "QA under-allocation (16.9% vs 25% minimum per PMBOK 8.2) — flagged as HIGH in risk register"
+      }
+    ],
+    "interpretation": "PM confidence score is 72.0 because input quality is HIGH, SDLC is Predictive with full scope sign-off, and team has direct stack experience. However, four HIGH risks (R1, R2, R6, R7) and QA under-allocation reduce confidence. Mitigation success depends on: (1) contractor backup pre-assignment and knowledge transfer, (2) PM protection from context-switching, (3) formal scope control with CFO, and (4) additional QA resource to meet 25% rule. If all mitigations are executed before Phase 2 kickoff, score will increase to 80+."
+  },
+  "project_viability": {
+    "viability_status": "VIABLE",
+    "gap_type": "N/A",
+    "gap_amount": null,
+    "scoping_options": null,
+    "rationale": "Budget: $28,000 approved by CFO. Estimated cost (internal team 3 FTE + contractor backup + additional QA) = ~$55,000 (assuming $50/h internal, $125/h contractor). HOWEVER, brief specifies 'contractor backup available' and '1 QA Analyst (50% internal)' — implying contractor and QA are already budgeted or contingent. If staffing plan is executed as specified (PM 50%, Full-Stack 100%, QA 50%, Contractor 20% standby, Additional QA 50%), total cost will exceed $28,000. ASSUMPTION: CFO budget of $28,000 covers internal team only (PM + Full-Stack + QA at stated allocations = ~$28,000 for 11.5 weeks). Contractor and additional QA are contingency/overflow, funded separately or deferred. Deadline: 10 weeks firm (Q3 payroll cycle). Critical path = 57 days (8.1 weeks) + 15% buffer = 9.3 weeks. VIABLE within 10-week deadline with 0.7-week margin. Schedule risk (R7) is MEDIUM, not critical. Viability is VIABLE if mitigations (contractor pre-assignment, PM protection, QA addition) are confirmed before Phase 2 kickoff."
+  },
+  "actor_role_mapping": {
+    "A1": [
+      "Product Manager",
+      "Full-Stack Developer",
+      "QA Analyst"
+    ],
+    "A2": [
+      "Product Manager",
+      "Full-Stack Developer",
+      "QA Analyst"
+    ],
+    "A3": [
+      "Product Manager",
+      "Full-Stack Developer",
+      "QA Analyst"
+    ],
+    "A4": [
+      "Full-Stack Developer",
+      "QA Analyst"
+    ],
+    "A5": [
+      "Full-Stack Developer",
+      "QA Analyst"
+    ],
+    "A6": [
+      "Full-Stack Developer",
+      "QA Analyst"
+    ]
+  }
+}

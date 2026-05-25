@@ -1,0 +1,57 @@
+{
+  "report_metadata": {
+    "generated_at": "2025-01-10T14:32:00Z",
+    "project_type": "TYPE_A",
+    "input_quality": "HIGH",
+    "classification_confidence": "HIGH",
+    "sdlc_approach": "Predictive",
+    "sdlc_rationale": "All four PREDICTIVE conditions met: requirements fully defined and signed off by CFO/IT/Finance; team has direct stack experience (React, Node.js, Azure AD integration); no scope changes expected (out-of-scope explicitly agreed); fixed 10-week deadline tied to Q3 payroll cycle."
+  },
+  "project_understanding": {
+    "primary_goal": "Build an internal web application to replace Google Sheets-based expense reporting, enabling employees to submit claims, managers to approve/reject, and Finance to export monthly CSV for reimbursement processing.",
+    "beneficiary": "All 60 employees (submitters), 8 managers (approvers), 2 Finance staff (exporters)",
+    "trigger": "Current Google Sheets process causes concurrent-edit data loss and has resulted in two payroll errors last quarter; CFO has approved budget and mandated IT ownership.",
+    "success_definition": [
+      "Employees can submit an expense claim in under 2 minutes",
+      "Managers can approve/reject with one click from email notification",
+      "Finance can export the full monthly report as CSV without manual aggregation",
+      "Zero data-loss incidents after go-live"
+    ],
+    "supporting_quotes": [
+      "The Google Sheets process breaks down when more than 3 people edit simultaneously, causing data loss.",
+      "We had two payroll errors last quarter from corrupted expense data.",
+      "CFO has approved budget and asked IT to own the solution.",
+      "10 weeks from project kickoff (firm, tied to Q3 payroll cycle start)"
+    ]
+  },
+  "assumption_log": [],
+  "constraints": {
+    "hard": {
+      "deadline": "10 weeks from kickoff (Q3 payroll cycle start)",
+      "budget": "$28,000 (fully approved by CFO)",
+      "team_size": 3,
+      "team_composition": "1 PM/Product Owner (50% internal), 1 Full-Stack Developer (100% internal, contractor backup available), 1 QA Analyst (50% internal)",
+      "technology_stack": "Frontend: React + TypeScript; Backend: Node.js + PostgreSQL; Auth: Azure AD SSO (existing library); Hosting: Azure App Service; Email: SendGrid",
+      "compliance": "Standard internal security policy (pre-approved by IT Security); 7-year data retention per company accounting policy (pre-approved by Legal); Azure Blob Storage encryption-at-rest (identical to HR portal already in production)"
+    },
+    "soft": {
+      "preferred_timeline": null,
+      "preferred_tools": "Follow existing internal UI component library for visual consistency",
+      "nice_to_have": []
+    },
+    "nfr": {
+      "security": "Azure AD SSO authentication; Azure Blob Storage encryption-at-rest (existing company standard); no PII beyond employee names and reimbursement amounts; no external data sharing",
+      "data_retention": "Expense records and receipt images retained for 7 years per company accounting policy (pre-approved, no new review required)",
+      "performance": "Page load < 2 seconds",
+      "availability": "Support 60 concurrent users maximum"
+    }
+  },
+  "open_questions_pre_planning": [
+    {
+      "priority": 1,
+      "question": "Who is the Product Owner responsible for backlog prioritization during execution?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Scope creep or decision delays if PM's authority to make trade-off decisions is not formally confirmed with CFO/IT Manager during kickoff."
+    }
+  ]
+}

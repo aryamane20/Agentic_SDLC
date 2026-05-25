@@ -1,0 +1,478 @@
+{
+  "project_plan": {
+    "total_duration_weeks": 11.5,
+    "buffer_applied_percent": 15.0,
+    "critical_path_summary": {
+      "sequence": [
+        "T1",
+        "T2",
+        "T3",
+        "T5",
+        "T8",
+        "T11",
+        "T14",
+        "T17",
+        "T20"
+      ],
+      "total_duration_days": 57.0,
+      "zero_slack_tasks": [
+        "T1",
+        "T2",
+        "T3",
+        "T5",
+        "T8",
+        "T11",
+        "T14",
+        "T17",
+        "T20"
+      ],
+      "highest_slack_tasks": [
+        "T4",
+        "T6",
+        "T7"
+      ],
+      "staffing_implication": "Full-Stack Developer and QA Analyst must be dedicated (not shared) across Phases 2-4; PM carries critical path through all phases and cannot context-switch."
+    },
+    "phases": [
+      {
+        "phase_number": 1,
+        "name": "Discovery & Design",
+        "duration_weeks": 1.5,
+        "percentage_of_total": 13.0,
+        "milestones": [
+          "Stakeholder alignment session completed with CFO/IT/Finance sign-off",
+          "User personas and success metrics finalized",
+          "API and database schema approved by Backend Developer",
+          "UI wireframes approved by stakeholders"
+        ],
+        "tasks": [
+          {
+            "id": "T1",
+            "name": "Conduct stakeholder alignment session and confirm scope with CFO/IT Manager",
+            "phase": 1,
+            "effort_hours": 8.0,
+            "owner_role": "Product Manager",
+            "dependencies": [],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Written sign-off from CFO and IT Manager confirming scope, timeline, and trade-off authority."
+          },
+          {
+            "id": "T2",
+            "name": "Define user personas, success metrics, and adoption plan",
+            "phase": 1,
+            "effort_hours": 12.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T1"
+            ],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Document with 3 personas (Employee, Manager, Finance), 4 success metrics, and post-launch ownership plan."
+          },
+          {
+            "id": "T3",
+            "name": "Design API endpoints and database schema for expense claims",
+            "phase": 1,
+            "effort_hours": 16.0,
+            "owner_role": "Full-Stack Developer",
+            "dependencies": [
+              "T2"
+            ],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "OpenAPI spec with all 7 endpoints (auth, submit, list, approve, reject, export) and PostgreSQL schema diagram approved by PM."
+          },
+          {
+            "id": "T4",
+            "name": "Create UI wireframes for employee and manager workflows",
+            "phase": 1,
+            "effort_hours": 10.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T2"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Figma wireframes for submit form, approval queue, and export screen reviewed by stakeholders."
+          },
+          {
+            "id": "T5",
+            "name": "Set up development environment, CI/CD pipeline, and Azure infrastructure",
+            "phase": 1,
+            "effort_hours": 12.0,
+            "owner_role": "Full-Stack Developer",
+            "dependencies": [
+              "T3"
+            ],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "GitHub repo, Azure App Service, PostgreSQL instance, and GitHub Actions pipeline ready for code commits."
+          }
+        ]
+      },
+      {
+        "phase_number": 2,
+        "name": "Core Development",
+        "duration_weeks": 4.0,
+        "percentage_of_total": 35.0,
+        "milestones": [
+          "Azure AD SSO authentication working end-to-end",
+          "Employee submit and manager approval workflows functional",
+          "Internal demo completed with stakeholders"
+        ],
+        "tasks": [
+          {
+            "id": "T6",
+            "name": "Implement Azure AD SSO login and session management",
+            "phase": 2,
+            "effort_hours": 16.0,
+            "owner_role": "Full-Stack Developer",
+            "dependencies": [
+              "T5"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Users can log in via Azure AD, session persists across page reloads, logout clears session."
+          },
+          {
+            "id": "T7",
+            "name": "Build employee expense submission form with receipt upload",
+            "phase": 2,
+            "effort_hours": 20.0,
+            "owner_role": "Full-Stack Developer",
+            "dependencies": [
+              "T5"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Form accepts amount, category, date, description; uploads receipt to Azure Blob Storage; saves to PostgreSQL."
+          },
+          {
+            "id": "T8",
+            "name": "Implement manager approval queue and approval/rejection logic",
+            "phase": 2,
+            "effort_hours": 18.0,
+            "owner_role": "Full-Stack Developer",
+            "dependencies": [
+              "T5"
+            ],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Manager sees pending claims, can approve/reject with one click, status updates in database."
+          },
+          {
+            "id": "T9",
+            "name": "Build employee expense history view (last 6 months)",
+            "phase": 2,
+            "effort_hours": 12.0,
+            "owner_role": "Full-Stack Developer",
+            "dependencies": [
+              "T5"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 3,
+            "definition_of_done": "Employee can filter by status (submitted, approved, rejected) and date range."
+          },
+          {
+            "id": "T10",
+            "name": "Integrate SendGrid for approval/rejection email notifications",
+            "phase": 2,
+            "effort_hours": 10.0,
+            "owner_role": "Full-Stack Developer",
+            "dependencies": [
+              "T8"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Employees receive email when claim is approved or rejected; email includes claim details and manager comment."
+          },
+          {
+            "id": "T11",
+            "name": "Conduct internal demo with stakeholders and capture feedback",
+            "phase": 2,
+            "effort_hours": 6.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T8"
+            ],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Demo covers submit, approve, reject, and history workflows; feedback documented and prioritized."
+          }
+        ]
+      },
+      {
+        "phase_number": 3,
+        "name": "Integration & Edge Cases",
+        "duration_weeks": 2.5,
+        "percentage_of_total": 22.0,
+        "milestones": [
+          "CSV export functionality tested with Finance team",
+          "All integrations (Azure AD, SendGrid, Blob Storage) validated",
+          "Security review completed by IT Security"
+        ],
+        "tasks": [
+          {
+            "id": "T12",
+            "name": "Build Finance CSV export endpoint with monthly filtering",
+            "phase": 3,
+            "effort_hours": 14.0,
+            "owner_role": "Full-Stack Developer",
+            "dependencies": [
+              "T11"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Finance staff can export all approved expenses for a given month as CSV; file includes employee name, amount, category, date."
+          },
+          {
+            "id": "T13",
+            "name": "Implement data validation and error handling for all user inputs",
+            "phase": 3,
+            "effort_hours": 12.0,
+            "owner_role": "Full-Stack Developer",
+            "dependencies": [
+              "T11"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "All form fields validated client-side and server-side; error messages clear and actionable."
+          },
+          {
+            "id": "T14",
+            "name": "Conduct security review with IT Security team",
+            "phase": 3,
+            "effort_hours": 8.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T12"
+            ],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "IT Security sign-off confirming Azure AD SSO, Blob Storage encryption, and data retention compliance."
+          },
+          {
+            "id": "T15",
+            "name": "Test concurrent user access and data integrity under load",
+            "phase": 3,
+            "effort_hours": 10.0,
+            "owner_role": "QA Analyst",
+            "dependencies": [
+              "T11"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Simulate 60 concurrent users; verify no data loss, no duplicate submissions, no race conditions."
+          },
+          {
+            "id": "T16",
+            "name": "Verify Azure AD SSO, SendGrid, and Blob Storage integrations end-to-end",
+            "phase": 3,
+            "effort_hours": 8.0,
+            "owner_role": "QA Analyst",
+            "dependencies": [
+              "T12"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Login via Azure AD, submit with receipt upload, receive approval email, export CSV all work without errors."
+          }
+        ]
+      },
+      {
+        "phase_number": 4,
+        "name": "QA & Testing",
+        "duration_weeks": 2.5,
+        "percentage_of_total": 20.0,
+        "milestones": [
+          "All critical bugs resolved",
+          "UAT completed with representative end users",
+          "Accessibility check (WCAG 2.1 AA) passed",
+          "Documentation and runbooks written"
+        ],
+        "tasks": [
+          {
+            "id": "T17",
+            "name": "Execute comprehensive test plan covering all 7 use cases",
+            "phase": 4,
+            "effort_hours": 20.0,
+            "owner_role": "QA Analyst",
+            "dependencies": [
+              "T14"
+            ],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Test matrix completed for UC1-UC7; all critical and high-priority bugs logged and triaged."
+          },
+          {
+            "id": "T18",
+            "name": "Conduct UAT with representative end users (1 employee, 1 manager, 1 Finance staff)",
+            "phase": 4,
+            "effort_hours": 12.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T17"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "UAT sign-off from all three user types; feedback incorporated or documented as post-launch."
+          },
+          {
+            "id": "T19",
+            "name": "Perform accessibility audit (WCAG 2.1 AA) and remediate issues",
+            "phase": 4,
+            "effort_hours": 10.0,
+            "owner_role": "Full-Stack Developer",
+            "dependencies": [
+              "T17"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Automated and manual accessibility checks pass; keyboard navigation, screen reader support, color contrast verified."
+          },
+          {
+            "id": "T20",
+            "name": "Write user documentation, admin runbook, and troubleshooting guide",
+            "phase": 4,
+            "effort_hours": 12.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T18"
+            ],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Three documents: employee quick-start guide, manager approval workflow, Finance export procedure; all reviewed by stakeholders."
+          },
+          {
+            "id": "T21",
+            "name": "Resolve all critical and high-priority bugs identified in testing",
+            "phase": 4,
+            "effort_hours": 16.0,
+            "owner_role": "Full-Stack Developer",
+            "dependencies": [
+              "T17"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "All P0 and P1 bugs closed; P2 bugs documented for post-launch; regression testing passed."
+          }
+        ]
+      },
+      {
+        "phase_number": 5,
+        "name": "Deployment & Handoff",
+        "duration_weeks": 0.75,
+        "percentage_of_total": 6.5,
+        "milestones": [
+          "Production deployment completed",
+          "Smoke testing in production passed",
+          "Go-live sign-off from CFO and IT Manager"
+        ],
+        "tasks": [
+          {
+            "id": "T22",
+            "name": "Deploy to production and execute smoke tests",
+            "phase": 5,
+            "effort_hours": 8.0,
+            "owner_role": "Full-Stack Developer",
+            "dependencies": [
+              "T20"
+            ],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Application live on Azure App Service; login, submit, approve, export all functional in production; no errors in logs."
+          },
+          {
+            "id": "T23",
+            "name": "Obtain go-live sign-off from CFO and IT Manager",
+            "phase": 5,
+            "effort_hours": 2.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T22"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 0,
+            "definition_of_done": "Written sign-off from CFO and IT Manager confirming readiness for employee access."
+          },
+          {
+            "id": "T24",
+            "name": "Confirm post-launch ownership and support escalation path",
+            "phase": 5,
+            "effort_hours": 2.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T23"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 0,
+            "definition_of_done": "Named owner (IT or Finance) confirmed; support email and escalation procedure documented and communicated to all users."
+          }
+        ]
+      }
+    ]
+  },
+  "use_case_task_mapping": {
+    "UC1": [
+      "T1",
+      "T6",
+      "T17"
+    ],
+    "UC2": [
+      "T3",
+      "T7",
+      "T13",
+      "T17"
+    ],
+    "UC3": [
+      "T3",
+      "T9",
+      "T17"
+    ],
+    "UC4": [
+      "T3",
+      "T8",
+      "T17"
+    ],
+    "UC5": [
+      "T8",
+      "T10",
+      "T17"
+    ],
+    "UC6": [
+      "T8",
+      "T10",
+      "T17"
+    ],
+    "UC7": [
+      "T3",
+      "T12",
+      "T17"
+    ]
+  }
+}
