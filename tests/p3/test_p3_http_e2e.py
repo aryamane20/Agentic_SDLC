@@ -207,8 +207,8 @@ def test_generate_evaluate_gate_runs_on_final_report():
     assert resp.json()["gate"]["fired"] is True
 
 
-def test_generate_intake_gate_returns_422():
-    """When the orchestrator returns paused_at='intake', the endpoint returns 422."""
+def test_generate_intake_gate_low_quality_returns_422_with_hint():
+    """LOW quality gate: 422 with actionable hint about adding brief detail."""
     failed_result = PipelineResult(
         paused_at="intake",
         gate_signal="Gate triggered: input quality is LOW",
@@ -234,11 +234,12 @@ def test_generate_intake_gate_returns_422():
     detail = resp.json()["detail"]
     assert detail["code"] == "intake_gate"
     assert "LOW" in detail["gate_signal"]
+    assert "goals" in detail["message"].lower() or "detail" in detail["message"].lower()
     mock_store.save_session.assert_not_called()
 
 
-def test_generate_intake_gate_does_not_save_session():
-    """On gate fire, nothing should be persisted."""
+def test_generate_intake_gate_too_many_assumptions_returns_422_with_hint():
+    """Assumption-count gate: 422 with actionable hint about clarifying assumptions."""
     failed_result = PipelineResult(
         paused_at="intake",
         gate_signal="Gate triggered: 7 assumptions exceed the 5-assumption threshold",
@@ -254,12 +255,17 @@ def test_generate_intake_gate_does_not_save_session():
         patch("backend.api.routers.reports.sync_pm_confidence_metadata_mirrors"),
     ):
         mock_store.load_session.return_value = None
-        client.post(
+        resp = client.post(
             "/reports/generate",
-            json={"brief": _BRIEF, "session_id": "ses-no-save"},
+            json={"brief": _BRIEF, "session_id": "ses-assumptions-gate"},
             headers=HEADERS,
         )
 
+    assert resp.status_code == 422
+    detail = resp.json()["detail"]
+    assert detail["code"] == "intake_gate"
+    assert "7 assumptions" in detail["gate_signal"]
+    assert "clarif" in detail["message"].lower() or "assumption" in detail["message"].lower()
     mock_store.save_session.assert_not_called()
 
 

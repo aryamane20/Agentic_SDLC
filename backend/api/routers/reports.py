@@ -119,13 +119,21 @@ async def generate_report(
     )
 
     if not pipeline_result.succeeded:
+        signal = pipeline_result.gate_signal or ""
+        if "LOW" in signal:
+            hint = (
+                "The brief lacks enough detail for automated planning. "
+                "Add goals, team size, timeline, constraints, and success criteria."
+            )
+        else:
+            hint = (
+                "Too many unknowns were logged during intake. "
+                "Clarify assumptions in the brief before resubmitting."
+            )
         raise HTTPException(status_code=422, detail={
             "code": "intake_gate",
-            "gate_signal": pipeline_result.gate_signal,
-            "message": (
-                "Input requires clarification before planning can proceed. "
-                f"{pipeline_result.gate_signal}"
-            ),
+            "gate_signal": signal,
+            "message": hint,
         })
 
     report = pipeline_result.final_report
