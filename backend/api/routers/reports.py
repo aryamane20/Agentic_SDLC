@@ -127,8 +127,8 @@ async def generate_report(
             )
         else:
             hint = (
-                "Too many unknowns were logged during intake. "
-                "Clarify assumptions in the brief before resubmitting."
+                "The brief did not pass the intake quality check. "
+                "Add more detail about goals, scope, team size, and timeline."
             )
         raise HTTPException(status_code=422, detail={
             "code": "intake_gate",

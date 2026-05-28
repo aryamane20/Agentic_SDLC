@@ -166,15 +166,9 @@ def test_gate_router_low_quality_fires():
     assert intake_gate_router(s) == "gate_end"
 
 
-def test_gate_router_six_assumptions_fires():
-    many = [{"id": f"A{i}"} for i in range(6)]
+def test_gate_router_many_assumptions_continues():
+    many = [{"id": f"A{i}"} for i in range(10)]
     s = _state(intake_artifact={**INTAKE_ARTIFACT, "assumption_log": many})
-    assert intake_gate_router(s) == "gate_end"
-
-
-def test_gate_router_exactly_five_assumptions_continues():
-    five = [{"id": f"A{i}"} for i in range(5)]
-    s = _state(intake_artifact={**INTAKE_ARTIFACT, "assumption_log": five})
     assert intake_gate_router(s) == "continue"
 
 
@@ -187,24 +181,13 @@ def test_gate_router_medium_quality_continues():
 # _gate_reason
 # ---------------------------------------------------------------------------
 
-def test_gate_reason_low_quality_only():
-    reason = _gate_reason("LOW", 3)
+def test_gate_reason_low_quality():
+    reason = _gate_reason("LOW")
     assert "LOW" in reason
-
-
-def test_gate_reason_assumptions_only():
-    reason = _gate_reason("HIGH", 7)
-    assert "7 assumptions" in reason
-
-
-def test_gate_reason_both_conditions():
-    reason = _gate_reason("LOW", 8)
-    assert "LOW" in reason
-    assert "8 assumptions" in reason
 
 
 def test_gate_reason_fallback_text():
-    reason = _gate_reason("", 0)
+    reason = _gate_reason("")
     assert "Gate triggered" in reason
 
 
@@ -462,26 +445,30 @@ async def test_gate_fires_when_low_quality():
 
 
 @pytest.mark.asyncio
-async def test_gate_fires_when_too_many_assumptions():
+async def test_many_assumptions_does_not_fire_gate():
     orchestrator = PipelineOrchestrator.for_testing()
-    many_assumptions = [{"id": f"A{i}", "what": "assumption"} for i in range(6)]
+    many_assumptions = [{"id": f"A{i}", "what": "assumption"} for i in range(10)]
     intake_with_many = {**INTAKE_ARTIFACT, "assumption_log": many_assumptions}
 
     with (
         patch("agent.orchestrator.UseCaseAgent") as MockUC,
         patch("agent.orchestrator.IntakeAgent") as MockInt,
         patch("agent.orchestrator.PlanningAgent") as MockPlan,
+        patch("agent.orchestrator.RiskAgent") as MockRisk,
+        patch("agent.orchestrator.StaffingAgent") as MockStaff,
+        patch("agent.orchestrator.SynthesisAgent") as MockSynth,
     ):
         MockUC.return_value.run_async = AsyncMock(return_value=_agent_result(USE_CASE_ARTIFACT))
         MockInt.return_value.run_async = AsyncMock(return_value=_agent_result(intake_with_many))
         MockPlan.return_value.run_async = AsyncMock(return_value=_agent_result(PROJECT_PLAN_ARTIFACT))
+        MockRisk.return_value.run_async = AsyncMock(return_value=_agent_result(RISK_ARTIFACT))
+        MockStaff.return_value.run_async = AsyncMock(return_value=_agent_result(STAFFING_ARTIFACT))
+        MockSynth.return_value.run_async = AsyncMock(return_value=_agent_result(SYNTHESIS_ARTIFACT))
 
         result = await orchestrator.run("test brief", "session-gate2", "user-1")
 
-    assert not result.succeeded
-    assert result.paused_at == "intake"
-    assert "6 assumptions" in result.gate_signal
-    MockPlan.return_value.run_async.assert_not_called()
+    assert result.succeeded
+    MockPlan.return_value.run_async.assert_called_once()
 
 
 @pytest.mark.asyncio

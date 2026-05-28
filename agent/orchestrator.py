@@ -9,7 +9,7 @@ Graph topology:
       → intake_node ──(gate?)──→ planning_risk_node → staffing_node → synthesis_node → END
                      └──────────────────────────────────────────────────────────────→ END
 
-Gate fires if: intake quality == LOW  OR  len(assumption_log) > 5
+Gate fires if: intake quality == LOW
 
 Refinement: aupdate_state(as_node=X) rewinds the graph to after node X,
 then ainvoke(None) continues from X's successor.
@@ -192,10 +192,8 @@ async def synthesis_node(state: PipelineState) -> dict:
 
 def intake_gate_router(state: PipelineState) -> str:
     uc = state.get("use_case_artifact") or {}
-    brief = state.get("intake_artifact") or {}
     quality = uc.get("input_quality_signal")
-    assumptions = len(brief.get("assumption_log") or [])
-    if quality == "LOW" or assumptions > 5:
+    if quality == "LOW":
         return "gate_end"
     return "continue"
 
@@ -381,24 +379,19 @@ def _build_result(state: Dict[str, Any]) -> PipelineResult:
 
     # Gate fired — planning never ran
     uc = state.get("use_case_artifact") or {}
-    brief = state.get("intake_artifact") or {}
     quality = uc.get("input_quality_signal", "")
-    assumptions = len(brief.get("assumption_log") or [])
     return PipelineResult(
         paused_at="intake",
-        gate_signal=_gate_reason(quality, assumptions),
+        gate_signal=_gate_reason(quality),
         partial_artifacts=partial,
         token_tally=tally,
     )
 
 
-def _gate_reason(quality: str, assumptions: int) -> str:
-    parts: List[str] = []
+def _gate_reason(quality: str) -> str:
     if quality == "LOW":
-        parts.append("input quality is LOW")
-    if assumptions > 5:
-        parts.append(f"{assumptions} assumptions exceed the 5-assumption threshold")
-    return "Gate triggered: " + "; ".join(parts) if parts else "Gate triggered: intake quality check failed"
+        return "Gate triggered: input quality is LOW"
+    return "Gate triggered: intake quality check failed"
 
 
 def _assemble_report(state: Dict[str, Any]) -> Dict[str, Any]:

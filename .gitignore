@@ -31,11 +31,8 @@ logs/*.log
 outputs/v*/
 outputs/.cache/
 !outputs/samples/
-<<<<<<< Updated upstream
+# P3 prompt test outputs (regenerable via scripts/test_p3_prompts.py)
 outputs/p3/
-=======
-# P3 prompt test outputs — keep latest clean run per TC, commit manually
->>>>>>> Stashed changes
 
 # Project 2 local session store (regenerable)
 sessions/
