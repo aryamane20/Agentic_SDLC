@@ -3,7 +3,7 @@ from pathlib import Path
 
 from agent.base_agent import BaseAgent, MODEL_HAIKU
 
-_PROMPT = Path(__file__).parent.parent.parent / "prompts/agents/risk_v1.1.txt"
+_PROMPT = Path(__file__).parent.parent.parent / "prompts/agents/risk_v1.3.txt"
 
 
 class RiskAgent(BaseAgent):

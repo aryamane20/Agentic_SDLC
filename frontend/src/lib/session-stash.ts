@@ -110,6 +110,13 @@ export function listStashedChatsForSidebar(
       removeSessionStash(id)
       continue
     }
+    // Prune stashes with no content — these are ghost drafts from empty new-plan sessions
+    const isEmpty =
+      !s.brief.trim() && !s.prdText.trim() && s.report === null
+    if (isEmpty) {
+      removeSessionStash(id)
+      continue
+    }
     rows.push({
       session_id: id,
       report_count: s.report ? 1 : 0,

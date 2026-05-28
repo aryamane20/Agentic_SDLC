@@ -214,11 +214,12 @@ def test_tc02_good_score():
 
 
 def test_tc03_medium_score():
-    # 5 assumptions, 2 CRITICAL, 5 HIGH, 3 unknown, Hybrid → raw 20; caps don't lower further
+    # 5 assumptions, 2 CRITICAL, 5 HIGH, 1 unknown (budget only), Hybrid → raw 30
+    # technology_stack and compliance null no longer count as planning-critical unknowns
     uc, intake, risk, plan = _load_fixtures("tc-03-medium")
     inputs = extract_confidence_inputs(uc, intake, risk, plan)
     result = compute_confidence(**inputs)
-    assert result.score == 20.0
+    assert result.score == 30.0
 
 
 # ---------------------------------------------------------------------------

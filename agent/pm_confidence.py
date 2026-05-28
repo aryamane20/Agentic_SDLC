@@ -136,10 +136,13 @@ def extract_confidence_inputs(
     meta  = intake_artifact.get("report_metadata", {})
 
     hard = intake_artifact.get("constraints", {}).get("hard", {})
+    # Only deadline, budget, and team_size being unknown block planning.
+    # technology_stack, team_composition, and compliance null = acceptable early-stage unknowns.
+    _PLANNING_CRITICAL = {"deadline", "budget", "team_size"}
     if isinstance(hard, dict):
-        unknown_constraints = sum(1 for v in hard.values() if v is None)
-    elif isinstance(hard, list):
-        unknown_constraints = sum(1 for v in hard if v is None)
+        unknown_constraints = sum(
+            1 for k, v in hard.items() if k in _PLANNING_CRITICAL and v is None
+        )
     else:
         unknown_constraints = 0
 

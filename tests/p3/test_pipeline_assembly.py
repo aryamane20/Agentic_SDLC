@@ -52,7 +52,7 @@ _PM_REPORT_REQUIRED_KEYS = {
 _EXPECTED_SCORES = {
     "tc-01-perfect": 40.0,
     "tc-02-good":    40.0,
-    "tc-03-medium":  20.0,
+    "tc-03-medium":  30.0,
     "tc-04-simple":  80.0,
 }
 

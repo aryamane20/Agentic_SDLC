@@ -275,7 +275,7 @@ def test_generate_intake_gate_non_low_signal_returns_422():
 @pytest.mark.parametrize("tc,expected_score", [
     ("tc-01-perfect", 40.0),
     ("tc-02-good",    40.0),
-    ("tc-03-medium",  20.0),
+    ("tc-03-medium",  30.0),
     ("tc-04-simple",  80.0),
 ])
 def test_all_tcs_correct_score_through_http(tc, expected_score):

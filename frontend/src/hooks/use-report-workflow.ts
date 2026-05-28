@@ -380,28 +380,32 @@ export function useReportWorkflow() {
       }
       setError(null)
       if (sessionId && sessionId !== targetSessionId) {
-        try {
-          stashSessionState(
-            buildStashFromLiveState({
-              sessionId,
-              brief,
-              prdText,
-              prdFileLabel,
-              phase,
-              report,
-              gate,
-              reportId,
-              planVersion,
-              planSnapshots,
-              messages,
-              refineText,
-              reportRevision: reportRevisionRef.current,
-              agentFailed,
-              lastError: error,
-            })
-          )
-        } catch {
-          /* quota */
+        const hasContent =
+          brief.trim().length > 0 || prdText.trim().length > 0 || report !== null
+        if (hasContent) {
+          try {
+            stashSessionState(
+              buildStashFromLiveState({
+                sessionId,
+                brief,
+                prdText,
+                prdFileLabel,
+                phase,
+                report,
+                gate,
+                reportId,
+                planVersion,
+                planSnapshots,
+                messages,
+                refineText,
+                reportRevision: reportRevisionRef.current,
+                agentFailed,
+                lastError: error,
+              })
+            )
+          } catch {
+            /* quota */
+          }
         }
         refreshStashedSidebar(sessionSummaries)
       }
