@@ -1,14 +1,11 @@
-"""Generate and fetch PM reports via PMAgent (Project 1 core)."""
+"""Generate and fetch PM reports via P3 multi-agent pipeline."""
 
-import time
 import uuid
-from functools import lru_cache
 from io import BytesIO
 from typing import Optional
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 
-from agent.main import PMAgent
 from agent.validator import SchemaValidator, sync_pm_confidence_metadata_mirrors
 
 from backend.api.db import store
@@ -17,13 +14,13 @@ from backend.api.models.gate import GateState, GenerateReportRequest
 from backend.api.models.session import ReportEntry, SessionState
 from backend.api.services.approval_gate import evaluate_gate
 from backend.api.services.input_guard import classify_input
+from backend.api.services.p3_pipeline import get_orchestrator
 
 router = APIRouter()
 _validator = SchemaValidator()
 
 _MAX_DOC_BYTES = 5 * 1024 * 1024
 _MAX_EXTRACT_CHARS = 120_000
-_MAX_VALIDATION_ATTEMPTS = 3
 
 
 def _compose_brief_for_agent(brief: str, prd_text: Optional[str]) -> str:
@@ -35,11 +32,6 @@ def _compose_brief_for_agent(brief: str, prd_text: Optional[str]) -> str:
     if p:
         parts.append("--- ATTACHED PRD ---\n" + p)
     return "\n\n".join(parts)
-
-
-@lru_cache(maxsize=8)
-def _agent_for_version(prompt_version: str) -> PMAgent:
-    return PMAgent(prompt_version=prompt_version)
 
 
 @router.post("/extract-document")
@@ -101,7 +93,7 @@ async def extract_document(file: UploadFile = File(...)) -> dict:
 
 
 @router.post("/generate")
-def generate_report(
+async def generate_report(
     body: GenerateReportRequest,
     user_id: str = Depends(planr_user_id),
 ) -> dict:
@@ -120,47 +112,39 @@ def generate_report(
             "message": verdict.user_message,
         })
 
-    agent = _agent_for_version(body.prompt_version or "v1.6.4")
-    run: dict | None = None
-    validation: dict | None = None
-    report: dict | None = None
-    for attempt in range(_MAX_VALIDATION_ATTEMPTS):
-        use_cache = body.use_cache if attempt == 0 else False
-        run = agent.run(
-            composed,
-            input_source=f"backend-session-{body.session_id}",
-            use_cache=use_cache,
-        )
-        report = run.get("report")
-        if not isinstance(report, dict):
-            raise HTTPException(
-                status_code=502,
-                detail="Agent returned no report dict — parse or model error",
-            )
+    pipeline_result = await get_orchestrator().run(
+        raw_brief=composed,
+        session_id=body.session_id,
+        user_id=user_id,
+    )
 
-        sync_pm_confidence_metadata_mirrors(report)
-        validation = _validator.validate(dict(report))
-        # Second enforcement after validate(): Pydantic/normalize may expose breakdown fields that
-        # bump the displayed score; caps must match gate evaluation on the final dict.
-        agent._enforce_hard_caps(report)
-        sync_pm_confidence_metadata_mirrors(report)
-        if validation.get("valid"):
-            break
-        if attempt + 1 < _MAX_VALIDATION_ATTEMPTS:
-            time.sleep(1.0 * (attempt + 1))
+    if not pipeline_result.succeeded:
+        raise HTTPException(status_code=422, detail={
+            "code": "intake_gate",
+            "gate_signal": pipeline_result.gate_signal,
+            "message": (
+                "Input requires clarification before planning can proceed. "
+                f"{pipeline_result.gate_signal}"
+            ),
+        })
 
-    assert run is not None and report is not None and validation is not None
+    report = pipeline_result.final_report
+    assert report is not None
+
+    sync_pm_confidence_metadata_mirrors(report)
+    validation = _validator.validate(dict(report))
     gate = evaluate_gate(report)
 
+    tally = pipeline_result.token_tally
     rid = f"rpt_{uuid.uuid4().hex[:12]}"
     entry = ReportEntry(
         report_id=rid,
         brief=composed,
         report=report,
         gate=gate,
-        input_tokens=run.get("input_tokens"),
-        output_tokens=run.get("output_tokens"),
-        tokens_used=run.get("tokens_used"),
+        input_tokens=tally.input_tokens,
+        output_tokens=tally.output_tokens,
+        tokens_used=tally.total_tokens,
     )
     state.reports.append(entry)
     store.save_session(user_id, state)
@@ -172,10 +156,10 @@ def generate_report(
         "report": report,
         "gate": gate.model_dump(mode="json"),
         "validation": validation,
-        "tokens_used": run.get("tokens_used"),
-        "input_tokens": run.get("input_tokens"),
-        "output_tokens": run.get("output_tokens"),
-        "cache_hit": run.get("cache_hit", False),
+        "tokens_used": tally.total_tokens,
+        "input_tokens": tally.input_tokens,
+        "output_tokens": tally.output_tokens,
+        "cache_hit": False,
     }
 
 

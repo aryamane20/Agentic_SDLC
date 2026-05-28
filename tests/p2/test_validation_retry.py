@@ -1,34 +1,40 @@
-"""Validation retry loop in POST /reports/generate.
+"""
+Tests for POST /reports/generate validation behavior in P3.
 
-_MAX_VALIDATION_ATTEMPTS = 3:
-- On invalid output the agent is re-run (cache busted).
-- After exhausting all attempts the last report is returned (no crash, no 500).
+P2 had a 3-attempt retry loop. P3 removed it — the orchestrator handles
+per-agent retries internally. The validator is now called once; a non-valid
+result is advisory and does not block the 200 response.
 """
 
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 from fastapi.testclient import TestClient
 
 from backend.api.main import app
+from backend.api.models.gate import GateState
 from backend.api.models.session import SessionState
 
 client = TestClient(app)
-
 HEADERS = {"X-Planr-User": "test-retry-user"}
 SESSION_ID = "ses-retry-test"
 
-_VALID_REPORT = {
-    "pm_confidence_score": {"score": 75},
-    "risk_register": [],
-    "open_questions": [],
-}
+_MOCK_GATE = GateState(fired=False, reasons=[], decision=None)
 
-_VALID_RUN = {
-    "report": _VALID_REPORT,
-    "input_tokens": 10,
-    "output_tokens": 20,
-    "tokens_used": 30,
-    "cache_hit": False,
+_MOCK_REPORT = {
+    "pm_confidence_score": {"score": 75},
+    "assumption_log": [],
+    "project_plan": {},
+    "risk_register": [],
+    "staffing_plan": [],
+    "open_questions": [],
+    "report_metadata": {},
+    "project_understanding": {},
+    "use_case_model": {},
+    "use_case_task_mapping": {},
+    "risk_use_case_mapping": {},
+    "critical_path_risk_flags": [],
+    "actor_role_mapping": {},
+    "project_viability": {},
 }
 
 _GENERATE_BODY = {
@@ -38,59 +44,60 @@ _GENERATE_BODY = {
 }
 
 
-def _mock_agent():
-    agent = MagicMock()
-    agent.run.return_value = dict(_VALID_RUN)
-    agent._enforce_hard_caps.return_value = None
-    return agent
+def _make_orchestrator(report=None):
+    tally = MagicMock()
+    tally.input_tokens = 10
+    tally.output_tokens = 20
+    tally.total_tokens = 30
+
+    pipeline_result = MagicMock()
+    pipeline_result.succeeded = True
+    pipeline_result.final_report = dict(report or _MOCK_REPORT)
+    pipeline_result.token_tally = tally
+
+    orch = MagicMock()
+    orch.run = AsyncMock(return_value=pipeline_result)
+    return orch
 
 
-def test_retry_succeeds_on_third_attempt():
-    """Agent returns invalid output twice; third attempt is valid → 200, run called 3 times."""
-    agent = _mock_agent()
-    # Validator: invalid, invalid, valid
-    validate_results = [
-        {"valid": False, "errors": ["missing field"]},
-        {"valid": False, "errors": ["missing field"]},
-        {"valid": True, "errors": []},
-    ]
-    validate_mock = MagicMock(side_effect=validate_results)
+def test_pipeline_result_validated_once():
+    """P3: pipeline runs once, validator called once, 200 returned."""
+    orch = _make_orchestrator()
+    validate_mock = MagicMock(return_value={"valid": True, "errors": []})
     state = SessionState(session_id=SESSION_ID)
 
     with (
-        patch("backend.api.routers.reports._agent_for_version", return_value=agent),
+        patch("backend.api.routers.reports.get_orchestrator", return_value=orch),
         patch("backend.api.routers.reports._validator.validate", validate_mock),
         patch("backend.api.routers.reports.store.load_session", return_value=state),
         patch("backend.api.routers.reports.store.save_session"),
-        patch("backend.api.routers.reports.time.sleep"),
+        patch("backend.api.routers.reports.evaluate_gate", return_value=_MOCK_GATE),
         patch("backend.api.routers.reports.sync_pm_confidence_metadata_mirrors"),
     ):
         resp = client.post("/reports/generate", headers=HEADERS, json=_GENERATE_BODY)
 
     assert resp.status_code == 200
-    assert agent.run.call_count == 3
-    # First call uses cache, subsequent calls bust it
-    calls = agent.run.call_args_list
-    assert calls[0].kwargs.get("use_cache", True) is True
-    assert calls[1].kwargs.get("use_cache", True) is False
-    assert calls[2].kwargs.get("use_cache", True) is False
+    orch.run.assert_called_once()
+    validate_mock.assert_called_once()
 
 
-def test_retry_exhausted_returns_200_not_500():
-    """All 3 attempts return invalid output — no crash, no 500, loop terminates cleanly."""
-    agent = _mock_agent()
-    validate_mock = MagicMock(return_value={"valid": False, "errors": ["bad schema"]})
+def test_validation_failure_still_returns_200():
+    """P3: schema validation is advisory — invalid result still returns 200."""
+    orch = _make_orchestrator()
+    validate_mock = MagicMock(return_value={"valid": False, "errors": ["missing field"]})
     state = SessionState(session_id=SESSION_ID)
 
     with (
-        patch("backend.api.routers.reports._agent_for_version", return_value=agent),
+        patch("backend.api.routers.reports.get_orchestrator", return_value=orch),
         patch("backend.api.routers.reports._validator.validate", validate_mock),
         patch("backend.api.routers.reports.store.load_session", return_value=state),
         patch("backend.api.routers.reports.store.save_session"),
-        patch("backend.api.routers.reports.time.sleep"),
+        patch("backend.api.routers.reports.evaluate_gate", return_value=_MOCK_GATE),
         patch("backend.api.routers.reports.sync_pm_confidence_metadata_mirrors"),
     ):
         resp = client.post("/reports/generate", headers=HEADERS, json=_GENERATE_BODY)
 
     assert resp.status_code == 200
-    assert agent.run.call_count == 3
+    body = resp.json()
+    assert body["validation"]["valid"] is False
+    orch.run.assert_called_once()

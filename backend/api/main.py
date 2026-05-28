@@ -1,5 +1,5 @@
 """
-PLANR — FastAPI backend (Project 2).
+PLANR — FastAPI backend (Project 3).
 
 Run from repository root (so agent/, prompts/, knowledge-base/ resolve):
   pip install -r requirements.txt -r backend/requirements.txt
@@ -8,16 +8,28 @@ Run from repository root (so agent/, prompts/, knowledge-base/ resolve):
 Stack: FastAPI + Uvicorn (docs/ARCHITECTURE.md §6).
 """
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api.routers import gates, refine, reports, sessions
+from backend.api.services import p3_pipeline
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await p3_pipeline.setup()
+    yield
+    await p3_pipeline.teardown()
+
 
 app = FastAPI(
     title="PLANR API",
     description="HITL approval gates + session persistence wrapping PMAgent",
     version="0.1.0",
     redirect_slashes=False,
+    lifespan=lifespan,
 )
 
 app.add_middleware(
