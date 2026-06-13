@@ -341,3 +341,32 @@ mechanism and no example of the anti-pattern. FINAL VERIFICATION step 4 said
 
 **Before:** tc-01=8 flags, tc-02=9 flags, tc-03=8 flags (all violate ≤7)
 **After:** to be measured on next eval-generate run
+
+---
+
+## synthesis_v1.1 — added_open_questions hallucination fix (2026-06-13)
+
+**Problem:** synthesis_v1.0 produced hallucinated added_open_questions referencing
+entities from a different project entirely — wrong UC names ("Complete Onboarding
+Checklist"), wrong APIs ("Workday API"), wrong durations ("26 weeks") — none present
+in the actual input artifacts. The model was ignoring the strict "Rules 3 and 5 only"
+instruction and generating questions from training data.
+
+**Root cause:** No pre-flight enumeration step forcing the model to count actual
+Rule 3/5 triggers before writing output. The output contract said "ONLY Rules 3+5"
+but provided no mechanism to enforce it at inference time.
+
+**Changes:**
+- Added MANDATORY PRE-FLIGHT block (Pre-Flight A + B) that forces the model to
+  enumerate missing UC ids and compute effort_weeks BEFORE writing any output.
+  Results are written inline — model cannot skip this step.
+- HARD LIMIT: added_open_questions may contain at most 1 question per missing UC id
+  (Rule 3) and 1 question if timeline is exceeded (Rule 5). Zero from any other source.
+- FORBIDDEN block: explicit list of what must never appear in added_open_questions
+  (risk IDs, task IDs, tool names, role names, anything not from Pre-Flight A/B).
+- Pattern enforcement: Rule-3 questions must start with "Use case [UC_NAME]...";
+  Rule-5 questions must start with "Staffing capacity analysis:".
+
+**Before:** tc-01 had 4 hallucinated questions referencing wrong project entities.
+**After:** tc-01=0 questions (correct, no triggers), tc-02=2 (UC7 missing + timeline),
+           tc-03=1 (timeline only). All questions match expected patterns.
