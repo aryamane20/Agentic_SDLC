@@ -19,12 +19,12 @@
     {
       "id": "A4",
       "name": "Logging Service",
-      "type": "secondary"
+      "type": "external"
     },
     {
       "id": "A5",
       "name": "Authentication Service",
-      "type": "secondary"
+      "type": "external"
     }
   ],
   "use_cases": [
@@ -55,7 +55,7 @@
         "A1"
       ],
       "complexity": "simple",
-      "description": "Enforce request rate limits per client or API endpoint"
+      "description": "Enforce rate limits per client to prevent abuse"
     },
     {
       "id": "UC4",
@@ -68,12 +68,12 @@
     },
     {
       "id": "UC5",
-      "name": "Balance Load Across Services",
+      "name": "Load Balance Request",
       "actors": [
         "A3"
       ],
       "complexity": "medium",
-      "description": "Distribute incoming requests across multiple instances of microservices"
+      "description": "Distribute incoming requests across multiple service instances"
     },
     {
       "id": "UC6",
@@ -87,12 +87,12 @@
     },
     {
       "id": "UC7",
-      "name": "Configure Gateway Rules",
+      "name": "Monitor Gateway Health",
       "actors": [
         "A2"
       ],
       "complexity": "medium",
-      "description": "Development team configures routing, rate limits, and authentication policies"
+      "description": "Development team views gateway metrics and logs for troubleshooting"
     }
   ],
   "relationships": [
@@ -110,11 +110,6 @@
       "type": "includes",
       "from_id": "UC1",
       "to_id": "UC4"
-    },
-    {
-      "type": "includes",
-      "from_id": "UC1",
-      "to_id": "UC5"
     },
     {
       "type": "includes",

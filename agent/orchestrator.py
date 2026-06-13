@@ -6,10 +6,13 @@ LangGraph StateGraph orchestrator for the P3 multi-agent pipeline.
 Graph topology:
     START
       → use_case_node
-      → intake_node ──(gate?)──→ planning_risk_node → staffing_node → synthesis_node → END
-                     └──────────────────────────────────────────────────────────────→ END
+      → intake_node ──(gate?)──→ planning_node → risk_node → staffing_node → synthesis_node → END
+                     └────────────────────────────────────────────────────────────────────────→ END
 
 Gate fires if: intake quality == LOW
+
+planning_node runs first so risk_node receives the full WBS before generating
+its register. This replaces the former parallel planning_risk_node.
 
 Refinement: aupdate_state(as_node=X) rewinds the graph to after node X,
 then ainvoke(None) continues from X's successor.
@@ -20,7 +23,6 @@ Tests use MemorySaver (no filesystem) via PipelineOrchestrator.for_testing().
 
 from __future__ import annotations
 
-import asyncio
 from pathlib import Path
 from typing import Any, Dict, List, Optional, TypedDict
 
@@ -47,13 +49,13 @@ _DB_PATH = Path(__file__).parent.parent / "sessions" / "p3_checkpoints.db"
 # Maps feedback section name → as_node for aupdate_state.
 # "as_node=X" means: act as if X just ran; graph resumes from X's successor.
 REFINEMENT_TARGETS: Dict[str, str] = {
-    "pm_confidence_score":    "staffing_node",       # re-run synthesis only
-    "staffing_plan":          "planning_risk_node",   # re-run staffing → synthesis
-    "open_questions":         "planning_risk_node",   # re-run staffing → synthesis
-    "risk_register":          "intake_node",          # re-run planning_risk → staffing → synthesis
-    "project_plan":           "intake_node",          # re-run planning_risk → staffing → synthesis
-    "assumption_log":         "use_case_node",        # re-run intake → all downstream
-    "project_understanding":  "use_case_node",        # re-run intake → all downstream
+    "pm_confidence_score":    "staffing_node",   # re-run synthesis only
+    "staffing_plan":          "risk_node",        # re-run staffing → synthesis
+    "open_questions":         "risk_node",        # re-run staffing → synthesis
+    "risk_register":          "planning_node",    # re-run risk → staffing → synthesis
+    "project_plan":           "intake_node",      # re-run planning → risk → staffing → synthesis
+    "assumption_log":         "use_case_node",    # re-run intake → all downstream
+    "project_understanding":  "use_case_node",    # re-run intake → all downstream
 }
 
 _kb = KBRetriever()
@@ -105,38 +107,37 @@ async def intake_node(state: PipelineState) -> dict:
     return {"intake_artifact": result["artifact"], "token_tally": tally}
 
 
-async def planning_risk_node(state: PipelineState) -> dict:
-    planning_agent = PlanningAgent()
-    risk_agent = RiskAgent()
+async def planning_node(state: PipelineState) -> dict:
+    agent = PlanningAgent()
     brief = state.get("intake_artifact") or {}
     uc = state.get("use_case_artifact") or {}
     project_type = brief.get("report_metadata", {}).get("project_type")
-
-    planning_ctx: Dict[str, Any] = {
+    context: Dict[str, Any] = {
         "structured_brief": brief,
         "use_case_model": uc,
         "_kb_content": _kb.get_for_agent("planning", project_type=project_type),
     }
-    risk_ctx: Dict[str, Any] = {
+    result = await agent.run_async(context=context)
+    tally = _copy_tally(state)
+    _add_tokens(tally, result)
+    return {"project_plan_artifact": result["artifact"], "token_tally": tally}
+
+
+async def risk_node(state: PipelineState) -> dict:
+    agent = RiskAgent()
+    brief = state.get("intake_artifact") or {}
+    uc = state.get("use_case_artifact") or {}
+    project_type = brief.get("report_metadata", {}).get("project_type")
+    context: Dict[str, Any] = {
         "structured_brief": brief,
         "use_case_model": uc,
-        "project_plan": {},
+        "project_plan": state.get("project_plan_artifact") or {},
         "_kb_content": _kb.get_for_agent("risk", project_type=project_type),
     }
-
-    planning_result, risk_result = await asyncio.gather(
-        planning_agent.run_async(context=planning_ctx),
-        risk_agent.run_async(context=risk_ctx),
-    )
-
+    result = await agent.run_async(context=context)
     tally = _copy_tally(state)
-    _add_tokens(tally, planning_result)
-    _add_tokens(tally, risk_result)
-    return {
-        "project_plan_artifact": planning_result["artifact"],
-        "risk_register_artifact": risk_result["artifact"],
-        "token_tally": tally,
-    }
+    _add_tokens(tally, result)
+    return {"risk_register_artifact": result["artifact"], "token_tally": tally}
 
 
 async def staffing_node(state: PipelineState) -> dict:
@@ -206,7 +207,8 @@ def build_graph() -> StateGraph:
     g = StateGraph(PipelineState)
     g.add_node("use_case_node", use_case_node)
     g.add_node("intake_node", intake_node)
-    g.add_node("planning_risk_node", planning_risk_node)
+    g.add_node("planning_node", planning_node)
+    g.add_node("risk_node", risk_node)
     g.add_node("staffing_node", staffing_node)
     g.add_node("synthesis_node", synthesis_node)
 
@@ -215,9 +217,10 @@ def build_graph() -> StateGraph:
     g.add_conditional_edges(
         "intake_node",
         intake_gate_router,
-        {"continue": "planning_risk_node", "gate_end": END},
+        {"continue": "planning_node", "gate_end": END},
     )
-    g.add_edge("planning_risk_node", "staffing_node")
+    g.add_edge("planning_node", "risk_node")
+    g.add_edge("risk_node", "staffing_node")
     g.add_edge("staffing_node", "synthesis_node")
     g.add_edge("synthesis_node", END)
     return g

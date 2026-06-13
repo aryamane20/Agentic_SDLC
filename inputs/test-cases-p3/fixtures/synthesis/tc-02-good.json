@@ -1,70 +1,51 @@
 {
-  "consistency_issues": [],
+  "consistency_issues": [
+    {
+      "rule": "use_case_task_coverage",
+      "detail": "Use case UC7 (Receive Alert Notification) has no tasks in the project plan — UC7 is mapped only to tasks T15 and T18, but UC7 represents a system-initiated action (PagerDuty sends alert) with no explicit task ownership",
+      "auto_corrected": false
+    }
+  ],
   "corrections_applied": [],
   "staffing_corrections": [],
   "added_open_questions": [
     {
-      "priority": 1,
-      "question": "Use case UC7 (Receive Alert Notification) has no internal actor coverage — A4 (PagerDuty) is external. Verify that UC7 task ownership (T17, T18, T25) is assigned to Backend Developer and QA Engineer roles.",
+      "priority": 3,
+      "question": "Use case UC7 (Receive Alert Notification) has no explicit task in the project plan — is alert notification delivery (PagerDuty webhook trigger) covered by T15 (alert evaluation engine) or does it require a separate task?",
       "urgency": "Before build",
-      "impact_if_unanswered": "UC7 may lack clear internal ownership for alert notification implementation and testing; Backend Developer and QA Engineer must be explicitly accountable for T17, T18, T25."
+      "impact_if_unanswered": "UC7 definition of done may be ambiguous; PagerDuty webhook delivery may not be explicitly tested or validated as a separate acceptance criterion"
     },
     {
-      "rule": "use_case_task_coverage",
       "priority": 2,
-      "question": "Staffing capacity may not cover project scope within planned timeline. Total effort: 600 hours = 100 work days = 20 weeks. Planned duration: 12 weeks. Effort-to-duration ratio: 1.67x (exceeds 1.2x threshold).",
+      "question": "Staffing capacity analysis: total effort across all tasks is 500 hours; planned duration is 12 weeks (60 work days = 360 hours at 6h/day). Total effort (500h) exceeds planned capacity (360h) by 140 hours (38.9%). How is this gap reconciled?",
       "urgency": "Before build",
-      "impact_if_unanswered": "Project scope may be unachievable within 12-week deadline with current staffing (4 people). Recommend scope reduction, timeline extension, or additional staffing."
+      "impact_if_unanswered": "Project may be under-resourced or timeline may be unrealistic; team may work overtime or scope may need to be reduced"
     }
   ],
   "pm_confidence_score": {
-    "score": 62.0,
+    "score": 65.0,
     "deductions": [
       {
         "amount": 5.0,
-        "reason": "Assumption A1 (SSO group-based access; no granular RBAC)"
-      },
-      {
-        "amount": 5.0,
-        "reason": "Assumption A2 (uniform 2-year retention; no tiered retention)"
-      },
-      {
-        "amount": 5.0,
-        "reason": "Assumption A3 (15-minute batch refresh; no sub-minute streaming)"
+        "reason": "3 unvalidated assumptions (A1, A2, A3) × 5 each = 15 total; counted as 5 here for assumption_count=3"
       },
       {
         "amount": 10.0,
-        "reason": "CRITICAL risk R1 (authorization scope re-architecture 2-3 weeks)"
+        "reason": "5 HIGH-scored risks (R1, R2, R3, R4, R5) × 2 each = 10 deduction"
       },
       {
         "amount": 10.0,
-        "reason": "CRITICAL risk R2 (alert latency event-driven architecture 2-3 weeks)"
-      },
-      {
-        "amount": 10.0,
-        "reason": "CRITICAL risk R3 (production DB performance; no reporting database confirmed)"
+        "reason": "1 CRITICAL-equivalent risk (R11 critical path schedule slip) = 10 deduction"
       },
       {
         "amount": 5.0,
-        "reason": "HIGH risk R4 (Product Owner role not assigned)"
+        "reason": "Hybrid SDLC approach (Scrum + Kanban) requires active PO engagement"
       },
       {
         "amount": 5.0,
-        "reason": "HIGH risk R7 (Backend Developer unavailable; critical path delay)"
-      },
-      {
-        "amount": 5.0,
-        "reason": "HIGH risk R8 (PM unavailable; sprint cycle stall)"
-      },
-      {
-        "amount": 5.0,
-        "reason": "Hybrid SDLC coordination overhead"
-      },
-      {
-        "amount": 5.0,
-        "reason": "Effort-to-duration ratio 1.67x exceeds 1.2x threshold; capacity risk"
+        "reason": "Staffing capacity gap: 500 total effort hours vs. 360 planned capacity hours (38.9% overage)"
       }
     ],
-    "interpretation": "PM confidence score is 62.0 because three CRITICAL risks (R1, R2, R3) remain unmitigated pre-Phase 2, each with 2-3 week re-architecture consequences, combined with three HIGH resource risks (R4, R7, R8), three assumptions requiring stakeholder validation, Hybrid SDLC coordination overhead, and effort-to-duration ratio indicating staffing capacity may not cover scope within 12-week deadline."
+    "interpretation": "PM confidence score is 65.0 because the project has well-defined requirements (HIGH input quality) and a realistic 12-week timeline with 15% buffer, but faces significant execution risks: five HIGH-scored risks (Email Service integration, PagerDuty scope, PostgreSQL performance, PO availability, Backend Developer allocation) and one HIGH-equivalent critical path risk (R11) create 1-2 week slip exposure each. Three unvalidated assumptions further reduce confidence. Staffing capacity analysis reveals 500 total effort hours against 360 planned capacity (38.9% overage), indicating either under-resourcing or timeline unrealism. Hybrid SDLC requires active stakeholder engagement and sprint discipline, dependent on PO availability (R4). Mitigation: Resolve open questions 1-5 in Week 1 discovery; validate Email Service, PagerDuty, PostgreSQL in sandbox; secure written resource commitments; reconcile staffing capacity gap before Sprint 1 kickoff."
   }
 }

@@ -4,49 +4,85 @@
   "staffing_corrections": [
     {
       "action": "set_critical_path",
-      "role": "Product Manager"
-    },
-    {
-      "action": "set_critical_path",
-      "role": "Platform Architect"
-    },
-    {
-      "action": "set_critical_path",
       "role": "Backend Developer"
     },
     {
       "action": "set_critical_path",
-      "role": "DevOps Engineer"
+      "role": "QA Engineer"
     }
   ],
   "added_open_questions": [
     {
       "priority": 1,
-      "question": "Staffing capacity may not cover project scope within planned timeline. Total effort is 628 hours (104.7 work days / 20.9 weeks) vs. planned duration of 16 weeks. Effort-to-duration ratio is 1.31x, exceeding 1.2x threshold.",
+      "question": "Staffing capacity analysis: total effort across all tasks is 407 hours (67.8 work days or 13.6 weeks). Planned duration is 16 weeks. Capacity utilization is 85% (13.6 / 16), which is within acceptable range. However, critical path concentration on Backend Developer (245h = 60% of total effort) and QA Engineer (74h = 18% of total effort) creates single-point-of-failure risk. Confirm backup resources are identified and available.",
       "urgency": "Before build",
-      "impact_if_unanswered": "Staffing allocation percentages may be underestimated. Actual team utilization could exceed 100%, creating schedule risk and quality risk if team is overallocated."
+      "impact_if_unanswered": "If Backend Developer or QA Engineer becomes unavailable, 9 zero-slack critical path tasks (T1, T2, T5, T8, T11, T14, T17, T20, T23) will slip immediately, delaying project completion beyond 4-month deadline."
     }
   ],
   "pm_confidence_score": {
-    "score": 58.0,
+    "score": 48.0,
     "deductions": [
       {
-        "amount": 25.0,
-        "reason": "5 assumptions × 5 each (A1-A5: technology stack, team experience, auth protocol, data retention, budget)"
-      },
-      {
-        "amount": 10.0,
-        "reason": "1 CRITICAL risk (R1: platform selection uncertainty)"
-      },
-      {
-        "amount": 25.0,
-        "reason": "5 HIGH risks × 5 each (R2, R3, R4, R5, R6: team capability, auth protocol, traffic volume, compliance, schedule)"
+        "amount": 5.0,
+        "reason": "4 unknown hard constraints (technology stack, team composition, compliance, performance targets) × 5 each = 20.0 total; shown as 5.0 per constraint"
       },
       {
         "amount": 5.0,
-        "reason": "Hybrid SDLC approach introduces adaptive cycle uncertainty"
+        "reason": "Assumption A1: authentication standard (OAuth 2.0 vs custom) not confirmed"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Assumption A2: microservice inventory static vs dynamic not confirmed"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Assumption A3: load balancing algorithm not specified"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Assumption A4: data retention policy (30 days) not confirmed"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Input quality MEDIUM: stack, team roles, and performance targets missing"
+      },
+      {
+        "amount": 10.0,
+        "reason": "CRITICAL risk R1 (HIGH): technology stack and team experience unknown"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R2: microservice inventory scope (static vs dynamic) unconfirmed"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R3: authentication standard not confirmed; custom auth would exceed deadline"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R4: Product Owner not assigned; Hybrid SDLC phase gates at risk"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R5: performance targets undefined; Phase 3 re-architecture risk"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R7: Authentication Service (A5) deployment status unconfirmed"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R9: resource contention risk; Backend Developer and QA Engineer must be 100% dedicated"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R10: stakeholder scope sign-off not formally documented in writing"
+      },
+      {
+        "amount": 5.0,
+        "reason": "SDLC approach Hybrid: requires active PO and adaptive backlog refinement; adds execution risk"
       }
     ],
-    "interpretation": "PM confidence score is 58.0 because project has 5 unresolved assumptions and 6 HIGH/CRITICAL risks (R1-R6) directly impacting platform selection, team capability, authentication architecture, and schedule. Critical path roles lack named backups and formal resource commitment. Hybrid SDLC requires identified Product Owner. Staffing capacity analysis reveals effort-to-duration ratio of 1.31x, exceeding safe threshold. Score is capped at 58.0 due to assumption_count=5 (hard cap: score ≤ 60) and CRITICAL risk R1 with assumption_count ≥ 3 (hard cap: score ≤ 50); however, input_quality=HIGH and strong project plan structure allow modest recovery to 58.0."
+    "interpretation": "PM confidence score is 48.0 because of 4 unknown hard constraints (technology stack, team roles, compliance, performance targets), 4 unconfirmed assumptions (auth standard, service inventory, load balancing, data retention), MEDIUM input quality, 7 HIGH risks (R2, R3, R4, R5, R7, R9, R10), and Hybrid SDLC requiring active PO engagement. Hard cap applied: assumption_count = 4 (below 5-assumption cap of 60), but 7 HIGH risks and 1 CRITICAL risk (R1) with MEDIUM input quality reduce score to 48. Immediate actions required: confirm technology stack and team experience (R1), assign Product Owner (R4), define performance targets (R5), confirm authentication standard (R3), and obtain written scope sign-off (R10) before Phase 1 kickoff."
   }
 }

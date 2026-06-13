@@ -9,36 +9,16 @@
         4,
         5
       ],
-      "total_hours": 82.0,
-      "allocation_percent": 10.3,
+      "total_hours": 56.0,
+      "allocation_percent": 11.2,
       "skills_required": [
-        "Stakeholder management",
         "Agile/Hybrid SDLC",
-        "API gateway domain knowledge",
-        "Adoption planning"
+        "Stakeholder management",
+        "Backlog prioritization",
+        "API gateway domain knowledge"
       ],
       "critical_path": true,
-      "notes": "Owns scope sign-off (T1), user personas (T3), internal demo (T15), UAT (T25), documentation (T28), adoption plan (T29), post-launch ownership (T30), go-live sign-off (T33). Must be full-time decision-maker for sprint planning and scope trade-offs in Hybrid SDLC. Allocation 10.3% is within 10-15% PM oversight rule (PMBOK 9.2)."
-    },
-    {
-      "role": "Platform Architect",
-      "phase_involvement": [
-        1,
-        2,
-        3
-      ],
-      "total_hours": 88.0,
-      "allocation_percent": 11.0,
-      "skills_required": [
-        "API gateway architecture",
-        "Microservices design",
-        "OAuth 2.0/JWT",
-        "Security architecture",
-        "Load balancing",
-        "TLS/SSL"
-      ],
-      "critical_path": true,
-      "notes": "Owns platform selection (T2), auth architecture (T4), data flow diagrams (T5), security review (T19). Critical path role; must be 100% dedicated (not shared) across Phases 1-3 per project_plan staffing_implication. Allocation 11.0% reflects front-loaded Phase 1 effort (24h + 20h + 18h = 62h in 2.5 weeks) then reduced Phase 2-3 oversight. No backup named; risk R7 mitigation requires formal commitment."
+      "notes": "Owns T1, T4, T16, T28, T30, T31, T34. PM oversight 11.2% of total project hours (500h). Must be available 4-6 hours/week for sprint planning and scope decisions. Critical for Hybrid SDLC phase gates."
     },
     {
       "role": "Backend Developer",
@@ -46,202 +26,184 @@
         1,
         2,
         3,
-        4
-      ],
-      "total_hours": 240.0,
-      "allocation_percent": 30.0,
-      "skills_required": [
-        "Go or Node.js",
-        "REST API design",
-        "OAuth 2.0/JWT implementation",
-        "Rate limiting algorithms",
-        "Load balancing",
-        "Error handling",
-        "Microservices integration"
-      ],
-      "critical_path": true,
-      "notes": "Owns core routing (T8), auth implementation (T9), rate limiting (T10), logging pipeline (T11), load balancing (T12), versioning (T13), microservice integration (T16), error handling (T17), request transformation (T18), bug resolution (T23). Critical path role; must be 100% dedicated (not shared) across Phases 2-4 per project_plan staffing_implication. Allocation 30.0% reflects heavy Phase 2-3 build effort. No backup named; risk R7 mitigation requires formal commitment. RESOURCE RISK: Single Backend Developer carrying 240h (30% of 800h total) across 4 phases creates single point of failure. Recommend identifying backup engineer with microservices experience."
-    },
-    {
-      "role": "DevOps Engineer",
-      "phase_involvement": [
-        2,
-        3,
         4,
         5
       ],
-      "total_hours": 84.0,
-      "allocation_percent": 10.5,
+      "total_hours": 245.0,
+      "allocation_percent": 49.0,
       "skills_required": [
-        "Docker",
-        "Kubernetes or cloud platform (AWS/GCP/Azure)",
-        "CI/CD pipelines",
-        "Infrastructure as Code",
-        "Monitoring/alerting",
-        "Deployment strategies"
+        "API gateway architecture",
+        "HTTP/REST protocols",
+        "OAuth 2.0/JWT",
+        "Load balancing algorithms",
+        "Circuit breaker pattern",
+        "TLS/SSL",
+        "Request routing",
+        "Microservice integration",
+        "Go or Node.js or Python"
       ],
       "critical_path": true,
-      "notes": "Owns infrastructure setup (T7), monitoring (T20), graceful shutdown (T22), runbooks (T27), production deployment (T31), smoke tests (T32). Critical path role for Phase 2 infrastructure gate (T7 on critical path). Allocation 10.5% reflects back-loaded Phase 5 effort (16h deployment + 12h smoke tests = 28h in 1.5 weeks). Must support rolling deployments and zero-downtime strategy."
-    },
-    {
-      "role": "Frontend Developer",
-      "phase_involvement": [
-        2,
-        4
-      ],
-      "total_hours": 42.0,
-      "allocation_percent": 5.3,
-      "skills_required": [
-        "React or Vue.js",
-        "REST API integration",
-        "UI/UX design",
-        "WCAG 2.1 accessibility",
-        "Form validation"
-      ],
-      "critical_path": false,
-      "notes": "Owns gateway configuration UI (T14), accessibility audit (T26). Non-critical path; can be shared with other projects during Phase 1 discovery per project_plan staffing_implication. Allocation 5.3% reflects Phase 2 UI build (28h) and Phase 4 accessibility work (12h) with slack. Accessibility audit (T26) has 2-day slack; can be deferred if needed."
+      "notes": "Owns T2, T5, T8, T11, T14, T17, T20, T23, T29, T32. All critical path tasks (zero slack). Must be 100% dedicated; no shared allocation with competing projects. Requires deep expertise in API gateway patterns and security hardening. Backup Backend Developer required for 16-week project duration per PMBOK 9.2."
     },
     {
       "role": "QA Engineer",
       "phase_involvement": [
+        2,
         3,
         4,
         5
       ],
-      "total_hours": 92.0,
-      "allocation_percent": 11.5,
+      "total_hours": 74.0,
+      "allocation_percent": 14.8,
       "skills_required": [
         "API testing",
-        "Load testing tools (JMeter, Gatling)",
-        "Test automation",
+        "Load testing tools",
         "Security testing",
+        "Penetration testing",
+        "Test automation",
+        "End-to-end testing",
         "Performance benchmarking"
       ],
+      "critical_path": true,
+      "notes": "Owns T22, T23, T25, T26, T33. Critical path tasks T23, T33 (zero slack). QA effort 74h = 30.2% of Backend Developer effort (245h), exceeds 25% minimum per PMBOK 8.2. Must be 100% dedicated; no shared allocation. Backup QA Engineer required for 16-week project duration."
+    },
+    {
+      "role": "Frontend Developer",
+      "phase_involvement": [
+        1,
+        2,
+        4
+      ],
+      "total_hours": 36.0,
+      "allocation_percent": 7.2,
+      "skills_required": [
+        "React or Vue or Angular",
+        "Dashboard UI development",
+        "REST API integration",
+        "WCAG 2.1 AA accessibility",
+        "Performance optimization"
+      ],
       "critical_path": false,
-      "notes": "Owns performance testing (T21), functional test suite (T24), UAT support (T25), production smoke tests (T32). QA effort = 92h; total development effort (Backend + Frontend + DevOps) = 240h + 42h + 84h = 366h. QA ratio = 92h / 366h = 25.1%, meeting PMBOK 8.2 minimum 25% rule. Allocation 11.5% reflects Phase 3-4 testing focus. Load testing (T21) is critical for validating rate limiting and logging performance under peak load."
+      "notes": "Owns T6, T15, T27. Non-critical path; has 2-3 days slack. Supports Phase 1 design (T6: 10h), Phase 2 dashboard development (T15: 20h), Phase 4 accessibility audit (T27: 6h). Can be shared with other projects at 7.2% allocation if needed, but recommend dedicated for continuity."
     }
   ],
   "open_questions": [
     {
       "priority": 1,
-      "question": "Is a named Product Owner identified and formally committed to Hybrid SDLC sprint planning (Phase 2-4) with minimum 10 hours/week availability? Risk R8 requires explicit PO assignment for scope negotiation and sprint goal definition.",
+      "question": "What is the technology stack (language, framework, container runtime) for the API gateway, and does the 4-engineer team have direct hands-on experience with the chosen stack?",
       "urgency": "Before build",
-      "impact_if_unanswered": "Sprint planning delays, scope creep, conflicting stakeholder priorities, decision bottlenecks in Phase 2-3 adaptive cycles."
+      "impact_if_unanswered": "Unknown stack or team inexperience triggers R1 (HIGH risk); Phase 2 implementation requires 2-3 week spike for learning curve or external consultant mentoring; extends timeline beyond 4-month deadline."
     },
     {
       "priority": 2,
-      "question": "Can Backend Developer and Platform Architect be formally committed to 100% allocation (not shared with competing projects) for full 16-week duration? Risk R7 mitigation requires documented resource commitment from resource manager.",
+      "question": "Is the microservice inventory static (enumerable list) or dynamic (services scale up/down or join/leave mesh)? How many services will the gateway route to at launch?",
       "urgency": "Before build",
-      "impact_if_unanswered": "If critical path roles are pulled to competing projects, core gateway development stalls and 4-month deadline is jeopardized. Backup engineer must be identified and trained if primary is unavailable."
+      "impact_if_unanswered": "Dynamic inventory triggers R2 (HIGH risk); requires service discovery integration (Consul, Eureka), adding 2-3 weeks and escalating complexity from TYPE_A to TYPE_D; scope and staffing must be re-evaluated."
     },
     {
       "priority": 3,
-      "question": "What is the team's prior experience with API gateway platforms (Kong, AWS API Gateway, Traefik) and microservices architecture? Phase 1 Week 1 must include explicit capability assessment per Risk R2 mitigation.",
+      "question": "Who is the assigned Product Owner, and what is their availability for sprint planning, backlog refinement, and stakeholder communication (4-6 hours/week minimum)?",
       "urgency": "Before build",
-      "impact_if_unanswered": "If team lacks gateway platform experience, Phase 1 discovery and Phase 2 design will extend beyond planned duration, compressing Phase 3-4 and increasing defect escape risk. Training or external consultant support may be required."
+      "impact_if_unanswered": "Missing PO triggers R4 (HIGH risk); Hybrid SDLC phase gates cannot execute; Phase 2 kickoff blocked. Must assign PO before Phase 1 start or escalate to sponsor for interim decision authority."
     },
     {
       "priority": 4,
-      "question": "Are microservice test instances, authentication service sandbox, and logging service staging environment confirmed available before Phase 3 build (Week 9)? Risk R9 requires integration readiness checklist and dependency confirmation.",
+      "question": "What are the performance targets: expected request volume (RPS), concurrent user count, gateway availability SLA, and response latency SLA?",
       "urgency": "Before build",
-      "impact_if_unanswered": "If external dependencies (microservices, auth service, logging service) are not available, Phase 3 integration testing will be blocked. Mock services or stubs must be implemented as contingency."
+      "impact_if_unanswered": "Unknown targets trigger R5 (HIGH risk); infrastructure sizing, load balancing algorithm, and caching strategy cannot be validated; Phase 3 testing may reveal performance gaps requiring re-architecture or timeline extension."
     },
     {
       "priority": 5,
-      "question": "Has budget approval been confirmed for API gateway project, including infrastructure, tooling, and operational costs? Risk R11 requires formal budget sign-off before Phase 1 platform evaluation.",
-      "urgency": "Before planning",
-      "impact_if_unanswered": "If budget is constrained, platform selection (open-source vs. commercial) and team size may be impacted. Cost-benefit analysis of Kong vs. AWS API Gateway vs. custom implementation must be completed in Phase 1 Week 2-3."
+      "question": "Are there compliance or audit requirements (SOC2, HIPAA, PCI-DSS) that mandate request log retention beyond 30 days, encryption, or access controls?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Unaddressed compliance triggers R6 (HIGH risk); Phase 3 may require re-work for audit trail implementation and data warehouse integration; extends timeline by 1-2 weeks."
     }
   ],
   "pm_confidence_score": {
-    "score": 62.0,
+    "score": 48.0,
     "deductions": [
       {
         "amount": 5.0,
-        "reason": "Assumption A1: Technology stack not specified; platform selection deferred to Phase 1 discovery (risk_if_wrong: HIGH)"
+        "reason": "UNKNOWN hard constraint: technology stack not specified"
       },
       {
         "amount": 5.0,
-        "reason": "Assumption A2: Team experience with API gateway platforms unknown; ramp-up timeline uncertain (risk_if_wrong: MEDIUM)"
+        "reason": "UNKNOWN hard constraint: team composition (roles, seniority) not specified"
       },
       {
         "amount": 5.0,
-        "reason": "Assumption A3: Authentication protocol (OAuth 2.0 vs. SAML vs. OIDC) not confirmed; scope creep risk (risk_if_wrong: HIGH)"
+        "reason": "UNKNOWN hard constraint: compliance requirements not specified"
       },
       {
         "amount": 5.0,
-        "reason": "Assumption A4: Data retention for API logs not specified; compliance requirements unknown (risk_if_wrong: MEDIUM)"
+        "reason": "UNKNOWN hard constraint: performance targets (RPS, latency SLA) not specified"
       },
       {
         "amount": 5.0,
-        "reason": "Assumption A5: Budget not specified; tooling and infrastructure costs unknown (risk_if_wrong: MEDIUM)"
+        "reason": "Assumption A1: authentication standard (OAuth 2.0 vs custom) not confirmed"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Assumption A2: microservice inventory static vs dynamic not confirmed"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Assumption A3: load balancing algorithm not specified"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Assumption A4: data retention policy (30 days) not confirmed"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Input quality MEDIUM: stack, team roles, and performance targets missing"
       },
       {
         "amount": 10.0,
-        "reason": "CRITICAL risk R1: Platform selection uncertainty cascades into Phase 2-3, requiring re-architecture mid-project"
+        "reason": "CRITICAL risk R1 (HIGH): technology stack and team experience unknown"
       },
       {
         "amount": 5.0,
-        "reason": "HIGH risk R2: Team capability gaps may extend Phase 1-2 timeline, compressing Phase 3-4 testing"
+        "reason": "HIGH risk R2: microservice inventory scope (static vs dynamic) unconfirmed"
       },
       {
         "amount": 5.0,
-        "reason": "HIGH risk R3: Authentication protocol not confirmed; Phase 2-3 re-work if stakeholder requirements change"
+        "reason": "HIGH risk R3: authentication standard not confirmed; custom auth would exceed deadline"
       },
       {
         "amount": 5.0,
-        "reason": "HIGH risk R4: API request volume not defined; load balancing and rate limiting configuration based on assumptions"
+        "reason": "HIGH risk R4: Product Owner not assigned; Hybrid SDLC phase gates at risk"
       },
       {
         "amount": 5.0,
-        "reason": "HIGH risk R5: Compliance requirements not identified; logging infrastructure may require re-architecture post-launch"
+        "reason": "HIGH risk R5: performance targets undefined; Phase 3 re-architecture risk"
       },
       {
         "amount": 5.0,
-        "reason": "HIGH risk R6: Phase 1 discovery may extend beyond Week 4, compressing Phase 2-4 and reducing QA time"
+        "reason": "HIGH risk R7: Authentication Service (A5) deployment status unconfirmed"
       },
       {
         "amount": 5.0,
-        "reason": "HIGH risk R7: Backend Developer and Platform Architect (critical path roles) may be pulled to competing projects"
+        "reason": "HIGH risk R9: resource contention risk; Backend Developer and QA Engineer must be 100% dedicated"
       },
       {
         "amount": 5.0,
-        "reason": "SDLC approach is Hybrid (Adaptive + Predictive); adaptive cycles in Phase 2-3 introduce schedule and scope uncertainty"
+        "reason": "HIGH risk R10: stakeholder scope sign-off not formally documented in writing"
+      },
+      {
+        "amount": 5.0,
+        "reason": "SDLC approach Hybrid: requires active PO and adaptive backlog refinement; adds execution risk"
       }
     ],
-    "interpretation": "PM confidence score is 62.0 because project has 5 unresolved assumptions (A1-A5) and 7 HIGH/CRITICAL risks (R1-R7) that directly impact platform selection, team capability, authentication architecture, and resource availability. Critical path roles (Backend Developer, Platform Architect) lack named backups and formal commitment. Hybrid SDLC requires identified Product Owner for sprint planning. Technology stack uncertainty (R1) and team capability gaps (R2) are primary drivers of schedule and quality risk. Score is capped at 62.0 due to assumption_count=5 (hard cap: score ≤ 60) and presence of CRITICAL risk R1 with assumption_count ≥ 3 (hard cap: score ≤ 50); however, input_quality=HIGH and no LOW-quality signals allow modest recovery to 62.0 based on strong project plan structure and clear use case model."
+    "interpretation": "PM confidence score is 48.0 because of 4 UNKNOWN hard constraints (stack, team roles, compliance, performance targets), 4 unconfirmed assumptions (auth standard, service inventory, load balancing, data retention), MEDIUM input quality, 7 HIGH risks (R2, R3, R4, R5, R7, R9, R10), and Hybrid SDLC requiring active PO engagement. Hard cap applied: assumption_count = 4 (below 5-assumption cap of 60), but 7 HIGH risks and 1 CRITICAL risk (R1) with MEDIUM input quality reduce score to 48. Immediate actions required: confirm technology stack and team experience (R1), assign Product Owner (R4), define performance targets (R5), confirm authentication standard (R3), and obtain written scope sign-off (R10) before Phase 1 kickoff."
   },
   "project_viability": {
     "viability_status": "AT_RISK",
     "gap_type": "SCHEDULE",
-    "gap_amount": 1.04,
-    "gap_description": "Critical path duration (80 days = 16 weeks) equals deadline (2025-05-17 = 16 weeks from 2025-01-17). Zero schedule buffer. Any Phase 1 delay (platform selection, capability assessment, stakeholder alignment) compresses Phase 2-4 and increases defect escape risk.",
-    "scoping_options": [
-      {
-        "option": 1,
-        "title": "Defer API Versioning and Advanced Features to Phase 4 or Post-Launch",
-        "description": "Reduce Phase 2 scope to core gateway features: request routing (T8), authentication (T9), rate limiting (T10), logging (T11), load balancing (T12). Defer API versioning (T13), request transformation (T18), and custom policies to Phase 4 or post-launch. Saves ~2 weeks in Phase 2-3 build effort.",
-        "effort_reduction_hours": 46.0,
-        "effort_reduction_percent": 5.8,
-        "risk": "Versioning support is a success criterion; deferral may impact internal developer adoption. Requires stakeholder approval."
-      },
-      {
-        "option": 2,
-        "title": "Add 1 Backend Developer (5 engineers total) to Parallel Phase 2-3 Build",
-        "description": "Allocate additional Backend Developer to parallel implementation of rate limiting (T10) and load balancing (T12) while primary Backend Developer focuses on routing (T8) and authentication (T9). Reduces Phase 2 duration by 1 week (6 weeks → 5 weeks). Requires budget approval for additional headcount.",
-        "effort_reduction_hours": 0.0,
-        "effort_reduction_percent": 0.0,
-        "risk": "Increases project cost and team coordination overhead. Requires onboarding and knowledge transfer. Mitigates schedule risk but not budget risk."
-      },
-      {
-        "option": 3,
-        "title": "Compress Phase 1 Discovery to 2 Weeks (Parallel Platform Evaluation)",
-        "description": "Run platform selection proof-of-concept in parallel with stakeholder alignment and auth architecture design. Allocate 2 engineers to platform POC (Kong vs. AWS API Gateway) while remaining 2 engineers complete requirements and architecture. Reduces Phase 1 from 2.5 weeks to 2 weeks. Requires high-bandwidth Phase 1 execution.",
-        "effort_reduction_hours": 0.0,
-        "effort_reduction_percent": 0.0,
-        "risk": "Parallel execution increases coordination overhead and decision-making pressure. Requires strong project governance and clear decision criteria. May increase Phase 1 effort if POC reveals gaps."
-      }
-    ]
+    "gap_amount": 0.0,
+    "gap_percent": 0.0,
+    "rationale": "Critical path duration is 72 days (10.3 weeks) with 15% buffer applied = 16 weeks total project duration. Hard deadline is 4 months (17.3 weeks). Project fits within deadline (16 weeks < 17.3 weeks), but 7 HIGH risks and 1 CRITICAL risk create schedule slip potential. If R1 (technology stack learning curve) or R2 (dynamic service discovery) or R3 (custom authentication) materialize, timeline extends 2-3 weeks, exceeding deadline. Viability is AT_RISK pending resolution of R1, R2, R3, R4, R5 in Phase 1 kickoff.",
+    "scoping_options": null
   },
   "actor_role_mapping": {
     "A1": [
@@ -252,20 +214,17 @@
       "Product Manager",
       "Backend Developer",
       "Frontend Developer",
-      "DevOps Engineer"
+      "QA Engineer"
     ],
     "A3": [
       "Backend Developer",
-      "DevOps Engineer",
       "QA Engineer"
     ],
     "A4": [
       "Backend Developer",
-      "DevOps Engineer",
       "QA Engineer"
     ],
     "A5": [
-      "Platform Architect",
       "Backend Developer",
       "QA Engineer"
     ]

@@ -6,399 +6,410 @@
       "sequence": [
         "T1",
         "T2",
-        "T4",
-        "T7",
+        "T5",
+        "T8",
         "T11",
-        "T15",
-        "T19",
+        "T14",
+        "T17",
+        "T20",
         "T23"
       ],
-      "total_duration_days": 80.0,
+      "total_duration_days": 72.0,
       "zero_slack_tasks": [
         "T1",
         "T2",
-        "T4",
-        "T7",
+        "T5",
+        "T8",
         "T11",
-        "T15",
-        "T19",
+        "T14",
+        "T17",
+        "T20",
         "T23"
       ],
       "highest_slack_tasks": [
         "T3",
-        "T6",
-        "T9"
+        "T4",
+        "T6"
       ],
-      "staffing_implication": "Backend Developer and Platform Architect must be dedicated (not shared) across Phases 1-4; Frontend Developer can be shared with other projects during Phase 1 discovery."
+      "staffing_implication": "Backend Developer and QA Engineer must be dedicated (not shared) across all phases; Frontend Developer can support Phase 1 design and Phase 4 testing with 3–5 days slack."
     },
     "phases": [
       {
         "phase_number": 1,
         "name": "Discovery & Design",
-        "duration_weeks": 2.5,
-        "percentage_of_total": 15.6,
+        "duration_weeks": 2.0,
+        "percentage_of_total": 12.5,
         "milestones": [
-          "Stakeholder alignment session completed",
-          "API gateway platform selected and approved",
-          "Authentication protocol and integration points defined",
-          "Architecture and data flow diagrams approved",
-          "Success metrics and adoption plan documented"
+          "Stakeholder alignment on gateway scope and success metrics",
+          "Microservice inventory and authentication standard documented",
+          "API gateway architecture and design approved",
+          "Technology stack and team skill assessment completed"
         ],
         "tasks": [
           {
             "id": "T1",
-            "name": "Conduct stakeholder alignment session and document scope sign-off",
+            "name": "Conduct stakeholder alignment session and define success metrics",
             "phase": 1,
             "effort_hours": 12.0,
             "owner_role": "Product Manager",
             "dependencies": [],
-            "risk_flag": false,
+            "risk_flag": true,
             "critical_path": true,
             "slack_days": 0,
-            "definition_of_done": "Stakeholder sign-off document signed by all decision-makers; scope boundaries and success criteria agreed."
+            "definition_of_done": "Success metrics documented and signed off by stakeholders; adoption plan outlined."
           },
           {
             "id": "T2",
-            "name": "Evaluate and select API gateway platform (Kong, AWS API Gateway, or custom)",
+            "name": "Document microservice inventory, authentication standard, and load balancing strategy",
             "phase": 1,
-            "effort_hours": 24.0,
-            "owner_role": "Platform Architect",
+            "effort_hours": 16.0,
+            "owner_role": "Backend Developer",
             "dependencies": [
               "T1"
             ],
             "risk_flag": true,
             "critical_path": true,
             "slack_days": 0,
-            "definition_of_done": "Platform selection document with pros/cons analysis; team consensus on chosen platform; procurement initiated if commercial."
+            "definition_of_done": "Service inventory list, auth method (OAuth 2.0/JWT/mTLS), load balancing algorithm, and RPS targets documented and validated with stakeholders."
           },
           {
             "id": "T3",
-            "name": "Define user personas and success metrics for adoption",
+            "name": "Perform user research and define personas for internal development teams",
             "phase": 1,
-            "effort_hours": 16.0,
-            "owner_role": "Product Manager",
+            "effort_hours": 8.0,
+            "owner_role": "UX Designer",
             "dependencies": [
               "T1"
-            ],
-            "risk_flag": false,
-            "critical_path": false,
-            "slack_days": 2,
-            "definition_of_done": "Persona document with 3-4 internal developer archetypes; adoption KPIs (e.g., % of services routed through gateway by month 3)."
-          },
-          {
-            "id": "T4",
-            "name": "Design authentication and authorization architecture (OAuth 2.0/JWT with RBAC)",
-            "phase": 1,
-            "effort_hours": 20.0,
-            "owner_role": "Platform Architect",
-            "dependencies": [
-              "T2"
-            ],
-            "risk_flag": true,
-            "critical_path": true,
-            "slack_days": 0,
-            "definition_of_done": "Auth architecture diagram; token flow documentation; RBAC policy model; integration points with existing identity provider identified."
-          },
-          {
-            "id": "T5",
-            "name": "Create API gateway data flow and routing architecture diagrams",
-            "phase": 1,
-            "effort_hours": 18.0,
-            "owner_role": "Platform Architect",
-            "dependencies": [
-              "T2",
-              "T4"
-            ],
-            "risk_flag": false,
-            "critical_path": false,
-            "slack_days": 1,
-            "definition_of_done": "Architecture diagrams (request flow, service mesh, logging pipeline) approved by tech lead; design review completed."
-          },
-          {
-            "id": "T6",
-            "name": "Document API versioning strategy and routing rules",
-            "phase": 1,
-            "effort_hours": 12.0,
-            "owner_role": "Backend Developer",
-            "dependencies": [
-              "T2"
             ],
             "risk_flag": false,
             "critical_path": false,
             "slack_days": 3,
-            "definition_of_done": "Versioning strategy document (header-based, path-based, or hybrid); routing rule examples for 3+ microservices."
+            "definition_of_done": "Persona document with use cases and pain points for gateway consumers."
+          },
+          {
+            "id": "T4",
+            "name": "Assess team skill gaps and technology stack fit",
+            "phase": 1,
+            "effort_hours": 6.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T2"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 3,
+            "definition_of_done": "Team skill matrix and training plan (if needed) documented; stack selection confirmed."
+          },
+          {
+            "id": "T5",
+            "name": "Design API gateway architecture, request flow, and authentication integration",
+            "phase": 1,
+            "effort_hours": 20.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T2"
+            ],
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Architecture diagram, request flow diagram, auth integration design, and rate limiting strategy documented and approved."
+          },
+          {
+            "id": "T6",
+            "name": "Design gateway UI/dashboard for monitoring and configuration",
+            "phase": 1,
+            "effort_hours": 10.0,
+            "owner_role": "UX Designer",
+            "dependencies": [
+              "T5"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Wireframes and UI mockups for gateway dashboard and admin panel."
           }
         ]
       },
       {
         "phase_number": 2,
-        "name": "Core Development (Sprint Cycles)",
+        "name": "Core Development",
         "duration_weeks": 6.0,
         "percentage_of_total": 37.5,
         "milestones": [
-          "Sprint 1: Core gateway routing and request/response handling operational",
-          "Sprint 2: Authentication and authorization fully integrated",
-          "Sprint 3: Rate limiting and load balancing implemented",
-          "Internal demo completed; core user flows end-to-end"
+          "Sprint 1: Core request routing and authentication implemented",
+          "Sprint 2: Rate limiting and load balancing implemented",
+          "Sprint 3: Logging and monitoring integrated",
+          "Internal demo: All core features working end-to-end",
+          "Backlog refinement for Phase 3 edge cases and integrations"
         ],
         "tasks": [
           {
             "id": "T7",
-            "name": "Set up gateway infrastructure and deployment pipeline (Docker, Kubernetes, or cloud platform)",
+            "name": "Set up gateway project structure, CI/CD pipeline, and local development environment",
             "phase": 2,
-            "effort_hours": 24.0,
-            "owner_role": "DevOps Engineer",
+            "effort_hours": 12.0,
+            "owner_role": "Backend Developer",
             "dependencies": [
-              "T2"
+              "T5"
             ],
-            "risk_flag": true,
-            "critical_path": true,
-            "slack_days": 0,
-            "definition_of_done": "Gateway container image built and pushed to registry; CI/CD pipeline for gateway deployments operational; dev and staging environments ready."
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Git repo initialized, CI/CD pipeline (build, test, deploy) functional, all team members can run gateway locally."
           },
           {
             "id": "T8",
-            "name": "Implement core request routing logic and HTTP request/response handling",
-            "phase": 2,
-            "effort_hours": 32.0,
-            "owner_role": "Backend Developer",
-            "dependencies": [
-              "T7"
-            ],
-            "risk_flag": false,
-            "critical_path": false,
-            "slack_days": 1,
-            "definition_of_done": "Gateway accepts HTTP requests; routes to correct microservice based on path/host; returns response to client; unit tests pass."
-          },
-          {
-            "id": "T9",
-            "name": "Implement OAuth 2.0/JWT token validation and RBAC enforcement",
-            "phase": 2,
-            "effort_hours": 28.0,
-            "owner_role": "Backend Developer",
-            "dependencies": [
-              "T4",
-              "T7"
-            ],
-            "risk_flag": true,
-            "critical_path": false,
-            "slack_days": 2,
-            "definition_of_done": "Token validation middleware integrated; RBAC policies enforced; unauthorized requests rejected with 401/403; integration tests with mock auth service pass."
-          },
-          {
-            "id": "T10",
-            "name": "Implement rate limiting (token bucket or sliding window algorithm)",
+            "name": "Implement core request routing logic and service discovery (static or dynamic)",
             "phase": 2,
             "effort_hours": 24.0,
             "owner_role": "Backend Developer",
             "dependencies": [
-              "T7"
+              "T5"
             ],
-            "risk_flag": false,
-            "critical_path": false,
-            "slack_days": 2,
-            "definition_of_done": "Rate limiting enforced per client/endpoint; 429 responses returned when limit exceeded; configuration via gateway rules; load tests confirm limits respected."
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Gateway accepts HTTP requests, routes to correct microservice based on path/header, returns response; handles 5+ test services."
           },
           {
-            "id": "T11",
-            "name": "Implement request/response logging pipeline to centralized logging service",
+            "id": "T9",
+            "name": "Implement authentication/authorization integration with auth service",
             "phase": 2,
             "effort_hours": 20.0,
             "owner_role": "Backend Developer",
             "dependencies": [
-              "T7"
+              "T8"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Gateway validates JWT/OAuth tokens, rejects unauthorized requests, passes auth context to downstream services."
+          },
+          {
+            "id": "T10",
+            "name": "Implement rate limiting per client (token bucket or sliding window)",
+            "phase": 2,
+            "effort_hours": 16.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T8"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Rate limits enforced per client ID; requests exceeding limit return 429 status; limits configurable."
+          },
+          {
+            "id": "T11",
+            "name": "Implement load balancing across service instances (round-robin or least-connections)",
+            "phase": 2,
+            "effort_hours": 12.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T8"
             ],
             "risk_flag": false,
             "critical_path": true,
             "slack_days": 0,
-            "definition_of_done": "All API requests logged with timestamp, client ID, endpoint, status code, response time; logs shipped to centralized service; 90-day retention configured."
+            "definition_of_done": "Requests distributed evenly across 2+ service instances; health checks detect and skip unhealthy instances."
           },
           {
             "id": "T12",
-            "name": "Implement load balancing across microservice instances (round-robin or least-connections)",
+            "name": "Implement request/response logging to logging service",
             "phase": 2,
-            "effort_hours": 20.0,
+            "effort_hours": 14.0,
             "owner_role": "Backend Developer",
             "dependencies": [
-              "T7"
+              "T8"
             ],
             "risk_flag": false,
             "critical_path": false,
             "slack_days": 2,
-            "definition_of_done": "Load balancer distributes requests across 2+ microservice instances; health checks detect failed instances; failover tested."
+            "definition_of_done": "All requests logged with timestamp, client ID, service, method, path, status, latency; logs sent to logging service."
           },
           {
             "id": "T13",
             "name": "Implement API versioning support (header or path-based routing)",
             "phase": 2,
-            "effort_hours": 16.0,
+            "effort_hours": 8.0,
             "owner_role": "Backend Developer",
             "dependencies": [
-              "T6",
               "T8"
             ],
             "risk_flag": false,
             "critical_path": false,
             "slack_days": 3,
-            "definition_of_done": "Gateway routes requests to correct API version; version mismatch returns 400 with clear error; integration tests cover 2+ versions."
+            "definition_of_done": "Gateway routes requests to correct API version based on Accept-Version header or /v1/, /v2/ path prefix."
           },
           {
             "id": "T14",
-            "name": "Build gateway configuration management UI or API for development team",
+            "name": "Build gateway monitoring dashboard and health check endpoint",
             "phase": 2,
-            "effort_hours": 28.0,
-            "owner_role": "Frontend Developer",
+            "effort_hours": 18.0,
+            "owner_role": "Backend Developer",
             "dependencies": [
-              "T7",
-              "T9"
-            ],
-            "risk_flag": false,
-            "critical_path": false,
-            "slack_days": 2,
-            "definition_of_done": "Development team can add/modify routing rules, rate limits, and auth policies via UI or API; changes take effect within 1 minute; audit log of all changes."
-          },
-          {
-            "id": "T15",
-            "name": "Conduct internal demo with core user flows end-to-end",
-            "phase": 2,
-            "effort_hours": 12.0,
-            "owner_role": "Product Manager",
-            "dependencies": [
-              "T8",
-              "T9",
               "T11"
             ],
             "risk_flag": false,
             "critical_path": true,
             "slack_days": 0,
-            "definition_of_done": "Demo script executed; stakeholders confirm core routing, auth, and logging working; feedback documented; no critical blockers identified."
+            "definition_of_done": "Dashboard displays request rate, latency, error rate, service health; /health endpoint returns gateway and downstream service status."
+          },
+          {
+            "id": "T15",
+            "name": "Develop gateway UI/dashboard frontend (React/Vue/Angular)",
+            "phase": 2,
+            "effort_hours": 20.0,
+            "owner_role": "Frontend Developer",
+            "dependencies": [
+              "T6",
+              "T14"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Dashboard displays metrics, logs, service status; admin panel allows rate limit and routing configuration."
+          },
+          {
+            "id": "T16",
+            "name": "Conduct internal demo and gather feedback on core features",
+            "phase": 2,
+            "effort_hours": 6.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T14",
+              "T15"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Demo completed with stakeholders; feedback documented; backlog updated for Phase 3."
           }
         ]
       },
       {
         "phase_number": 3,
-        "name": "Integration & Edge Cases (Sprint Cycles)",
-        "duration_weeks": 5.0,
-        "percentage_of_total": 31.3,
+        "name": "Integration & Edge Cases",
+        "duration_weeks": 4.0,
+        "percentage_of_total": 25.0,
         "milestones": [
-          "Sprint 4: All integrations with microservices tested; edge cases handled",
-          "Sprint 5: Security review completed; performance benchmarks met",
-          "All critical bugs resolved; gateway ready for QA"
+          "Sprint 4: Edge cases and error handling implemented",
+          "Sprint 5: Security hardening and compliance checks completed",
+          "All integrations tested with real microservices",
+          "Security review and penetration testing completed"
         ],
         "tasks": [
           {
-            "id": "T16",
-            "name": "Integrate gateway with 3+ microservices; test end-to-end routing",
-            "phase": 3,
-            "effort_hours": 32.0,
-            "owner_role": "Backend Developer",
-            "dependencies": [
-              "T15"
-            ],
-            "risk_flag": true,
-            "critical_path": false,
-            "slack_days": 1,
-            "definition_of_done": "Gateway successfully routes requests to 3+ microservices; response times logged; no dropped requests; integration tests pass."
-          },
-          {
             "id": "T17",
-            "name": "Implement error handling and retry logic for failed microservice calls",
+            "name": "Implement error handling, retry logic, and circuit breaker pattern",
             "phase": 3,
-            "effort_hours": 20.0,
+            "effort_hours": 16.0,
             "owner_role": "Backend Developer",
             "dependencies": [
-              "T16"
+              "T14"
             ],
             "risk_flag": false,
-            "critical_path": false,
-            "slack_days": 2,
-            "definition_of_done": "Gateway retries failed requests (exponential backoff); circuit breaker pattern implemented; timeout handling tested; error responses logged."
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Gateway handles service timeouts, connection errors, and cascading failures; circuit breaker prevents thundering herd; retries configurable."
           },
           {
             "id": "T18",
             "name": "Implement request/response transformation and header manipulation",
             "phase": 3,
-            "effort_hours": 18.0,
+            "effort_hours": 12.0,
             "owner_role": "Backend Developer",
             "dependencies": [
-              "T16"
+              "T17"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Gateway can add/remove/modify headers, transform request/response payloads, and inject correlation IDs."
+          },
+          {
+            "id": "T19",
+            "name": "Implement caching layer for frequently accessed endpoints",
+            "phase": 3,
+            "effort_hours": 10.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T17"
             ],
             "risk_flag": false,
             "critical_path": false,
             "slack_days": 2,
-            "definition_of_done": "Gateway can add/remove/modify headers; transform request/response payloads; configuration-driven transformations; unit tests pass."
+            "definition_of_done": "Caching (Redis or in-memory) reduces latency for cacheable requests; TTL and cache invalidation configurable."
           },
           {
-            "id": "T19",
-            "name": "Conduct security review and implement TLS/SSL, input validation, and injection prevention",
+            "id": "T20",
+            "name": "Conduct security hardening: input validation, SQL injection prevention, XSS protection",
             "phase": 3,
-            "effort_hours": 24.0,
-            "owner_role": "Platform Architect",
+            "effort_hours": 14.0,
+            "owner_role": "Backend Developer",
             "dependencies": [
-              "T16"
+              "T17"
             ],
             "risk_flag": true,
             "critical_path": true,
             "slack_days": 0,
-            "definition_of_done": "Security review checklist completed; TLS 1.2+ enforced; input validation on all endpoints; SQL/command injection prevention tested; no critical vulnerabilities."
+            "definition_of_done": "Input validation rules applied; no SQL injection or XSS vulnerabilities detected in security scan; OWASP Top 10 checklist completed."
           },
           {
-            "id": "T20",
-            "name": "Implement monitoring, alerting, and health check endpoints",
+            "id": "T21",
+            "name": "Implement TLS/SSL encryption for gateway-to-service communication",
             "phase": 3,
-            "effort_hours": 20.0,
-            "owner_role": "DevOps Engineer",
+            "effort_hours": 8.0,
+            "owner_role": "Backend Developer",
             "dependencies": [
-              "T7"
+              "T20"
             ],
             "risk_flag": false,
             "critical_path": false,
             "slack_days": 2,
-            "definition_of_done": "Gateway exposes /health endpoint; metrics (request count, latency, error rate) exported; alerts configured for high error rates or latency; dashboards created."
+            "definition_of_done": "All gateway-to-microservice communication encrypted; certificate management and rotation automated."
           },
           {
-            "id": "T21",
-            "name": "Performance testing and optimization (load testing, latency benchmarks)",
+            "id": "T22",
+            "name": "Integrate with real microservices and test end-to-end flows",
             "phase": 3,
-            "effort_hours": 24.0,
+            "effort_hours": 18.0,
             "owner_role": "QA Engineer",
             "dependencies": [
-              "T16"
+              "T20"
             ],
             "risk_flag": true,
             "critical_path": false,
             "slack_days": 1,
-            "definition_of_done": "Load test with 1000+ concurrent requests; p99 latency < 2s; no memory leaks; throughput benchmarks documented; optimization recommendations implemented."
-          },
-          {
-            "id": "T22",
-            "name": "Implement graceful shutdown and rolling deployment support",
-            "phase": 3,
-            "effort_hours": 12.0,
-            "owner_role": "DevOps Engineer",
-            "dependencies": [
-              "T7"
-            ],
-            "risk_flag": false,
-            "critical_path": false,
-            "slack_days": 3,
-            "definition_of_done": "Gateway drains in-flight requests on shutdown; rolling deployments tested; zero downtime deployments confirmed; runbook documented."
+            "definition_of_done": "Gateway tested against 5+ real microservices; all use cases (UC1–UC7) validated; no integration blockers."
           },
           {
             "id": "T23",
-            "name": "Resolve critical bugs and edge cases identified in integration testing",
+            "name": "Conduct security review and penetration testing",
             "phase": 3,
-            "effort_hours": 20.0,
-            "owner_role": "Backend Developer",
+            "effort_hours": 12.0,
+            "owner_role": "QA Engineer",
             "dependencies": [
-              "T16",
-              "T19",
-              "T21"
+              "T20"
             ],
-            "risk_flag": false,
+            "risk_flag": true,
             "critical_path": true,
             "slack_days": 0,
-            "definition_of_done": "All P0/P1 bugs fixed and verified; edge cases (malformed requests, timeout scenarios) handled; regression tests pass."
+            "definition_of_done": "Security review completed; penetration test report generated; critical/high vulnerabilities remediated."
+          },
+          {
+            "id": "T24",
+            "name": "Implement request tracing and distributed logging (OpenTelemetry or similar)",
+            "phase": 3,
+            "effort_hours": 10.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T23"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Request traces captured end-to-end; logs correlated by trace ID; traces queryable in monitoring dashboard."
           }
         ]
       },
@@ -406,19 +417,20 @@
         "phase_number": 4,
         "name": "QA & Testing",
         "duration_weeks": 3.0,
-        "percentage_of_total": 18.8,
+        "percentage_of_total": 18.75,
         "milestones": [
           "All critical bugs resolved",
-          "UAT completed with internal development team",
+          "Performance and load testing completed",
+          "UAT with internal development teams completed",
           "Accessibility check (WCAG 2.1 AA) passed",
-          "Documentation and runbooks finalized"
+          "Documentation and runbooks written"
         ],
         "tasks": [
           {
-            "id": "T24",
-            "name": "Execute comprehensive functional test suite (routing, auth, rate limiting, logging)",
+            "id": "T25",
+            "name": "Execute comprehensive functional test suite (unit, integration, end-to-end)",
             "phase": 4,
-            "effort_hours": 24.0,
+            "effort_hours": 16.0,
             "owner_role": "QA Engineer",
             "dependencies": [
               "T23"
@@ -426,146 +438,146 @@
             "risk_flag": false,
             "critical_path": false,
             "slack_days": 1,
-            "definition_of_done": "Test cases for all 7 use cases executed; pass rate ≥ 95%; defects logged and prioritized; regression tests automated."
+            "definition_of_done": "Test suite covers all use cases; >80% code coverage; all critical and high-priority bugs resolved."
           },
           {
-            "id": "T25",
-            "name": "Conduct UAT with internal development team (3+ representative users)",
+            "id": "T26",
+            "name": "Conduct performance and load testing (target RPS, latency, throughput)",
             "phase": 4,
-            "effort_hours": 20.0,
+            "effort_hours": 12.0,
+            "owner_role": "QA Engineer",
+            "dependencies": [
+              "T25"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 1,
+            "definition_of_done": "Load test results show gateway meets RPS and latency targets; bottlenecks identified and documented."
+          },
+          {
+            "id": "T27",
+            "name": "Perform accessibility audit (WCAG 2.1 AA) on gateway dashboard",
+            "phase": 4,
+            "effort_hours": 6.0,
+            "owner_role": "Frontend Developer",
+            "dependencies": [
+              "T25"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Dashboard passes WCAG 2.1 AA accessibility audit; keyboard navigation and screen reader support verified."
+          },
+          {
+            "id": "T28",
+            "name": "Conduct UAT with internal development teams (representative end users)",
+            "phase": 4,
+            "effort_hours": 10.0,
             "owner_role": "Product Manager",
             "dependencies": [
-              "T24"
+              "T26"
             ],
             "risk_flag": false,
             "critical_path": false,
             "slack_days": 1,
-            "definition_of_done": "UAT sign-off from 3+ internal developers; feedback documented; critical issues resolved; gateway approved for production."
-          },
-          {
-            "id": "T26",
-            "name": "Perform accessibility audit (WCAG 2.1 AA) on gateway configuration UI",
-            "phase": 4,
-            "effort_hours": 12.0,
-            "owner_role": "Frontend Developer",
-            "dependencies": [
-              "T14"
-            ],
-            "risk_flag": false,
-            "critical_path": false,
-            "slack_days": 2,
-            "definition_of_done": "Accessibility audit completed; WCAG 2.1 AA compliance verified; keyboard navigation tested; screen reader compatibility confirmed."
-          },
-          {
-            "id": "T27",
-            "name": "Write operational runbooks and troubleshooting guides",
-            "phase": 4,
-            "effort_hours": 16.0,
-            "owner_role": "DevOps Engineer",
-            "dependencies": [
-              "T20"
-            ],
-            "risk_flag": false,
-            "critical_path": false,
-            "slack_days": 2,
-            "definition_of_done": "Runbooks cover deployment, scaling, monitoring, incident response; troubleshooting guide for common issues; team trained on runbooks."
-          },
-          {
-            "id": "T28",
-            "name": "Write API gateway user documentation and integration guide for microservices",
-            "phase": 4,
-            "effort_hours": 18.0,
-            "owner_role": "Product Manager",
-            "dependencies": [
-              "T25"
-            ],
-            "risk_flag": false,
-            "critical_path": false,
-            "slack_days": 2,
-            "definition_of_done": "User guide for configuring gateway rules; integration guide for microservices; API reference documentation; examples for 3+ use cases."
+            "definition_of_done": "UAT completed with 2+ internal teams; sign-off obtained; feedback incorporated or deferred to Phase 5."
           },
           {
             "id": "T29",
-            "name": "Create adoption plan and communication strategy for internal rollout",
+            "name": "Write API documentation, runbooks, and troubleshooting guides",
             "phase": 4,
-            "effort_hours": 12.0,
-            "owner_role": "Product Manager",
+            "effort_hours": 14.0,
+            "owner_role": "Backend Developer",
             "dependencies": [
-              "T3"
+              "T28"
             ],
             "risk_flag": false,
             "critical_path": false,
-            "slack_days": 3,
-            "definition_of_done": "Adoption plan with timeline for service migration; communication plan (email, wiki, training sessions); success metrics and tracking mechanism."
+            "slack_days": 1,
+            "definition_of_done": "API docs (OpenAPI/Swagger), deployment runbook, troubleshooting guide, and FAQ published; reviewed by team."
           },
           {
             "id": "T30",
-            "name": "Identify and document post-launch ownership and support model",
+            "name": "Create adoption plan and training materials for internal teams",
             "phase": 4,
             "effort_hours": 8.0,
             "owner_role": "Product Manager",
             "dependencies": [
-              "T25"
+              "T28"
             ],
             "risk_flag": false,
             "critical_path": false,
-            "slack_days": 3,
-            "definition_of_done": "Post-launch owner named; support escalation path defined; SLA for bug fixes and feature requests documented; handoff meeting completed."
+            "slack_days": 2,
+            "definition_of_done": "Adoption plan (communication, training, rollout schedule) documented; training materials (slides, videos, demos) prepared."
+          },
+          {
+            "id": "T31",
+            "name": "Identify and document post-launch owner and maintenance plan",
+            "phase": 4,
+            "effort_hours": 4.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T29"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Post-launch owner named; maintenance SLA, on-call rotation, and escalation path documented."
           }
         ]
       },
       {
         "phase_number": 5,
         "name": "Deployment & Handoff",
-        "duration_weeks": 1.5,
-        "percentage_of_total": 9.4,
+        "duration_weeks": 1.0,
+        "percentage_of_total": 6.25,
         "milestones": [
           "Production deployment completed",
-          "Smoke tests passed in production",
-          "Go-live sign-off from stakeholders"
+          "Smoke testing in production passed",
+          "Go-live sign-off obtained"
         ],
         "tasks": [
           {
-            "id": "T31",
-            "name": "Deploy gateway to production environment with zero-downtime strategy",
-            "phase": 5,
-            "effort_hours": 16.0,
-            "owner_role": "DevOps Engineer",
-            "dependencies": [
-              "T27"
-            ],
-            "risk_flag": true,
-            "critical_path": false,
-            "slack_days": 1,
-            "definition_of_done": "Gateway deployed to production; blue-green or canary deployment executed; no service interruption; rollback plan tested."
-          },
-          {
             "id": "T32",
-            "name": "Execute smoke tests and production validation (routing, auth, logging)",
+            "name": "Deploy gateway to production environment",
             "phase": 5,
-            "effort_hours": 12.0,
-            "owner_role": "QA Engineer",
+            "effort_hours": 8.0,
+            "owner_role": "Backend Developer",
             "dependencies": [
               "T31"
             ],
             "risk_flag": false,
             "critical_path": false,
-            "slack_days": 1,
-            "definition_of_done": "Smoke test suite executed in production; all critical paths validated; no errors in production logs; performance metrics within SLA."
+            "slack_days": 0,
+            "definition_of_done": "Gateway deployed to production; all services accessible through gateway; no deployment errors."
           },
           {
             "id": "T33",
-            "name": "Obtain go-live sign-off from stakeholders and product owner",
+            "name": "Execute smoke testing in production (critical paths, health checks)",
             "phase": 5,
-            "effort_hours": 4.0,
-            "owner_role": "Product Manager",
+            "effort_hours": 6.0,
+            "owner_role": "QA Engineer",
             "dependencies": [
               "T32"
             ],
             "risk_flag": false,
             "critical_path": false,
-            "slack_days": 1,
-            "definition_of_done": "Go-live sign-off document signed; stakeholders confirm gateway ready for internal rollout; launch date confirmed."
+            "slack_days": 0,
+            "definition_of_done": "Smoke tests pass; gateway health check returns 200; all critical use cases verified in production."
+          },
+          {
+            "id": "T34",
+            "name": "Obtain go-live sign-off from stakeholders and post-launch owner",
+            "phase": 5,
+            "effort_hours": 2.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T33"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 0,
+            "definition_of_done": "Go-live sign-off email received from stakeholders and post-launch owner; project closure checklist completed."
           }
         ]
       }
@@ -573,41 +585,46 @@
   },
   "use_case_task_mapping": {
     "UC1": [
+      "T5",
       "T8",
-      "T16",
+      "T13",
       "T17",
-      "T24"
+      "T18"
     ],
     "UC2": [
-      "T4",
+      "T2",
+      "T5",
       "T9",
-      "T19",
-      "T24"
+      "T20",
+      "T21"
     ],
     "UC3": [
+      "T5",
       "T10",
-      "T21",
-      "T24"
+      "T17"
     ],
     "UC4": [
-      "T11",
-      "T20",
+      "T5",
+      "T12",
       "T24"
     ],
     "UC5": [
-      "T12",
-      "T16",
-      "T21",
-      "T24"
+      "T5",
+      "T11",
+      "T17",
+      "T19"
     ],
     "UC6": [
-      "T6",
+      "T5",
       "T13",
-      "T24"
+      "T18"
     ],
     "UC7": [
+      "T6",
       "T14",
-      "T28"
+      "T15",
+      "T24",
+      "T29"
     ]
   }
 }

@@ -197,29 +197,31 @@ def _load_fixtures(tc: str):
 
 
 def test_tc01_perfect_score():
-    # 5 assumptions, 2 CRITICAL, 4 HIGH, Hybrid → raw 40; cap(5 assump)→60 no effect, CRIT+3→50 no effect
+    # 3 assumptions, 0 CRITICAL, 7 HIGH, Hybrid → 100-15-35-5 = 45
+    # Updated after risk_v1.6 fixture regeneration (2026-06-13)
     uc, intake, risk, plan = _load_fixtures("tc-01-perfect")
     inputs = extract_confidence_inputs(uc, intake, risk, plan)
     result = compute_confidence(**inputs)
-    assert result.score == 40.0
-    assert result.raw_score_before_caps == 40.0
+    assert result.score == 45.0
+    assert result.raw_score_before_caps == 45.0
 
 
 def test_tc02_good_score():
-    # 3 assumptions, 3 CRITICAL, 5 HIGH, 1 unknown, Hybrid → raw 40; CRIT+3 assump cap→50 no effect
+    # 3 assumptions, 0 CRITICAL, 6 HIGH, 1 unknown, Hybrid → 100-5-15-30-5 = 45
+    # Updated after risk_v1.6 fixture regeneration (2026-06-13)
     uc, intake, risk, plan = _load_fixtures("tc-02-good")
     inputs = extract_confidence_inputs(uc, intake, risk, plan)
     result = compute_confidence(**inputs)
-    assert result.score == 40.0
+    assert result.score == 45.0
 
 
 def test_tc03_medium_score():
-    # 5 assumptions, 2 CRITICAL, 5 HIGH, 1 unknown (budget only), Hybrid → raw 30
-    # technology_stack and compliance null no longer count as planning-critical unknowns
+    # 4 assumptions, 0 CRITICAL, 9 HIGH, 1 unknown, Hybrid → 100-5-20-45-5 = 25
+    # Updated after risk_v1.6 fixture regeneration (2026-06-13)
     uc, intake, risk, plan = _load_fixtures("tc-03-medium")
     inputs = extract_confidence_inputs(uc, intake, risk, plan)
     result = compute_confidence(**inputs)
-    assert result.score == 30.0
+    assert result.score == 25.0
 
 
 # ---------------------------------------------------------------------------

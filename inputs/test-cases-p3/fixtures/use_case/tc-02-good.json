@@ -8,13 +8,13 @@
     },
     {
       "id": "A2",
-      "name": "Sales Team Member",
+      "name": "Sales Representative",
       "type": "primary"
     },
     {
       "id": "A3",
-      "name": "SSO Authentication Service",
-      "type": "external"
+      "name": "Email Service",
+      "type": "secondary"
     },
     {
       "id": "A4",
@@ -23,8 +23,8 @@
     },
     {
       "id": "A5",
-      "name": "Email Service",
-      "type": "secondary"
+      "name": "SSO Provider",
+      "type": "external"
     }
   ],
   "use_cases": [
@@ -34,10 +34,10 @@
       "actors": [
         "A1",
         "A2",
-        "A3"
+        "A5"
       ],
       "complexity": "simple",
-      "description": "User logs in via SSO to access the dashboard"
+      "description": "User logs in via existing SSO provider"
     },
     {
       "id": "UC2",
@@ -47,7 +47,7 @@
         "A2"
       ],
       "complexity": "simple",
-      "description": "User views real-time KPI widgets and customer analytics"
+      "description": "User views KPI widgets with real-time data refreshed every 15 minutes"
     },
     {
       "id": "UC3",
@@ -57,7 +57,7 @@
         "A2"
       ],
       "complexity": "medium",
-      "description": "User defines custom date ranges, metrics, and filters to generate a report"
+      "description": "User selects metrics, applies date range filters, and generates report in under 5 minutes"
     },
     {
       "id": "UC4",
@@ -74,20 +74,22 @@
       "name": "Schedule Report Delivery",
       "actors": [
         "A1",
-        "A2"
+        "A2",
+        "A3"
       ],
       "complexity": "medium",
-      "description": "User configures automated email delivery of reports on a recurring schedule"
+      "description": "User configures automated report generation and email delivery on a schedule"
     },
     {
       "id": "UC6",
       "name": "Configure Alert",
       "actors": [
         "A1",
-        "A2"
+        "A2",
+        "A4"
       ],
       "complexity": "medium",
-      "description": "User sets threshold-based alerts on KPIs and notification channels"
+      "description": "User sets threshold-based alerts that trigger notifications via PagerDuty"
     },
     {
       "id": "UC7",
@@ -100,13 +102,13 @@
     },
     {
       "id": "UC8",
-      "name": "Refresh Dashboard Data",
+      "name": "Respond to Alert",
       "actors": [
         "A1",
         "A2"
       ],
       "complexity": "simple",
-      "description": "System updates dashboard widgets with latest data every 15 minutes"
+      "description": "User acknowledges or resolves alert within 1 hour of notification"
     }
   ],
   "relationships": [

@@ -316,3 +316,28 @@ SDLC consistency, assumption anchoring, risk determinism
   changes with no eval impact. Use a descriptive git commit instead.
 - Never overwrite an existing version file. Create a new file.
 - Archive folder (`prompts/archive/`) is read-only — never edit archived files.
+
+---
+
+## risk_v1.6 — cp_flags hard enforcement (2026-06-13)
+
+**Problem:** risk_v1.5 produced cp_flags counts of 8–9 across all 3 test cases run
+(tc-01: 8, tc-02: 9, tc-03: 8), violating the stated maximum of 7. The agent was
+sequentially listing task IDs (T1,T2,...,T8) rather than selecting only tasks tied
+to specific HIGH/CRITICAL risks.
+
+**Root cause:** The selection rule said "Maximum 7 task IDs" but gave no enforcement
+mechanism and no example of the anti-pattern. FINAL VERIFICATION step 4 said
+"Remove flags for non-critical tasks" without defining how to trim.
+
+**Changes:**
+- Replaced one-line `critical_path_risk_flags` instruction with a named subsection
+  ("Critical Path Risk Flags — HARD LIMIT") with explicit selection rule:
+  each flag must name a risk ID (R1, R2...) with score HIGH or CRITICAL.
+- Added WRONG/CORRECT example showing sequential listing as the anti-pattern.
+- FINAL VERIFICATION step 4 now has a 4-step trim procedure with tiebreak rule
+  (drop MEDIUM-linked flags before HIGH-linked flags) and explicit "A sequential
+  list (T1,T2,T3,...,T8) is always wrong" statement.
+
+**Before:** tc-01=8 flags, tc-02=9 flags, tc-03=8 flags (all violate ≤7)
+**After:** to be measured on next eval-generate run

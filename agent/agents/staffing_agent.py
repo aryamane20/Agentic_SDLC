@@ -12,7 +12,7 @@ class StaffingAgent(BaseAgent):
             agent_name="staffing",
             prompt_path=_PROMPT,
             model=MODEL_HAIKU,
-            max_tokens=4000,
+            max_tokens=6000,
         )
 
     def _is_valid_artifact(self, parsed: dict) -> bool:

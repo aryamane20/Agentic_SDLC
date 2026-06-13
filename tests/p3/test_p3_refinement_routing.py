@@ -16,26 +16,27 @@ from agent.orchestrator import (
 )
 
 # All valid node names in the graph
-_VALID_NODES = {"use_case_node", "intake_node", "planning_risk_node", "staffing_node", "synthesis_node"}
+_VALID_NODES = {"use_case_node", "intake_node", "planning_node", "risk_node", "staffing_node", "synthesis_node"}
 
 # For each section, which nodes MUST re-run (downstream from the as_node)
 _EXPECTED_RERUNS = {
     "pm_confidence_score":   ["synthesis_node"],
     "staffing_plan":         ["staffing_node", "synthesis_node"],
     "open_questions":        ["staffing_node", "synthesis_node"],
-    "risk_register":         ["planning_risk_node", "staffing_node", "synthesis_node"],
-    "project_plan":          ["planning_risk_node", "staffing_node", "synthesis_node"],
-    "assumption_log":        ["intake_node", "planning_risk_node", "staffing_node", "synthesis_node"],
-    "project_understanding": ["intake_node", "planning_risk_node", "staffing_node", "synthesis_node"],
+    "risk_register":         ["risk_node", "staffing_node", "synthesis_node"],
+    "project_plan":          ["planning_node", "risk_node", "staffing_node", "synthesis_node"],
+    "assumption_log":        ["intake_node", "planning_node", "risk_node", "staffing_node", "synthesis_node"],
+    "project_understanding": ["intake_node", "planning_node", "risk_node", "staffing_node", "synthesis_node"],
 }
 
 # Graph successor map: as_node X → nodes that will re-run after X
 _SUCCESSORS = {
-    "use_case_node":       ["intake_node", "planning_risk_node", "staffing_node", "synthesis_node"],
-    "intake_node":         ["planning_risk_node", "staffing_node", "synthesis_node"],
-    "planning_risk_node":  ["staffing_node", "synthesis_node"],
-    "staffing_node":       ["synthesis_node"],
-    "synthesis_node":      [],
+    "use_case_node":  ["intake_node", "planning_node", "risk_node", "staffing_node", "synthesis_node"],
+    "intake_node":    ["planning_node", "risk_node", "staffing_node", "synthesis_node"],
+    "planning_node":  ["risk_node", "staffing_node", "synthesis_node"],
+    "risk_node":      ["staffing_node", "synthesis_node"],
+    "staffing_node":  ["synthesis_node"],
+    "synthesis_node": [],
 }
 
 
@@ -72,18 +73,20 @@ def test_confidence_only_reruns_synthesis():
     assert reruns == ["synthesis_node"]
 
 
-def test_risk_reruns_from_planning_risk():
+def test_risk_reruns_from_planning_node():
     as_node = REFINEMENT_TARGETS["risk_register"]
     reruns = _SUCCESSORS[as_node]
-    assert "planning_risk_node" in reruns
+    assert as_node == "planning_node"
+    assert "risk_node" in reruns
     assert "staffing_node" in reruns
     assert "synthesis_node" in reruns
+    assert "planning_node" not in reruns  # planning itself does not re-run
 
 
 def test_assumption_log_reruns_all_downstream():
     as_node = REFINEMENT_TARGETS["assumption_log"]
     reruns = _SUCCESSORS[as_node]
-    assert reruns == ["intake_node", "planning_risk_node", "staffing_node", "synthesis_node"]
+    assert reruns == ["intake_node", "planning_node", "risk_node", "staffing_node", "synthesis_node"]
 
 
 def test_refinement_targets_are_not_synthesis_node_itself():
@@ -191,7 +194,8 @@ async def test_refine_pm_confidence_only_reruns_synthesis():
 
 
 @pytest.mark.asyncio
-async def test_refine_risk_reruns_planning_and_downstream():
+async def test_refine_risk_reruns_risk_and_downstream():
+    """risk_register refinement re-runs risk → staffing → synthesis; planning is preserved."""
     orchestrator = PipelineOrchestrator.for_testing()
 
     with (
@@ -226,7 +230,7 @@ async def test_refine_risk_reruns_planning_and_downstream():
         )
 
     assert result.succeeded
-    MockPlan.return_value.run_async.assert_called_once()
+    MockPlan.return_value.run_async.assert_not_called()  # planning preserved
     MockRisk.return_value.run_async.assert_called_once()
     MockStaff.return_value.run_async.assert_called_once()
     MockSynth.return_value.run_async.assert_called_once()

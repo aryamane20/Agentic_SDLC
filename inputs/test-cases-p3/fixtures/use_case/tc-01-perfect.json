@@ -46,7 +46,8 @@
       "id": "UC2",
       "name": "Submit Required Documents",
       "actors": [
-        "A1"
+        "A1",
+        "A6"
       ],
       "complexity": "medium",
       "description": "New hire uploads and e-signs I-9, W-4, and direct deposit forms"
@@ -64,10 +65,11 @@
       "id": "UC4",
       "name": "Provision IT Accounts",
       "actors": [
-        "A3"
+        "A2",
+        "A5"
       ],
       "complexity": "complex",
-      "description": "IT administrator or system automatically creates email, Slack, and SaaS tool accounts for new hire"
+      "description": "System automatically creates email, Slack, and SaaS tool accounts via Azure AD integration"
     },
     {
       "id": "UC5",
@@ -76,7 +78,7 @@
         "A2"
       ],
       "complexity": "simple",
-      "description": "HR administrator views dashboard of new hire task completion and document submission status"
+      "description": "HR administrator views dashboard of all new hires and their task completion status"
     },
     {
       "id": "UC6",
@@ -89,39 +91,25 @@
     },
     {
       "id": "UC7",
-      "name": "Authenticate via SSO",
+      "name": "Authenticate New Hire",
       "actors": [
-        "A1"
+        "A1",
+        "A5"
       ],
       "complexity": "simple",
-      "description": "New hire logs in using Azure AD credentials"
+      "description": "New hire logs in via SSO using Azure AD credentials"
     },
     {
       "id": "UC8",
-      "name": "Collect E-signatures",
+      "name": "Generate Audit Logs",
       "actors": [
-        "A1"
+        "A2"
       ],
       "complexity": "simple",
-      "description": "New hire electronically signs required documents via integrated e-signature service"
+      "description": "System records all onboarding actions for SOC 2 compliance"
     }
   ],
   "relationships": [
-    {
-      "type": "includes",
-      "from_id": "UC1",
-      "to_id": "UC2"
-    },
-    {
-      "type": "includes",
-      "from_id": "UC1",
-      "to_id": "UC3"
-    },
-    {
-      "type": "includes",
-      "from_id": "UC2",
-      "to_id": "UC8"
-    },
     {
       "type": "includes",
       "from_id": "UC1",
@@ -129,8 +117,28 @@
     },
     {
       "type": "includes",
+      "from_id": "UC2",
+      "to_id": "UC7"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC3",
+      "to_id": "UC7"
+    },
+    {
+      "type": "includes",
       "from_id": "UC4",
       "to_id": "UC6"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC1",
+      "to_id": "UC8"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC2",
+      "to_id": "UC8"
     }
   ],
   "input_quality_signal": "HIGH",
