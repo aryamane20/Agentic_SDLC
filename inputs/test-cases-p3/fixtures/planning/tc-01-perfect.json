@@ -7,53 +7,33 @@
         "T1",
         "T2",
         "T3",
-        "T4",
         "T5",
-        "T6",
-        "T7",
-        "T8",
         "T9",
-        "T10",
-        "T11",
-        "T12",
         "T13",
-        "T14",
-        "T15",
-        "T16",
         "T17",
-        "T18",
-        "T19",
-        "T20"
+        "T21",
+        "T25",
+        "T29"
       ],
       "total_duration_days": 130.0,
       "zero_slack_tasks": [
         "T1",
         "T2",
         "T3",
-        "T4",
         "T5",
-        "T6",
-        "T7",
-        "T8",
         "T9",
-        "T10",
-        "T11",
-        "T12",
         "T13",
-        "T14",
-        "T15",
-        "T16",
         "T17",
-        "T18",
-        "T19",
-        "T20"
+        "T21",
+        "T25",
+        "T29"
       ],
       "highest_slack_tasks": [
-        "T21",
-        "T22",
-        "T23"
+        "T4",
+        "T8",
+        "T12"
       ],
-      "staffing_implication": "PM, Backend Developer, and Frontend Developer must be dedicated full-time across all phases; UX Designer front-loaded to Phase 1-2; DevOps Engineer back-loaded to Phase 5."
+      "staffing_implication": "Product Manager and Backend Developer must be dedicated (not shared) across all phases; Frontend Developer and UX Designer can be partially shared with other projects during Phase 4-5 non-critical tasks."
     },
     "phases": [
       {
@@ -64,9 +44,8 @@
         "milestones": [
           "Stakeholder alignment session completed and scope signed off",
           "User personas and success metrics defined",
-          "E-signature vendor selected and legal review approved",
-          "Architecture and API integration plan approved",
-          "Requirements finalized"
+          "Architecture and data retention policy approved",
+          "Requirements finalized and design mockups approved"
         ],
         "tasks": [
           {
@@ -76,59 +55,58 @@
             "effort_hours": 12.0,
             "owner_role": "Product Manager",
             "dependencies": [],
-            "risk_flag": false,
+            "risk_flag": true,
             "critical_path": true,
             "slack_days": 0,
-            "definition_of_done": "Signed scope document with all stakeholders (HR, IT, CEO) confirming project goals, success metrics, and constraints."
+            "definition_of_done": "Scope document signed by CEO, HR Director, and IT Director; all hard constraints and assumptions documented."
           },
           {
             "id": "T2",
-            "name": "Define user personas and success metrics for new hire and HR admin",
+            "name": "Define user personas, success metrics, and adoption plan for new hires and HR team",
             "phase": 1,
             "effort_hours": 16.0,
-            "owner_role": "UX Designer",
-            "dependencies": [
-              "T1"
-            ],
-            "risk_flag": false,
-            "critical_path": true,
-            "slack_days": 0,
-            "definition_of_done": "Documented personas (new hire, HR admin) with adoption targets and 80% pre-day-one completion metric baseline."
-          },
-          {
-            "id": "T3",
-            "name": "Evaluate and select e-signature service vendor with legal compliance review",
-            "phase": 1,
-            "effort_hours": 20.0,
             "owner_role": "Product Manager",
             "dependencies": [
               "T1"
             ],
-            "risk_flag": true,
+            "risk_flag": false,
             "critical_path": true,
             "slack_days": 0,
-            "definition_of_done": "Vendor selected, contract signed, SOC 2 compliance confirmed, and form templates (I-9, W-4, direct deposit) validated."
+            "definition_of_done": "Personas document with 3+ new hire archetypes; success metrics tied to business goals; adoption plan with communication timeline."
           },
           {
-            "id": "T4",
-            "name": "Design system architecture and API integration plan for Workday and Azure AD",
+            "id": "T3",
+            "name": "Confirm Workday API sandbox availability, Azure AD permissions, e-signature vendor compliance, and data retention policy with stakeholders",
             "phase": 1,
-            "effort_hours": 24.0,
-            "owner_role": "Backend Developer",
+            "effort_hours": 20.0,
+            "owner_role": "Product Manager",
             "dependencies": [
-              "T1",
-              "T3"
+              "T2"
             ],
             "risk_flag": true,
             "critical_path": true,
             "slack_days": 0,
-            "definition_of_done": "Architecture diagram, API integration sequence diagrams, and data flow documentation approved by tech lead and IT Administrator."
+            "definition_of_done": "Written confirmation from Workday, IT Director, Legal, and Compliance on all four assumptions (A1-A4); any blockers escalated and mitigation plan documented."
+          },
+          {
+            "id": "T4",
+            "name": "Create system architecture diagram and database schema for onboarding portal with data retention logic",
+            "phase": 1,
+            "effort_hours": 24.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T3"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 3,
+            "definition_of_done": "Architecture diagram approved by Tech Lead; PostgreSQL schema includes audit log tables and retention policy columns; SOC 2 compliance checklist addressed."
           },
           {
             "id": "T5",
-            "name": "Create detailed wireframes and user flows for onboarding portal UI",
+            "name": "Design UI mockups and user flows for onboarding checklist, document submission, and team introduction screens",
             "phase": 1,
-            "effort_hours": 20.0,
+            "effort_hours": 28.0,
             "owner_role": "UX Designer",
             "dependencies": [
               "T2"
@@ -136,21 +114,35 @@
             "risk_flag": false,
             "critical_path": true,
             "slack_days": 0,
-            "definition_of_done": "Wireframes for all 6 main screens (checklist, document upload, team intro, account status, HR dashboard, audit logs) with user flow annotations."
+            "definition_of_done": "Figma mockups for all 5 primary screens; user flows validated with 2+ HR stakeholders; accessibility checklist (WCAG 2.1 AA) initiated."
           },
           {
             "id": "T6",
-            "name": "Validate Workday API sandbox access and document integration requirements",
+            "name": "Write API specification for onboarding endpoints (checklist, documents, team, audit logs)",
             "phase": 1,
-            "effort_hours": 12.0,
+            "effort_hours": 20.0,
             "owner_role": "Backend Developer",
             "dependencies": [
               "T4"
             ],
-            "risk_flag": true,
-            "critical_path": true,
-            "slack_days": 0,
-            "definition_of_done": "Workday sandbox credentials confirmed, API documentation reviewed, field mapping list created, and custom configuration scope determined."
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 3,
+            "definition_of_done": "OpenAPI 3.0 spec with all endpoints, request/response schemas, and error codes; reviewed by Frontend Developer."
+          },
+          {
+            "id": "T7",
+            "name": "Set up development environment, CI/CD pipeline, and Azure App Service infrastructure",
+            "phase": 1,
+            "effort_hours": 16.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T4"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 3,
+            "definition_of_done": "GitHub repo created; Azure App Service staging and production slots configured; CI/CD pipeline deploys on commit; all team members can run local dev environment."
           }
         ]
       },
@@ -160,31 +152,30 @@
         "duration_weeks": 10.0,
         "percentage_of_total": 38.5,
         "milestones": [
-          "Sprint 1: Authentication and core portal UI complete",
-          "Sprint 2: Onboarding checklist and document upload workflow complete",
-          "Sprint 3: Workday integration and data pre-population complete",
-          "Sprint 4: Azure AD provisioning integration complete",
-          "Sprint 5: E-signature integration and team introduction feature complete",
-          "Internal demo completed with stakeholders"
+          "Sprint 1: Onboarding checklist and team introduction UI complete",
+          "Sprint 2: Azure AD SSO authentication and user profile management complete",
+          "Sprint 3: Document submission and e-signature integration complete",
+          "Sprint 4: Workday API integration and form pre-population complete",
+          "Sprint 5: Internal demo with HR team; core features working end-to-end"
         ],
         "tasks": [
           {
-            "id": "T7",
-            "name": "Implement Azure AD SSO authentication and session management",
+            "id": "T8",
+            "name": "Build React frontend for onboarding checklist and task tracking UI",
             "phase": 2,
-            "effort_hours": 24.0,
-            "owner_role": "Backend Developer",
+            "effort_hours": 32.0,
+            "owner_role": "Frontend Developer",
             "dependencies": [
-              "T6"
+              "T5"
             ],
             "risk_flag": false,
-            "critical_path": true,
-            "slack_days": 0,
-            "definition_of_done": "New hire can log in via Azure AD SSO, session persists across portal pages, logout clears session, and audit log records authentication event."
+            "critical_path": false,
+            "slack_days": 5,
+            "definition_of_done": "Checklist displays all 8 onboarding tasks with due dates; task completion state persists; responsive design tested on mobile and desktop."
           },
           {
-            "id": "T8",
-            "name": "Build portal UI shell with navigation, header, and responsive layout",
+            "id": "T9",
+            "name": "Build React frontend for team introduction screen with member profiles and photos",
             "phase": 2,
             "effort_hours": 20.0,
             "owner_role": "Frontend Developer",
@@ -194,122 +185,124 @@
             "risk_flag": false,
             "critical_path": true,
             "slack_days": 0,
-            "definition_of_done": "React component library with navigation, responsive grid layout, and accessibility (WCAG 2.1 AA) tested on mobile and desktop."
-          },
-          {
-            "id": "T9",
-            "name": "Implement onboarding checklist UI with task status tracking",
-            "phase": 2,
-            "effort_hours": 18.0,
-            "owner_role": "Frontend Developer",
-            "dependencies": [
-              "T8"
-            ],
-            "risk_flag": false,
-            "critical_path": true,
-            "slack_days": 0,
-            "definition_of_done": "Checklist displays all 8 onboarding tasks with due dates, completion status, and progress bar; new hire can mark tasks complete."
+            "definition_of_done": "Team member profiles display name, role, photo, and bio; search and filter by department functional; accessibility audit passed."
           },
           {
             "id": "T10",
-            "name": "Build document upload and e-signature integration with selected vendor",
+            "name": "Implement Azure AD SSO authentication and session management",
+            "phase": 2,
+            "effort_hours": 24.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T7"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 5,
+            "definition_of_done": "New hires can log in via Azure AD; session tokens validated on every API call; logout clears session; tested with 3+ Azure AD test accounts."
+          },
+          {
+            "id": "T11",
+            "name": "Build user profile management API and database schema for new hire data",
+            "phase": 2,
+            "effort_hours": 20.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T4"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 5,
+            "definition_of_done": "API endpoints for GET/POST user profile; PostgreSQL user table with audit columns; data validation and error handling complete."
+          },
+          {
+            "id": "T12",
+            "name": "Build React frontend for document submission and e-signature workflow",
+            "phase": 2,
+            "effort_hours": 36.0,
+            "owner_role": "Frontend Developer",
+            "dependencies": [
+              "T5"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 5,
+            "definition_of_done": "Document upload form for I-9, W-4, direct deposit; e-signature widget embedded; submission confirmation and status tracking functional."
+          },
+          {
+            "id": "T13",
+            "name": "Integrate e-signature service API for document signing and compliance tracking",
             "phase": 2,
             "effort_hours": 28.0,
             "owner_role": "Backend Developer",
             "dependencies": [
-              "T7",
+              "T6",
               "T3"
             ],
             "risk_flag": true,
             "critical_path": true,
             "slack_days": 0,
-            "definition_of_done": "New hire can upload I-9, W-4, direct deposit forms; e-signature service API called; signed documents stored with audit trail; SOC 2 compliance verified."
+            "definition_of_done": "Documents sent to e-signature service; signed documents retrieved and stored; audit trail captured; SOC 2 compliance checklist updated."
           },
           {
-            "id": "T11",
-            "name": "Implement Workday API integration for new hire data pre-population",
+            "id": "T14",
+            "name": "Build Workday API integration for employee data retrieval and form pre-population",
             "phase": 2,
             "effort_hours": 32.0,
             "owner_role": "Backend Developer",
             "dependencies": [
               "T6",
-              "T10"
+              "T3"
             ],
             "risk_flag": true,
-            "critical_path": true,
-            "slack_days": 0,
-            "definition_of_done": "System fetches new hire name, email, department, manager from Workday; pre-populates onboarding form fields; error handling for API failures; tested with 10 sample records."
-          },
-          {
-            "id": "T12",
-            "name": "Build Azure AD account provisioning integration for email and SaaS tools",
-            "phase": 2,
-            "effort_hours": 36.0,
-            "owner_role": "Backend Developer",
-            "dependencies": [
-              "T11"
-            ],
-            "risk_flag": true,
-            "critical_path": true,
-            "slack_days": 0,
-            "definition_of_done": "System creates email account, Slack account, and configured SaaS tool accounts via Azure AD API; zero manual IT tickets; audit log records all provisioning actions."
-          },
-          {
-            "id": "T13",
-            "name": "Implement team introduction feature with member profiles and photos",
-            "phase": 2,
-            "effort_hours": 16.0,
-            "owner_role": "Frontend Developer",
-            "dependencies": [
-              "T9"
-            ],
-            "risk_flag": false,
-            "critical_path": true,
-            "slack_days": 0,
-            "definition_of_done": "New hire views team member cards with photo, name, role, and bio; searchable by name or department; loads from HR database."
-          },
-          {
-            "id": "T14",
-            "name": "Build HR admin dashboard for onboarding progress monitoring",
-            "phase": 2,
-            "effort_hours": 24.0,
-            "owner_role": "Frontend Developer",
-            "dependencies": [
-              "T9"
-            ],
-            "risk_flag": false,
-            "critical_path": true,
-            "slack_days": 0,
-            "definition_of_done": "HR admin views list of all new hires with task completion %, can filter by start date, export report; real-time updates."
+            "critical_path": false,
+            "slack_days": 5,
+            "definition_of_done": "API calls to Workday sandbox retrieve new hire name, email, department, start date; form fields pre-populated; error handling for API failures."
           },
           {
             "id": "T15",
-            "name": "Implement audit logging system for SOC 2 compliance",
+            "name": "Implement audit logging for all document submissions and user actions",
             "phase": 2,
             "effort_hours": 20.0,
             "owner_role": "Backend Developer",
             "dependencies": [
-              "T7"
+              "T4",
+              "T11"
             ],
             "risk_flag": false,
-            "critical_path": true,
-            "slack_days": 0,
-            "definition_of_done": "All onboarding actions (login, document upload, task completion, account provisioning) logged with timestamp, user ID, action type, and result; immutable audit table."
+            "critical_path": false,
+            "slack_days": 5,
+            "definition_of_done": "Audit log table records timestamp, user ID, action type, and document ID for all submissions; logs immutable and retained per policy; SOC 2 requirement met."
           },
           {
             "id": "T16",
-            "name": "Conduct internal demo with stakeholders and gather feedback",
+            "name": "Build HR admin dashboard for monitoring new hire task completion and document status",
+            "phase": 2,
+            "effort_hours": 28.0,
+            "owner_role": "Frontend Developer",
+            "dependencies": [
+              "T5"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 5,
+            "definition_of_done": "Dashboard displays list of new hires with task completion percentage; document submission status; filter by cohort and start date; export to CSV."
+          },
+          {
+            "id": "T17",
+            "name": "Conduct internal demo with HR team and gather feedback on core features",
             "phase": 2,
             "effort_hours": 12.0,
             "owner_role": "Product Manager",
             "dependencies": [
-              "T14",
-              "T15"
+              "T9",
+              "T13",
+              "T16"
             ],
             "risk_flag": false,
             "critical_path": true,
             "slack_days": 0,
-            "definition_of_done": "Demo covers all 6 use cases; stakeholders confirm core features meet requirements; feedback logged and prioritized for Phase 3."
+            "definition_of_done": "Demo covers all 5 primary use cases; HR team provides written feedback; scope change requests logged and prioritized; go/no-go decision documented."
           }
         ]
       },
@@ -319,266 +312,279 @@
         "duration_weeks": 5.5,
         "percentage_of_total": 21.2,
         "milestones": [
-          "Sprint 6: Error handling and retry logic for all integrations complete",
-          "Sprint 7: Edge cases and data validation complete",
-          "All integrations tested end-to-end",
-          "Security review completed",
-          "Performance testing completed"
+          "Sprint 6: IT account provisioning automation via Azure AD complete",
+          "Sprint 7: Edge cases and error handling complete; security review initiated",
+          "All integrations tested end-to-end; security review completed"
         ],
         "tasks": [
           {
-            "id": "T17",
-            "name": "Implement error handling and retry logic for Workday and Azure AD APIs",
-            "phase": 3,
-            "effort_hours": 24.0,
-            "owner_role": "Backend Developer",
-            "dependencies": [
-              "T12"
-            ],
-            "risk_flag": true,
-            "critical_path": true,
-            "slack_days": 0,
-            "definition_of_done": "API failures trigger exponential backoff retry; user sees clear error message; failed provisioning tasks queued for manual retry; tested with simulated API outages."
-          },
-          {
             "id": "T18",
-            "name": "Add data validation and edge case handling for form submissions",
+            "name": "Implement Azure AD account provisioning automation for email, Slack, and SaaS tools",
             "phase": 3,
-            "effort_hours": 20.0,
-            "owner_role": "Frontend Developer",
+            "effort_hours": 36.0,
+            "owner_role": "Backend Developer",
             "dependencies": [
               "T10"
             ],
-            "risk_flag": false,
-            "critical_path": true,
-            "slack_days": 0,
-            "definition_of_done": "Form validates required fields, email format, phone format, SSN format; handles duplicate submissions; prevents form submission if required docs not signed."
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 5,
+            "definition_of_done": "IT admin triggers account creation; Azure AD Graph API creates user account; email, Slack, and SaaS provisioning automated; rollback procedure documented."
           },
           {
             "id": "T19",
-            "name": "Conduct security review and implement SOC 2 compliance controls",
+            "name": "Build IT admin interface for account provisioning approval and status tracking",
             "phase": 3,
-            "effort_hours": 28.0,
-            "owner_role": "Backend Developer",
+            "effort_hours": 24.0,
+            "owner_role": "Frontend Developer",
             "dependencies": [
-              "T15"
+              "T5"
             ],
-            "risk_flag": true,
-            "critical_path": true,
-            "slack_days": 0,
-            "definition_of_done": "Security audit completed; OWASP Top 10 vulnerabilities addressed; data encryption at rest and in transit verified; audit logs immutable and tamper-evident."
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 5,
+            "definition_of_done": "IT admin can view pending account requests; approve/reject with comments; track provisioning status; receive notifications on completion."
           },
           {
             "id": "T20",
-            "name": "Execute end-to-end integration testing across all systems",
+            "name": "Test Workday API integration with sandbox data and handle API failures gracefully",
             "phase": 3,
-            "effort_hours": 32.0,
-            "owner_role": "QA Engineer",
-            "dependencies": [
-              "T17",
-              "T18"
-            ],
-            "risk_flag": false,
-            "critical_path": true,
-            "slack_days": 0,
-            "definition_of_done": "Test scenarios cover: new hire login → checklist → document upload → e-signature → account provisioning → HR dashboard view; all 8 use cases tested; zero critical bugs."
-          },
-          {
-            "id": "T21",
-            "name": "Optimize database queries and implement caching for performance",
-            "phase": 3,
-            "effort_hours": 16.0,
+            "effort_hours": 20.0,
             "owner_role": "Backend Developer",
             "dependencies": [
               "T14"
             ],
-            "risk_flag": false,
+            "risk_flag": true,
             "critical_path": false,
-            "slack_days": 3,
-            "definition_of_done": "HR dashboard loads in < 2 seconds; checklist page loads in < 1 second; Redis caching implemented for team member profiles."
+            "slack_days": 5,
+            "definition_of_done": "Integration tested with 10+ sandbox employee records; API timeout and error responses handled; fallback to manual data entry functional; logging complete."
+          },
+          {
+            "id": "T21",
+            "name": "Test e-signature integration end-to-end with real document workflows",
+            "phase": 3,
+            "effort_hours": 16.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T13"
+            ],
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "Documents signed and retrieved from e-signature service; signed PDFs stored securely; audit trail complete; compliance verified."
           },
           {
             "id": "T22",
-            "name": "Build automated test suite for regression testing",
+            "name": "Implement error handling and edge cases for missing data, API failures, and network timeouts",
             "phase": 3,
-            "effort_hours": 20.0,
-            "owner_role": "QA Engineer",
+            "effort_hours": 24.0,
+            "owner_role": "Backend Developer",
             "dependencies": [
               "T20"
             ],
             "risk_flag": false,
             "critical_path": false,
-            "slack_days": 2,
-            "definition_of_done": "Automated tests cover happy path and error scenarios; 80% code coverage; tests run in CI/CD pipeline on every commit."
+            "slack_days": 5,
+            "definition_of_done": "All API calls have retry logic; user-facing error messages clear and actionable; logging captures all failures; tested with chaos engineering scenarios."
           },
           {
             "id": "T23",
-            "name": "Create runbooks and troubleshooting guides for IT team",
+            "name": "Conduct security review and penetration testing for SOC 2 compliance",
             "phase": 3,
-            "effort_hours": 12.0,
-            "owner_role": "Product Manager",
+            "effort_hours": 28.0,
+            "owner_role": "Backend Developer",
             "dependencies": [
-              "T20"
+              "T21",
+              "T15"
+            ],
+            "risk_flag": true,
+            "critical_path": false,
+            "slack_days": 5,
+            "definition_of_done": "Security audit completed by external firm; vulnerabilities identified and remediated; SOC 2 Type II readiness confirmed; compliance report generated."
+          },
+          {
+            "id": "T24",
+            "name": "Test accessibility compliance (WCAG 2.1 AA) across all screens and workflows",
+            "phase": 3,
+            "effort_hours": 16.0,
+            "owner_role": "Frontend Developer",
+            "dependencies": [
+              "T12",
+              "T16",
+              "T19"
             ],
             "risk_flag": false,
             "critical_path": false,
-            "slack_days": 4,
-            "definition_of_done": "Runbooks document: account provisioning failures, Workday sync issues, e-signature service outages, audit log queries; IT team trained and sign-off obtained."
+            "slack_days": 5,
+            "definition_of_done": "Automated accessibility scan passed; manual testing with screen reader completed; color contrast verified; keyboard navigation functional."
+          },
+          {
+            "id": "T25",
+            "name": "Conduct integration testing across all external APIs (Workday, Azure AD, e-signature) in staging environment",
+            "phase": 3,
+            "effort_hours": 20.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T20",
+              "T21"
+            ],
+            "risk_flag": true,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "All integrations tested end-to-end in staging; data flows correctly between systems; audit logs capture all transactions; no data loss or corruption."
           }
         ]
       },
       {
         "phase_number": 4,
         "name": "QA & Testing",
-        "duration_weeks": 4.5,
-        "percentage_of_total": 17.3,
+        "duration_weeks": 5.0,
+        "percentage_of_total": 19.2,
         "milestones": [
           "All critical bugs resolved",
           "UAT completed with HR team and new hire representatives",
-          "Accessibility audit passed (WCAG 2.1 AA)",
-          "Performance testing passed",
-          "Documentation and training materials completed"
+          "Performance and load testing passed",
+          "Documentation and runbooks written"
         ],
         "tasks": [
           {
-            "id": "T24",
-            "name": "Execute UAT with HR team and new hire representatives",
+            "id": "T26",
+            "name": "Execute comprehensive functional testing across all use cases and user workflows",
+            "phase": 4,
+            "effort_hours": 32.0,
+            "owner_role": "Backend Developer",
+            "dependencies": [
+              "T25"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 5,
+            "definition_of_done": "Test cases written for all 8 use cases; 95%+ pass rate; critical bugs logged and prioritized; regression testing completed."
+          },
+          {
+            "id": "T27",
+            "name": "Conduct user acceptance testing (UAT) with HR team and 3+ new hire representatives",
             "phase": 4,
             "effort_hours": 24.0,
-            "owner_role": "QA Engineer",
+            "owner_role": "Product Manager",
             "dependencies": [
-              "T20"
+              "T26"
             ],
             "risk_flag": false,
             "critical_path": false,
-            "slack_days": 2,
-            "definition_of_done": "UAT script covers all 8 use cases; 5+ new hires and 3+ HR admins test portal; sign-off document confirms readiness for production."
+            "slack_days": 5,
+            "definition_of_done": "UAT script executed with real users; feedback documented; satisfaction survey completed; sign-off obtained from HR Director and IT Director."
           },
           {
-            "id": "T25",
-            "name": "Conduct accessibility audit and remediate WCAG 2.1 AA violations",
+            "id": "T28",
+            "name": "Perform load testing and performance optimization for 200+ concurrent new hires",
             "phase": 4,
             "effort_hours": 20.0,
-            "owner_role": "Frontend Developer",
+            "owner_role": "Backend Developer",
             "dependencies": [
-              "T18"
+              "T25"
             ],
             "risk_flag": false,
             "critical_path": false,
-            "slack_days": 2,
-            "definition_of_done": "Automated accessibility scan (axe, WAVE) shows zero violations; keyboard navigation tested; screen reader tested; WCAG 2.1 AA compliance verified."
+            "slack_days": 5,
+            "definition_of_done": "Load test simulates 200 concurrent users; response times < 2 seconds; database queries optimized; caching implemented where applicable."
           },
           {
-            "id": "T26",
-            "name": "Resolve all critical and high-priority bugs from UAT and testing",
+            "id": "T29",
+            "name": "Resolve all critical and high-priority bugs identified during testing and UAT",
             "phase": 4,
             "effort_hours": 28.0,
             "owner_role": "Backend Developer",
             "dependencies": [
-              "T24"
+              "T27"
+            ],
+            "risk_flag": false,
+            "critical_path": true,
+            "slack_days": 0,
+            "definition_of_done": "All P0 and P1 bugs fixed and verified; regression testing passed; release notes prepared; ready for production deployment."
+          },
+          {
+            "id": "T30",
+            "name": "Write technical documentation, runbooks, and operational procedures for HR and IT teams",
+            "phase": 4,
+            "effort_hours": 20.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T29"
             ],
             "risk_flag": false,
             "critical_path": false,
-            "slack_days": 1,
-            "definition_of_done": "All critical bugs (data loss, security, compliance) fixed and verified; high-priority bugs (workflow breaks, integration failures) fixed; regression testing passed."
+            "slack_days": 5,
+            "definition_of_done": "Runbooks cover account provisioning, document submission, troubleshooting, and escalation procedures; training materials prepared; video walkthroughs recorded."
           },
           {
-            "id": "T27",
-            "name": "Create user documentation and training materials for HR and new hires",
+            "id": "T31",
+            "name": "Create adoption and communication plan for new hire onboarding and HR team training",
             "phase": 4,
             "effort_hours": 16.0,
             "owner_role": "Product Manager",
             "dependencies": [
-              "T23"
+              "T30"
             ],
             "risk_flag": false,
             "critical_path": false,
-            "slack_days": 3,
-            "definition_of_done": "User guides for new hire onboarding flow; admin guide for HR dashboard; video tutorials (3-5 min each); FAQ document; training session conducted with HR team."
-          },
-          {
-            "id": "T28",
-            "name": "Prepare adoption and communication plan for launch",
-            "phase": 4,
-            "effort_hours": 12.0,
-            "owner_role": "Product Manager",
-            "dependencies": [
-              "T27"
-            ],
-            "risk_flag": false,
-            "critical_path": false,
-            "slack_days": 3,
-            "definition_of_done": "Communication plan includes: email announcement, HR team briefing, new hire onboarding email, FAQ, support contact info; adoption metrics dashboard created."
-          },
-          {
-            "id": "T29",
-            "name": "Establish post-launch ownership and support model",
-            "phase": 4,
-            "effort_hours": 8.0,
-            "owner_role": "Product Manager",
-            "dependencies": [
-              "T27"
-            ],
-            "risk_flag": false,
-            "critical_path": false,
-            "slack_days": 4,
-            "definition_of_done": "Named product owner assigned; support escalation path defined; SLA for bug fixes and feature requests documented; handoff meeting completed."
+            "slack_days": 5,
+            "definition_of_done": "Communication timeline established; HR team training scheduled; new hire email template drafted; FAQ document prepared; post-launch support plan defined."
           }
         ]
       },
       {
         "phase_number": 5,
         "name": "Deployment & Handoff",
-        "duration_weeks": 2.5,
-        "percentage_of_total": 9.6,
+        "duration_weeks": 2.0,
+        "percentage_of_total": 7.7,
         "milestones": [
           "Production deployment completed",
           "Smoke testing in production passed",
-          "Go-live sign-off obtained",
-          "Post-launch support plan activated"
+          "Go-live sign-off obtained"
         ],
         "tasks": [
           {
-            "id": "T30",
-            "name": "Deploy portal to Azure App Service production environment",
-            "phase": 5,
-            "effort_hours": 16.0,
-            "owner_role": "DevOps Engineer",
-            "dependencies": [
-              "T26"
-            ],
-            "risk_flag": false,
-            "critical_path": false,
-            "slack_days": 1,
-            "definition_of_done": "Code deployed to production; database migrations applied; environment variables configured; SSL certificate installed; monitoring and alerting enabled."
-          },
-          {
-            "id": "T31",
-            "name": "Execute smoke testing in production environment",
+            "id": "T32",
+            "name": "Deploy application to Azure App Service production environment",
             "phase": 5,
             "effort_hours": 12.0,
-            "owner_role": "QA Engineer",
+            "owner_role": "Backend Developer",
             "dependencies": [
-              "T30"
+              "T29"
             ],
             "risk_flag": false,
             "critical_path": false,
-            "slack_days": 0,
-            "definition_of_done": "Smoke test script covers: login, checklist view, document upload, account provisioning, HR dashboard; all tests pass; no critical issues found."
+            "slack_days": 2,
+            "definition_of_done": "Code deployed to production; database migrations applied; environment variables configured; rollback procedure tested and documented."
           },
           {
-            "id": "T32",
-            "name": "Obtain go-live sign-off from stakeholders and activate support",
+            "id": "T33",
+            "name": "Execute smoke testing in production and verify all critical workflows functional",
             "phase": 5,
             "effort_hours": 8.0,
-            "owner_role": "Product Manager",
+            "owner_role": "Backend Developer",
             "dependencies": [
-              "T31"
+              "T32"
             ],
             "risk_flag": false,
             "critical_path": false,
-            "slack_days": 0,
-            "definition_of_done": "Signed go-live approval from CEO, HR Director, IT Director; support team briefed; escalation contacts confirmed; launch email sent to all new hires."
+            "slack_days": 2,
+            "definition_of_done": "Smoke test checklist executed; all 8 use cases verified in production; no critical issues found; monitoring and alerting active."
+          },
+          {
+            "id": "T34",
+            "name": "Obtain go-live sign-off from CEO, HR Director, and IT Director",
+            "phase": 5,
+            "effort_hours": 4.0,
+            "owner_role": "Product Manager",
+            "dependencies": [
+              "T33"
+            ],
+            "risk_flag": false,
+            "critical_path": false,
+            "slack_days": 2,
+            "definition_of_done": "Written sign-off obtained from all three stakeholders; go-live date confirmed; post-launch support escalation procedures activated."
           }
         ]
       }
@@ -586,44 +592,41 @@
   },
   "use_case_task_mapping": {
     "UC1": [
-      "T9",
-      "T14",
-      "T18",
-      "T24"
+      "T8",
+      "T26"
     ],
     "UC2": [
-      "T10",
-      "T18",
-      "T24"
+      "T12",
+      "T13",
+      "T21",
+      "T27"
     ],
     "UC3": [
-      "T13",
+      "T9",
       "T24"
     ],
     "UC4": [
-      "T12",
-      "T17",
-      "T20",
-      "T26"
+      "T18",
+      "T19",
+      "T25"
     ],
     "UC5": [
-      "T14",
-      "T24"
+      "T16",
+      "T26"
     ],
     "UC6": [
-      "T11",
-      "T17",
-      "T20"
+      "T10",
+      "T26"
     ],
     "UC7": [
-      "T7",
-      "T8",
-      "T24"
+      "T14",
+      "T20",
+      "T25"
     ],
     "UC8": [
       "T15",
-      "T19",
-      "T20"
+      "T23",
+      "T25"
     ]
   }
 }

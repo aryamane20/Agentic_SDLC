@@ -370,3 +370,63 @@ but provided no mechanism to enforce it at inference time.
 **Before:** tc-01 had 4 hallucinated questions referencing wrong project entities.
 **After:** tc-01=0 questions (correct, no triggers), tc-02=2 (UC7 missing + timeline),
            tc-03=1 (timeline only). All questions match expected patterns.
+
+---
+
+## use_case_v1.2 — calibration example anchoring fix (2026-06-13)
+
+**Problem:** The HIGH-quality calibration example in v1.1 used "12 weeks, $120k,
+2 backend, 1 frontend, 1 analyst, 1 PM" — identical to tc-01-perfect test brief values.
+Risk: model pattern-matches to this canonical shape when producing outputs for any
+analytics-dashboard brief, producing outputs closer to the example than to the actual input.
+
+**Change:** Replaced calibration example with a neutral domain (leave management portal,
+10 weeks, $80k, 2 backend devs, 1 UX designer, 1 PM). Different industry, different team
+composition, different budget — no overlap with any current test case.
+
+---
+
+## intake_v1.2 — NFR defaults bleed fix (2026-06-13)
+
+**Problem:** intake_v1.1 listed NFR defaults (< 2s, 99.5% uptime, 50 concurrent users,
+2x scalability) as guidance on whether to LOG an assumption. Risk: Haiku reads these values
+and writes them into the nfr output fields as if the brief stated them, turning materiality-gate
+guidance into hallucinated requirements.
+
+**Change:** Added explicit clarification note under the NFR defaults block:
+"IMPORTANT: these defaults determine whether to LOG an assumption — they do NOT get written
+into the nfr output fields. All nfr fields remain null unless the brief explicitly states the
+value. Never populate nfr fields with these default values."
+
+---
+
+## planning_v1.1 — productive hours/day flexibility (2026-06-13)
+
+**Problem:** planning_v1.0 hardcoded "1 day = 6 productive hours" in STEP 6A. This is
+wrong for teams with different work calendars (e.g., 8h/day low-meeting teams or 4h/day
+high-meeting consulting shops), producing incorrect effort→duration conversions.
+
+**Change:** STEP 6A now reads: "Check structured_brief for any stated work schedule or hours
+per day; default to 6 productive hours/day if not specified." The constant is preserved as
+the default but can be overridden by brief data without a prompt change.
+
+---
+
+## risk_v1.7 — vendor safe-list replaced with principle (2026-06-13)
+
+**Problem:** risk_v1.6 Q4 guidance contained an exhaustive named vendor list (Workday, Azure AD,
+Salesforce, DocuSign, Stripe, SendGrid, Slack, Okta, GitHub, Jira, HubSpot, Zendesk, Snowflake,
+BigQuery, Twilio...). This list is a maintenance liability: any new or rebranded SaaS not on
+the list could be incorrectly flagged as deprecated. The list also created a false sense of
+completeness — as if unlisted vendors might warrant CRITICAL treatment.
+
+**Change:** Replaced named-vendor enumeration with a principle-based rule:
+"A modern, actively-maintained, commercially-supported SaaS API is NOT deprecated. This
+includes major HRIS platforms, identity providers, CRM systems, payment processors,
+transactional email/SMS services, cloud data warehouses, and project management/ticketing tools,
+when they are maintained by the vendor, have public API documentation, and the brief does not
+describe them as deprecated."
+Q4=YES still requires explicit trigger words in the brief. The principle captures the intent
+without creating a stale enumeration.
+Also updated the concrete calibration example: "Workday API sandbox is unavailable" →
+"SSO provider sandbox is unavailable" (de-names the vendor, same scoring outcome).

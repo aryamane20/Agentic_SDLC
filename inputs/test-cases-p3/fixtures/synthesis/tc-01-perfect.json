@@ -5,49 +5,63 @@
   "added_open_questions": [
     {
       "priority": 1,
-      "question": "Use case UC1 (Complete Onboarding Checklist) is mapped to tasks [T9, T14, T18, T24]. Verify all mapped tasks are sufficient to fully deliver UC1 scope and acceptance criteria.",
+      "question": "Staffing capacity analysis: Total effort across all tasks is 520 hours. Converted to work days (6h/day) = 86.67 days. Converted to weeks (5 days/week) = 17.33 weeks. Planned duration is 26.0 weeks. Ratio: 17.33 / (26.0 × 1.2) = 17.33 / 31.2 = 0.556. Effort is 55.6% of capacity threshold. PASS — no timeline achievability issue.",
       "urgency": "Before build",
-      "impact_if_unanswered": "If task mapping is incomplete, UC1 may not be fully delivered or acceptance criteria may not be met at launch."
-    },
-    {
-      "priority": 2,
-      "question": "Staffing capacity analysis: Total project effort is 520 hours across 26 weeks. With 4 core team members (PM 80h, Backend Dev 276h, Frontend Dev 146h, UX Designer 56h) plus QA Engineer (128h) and DevOps (16h), verify that 520 total hours can be delivered within 26-week timeline given 6-hour work days and 5-day work weeks.",
-      "urgency": "Before build",
-      "impact_if_unanswered": "If staffing capacity is insufficient, project timeline will slip or scope must be reduced."
-    },
-    {
-      "priority": 3,
-      "question": "Risk R1 (Workday API integration failure) is HIGH-scored and on critical path (T6). Mitigation requires Workday sandbox access confirmation in Phase 1 week 1. Confirm that Workday account manager contact and sandbox access request are already initiated before project kickoff.",
-      "urgency": "Before build",
-      "impact_if_unanswered": "If Workday sandbox access is not confirmed by Phase 1 week 2, Phase 2 integration timeline (T6, T11) will slip 2-4 weeks."
-    },
-    {
-      "priority": 4,
-      "question": "Risk R5 (Product Owner authority) is HIGH-scored. Staffing plan assumes PM role includes PO function. Confirm that designated Product Owner (PM or separate role) has explicit authority for backlog prioritization and trade-off decisions, and is available minimum 10 hours/week during Phase 2-3 sprints.",
-      "urgency": "Before build",
-      "impact_if_unanswered": "If PO authority is unclear or PO is unavailable, Hybrid SDLC sprint cycles will experience decision bottlenecks and delays."
+      "impact_if_unanswered": "None — capacity is within acceptable range."
     }
   ],
   "pm_confidence_score": {
-    "score": 68.0,
+    "score": 62.0,
     "deductions": [
       {
         "amount": 5.0,
-        "reason": "3 assumptions in assumption_log (A1, A2, A3) × 5.0 each = 15.0 total"
-      },
-      {
-        "amount": 10.0,
-        "reason": "Hybrid SDLC approach (Adaptive + Predictive) adds sprint execution complexity"
+        "reason": "Assumption A1 (Workday API sandbox availability) — HIGH risk if wrong"
       },
       {
         "amount": 5.0,
-        "reason": "9 HIGH-scored risks in risk_register (R1, R2, R3, R4, R5, R7, R8, R9, R11, R12) — 5.0 × 9 = 45.0 total; capped at 5.0 per rule (only one deduction line for high-risk count)"
+        "reason": "Assumption A2 (Azure AD permissions pre-approved) — HIGH risk if wrong"
       },
       {
-        "amount": 7.0,
-        "reason": "Input quality is HIGH (0 deduction), but 9 HIGH-scored risks and 3 HIGH-impact assumptions reduce confidence by additional 7.0"
+        "amount": 5.0,
+        "reason": "Assumption A3 (E-signature vendor SOC 2 compliance) — MEDIUM risk if wrong"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Assumption A4 (Data retention policy defined) — HIGH risk if wrong"
+      },
+      {
+        "amount": 10.0,
+        "reason": "CRITICAL risk R6 (PM/Backend Developer unavailability) — zero slack, no backup"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R1 (Workday API unavailable)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R2 (Azure AD permissions denied)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R3 (Scope creep without change control)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R4 (Data retention policy undefined)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R9 (SOC 2 compliance incomplete)"
+      },
+      {
+        "amount": 5.0,
+        "reason": "QA allocation 15.8% is 25% below PMBOK 8.2 minimum"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Hybrid SDLC approach adds complexity and decision-making risk"
       }
     ],
-    "interpretation": "PM confidence score is 68.0 because the project has HIGH input quality, clear 26-week timeline, and well-defined phases, but is constrained by 9 HIGH-scored risks (Workday/Azure AD/e-signature integration, scope definition, PO authority, SOC 2 compliance, resource availability, schedule compression, API rate limiting, scope creep) and 3 HIGH-impact assumptions. Hybrid SDLC adds adaptive sprint complexity. Confidence is further reduced by lack of pre-project stakeholder sign-off and undefined Product Owner authority. Mitigation of R1, R2, R3, R4, R5, R7, R8 in Phase 1 discovery (weeks 1-4) is essential to reduce risk score and increase confidence to 75+. Project is AT_RISK on schedule (critical path 1.15× deadline); any Phase 1 discovery delay will compress Phase 2-3 timeline."
+    "interpretation": "PM confidence score is 62.0 because four HIGH-risk assumptions (Workday API, Azure AD permissions, e-signature compliance, data retention policy) are unconfirmed, critical resource R6 has zero slack and no backup, QA allocation violates PMBOK 8.2 baseline by 25%, and Hybrid SDLC requires active Product Owner engagement during Phase 2-3 sprints. Mitigation: confirm all four assumptions in writing before Phase 2 begins (T3), identify backup PM and Backend Developer, increase QA allocation to 129 hours (25% of dev effort), and name Product Owner for sprint prioritization."
   }
 }

@@ -8,7 +8,7 @@
     },
     {
       "id": "A2",
-      "name": "Sales Representative",
+      "name": "Sales Team Member",
       "type": "primary"
     },
     {
@@ -37,7 +37,7 @@
         "A5"
       ],
       "complexity": "simple",
-      "description": "User logs in via existing SSO provider"
+      "description": "User logs in via SSO to access the dashboard"
     },
     {
       "id": "UC2",
@@ -57,7 +57,7 @@
         "A2"
       ],
       "complexity": "medium",
-      "description": "User selects metrics, applies date range filters, and generates report in under 5 minutes"
+      "description": "User selects metrics, applies date range filters, and generates a custom report"
     },
     {
       "id": "UC4",
@@ -99,16 +99,6 @@
       ],
       "complexity": "simple",
       "description": "System sends alert to PagerDuty when threshold is breached"
-    },
-    {
-      "id": "UC8",
-      "name": "Respond to Alert",
-      "actors": [
-        "A1",
-        "A2"
-      ],
-      "complexity": "simple",
-      "description": "User acknowledges or resolves alert within 1 hour of notification"
     }
   ],
   "relationships": [
@@ -136,11 +126,6 @@
       "type": "includes",
       "from_id": "UC6",
       "to_id": "UC1"
-    },
-    {
-      "type": "includes",
-      "from_id": "UC7",
-      "to_id": "UC6"
     }
   ],
   "input_quality_signal": "HIGH",

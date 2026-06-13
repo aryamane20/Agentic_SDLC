@@ -1,88 +1,93 @@
 {
   "consistency_issues": [],
   "corrections_applied": [],
-  "staffing_corrections": [
-    {
-      "action": "set_critical_path",
-      "role": "Backend Developer"
-    },
-    {
-      "action": "set_critical_path",
-      "role": "QA Engineer"
-    }
-  ],
+  "staffing_corrections": [],
   "added_open_questions": [
     {
       "priority": 1,
-      "question": "Staffing capacity analysis: total effort across all tasks is 407 hours (67.8 work days or 13.6 weeks). Planned duration is 16 weeks. Capacity utilization is 85% (13.6 / 16), which is within acceptable range. However, critical path concentration on Backend Developer (245h = 60% of total effort) and QA Engineer (74h = 18% of total effort) creates single-point-of-failure risk. Confirm backup resources are identified and available.",
+      "question": "Use case UC7 (Monitor Gateway Health) has no tasks in the project plan.",
       "urgency": "Before build",
-      "impact_if_unanswered": "If Backend Developer or QA Engineer becomes unavailable, 9 zero-slack critical path tasks (T1, T2, T5, T8, T11, T14, T17, T20, T23) will slip immediately, delaying project completion beyond 4-month deadline."
+      "impact_if_unanswered": "UC7 will not be delivered"
+    },
+    {
+      "priority": 2,
+      "question": "Staffing capacity analysis: Total effort across all tasks is 500 hours (83.3 work days, 16.7 weeks). Planned duration is 17.4 weeks. Ratio is 16.7 / (17.4 × 1.2) = 0.80, within acceptable threshold. However, this assumes zero rework and no context switching. Given 4 CRITICAL risks and team dedication uncertainty, actual effort may exceed capacity.",
+      "urgency": "Before build",
+      "impact_if_unanswered": "If risks materialize and rework is required, staffing capacity will be exceeded and timeline will slip."
     }
   ],
   "pm_confidence_score": {
-    "score": 48.0,
+    "score": 42.0,
     "deductions": [
       {
         "amount": 5.0,
-        "reason": "4 unknown hard constraints (technology stack, team composition, compliance, performance targets) × 5 each = 20.0 total; shown as 5.0 per constraint"
+        "reason": "UNKNOWN hard constraint: technology_stack is null"
       },
       {
         "amount": 5.0,
-        "reason": "Assumption A1: authentication standard (OAuth 2.0 vs custom) not confirmed"
+        "reason": "UNKNOWN hard constraint: team_composition specifies 4 engineers with no roles or seniority confirmed"
       },
       {
         "amount": 5.0,
-        "reason": "Assumption A2: microservice inventory static vs dynamic not confirmed"
+        "reason": "UNKNOWN hard constraint: team dedication not confirmed in brief"
       },
       {
         "amount": 5.0,
-        "reason": "Assumption A3: load balancing algorithm not specified"
+        "reason": "UNKNOWN hard constraint: Product Owner not assigned"
       },
       {
         "amount": 5.0,
-        "reason": "Assumption A4: data retention policy (30 days) not confirmed"
+        "reason": "Assumption A1 (authentication service ready): risk_if_wrong HIGH, unresolved"
       },
       {
         "amount": 5.0,
-        "reason": "Input quality MEDIUM: stack, team roles, and performance targets missing"
+        "reason": "Assumption A2 (microservice inventory documented): risk_if_wrong MEDIUM, unresolved"
+      },
+      {
+        "amount": 5.0,
+        "reason": "Assumption A3 (standard logging, no regulatory requirements): risk_if_wrong MEDIUM, unresolved"
+      },
+      {
+        "amount": 5.0,
+        "reason": "input_quality MEDIUM: lacks explicit confirmation of critical constraints"
       },
       {
         "amount": 10.0,
-        "reason": "CRITICAL risk R1 (HIGH): technology stack and team experience unknown"
+        "reason": "CRITICAL risk R1: team lacks gateway framework experience, probability HIGH, impact HIGH"
+      },
+      {
+        "amount": 10.0,
+        "reason": "CRITICAL risk R2: authentication service not production-ready, probability HIGH, impact HIGH"
+      },
+      {
+        "amount": 10.0,
+        "reason": "CRITICAL risk R3: microservice inventory incomplete, probability HIGH, impact HIGH"
+      },
+      {
+        "amount": 10.0,
+        "reason": "CRITICAL risk R4: team not fully dedicated, probability HIGH, impact HIGH"
       },
       {
         "amount": 5.0,
-        "reason": "HIGH risk R2: microservice inventory scope (static vs dynamic) unconfirmed"
+        "reason": "HIGH risk R5: Product Owner not assigned, probability MEDIUM, impact HIGH"
       },
       {
         "amount": 5.0,
-        "reason": "HIGH risk R3: authentication standard not confirmed; custom auth would exceed deadline"
+        "reason": "HIGH risk R6: compliance requirements not discovered, probability MEDIUM, impact HIGH"
       },
       {
         "amount": 5.0,
-        "reason": "HIGH risk R4: Product Owner not assigned; Hybrid SDLC phase gates at risk"
+        "reason": "HIGH risk R7: external dependencies undocumented, probability MEDIUM, impact HIGH"
       },
       {
         "amount": 5.0,
-        "reason": "HIGH risk R5: performance targets undefined; Phase 3 re-architecture risk"
+        "reason": "HIGH risk R9: Phase 1 discovery incomplete, probability MEDIUM, impact HIGH"
       },
       {
         "amount": 5.0,
-        "reason": "HIGH risk R7: Authentication Service (A5) deployment status unconfirmed"
-      },
-      {
-        "amount": 5.0,
-        "reason": "HIGH risk R9: resource contention risk; Backend Developer and QA Engineer must be 100% dedicated"
-      },
-      {
-        "amount": 5.0,
-        "reason": "HIGH risk R10: stakeholder scope sign-off not formally documented in writing"
-      },
-      {
-        "amount": 5.0,
-        "reason": "SDLC approach Hybrid: requires active PO and adaptive backlog refinement; adds execution risk"
+        "reason": "sdlc_approach Hybrid: adaptive refinement required, adds uncertainty"
       }
     ],
-    "interpretation": "PM confidence score is 48.0 because of 4 unknown hard constraints (technology stack, team roles, compliance, performance targets), 4 unconfirmed assumptions (auth standard, service inventory, load balancing, data retention), MEDIUM input quality, 7 HIGH risks (R2, R3, R4, R5, R7, R9, R10), and Hybrid SDLC requiring active PO engagement. Hard cap applied: assumption_count = 4 (below 5-assumption cap of 60), but 7 HIGH risks and 1 CRITICAL risk (R1) with MEDIUM input quality reduce score to 48. Immediate actions required: confirm technology stack and team experience (R1), assign Product Owner (R4), define performance targets (R5), confirm authentication standard (R3), and obtain written scope sign-off (R10) before Phase 1 kickoff."
+    "interpretation": "PM confidence score is 42.0 because the project has 4 CRITICAL risks (R1, R2, R3, R4) related to team capability, technology stack, authentication readiness, and team dedication, combined with 4 HIGH risks (R5, R6, R7, R9). The brief contains 4 unresolved UNKNOWN hard constraints and 3 high-risk assumptions. Input quality is MEDIUM and Hybrid SDLC adds uncertainty. Hard cap for 4+ assumptions is 60; hard cap for CRITICAL risks further reduces confidence."
   }
 }

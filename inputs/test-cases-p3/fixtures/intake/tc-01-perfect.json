@@ -5,56 +5,64 @@
     "input_quality": "HIGH",
     "classification_confidence": "HIGH",
     "sdlc_approach": "Hybrid",
-    "sdlc_rationale": "Deadline fixed (June 30, 2026) and requirements fully defined with signed stakeholders, but integration complexity with Workday/Azure AD and new team experience with React/Node stack warrant adaptive sprint cycles within predictive phase gates."
+    "sdlc_rationale": "Requirements fully defined and signed off with fixed deadline and budget, but new hire satisfaction and HR efficiency gains require working software validation; scope is clear enough for predictive phase structure with adaptive sprint cycles in Phase 2–3."
   },
   "project_understanding": {
-    "primary_goal": "Build a self-service employee onboarding portal enabling new hires to complete required paperwork, provision IT accounts, and receive team introductions before day one.",
+    "primary_goal": "Build a self-service employee onboarding portal enabling new hires to complete required paperwork, set up IT accounts, and get team introductions before day one.",
     "beneficiary": "New employees (100–200/year) and HR team (5 people)",
-    "trigger": "Current onboarding is fragmented across PDF-based paperwork, manual IT account setup, and unprepared new hires; CEO requested HR fix after hearing complaints at all-hands.",
+    "trigger": "Current onboarding is fragmented across PDF-based paperwork, manual IT account setup, and no pre-day-one preparation; CEO requested HR fix after hearing complaints at all-hands.",
     "success_definition": [
       "80% of onboarding tasks completed by new hires before day one",
-      "50% reduction in HR admin time spent on onboarding",
+      "HR admin time reduced by 50%",
       "IT account setup fully automated (zero manual tickets)",
       "New hire satisfaction survey score > 4/5"
     ],
     "supporting_quotes": [
       "Create a self-service employee onboarding portal that allows new hires to complete all required paperwork, set up their IT accounts, and get introduced to the team before day one.",
       "Currently onboarding is fragmented - paperwork is PDF-based, IT account setup is manual, new hires feel unprepared on day one.",
-      "New hires can complete 80% of onboarding tasks before day one",
-      "HR time spent on onboarding admin reduced by 50%",
-      "IT account setup automated (no manual tickets)"
+      "New hires can complete 80% of onboarding tasks before day one; HR time spent on onboarding admin reduced by 50%; IT account setup automated (no manual tickets); New hire satisfaction survey score > 4/5"
     ]
   },
   "assumption_log": [
     {
       "id": "A1",
-      "what": "Workday API sandbox environment, documentation, and SLA are available and stable; integration does not require custom Workday configuration beyond standard employee data export.",
-      "why": "External API integrations are common failure points in internal tool projects. Workday is enterprise-grade but integration scope (pre-population vs. real-time sync) materially affects architecture and timeline.",
-      "pmi_basis": "PMBOK 6th Ed, Section 8.1 (Scope Management) and Section 12.1 (Integration Management)",
+      "what": "Workday API sandbox environment, documentation, and SLA are available and stable for integration development and testing.",
+      "why": "External API availability is a hard dependency for UC7 (Retrieve Employee Data) and cannot be assumed without explicit confirmation; integration delays directly impact Phase 2 delivery.",
+      "pmi_basis": "PMBOK 6th Ed, Section 8.1 (Resource Planning) and Section 12.2 (Manage Communications)",
       "risk_if_wrong": "HIGH",
-      "consequence": "If Workday API requires custom configuration, custom field mapping, or sandbox is unavailable, Phase 2 integration work extends 2–4 weeks; if real-time sync required instead of batch, architecture must shift to event-driven model.",
+      "consequence": "Phase 2 integration work blocked; onboarding form pre-population cannot be tested; go-live delayed by 2–4 weeks minimum.",
       "source": "hard_constraint",
-      "tradeoff": "Gains: Unblocks Phase 2 integration work on schedule; enables pre-population of new hire data. Risks: If API unavailable or requires custom work, team must pivot to manual data entry or delay launch."
+      "tradeoff": "Gains: Confirms integration feasibility and timeline realism. Risks: If API unavailable or undocumented, team must build manual data entry fallback or delay launch."
     },
     {
       "id": "A2",
-      "what": "Azure AD provisioning API and Slack/SaaS tool SCIM integrations are documented, tested, and do not require custom connector development; IT Administrator has or can quickly gain hands-on experience with Azure AD automation.",
-      "why": "IT account provisioning (UC4) is marked 'complex' in use case model and is a critical path item. Azure AD is standard but automation scope (email-only vs. full SaaS provisioning) and team familiarity materially affect Phase 2 timeline and risk.",
-      "pmi_basis": "PMBOK 6th Ed, Section 9.3 (Resource Management) and Section 12.1 (Integration Management)",
+      "what": "Azure AD tenant is already provisioned, team has existing SSO integration experience, and Azure AD API/Graph permissions are pre-approved for account provisioning (UC4).",
+      "why": "UC4 (Provision IT Accounts) and UC6 (Authenticate via SSO) depend on Azure AD; if team lacks experience or permissions are not pre-approved, architecture and timeline shift significantly.",
+      "pmi_basis": "PMBOK 6th Ed, Section 9.1 (Resource Management Plan) and Section 13.1 (Stakeholder Engagement)",
       "risk_if_wrong": "HIGH",
-      "consequence": "If Azure AD provisioning requires custom scripting or IT team lacks automation experience, Phase 2 integration extends 3–6 weeks; if Slack/SaaS integrations lack SCIM support, manual provisioning workflows must be built or scope reduced.",
+      "consequence": "Security review delays; account provisioning automation scope reduced to manual approval workflow; Phase 2 timeline extends 2–3 weeks; IT Director sign-off delayed.",
       "source": "hard_constraint",
-      "tradeoff": "Gains: Unblocks automated account provisioning on schedule; enables 'zero manual tickets' success metric. Risks: If integrations require custom development, team must allocate developer capacity away from portal UI or delay launch."
+      "tradeoff": "Gains: Confirms team capability and infrastructure readiness. Risks: If permissions denied or team inexperienced, must add security review cycle and reduce automation scope."
     },
     {
       "id": "A3",
-      "what": "E-signature service (UC2) is pre-selected, has documented API, and supports I-9/W-4/direct deposit form templates; no custom legal review or form redesign is required beyond standard onboarding documents.",
-      "why": "Document e-signature is a must-have feature and involves compliance (SOC 2 audit logs). Service selection and form readiness materially affect Phase 2 scope and legal/compliance sign-off timeline.",
-      "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Scope Definition)",
+      "what": "E-signature service (UC2) is already contracted, API is documented, and legal/compliance has pre-approved the vendor for SOC 2 compliance.",
+      "why": "Document e-signature is a must-have feature and compliance-critical; vendor lock-in and compliance sign-off are prerequisites that cannot be assumed.",
+      "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Collect Requirements) and Section 10.1 (Plan Communications)",
       "risk_if_wrong": "MEDIUM",
-      "consequence": "If e-signature service is not yet selected, Phase 1 extends 1–2 weeks for vendor evaluation and legal review; if forms require redesign for compliance, Phase 2 extends 1–3 weeks.",
+      "consequence": "Vendor selection and legal review add 2–3 weeks; if vendor does not meet SOC 2 requirements, alternative must be sourced; Phase 2 document collection feature delayed.",
       "source": "hard_constraint",
-      "tradeoff": "Gains: Unblocks document collection workflow; enables compliance audit trail. Risks: If service selection or form review delayed, Phase 1 timeline slips."
+      "tradeoff": "Gains: Confirms compliance path and vendor readiness. Risks: If vendor unavailable or non-compliant, must re-select and re-negotiate; launch delayed."
+    },
+    {
+      "id": "A4",
+      "what": "Data retention policy for onboarding documents (I-9, W-4, direct deposit, audit logs) is defined by Legal/Compliance and aligns with SOC 2 requirements.",
+      "why": "SOC 2 compliance (stated hard constraint) requires explicit data retention and deletion policies; absence of this policy creates compliance risk and affects database schema design.",
+      "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Collect Requirements) and Section 10.1 (Plan Communications)",
+      "risk_if_wrong": "HIGH",
+      "consequence": "Database schema must be redesigned post-build to support retention policies; audit log retention unclear; SOC 2 assessment fails; re-architecture required.",
+      "source": "nfr",
+      "tradeoff": "Gains: Confirms compliance scope and storage architecture. Risks: If policy undefined, team builds without retention logic; compliance review fails; rework required."
     }
   ],
   "constraints": {
@@ -63,8 +71,8 @@
       "budget": "$80,000",
       "team_size": 4,
       "team_composition": "1 PM, 2 Developers, 1 UX Designer",
-      "technology_stack": "Frontend: React + TypeScript; Backend: Node.js + PostgreSQL; Integration: Workday API, Azure AD SSO; Hosting: Azure App Service",
-      "compliance": "SOC 2 compliance required (audit logs, data handling)"
+      "technology_stack": "Frontend: React + TypeScript; Backend: Node.js + PostgreSQL; Integration: Workday API, Azure AD; Hosting: Azure App Service",
+      "compliance": "SOC 2 compliance required (data handling, audit logs)"
     },
     "soft": {
       "preferred_timeline": null,
@@ -76,7 +84,7 @@
       ]
     },
     "nfr": {
-      "security": "Azure AD SSO for authentication; SOC 2 compliance for audit logs and data handling",
+      "security": "Azure AD SSO authentication; SOC 2 compliance; audit logging for all document submissions and account provisioning actions",
       "data_retention": null,
       "performance": null,
       "availability": null
@@ -85,33 +93,33 @@
   "open_questions_pre_planning": [
     {
       "priority": 1,
-      "question": "Is the e-signature service (UC2) already selected, or does vendor evaluation need to occur in Phase 1?",
+      "question": "Is the Workday API sandbox environment available, documented, and stable for integration development? What is the SLA for API availability during Phase 2 testing?",
       "urgency": "Before build",
-      "impact_if_unanswered": "If not selected, Phase 1 extends 1–2 weeks for vendor evaluation and legal review; if forms require redesign, Phase 2 extends 1–3 weeks."
+      "impact_if_unanswered": "Integration work blocked; form pre-population cannot be tested; Phase 2 timeline at risk."
     },
     {
       "priority": 2,
-      "question": "What is the scope of IT account provisioning (UC4): email-only, or does it include Slack, SaaS tools, and VPN access? Which SaaS tools require provisioning?",
+      "question": "Does the team have prior experience with Azure AD account provisioning and Graph API? Are Graph API permissions pre-approved by Security for automated account creation?",
       "urgency": "Before build",
-      "impact_if_unanswered": "Scope creep on integrations directly impacts Phase 2 timeline; unclear SaaS tool list may require re-scoping or delay."
+      "impact_if_unanswered": "IT account provisioning automation scope may be reduced; Phase 2 timeline extends 2–3 weeks; IT Director sign-off delayed."
     },
     {
       "priority": 3,
-      "question": "Does Workday API integration require custom field mapping or configuration, or is standard employee data export sufficient for pre-population?",
+      "question": "Which e-signature service vendor is contracted, and has Legal/Compliance confirmed SOC 2 compliance for that vendor?",
       "urgency": "Before build",
-      "impact_if_unanswered": "If custom configuration required, Phase 2 integration work extends 2–4 weeks."
+      "impact_if_unanswered": "Vendor selection and legal review add 2–3 weeks; if vendor non-compliant, alternative must be sourced; Phase 2 document collection delayed."
     },
     {
       "priority": 4,
-      "question": "Who is the Product Owner responsible for backlog prioritization and stakeholder trade-off decisions during Phase 2–3 sprints?",
+      "question": "What is the data retention policy for onboarding documents (I-9, W-4, direct deposit) and audit logs? Who owns this policy (Legal, Compliance, HR)?",
       "urgency": "Before build",
-      "impact_if_unanswered": "Hybrid SDLC requires clear PO authority; absence of PO creates decision bottlenecks and delays sprint execution."
+      "impact_if_unanswered": "Database schema must be redesigned post-build; SOC 2 assessment fails; re-architecture required."
     },
     {
       "priority": 5,
-      "question": "What is the data retention policy for onboarding documents and audit logs post-completion (e.g., 7 years for I-9 compliance)?",
+      "question": "Who is the Product Owner responsible for backlog prioritization and sprint-level scope decisions during Phase 2–3?",
       "urgency": "Before build",
-      "impact_if_unanswered": "If retention policy is not defined, database schema and compliance controls may require re-architecture post-launch."
+      "impact_if_unanswered": "Hybrid SDLC sprint cycles cannot proceed; decision-making delays; scope creep unmanaged."
     }
   ]
 }

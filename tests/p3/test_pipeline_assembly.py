@@ -49,14 +49,14 @@ _PM_REPORT_REQUIRED_KEYS = {
 }
 
 # Python-computed authoritative scores (LLM values differ — see test_pm_confidence.py)
-# Updated after risk_v1.6 fixture regeneration (2026-06-13):
-#   tc-01: 3 assumptions, 0 CRITICAL, 7 HIGH, Hybrid → 100-15-35-5 = 45
-#   tc-02: 3 assumptions, 0 CRITICAL, 6 HIGH, 1 unknown, Hybrid → 100-5-15-30-5 = 45
-#   tc-03: 4 assumptions, 0 CRITICAL, 9 HIGH, 1 unknown, Hybrid → 100-5-20-45-5 = 25
+# Updated after risk_v1.7 fixture regeneration (2026-06-13):
+#   tc-01: 4 assumptions, 0 CRITICAL, 6 HIGH, Hybrid → 100-20-30-5 = 45
+#   tc-02: 3 assumptions, 0 CRITICAL, 5 HIGH, 1 unknown, Hybrid → 100-5-15-25-5 = 50
+#   tc-03: 4 assumptions, 4 CRITICAL, 4 HIGH, 1 unknown, Hybrid → 100-5-20-10-20-5 = 40
 _EXPECTED_SCORES = {
     "tc-01-perfect": 45.0,
-    "tc-02-good":    45.0,
-    "tc-03-medium":  25.0,
+    "tc-02-good":    50.0,
+    "tc-03-medium":  40.0,
     "tc-04-simple":  80.0,
 }
 

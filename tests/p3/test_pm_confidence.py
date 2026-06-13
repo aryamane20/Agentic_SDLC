@@ -207,21 +207,21 @@ def test_tc01_perfect_score():
 
 
 def test_tc02_good_score():
-    # 3 assumptions, 0 CRITICAL, 6 HIGH, 1 unknown, Hybrid → 100-5-15-30-5 = 45
-    # Updated after risk_v1.6 fixture regeneration (2026-06-13)
+    # 3 assumptions, 0 CRITICAL, 5 HIGH, 1 unknown, Hybrid → 100-5-15-25-5 = 50
+    # Updated after risk_v1.7 fixture regeneration (2026-06-13)
     uc, intake, risk, plan = _load_fixtures("tc-02-good")
     inputs = extract_confidence_inputs(uc, intake, risk, plan)
     result = compute_confidence(**inputs)
-    assert result.score == 45.0
+    assert result.score == 50.0
 
 
 def test_tc03_medium_score():
-    # 4 assumptions, 0 CRITICAL, 9 HIGH, 1 unknown, Hybrid → 100-5-20-45-5 = 25
-    # Updated after risk_v1.6 fixture regeneration (2026-06-13)
+    # 4 assumptions, 4 CRITICAL, 4 HIGH, 1 unknown, Hybrid → 100-5-20-10-20-5 = 40; cap(crit+3assump)=min(40,50)=40
+    # Updated after risk_v1.7 fixture regeneration (2026-06-13)
     uc, intake, risk, plan = _load_fixtures("tc-03-medium")
     inputs = extract_confidence_inputs(uc, intake, risk, plan)
     result = compute_confidence(**inputs)
-    assert result.score == 25.0
+    assert result.score == 40.0
 
 
 # ---------------------------------------------------------------------------

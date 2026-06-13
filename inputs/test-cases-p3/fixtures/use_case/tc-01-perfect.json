@@ -40,17 +40,16 @@
         "A1"
       ],
       "complexity": "medium",
-      "description": "New hire views and tracks all required onboarding tasks with due dates"
+      "description": "New hire views and tracks all required onboarding tasks with due dates."
     },
     {
       "id": "UC2",
       "name": "Submit Required Documents",
       "actors": [
-        "A1",
-        "A6"
+        "A1"
       ],
       "complexity": "medium",
-      "description": "New hire uploads and e-signs I-9, W-4, and direct deposit forms"
+      "description": "New hire uploads and e-signs required paperwork (I-9, W-4, direct deposit)."
     },
     {
       "id": "UC3",
@@ -59,17 +58,16 @@
         "A1"
       ],
       "complexity": "simple",
-      "description": "New hire views team member profiles with photos and roles"
+      "description": "New hire views team member profiles with photos and roles."
     },
     {
       "id": "UC4",
       "name": "Provision IT Accounts",
       "actors": [
-        "A2",
-        "A5"
+        "A3"
       ],
       "complexity": "complex",
-      "description": "System automatically creates email, Slack, and SaaS tool accounts via Azure AD integration"
+      "description": "IT administrator triggers automated account creation for email, Slack, and SaaS tools via Azure AD."
     },
     {
       "id": "UC5",
@@ -78,26 +76,25 @@
         "A2"
       ],
       "complexity": "simple",
-      "description": "HR administrator views dashboard of all new hires and their task completion status"
+      "description": "HR administrator views dashboard of new hire task completion and document submission status."
     },
     {
       "id": "UC6",
-      "name": "Retrieve Employee Data",
+      "name": "Authenticate via SSO",
       "actors": [
-        "A4"
+        "A1"
       ],
       "complexity": "simple",
-      "description": "System fetches new hire information from Workday to pre-populate onboarding forms"
+      "description": "New hire logs in using Azure AD single sign-on."
     },
     {
       "id": "UC7",
-      "name": "Authenticate New Hire",
+      "name": "Retrieve Employee Data",
       "actors": [
-        "A1",
-        "A5"
+        "A2"
       ],
       "complexity": "simple",
-      "description": "New hire logs in via SSO using Azure AD credentials"
+      "description": "System syncs new hire information from Workday to pre-populate onboarding forms."
     },
     {
       "id": "UC8",
@@ -106,38 +103,38 @@
         "A2"
       ],
       "complexity": "simple",
-      "description": "System records all onboarding actions for SOC 2 compliance"
+      "description": "System records all document submissions and account provisioning actions for SOC 2 compliance."
     }
   ],
   "relationships": [
     {
       "type": "includes",
       "from_id": "UC1",
-      "to_id": "UC7"
-    },
-    {
-      "type": "includes",
-      "from_id": "UC2",
-      "to_id": "UC7"
-    },
-    {
-      "type": "includes",
-      "from_id": "UC3",
-      "to_id": "UC7"
-    },
-    {
-      "type": "includes",
-      "from_id": "UC4",
-      "to_id": "UC6"
+      "to_id": "UC2"
     },
     {
       "type": "includes",
       "from_id": "UC1",
-      "to_id": "UC8"
+      "to_id": "UC3"
     },
     {
       "type": "includes",
       "from_id": "UC2",
+      "to_id": "UC6"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC4",
+      "to_id": "UC7"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC2",
+      "to_id": "UC8"
+    },
+    {
+      "type": "includes",
+      "from_id": "UC4",
       "to_id": "UC8"
     }
   ],

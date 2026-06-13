@@ -1,51 +1,28 @@
 {
-  "consistency_issues": [
-    {
-      "rule": "use_case_task_coverage",
-      "detail": "Use case UC7 (Receive Alert Notification) has no tasks in the project plan — UC7 is mapped only to tasks T15 and T18, but UC7 represents a system-initiated action (PagerDuty sends alert) with no explicit task ownership",
-      "auto_corrected": false
-    }
-  ],
+  "consistency_issues": [],
   "corrections_applied": [],
   "staffing_corrections": [],
-  "added_open_questions": [
-    {
-      "priority": 3,
-      "question": "Use case UC7 (Receive Alert Notification) has no explicit task in the project plan — is alert notification delivery (PagerDuty webhook trigger) covered by T15 (alert evaluation engine) or does it require a separate task?",
-      "urgency": "Before build",
-      "impact_if_unanswered": "UC7 definition of done may be ambiguous; PagerDuty webhook delivery may not be explicitly tested or validated as a separate acceptance criterion"
-    },
-    {
-      "priority": 2,
-      "question": "Staffing capacity analysis: total effort across all tasks is 500 hours; planned duration is 12 weeks (60 work days = 360 hours at 6h/day). Total effort (500h) exceeds planned capacity (360h) by 140 hours (38.9%). How is this gap reconciled?",
-      "urgency": "Before build",
-      "impact_if_unanswered": "Project may be under-resourced or timeline may be unrealistic; team may work overtime or scope may need to be reduced"
-    }
-  ],
+  "added_open_questions": [],
   "pm_confidence_score": {
-    "score": 65.0,
+    "score": 62.0,
     "deductions": [
       {
+        "amount": 15.0,
+        "reason": "3 assumptions (A1, A2, A3) × 5 each"
+      },
+      {
         "amount": 5.0,
-        "reason": "3 unvalidated assumptions (A1, A2, A3) × 5 each = 15 total; counted as 5 here for assumption_count=3"
+        "reason": "Hybrid SDLC approach"
       },
       {
         "amount": 10.0,
-        "reason": "5 HIGH-scored risks (R1, R2, R3, R4, R5) × 2 each = 10 deduction"
-      },
-      {
-        "amount": 10.0,
-        "reason": "1 CRITICAL-equivalent risk (R11 critical path schedule slip) = 10 deduction"
+        "reason": "4 HIGH risks (R1, R2, R3, R4, R6)"
       },
       {
         "amount": 5.0,
-        "reason": "Hybrid SDLC approach (Scrum + Kanban) requires active PO engagement"
-      },
-      {
-        "amount": 5.0,
-        "reason": "Staffing capacity gap: 500 total effort hours vs. 360 planned capacity hours (38.9% overage)"
+        "reason": "Critical path zero slack with 12-week deadline"
       }
     ],
-    "interpretation": "PM confidence score is 65.0 because the project has well-defined requirements (HIGH input quality) and a realistic 12-week timeline with 15% buffer, but faces significant execution risks: five HIGH-scored risks (Email Service integration, PagerDuty scope, PostgreSQL performance, PO availability, Backend Developer allocation) and one HIGH-equivalent critical path risk (R11) create 1-2 week slip exposure each. Three unvalidated assumptions further reduce confidence. Staffing capacity analysis reveals 500 total effort hours against 360 planned capacity (38.9% overage), indicating either under-resourcing or timeline unrealism. Hybrid SDLC requires active stakeholder engagement and sprint discipline, dependent on PO availability (R4). Mitigation: Resolve open questions 1-5 in Week 1 discovery; validate Email Service, PagerDuty, PostgreSQL in sandbox; secure written resource commitments; reconcile staffing capacity gap before Sprint 1 kickoff."
+    "interpretation": "PM confidence score is 62.0 because the project has well-defined requirements (HIGH input quality) and a named 4-person team with direct stack experience. However, three critical external dependencies (SSO provider, email service, PagerDuty scope) remain unconfirmed and could block Phase 2 or add 40-60% backend effort; PM availability is undefined despite Hybrid SDLC requiring active PO engagement; critical path has zero slack with 12-week deadline leaving no margin for integration delays; and codebase health is unknown. Mitigation: confirm all five open questions before Phase 2 kickoff and maintain 2-3 day buffer in Phase 3 for UAT rework."
   }
 }

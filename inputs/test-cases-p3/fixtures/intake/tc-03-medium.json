@@ -1,20 +1,20 @@
 {
   "report_metadata": {
     "generated_at": "2025-01-10T14:32:00Z",
-    "project_type": "TYPE_A",
+    "project_type": "TYPE_D",
     "input_quality": "MEDIUM",
     "classification_confidence": "HIGH",
     "sdlc_approach": "Hybrid",
-    "sdlc_rationale": "Deadline fixed at 4 months and team size known, but authentication/authorization scope, load balancing strategy, and microservice inventory are not fully defined; requires adaptive backlog refinement within predictive phase gates."
+    "sdlc_rationale": "Deadline fixed at 4 months and team composition known, but authentication/authorization scope and external service integration points (microservices, auth service, logging service) are not fully detailed, requiring adaptive refinement during Phase 2–3."
   },
   "project_understanding": {
-    "primary_goal": "Build a centralized API gateway to manage microservices with unified authentication, rate limiting, request logging, and load balancing.",
+    "primary_goal": "Build a centralized API gateway to manage microservices routing, authentication, rate limiting, and logging.",
     "beneficiary": "Internal development teams",
     "trigger": "Multiple services with inconsistent APIs, security concerns, and lack of centralized rate limiting.",
     "success_definition": [
       "All external APIs routed through gateway",
       "Consistent authentication across all services",
-      "Request logging enabled for all API calls"
+      "Request logging for all API calls"
     ],
     "supporting_quotes": [
       "Build an API gateway for our microservices.",
@@ -26,43 +26,43 @@
   "assumption_log": [
     {
       "id": "A1",
-      "what": "Authentication/authorization implementation uses industry-standard OAuth 2.0 or JWT-based token validation rather than custom credential system.",
-      "why": "Internal microservices typically adopt OAuth 2.0 or JWT for stateless, scalable auth. Assuming standard pattern avoids custom security implementation risk.",
-      "pmi_basis": "PMBOK 6th Ed, Section 8.1 (Quality Planning); security architecture is a foundational design decision.",
+      "what": "Authentication service integration scope and SLA are defined and available; team has direct experience with the chosen auth mechanism (SSO, OAuth2, API keys, or mTLS).",
+      "why": "Authentication is a hard dependency for gateway routing and security posture. If the auth service is unavailable, undocumented, or team lacks experience, architecture and timeline will require re-scoping.",
+      "pmi_basis": "PMBOK 6th Ed, Section 8.1 (Resource Planning) and Section 12.1 (Integration Management)",
       "risk_if_wrong": "HIGH",
-      "consequence": "If custom auth system required, design, implementation, and security audit timeline extends 4–6 weeks; may require external security review.",
+      "consequence": "Gateway cannot enforce consistent authentication; team may need to build custom auth layer or delay launch pending auth service availability and documentation.",
       "source": "hard_constraint",
-      "tradeoff": "Gains: standard OAuth 2.0/JWT reduces implementation risk and integrates with existing auth services (A5 in use case model). Risks: if custom credential system required, re-architecture needed."
+      "tradeoff": "Gains: Assumes auth service is production-ready and team can integrate without custom development. Risks: If auth service is in-flight or team lacks experience, 2–4 week delay and potential re-architecture of gateway auth layer."
     },
     {
       "id": "A2",
-      "what": "Microservice inventory and count is known to the team; gateway will route to existing services without requiring service discovery implementation.",
-      "why": "Brief states 'multiple services with inconsistent APIs' implying services already exist and are enumerable. Service discovery (Consul, Eureka) is a separate infrastructure project.",
-      "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Scope Definition); scope boundary assumes static service list.",
+      "what": "Microservice inventory, endpoint contracts, and current API inconsistencies are documented or discoverable; no undocumented legacy services will be discovered mid-project.",
+      "why": "Gateway routing and versioning support depend on knowing which services exist and their current API signatures. Undiscovered services or breaking changes mid-project will expand scope.",
+      "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Requirements Collection)",
       "risk_if_wrong": "MEDIUM",
-      "consequence": "If dynamic service discovery required, adds 2–3 weeks for service registry integration and testing; increases complexity from TYPE_A to TYPE_D (System Integration).",
+      "consequence": "Gateway routing rules incomplete at launch; post-launch service onboarding requires gateway reconfiguration and testing; timeline slips by 1–2 weeks per undiscovered service cluster.",
       "source": "scope",
-      "tradeoff": "Gains: static routing table simplifies Phase 2 implementation and testing. Risks: if services are ephemeral or frequently added/removed, gateway becomes brittle."
+      "tradeoff": "Gains: Assumes all services are known and stable. Risks: If services are undocumented or rapidly evolving, gateway becomes a moving target and requires continuous re-scoping."
     },
     {
       "id": "A3",
-      "what": "Load balancing is round-robin or least-connections across known service instances; no advanced algorithms (canary, weighted routing) required.",
-      "why": "Brief lists 'load balancing' as requirement but does not specify strategy. Round-robin is standard default for internal microservices without traffic shaping needs.",
-      "pmi_basis": "PMBOK 6th Ed, Section 6.2 (Define Activities); load balancing strategy is a design assumption.",
+      "what": "Data retention and audit logging requirements are standard (logs retained for 90 days, no PII redaction required); no HIPAA, SOC2, or regulatory data masking is mandated.",
+      "why": "Logging architecture (storage, retention, encryption) is determined by compliance scope. If regulatory requirements exist, storage and pipeline design will differ significantly.",
+      "pmi_basis": "PMBOK 6th Ed, Section 5.1 (Scope Management)",
       "risk_if_wrong": "MEDIUM",
-      "consequence": "If weighted routing, canary deployment, or traffic shaping required, adds 1–2 weeks for algorithm implementation and testing.",
-      "source": "scope",
-      "tradeoff": "Gains: round-robin is simple, testable, and sufficient for uniform service instances. Risks: if traffic patterns are non-uniform or canary deployments needed, re-design required."
+      "consequence": "If regulatory requirements exist, logging pipeline must include encryption, PII redaction, and longer retention; storage costs and infrastructure complexity increase; 1–2 week delay for compliance design review.",
+      "source": "nfr",
+      "tradeoff": "Gains: Assumes standard internal audit logging with no regulatory masking. Risks: If compliance requirements exist, logging architecture must be re-designed and re-budgeted."
     },
     {
       "id": "A4",
-      "what": "Data retention for request logs is 30 days; no long-term archival or compliance-driven retention policy required.",
-      "why": "Brief specifies 'request logging for all API calls' but does not state retention period. 30 days is standard for operational troubleshooting without compliance drivers.",
-      "pmi_basis": "PMBOK 6th Ed, Section 8.1 (Quality Planning); data retention affects storage architecture and cost.",
-      "risk_if_wrong": "MEDIUM",
-      "consequence": "If compliance requires 1+ year retention, storage architecture and cost model change; may require data warehouse integration (TYPE_C scope creep).",
-      "source": "nfr",
-      "tradeoff": "Gains: 30-day retention keeps logging service lightweight and cost-effective. Risks: if audit/compliance requires longer retention, re-architecture to data warehouse needed."
+      "what": "Load balancing is stateless round-robin or least-connections; no session affinity, sticky sessions, or stateful routing is required.",
+      "why": "Load balancing complexity ranges from simple (round-robin) to complex (session affinity, circuit breakers, canary deployments). Stateless routing is the default for microservices gateways.",
+      "pmi_basis": "PMBOK 6th Ed, Section 6.4 (Estimate Activity Resources)",
+      "risk_if_wrong": "LOW",
+      "consequence": "If stateful routing is required, gateway must implement session affinity and distributed state management; 1 week additional development and testing.",
+      "source": "scope",
+      "tradeoff": "Gains: Assumes stateless load balancing, simplifying gateway logic and scaling. Risks: If services require session affinity, gateway becomes stateful and harder to scale horizontally."
     }
   ],
   "constraints": {
@@ -70,7 +70,7 @@
       "deadline": "4 months",
       "budget": null,
       "team_size": 4,
-      "team_composition": "4 engineers (no role breakdown, seniority, or stack experience stated)",
+      "team_composition": "4 engineers (no roles, seniority, or stack experience specified)",
       "technology_stack": null,
       "compliance": null
     },
@@ -80,8 +80,8 @@
       "nice_to_have": []
     },
     "nfr": {
-      "security": "Authentication/authorization required; method not specified (see A1).",
-      "data_retention": "Request logging required; retention period not specified (see A4).",
+      "security": null,
+      "data_retention": null,
       "performance": null,
       "availability": null
     }
@@ -89,39 +89,33 @@
   "open_questions_pre_planning": [
     {
       "priority": 1,
-      "question": "What is the current technology stack (language, framework, container runtime) for the API gateway? Does the 4-engineer team have direct experience with the chosen stack?",
+      "question": "What is the team's experience with API gateway frameworks (Kong, AWS API Gateway, Envoy, Spring Cloud Gateway, etc.) and the chosen technology stack?",
       "urgency": "Before build",
-      "impact_if_unanswered": "Unknown stack or team inexperience signals ADAPTIVE SDLC; affects Phase 2 sprint structure, spike allocation, and delivery risk."
+      "impact_if_unanswered": "If team lacks experience with the chosen gateway platform, development velocity will be 30–50% slower; timeline may slip by 4–6 weeks."
     },
     {
       "priority": 2,
-      "question": "How many microservices will the gateway route to, and is the service inventory static or dynamic (do services scale up/down or join/leave the mesh)?",
+      "question": "Is the authentication service (SSO, OAuth2, API keys, mTLS) already in production and documented, or will it be built/integrated as part of this project?",
       "urgency": "Before build",
-      "impact_if_unanswered": "If dynamic, service discovery integration required; scope and complexity increase (TYPE_D signal). Affects Phase 2 design and testing."
+      "impact_if_unanswered": "If auth service is not ready, gateway cannot enforce consistent authentication; project scope expands or launch is blocked."
     },
     {
       "priority": 3,
-      "question": "What is the authentication/authorization implementation standard: OAuth 2.0, JWT, mTLS, or custom? Is an Authentication Service (A5 in use case model) already deployed?",
+      "question": "How many microservices must the gateway route to at launch, and what is the current state of their API documentation and versioning?",
       "urgency": "Before build",
-      "impact_if_unanswered": "Custom auth system extends timeline 4–6 weeks and requires security audit. Affects Phase 2 design and Phase 3 testing scope."
+      "impact_if_unanswered": "If service inventory is incomplete or APIs are undocumented, gateway routing rules will be incomplete; post-launch service onboarding will require continuous re-scoping."
     },
     {
       "priority": 4,
-      "question": "Who is the Product Owner responsible for backlog prioritization and requirement refinement during Phase 2–3 sprints?",
+      "question": "Who is the Product Owner responsible for backlog prioritization and trade-off decisions between rate limiting, versioning, and load balancing features?",
       "urgency": "Before build",
-      "impact_if_unanswered": "Hybrid SDLC requires active PO for sprint planning and scope negotiation. Absence blocks Phase 2 kickoff."
+      "impact_if_unanswered": "Without a clear PO, feature prioritization will stall; team will build all features equally, risking timeline slip if scope must be cut."
     },
     {
       "priority": 5,
-      "question": "What is the expected request volume (RPS), concurrent user count, and SLA for gateway availability and response latency?",
+      "question": "Are there regulatory or compliance requirements (SOC2, HIPAA, PCI-DSS) that mandate specific logging, encryption, or data retention policies?",
       "urgency": "Before build",
-      "impact_if_unanswered": "Unknown performance targets affect infrastructure sizing, load balancing algorithm choice, and caching strategy. May require re-architecture if targets are aggressive."
-    },
-    {
-      "priority": 6,
-      "question": "Are there compliance or audit requirements (SOC2, HIPAA, PCI-DSS) that mandate request log retention, encryption, or access controls?",
-      "urgency": "Before build",
-      "impact_if_unanswered": "Compliance drivers change data retention architecture and cost model. If unaddressed, Phase 3 may require re-work for audit trail implementation."
+      "impact_if_unanswered": "If compliance requirements exist but are not discovered until Phase 2, logging architecture must be re-designed; 1–2 week delay and potential re-budgeting."
     }
   ]
 }

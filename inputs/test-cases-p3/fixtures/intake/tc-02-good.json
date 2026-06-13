@@ -5,53 +5,53 @@
     "input_quality": "HIGH",
     "classification_confidence": "HIGH",
     "sdlc_approach": "Hybrid",
-    "sdlc_rationale": "Requirements are well-defined and signed off, team has direct stack experience (React/Python/Django), but scope includes medium-complexity integrations (PagerDuty, email scheduling) and real-time data refresh that may require iterative validation with stakeholders."
+    "sdlc_rationale": "Requirements are well-defined and signed off; team has direct stack experience (React, Python/Django, PostgreSQL); however, 3-month deadline with 4-person team and multiple integrations (SSO, PagerDuty, email scheduling) creates scope uncertainty requiring adaptive sprint cycles within predictive phase structure."
   },
   "project_understanding": {
     "primary_goal": "Add real-time reporting and alerting capabilities to the existing customer analytics dashboard to eliminate manual report generation.",
-    "beneficiary": "Customer Success team (15 people) and Sales team (25 people)",
-    "trigger": "CSMs are spending 10 hours/week manually generating reports; leadership wants automated dashboards to reduce manual effort.",
+    "beneficiary": "Customer Success Team (15 people) and Sales Team (25 people)",
+    "trigger": "CSMs currently spend 10 hours/week manually generating reports; leadership mandate to automate dashboards and reduce manual effort.",
     "success_definition": [
       "CSMs can create custom reports in < 5 minutes",
       "90% of scheduled reports delivered on time",
       "Alert response time < 1 hour"
     ],
     "supporting_quotes": [
-      "Customer success managers are spending 10 hours/week manually generating reports. Leadership wants automated dashboards.",
-      "Add real-time reporting and alerting capabilities to our existing customer analytics dashboard.",
-      "CSMs can create custom reports in < 5 minutes; 90% of scheduled reports delivered on time; Alert response time < 1 hour"
+      "Customer success managers are spending 10 hours/week manually generating reports.",
+      "Leadership wants automated dashboards.",
+      "Add real-time reporting and alerting capabilities to our existing customer analytics dashboard."
     ]
   },
   "assumption_log": [
     {
       "id": "A1",
-      "what": "Email Service (A3) is an internal or third-party SMTP service with documented API and SLA; no custom email infrastructure build required.",
-      "why": "Use case model shows Email Service as secondary actor in UC5 (Schedule Report Delivery). Brief specifies 'Email scheduling' as requirement but does not detail email provider. Standard practice for internal tools is to assume existing email service (SendGrid, AWS SES, or internal SMTP) rather than build custom.",
-      "pmi_basis": "PMBOK 6th Ed, Section 8.1 (Resource Planning) — assume existing shared services unless explicitly stated as build scope.",
+      "what": "SSO provider (identity source) is operational, documented, and accessible to development team during build and testing phases.",
+      "why": "Brief states 'must integrate with existing authentication (SSO)' but does not specify provider identity, sandbox availability, API documentation maturity, or SLA. External authentication is a hard dependency; unavailable or undocumented provider blocks development.",
+      "pmi_basis": "PMBOK 6th Ed, Section 8.1 (Resource Planning) and Section 12.2 (Manage Communications) — external system availability is a critical assumption for integration projects.",
       "risk_if_wrong": "HIGH",
-      "consequence": "If email service does not exist or requires custom build, Phase 2 scope expands by 1–2 weeks; if SLA is undefined, scheduled report reliability metric (90% on-time) becomes unachievable without email service SLA commitment.",
+      "consequence": "Development blocked on authentication integration; timeline slip of 2–4 weeks if provider docs are incomplete or sandbox unavailable; potential re-architecture if provider does not support required grant flows.",
       "source": "hard_constraint",
-      "tradeoff": "Gains: Reduces Phase 2 scope by ~40 hours; enables 90% on-time delivery metric. Risks: If email service is unavailable or undocumented, scheduled report feature fails; team must pivot to custom build or alternative provider."
+      "tradeoff": "Gains: Proceeding with build on schedule. Risks: If SSO provider is undocumented or sandbox unavailable, team cannot validate integration until late in Phase 2, causing rework and deadline pressure."
     },
     {
       "id": "A2",
-      "what": "PagerDuty integration scope is limited to webhook ingestion and alert routing; no custom PagerDuty escalation policy or incident management workflow build required.",
-      "why": "Use case model shows PagerDuty as external actor in UC6 (Configure Alert) and UC7 (Receive Alert Notification). Brief specifies 'PagerDuty integration' but does not detail scope of integration (webhook only vs. full incident lifecycle management). Standard practice is to assume webhook-based alert delivery unless brief specifies custom escalation or on-call scheduling.",
-      "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Scope Definition) — external system integrations default to documented API unless brief specifies custom workflow.",
+      "what": "PagerDuty integration scope is limited to threshold-based alert triggering (UC6, UC7); PagerDuty does not require custom escalation policies, on-call schedule management, or incident lifecycle automation beyond alert receipt.",
+      "why": "Brief specifies 'Alerting: PagerDuty integration' and UC6/UC7 describe threshold alerts and notifications, but does not detail escalation, incident management, or custom workflow requirements. Scope boundary is ambiguous.",
+      "pmi_basis": "PMBOK 6th Ed, Section 5.2 (Collect Requirements) — integration scope must be explicit to avoid scope creep.",
       "risk_if_wrong": "MEDIUM",
-      "consequence": "If PagerDuty integration requires custom escalation policy, on-call scheduling, or incident lifecycle management, Phase 2 scope expands by 1–2 weeks; alert response time metric (< 1 hour) may require PagerDuty SLA validation.",
-      "source": "hard_constraint",
-      "tradeoff": "Gains: Reduces Phase 2 scope by ~30 hours; enables alert notification feature. Risks: If PagerDuty integration scope is broader than webhook ingestion, team must re-estimate and re-plan Phase 2."
+      "consequence": "If PagerDuty integration requires custom incident workflows, escalation policies, or on-call automation, backend development effort increases 40–60%; timeline slip of 1–2 weeks; potential re-architecture of alert configuration UI.",
+      "source": "scope",
+      "tradeoff": "Gains: Proceeding with baseline alert integration (threshold → PagerDuty notification). Risks: If stakeholders expect incident lifecycle automation, team discovers scope gap mid-Phase 2, requiring backlog re-prioritization or deadline extension."
     },
     {
       "id": "A3",
-      "what": "Real-time data refresh (every 15 minutes) is achievable with existing PostgreSQL database and does not require data warehouse migration, streaming pipeline, or materialized view infrastructure.",
-      "why": "Brief specifies 'Real-time data refresh (every 15 minutes)' and use case UC2 requires KPI widgets refreshed every 15 minutes. Brief does not specify data volume, query complexity, or current database performance. Standard practice for internal dashboards is to assume 15-minute refresh is achievable with polling or scheduled queries on existing database unless brief specifies high data volume or sub-minute latency requirement.",
-      "pmi_basis": "PMBOK 6th Ed, Section 6.4 (Schedule Development) — assume standard refresh cadence unless brief specifies real-time (< 1 minute) or high-volume streaming.",
+      "what": "Email scheduling (UC5) uses internal SMTP or a managed email service (SendGrid, AWS SES) already provisioned and accessible; no new email infrastructure procurement required.",
+      "why": "Brief specifies 'Email scheduling' and UC5 describes automated report delivery, but does not state whether email service exists, is provisioned, or requires procurement. Email delivery is a hard dependency for success metric '90% of scheduled reports delivered on time'.",
+      "pmi_basis": "PMBOK 6th Ed, Section 8.1 (Resource Planning) — external service availability must be confirmed before build.",
       "risk_if_wrong": "MEDIUM",
-      "consequence": "If data volume or query complexity prevents 15-minute refresh on PostgreSQL, team must architect data warehouse (Snowflake, BigQuery) or streaming pipeline (Kafka, Fivetran), adding 3–4 weeks to Phase 2 and increasing budget by $10K–$20K.",
-      "source": "nfr",
-      "tradeoff": "Gains: Reduces Phase 2 scope by ~50 hours; enables real-time KPI widget feature. Risks: If database performance is poor or data volume is high, team must pivot to data warehouse or streaming architecture."
+      "consequence": "If email service is not provisioned, team must evaluate, procure, and integrate a new service (1–2 weeks); if existing service has delivery SLA < 99%, success metric '90% on-time delivery' becomes unachievable without re-negotiation or service swap.",
+      "source": "hard_constraint",
+      "tradeoff": "Gains: Proceeding with email scheduling build on schedule. Risks: If email service is unavailable or has poor SLA, team discovers gap during Phase 2 integration, requiring procurement delay or success metric re-negotiation."
     }
   ],
   "constraints": {
@@ -61,7 +61,7 @@
       "team_size": 4,
       "team_composition": "3 developers, 1 product manager",
       "technology_stack": "Frontend: React; Backend: Python/Django; Database: PostgreSQL; Alerting: PagerDuty integration",
-      "compliance": "Must integrate with existing authentication (SSO); Data retention policy: 2 years"
+      "compliance": "Data retention policy: 2 years"
     },
     "soft": {
       "preferred_timeline": null,
@@ -69,36 +69,42 @@
       "nice_to_have": []
     },
     "nfr": {
-      "security": "SSO authentication required; existing SSO provider integration (A5 in use case model)",
+      "security": "SSO-based authentication required; existing authentication system must be integrated",
       "data_retention": "2 years",
-      "performance": "Custom report generation < 5 minutes; real-time data refresh every 15 minutes",
+      "performance": null,
       "availability": null
     }
   },
   "open_questions_pre_planning": [
     {
       "priority": 1,
-      "question": "Is the Email Service (A3) an existing internal or third-party SMTP service with documented API and SLA, or does it require custom build?",
+      "question": "Which SSO provider is in use (Okta, Azure AD, Google Workspace, other), and is sandbox/test environment documentation and API access confirmed for the development team?",
       "urgency": "Before build",
-      "impact_if_unanswered": "If email service does not exist or requires custom build, Phase 2 scope expands by 1–2 weeks; if SLA is undefined, 90% on-time delivery metric becomes unachievable."
+      "impact_if_unanswered": "Authentication integration cannot proceed without provider identity and sandbox access; blocks Phase 2 development start."
     },
     {
       "priority": 2,
-      "question": "What is the scope of PagerDuty integration: webhook-based alert delivery only, or does it include custom escalation policy, on-call scheduling, or incident lifecycle management?",
+      "question": "Is an email service (SMTP, SendGrid, AWS SES, other) already provisioned and accessible, and what is its delivery SLA?",
       "urgency": "Before build",
-      "impact_if_unanswered": "If PagerDuty integration scope is broader than webhook ingestion, Phase 2 scope expands by 1–2 weeks; alert response time metric (< 1 hour) may require PagerDuty SLA validation."
+      "impact_if_unanswered": "If not provisioned, procurement delay (1–2 weeks) or success metric '90% on-time delivery' becomes unachievable."
     },
     {
       "priority": 3,
-      "question": "What is the current data volume and query complexity in PostgreSQL? Can 15-minute refresh cadence be achieved with polling or scheduled queries, or does the team need to architect a data warehouse or streaming pipeline?",
+      "question": "For PagerDuty integration, are custom escalation policies, on-call schedule management, or incident lifecycle automation required, or is the scope limited to threshold-based alert triggering and notification?",
       "urgency": "Before build",
-      "impact_if_unanswered": "If database performance is poor or data volume is high, team must pivot to data warehouse or streaming architecture, adding 3–4 weeks to Phase 2 and increasing budget by $10K–$20K."
+      "impact_if_unanswered": "Scope ambiguity on PagerDuty integration could add 40–60% backend effort if custom workflows are required; discovered mid-Phase 2 causes rework."
     },
     {
       "priority": 4,
-      "question": "Who is the Product Owner responsible for backlog prioritization and scope trade-offs during Phase 2–3 sprints?",
+      "question": "Who is the Product Owner responsible for backlog prioritization, sprint planning, and stakeholder feedback during Phase 2–3 sprint cycles?",
       "urgency": "Before build",
-      "impact_if_unanswered": "Hybrid SDLC requires clear PO ownership for sprint planning and backlog refinement; without this, sprint cycles will stall on scope decisions."
+      "impact_if_unanswered": "Hybrid SDLC requires active PO engagement; undefined PO role causes decision delays and sprint planning friction."
+    },
+    {
+      "priority": 5,
+      "question": "What is the current state of the existing customer analytics dashboard (codebase health, test coverage, deployment pipeline), and are there known technical debt or architectural constraints that affect the enhancement scope?",
+      "urgency": "Before build",
+      "impact_if_unanswered": "Unknown codebase state could reveal integration complexity or refactoring needs not visible in brief; discovered during Phase 1 could compress Phase 2 timeline."
     }
   ]
 }

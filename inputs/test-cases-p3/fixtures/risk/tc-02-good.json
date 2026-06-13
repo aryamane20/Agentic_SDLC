@@ -3,187 +3,132 @@
     {
       "id": "R1",
       "category": "Integration",
-      "description": "If Email Service (A3) lacks documented API, SLA, or requires custom build, then scheduled report delivery feature (UC5) cannot meet 90% on-time delivery success metric and Phase 2 scope expands by 1–2 weeks.",
+      "description": "If SSO provider identity, sandbox access, or API documentation is not confirmed before Phase 2 begins, then authentication integration cannot proceed, blocking UC1 (Authenticate User) and all dependent use cases (UC2, UC3, UC5, UC6). Development team cannot validate SSO integration until late Phase 2, causing 2–4 week timeline slip and potential re-architecture if provider does not support required grant flows.",
       "probability": "MEDIUM",
       "impact": "HIGH",
       "score": "HIGH",
-      "trigger": "Email Service API documentation unavailable or SLA not confirmed before Sprint 1 build starts",
-      "mitigation": "Confirm Email Service provider (SendGrid, AWS SES, or internal SMTP) and validate API documentation + SLA in week 1 discovery; document rate limits and delivery guarantees",
-      "contingency": "If Email Service is unavailable, pivot to alternative provider (SendGrid free tier confirmed sufficient for 40 scheduled reports/day) or defer scheduled delivery to Phase 3"
+      "trigger": "Open Question #1 remains unanswered at Phase 2 kickoff; SSO provider sandbox not accessible to development team by end of week 1",
+      "mitigation": "Confirm SSO provider identity and request sandbox/test environment access immediately (week 0); validate API documentation completeness and required grant flows (OAuth 2.0, SAML, etc.) before Phase 2 sprint planning; assign Backend Developer to SSO integration spike in Phase 1 to de-risk provider compatibility",
+      "contingency": "If SSO provider sandbox is unavailable, establish direct escalation path to SSO vendor support; prepare alternative authentication approach (temporary API key or test account) to unblock Phase 2 development; if provider does not support required flows, evaluate alternative SSO provider (Okta, Azure AD, Google Workspace) and re-estimate integration effort"
     },
     {
       "id": "R2",
       "category": "Integration",
-      "description": "If PagerDuty integration scope includes custom escalation policy, on-call scheduling, or incident lifecycle management beyond webhook ingestion, then Phase 2 scope expands by 1–2 weeks and alert response time metric (< 1 hour) may become unachievable.",
+      "description": "If email service (SMTP, SendGrid, AWS SES) is not provisioned and accessible before Phase 2 begins, then UC5 (Schedule Report Delivery) cannot be implemented on schedule. Procurement and integration of a new email service requires 1–2 weeks; if existing service has delivery SLA < 99%, success metric '90% of scheduled reports delivered on time' becomes unachievable without service swap or metric re-negotiation.",
       "probability": "MEDIUM",
       "impact": "HIGH",
       "score": "HIGH",
-      "trigger": "PagerDuty integration requirements clarified in Sprint 0 and scope exceeds webhook-based alert delivery",
-      "mitigation": "Confirm PagerDuty integration scope is webhook-only in week 1 discovery; validate PagerDuty API documentation and test webhook delivery in sandbox environment",
-      "contingency": "If PagerDuty scope is broader, descope custom escalation policy to Phase 3 and deliver webhook-only alerts in Phase 2"
+      "trigger": "Open Question #2 remains unanswered at Phase 2 kickoff; email service not provisioned or SLA < 99% confirmed by end of week 1",
+      "mitigation": "Confirm email service availability and SLA (target ≥ 99%) immediately (week 0); if not provisioned, evaluate and procure service (SendGrid, AWS SES, or internal SMTP) before Phase 2 sprint planning; validate email delivery rate and latency in test environment; document email service API and rate limits for backend integration",
+      "contingency": "If email service is unavailable, procure alternative service and integrate in Phase 2 (adds 1–2 weeks); if SLA is < 99%, re-negotiate success metric '90% on-time delivery' with stakeholders or implement retry/fallback logic to improve delivery reliability"
     },
     {
       "id": "R3",
-      "category": "Technical",
-      "description": "If PostgreSQL database performance cannot support 15-minute refresh cadence due to data volume or query complexity, then real-time KPI widget feature (UC2) fails and team must architect data warehouse (Snowflake, BigQuery) or streaming pipeline (Kafka, Fivetran), adding 3–4 weeks to Phase 2 and $10K–$20K to budget.",
+      "category": "Scope",
+      "description": "If PagerDuty integration scope is not explicitly defined (threshold-based alerts only vs. custom escalation policies, on-call schedule management, incident lifecycle automation), then backend development effort could increase 40–60% if stakeholders expect advanced workflows. Scope ambiguity discovered mid-Phase 2 causes rework, backlog re-prioritization, and timeline slip of 1–2 weeks.",
       "probability": "MEDIUM",
       "impact": "HIGH",
       "score": "HIGH",
-      "trigger": "Database performance testing in Sprint 0 shows query latency > 2 minutes or data volume > 100M rows prevents 15-minute refresh",
-      "mitigation": "Run database performance baseline in week 1; validate 15-minute refresh is achievable with polling or scheduled queries on current PostgreSQL schema; document query execution plans",
-      "contingency": "If PostgreSQL cannot support 15-minute refresh, pivot to data warehouse (BigQuery) or implement materialized views with incremental refresh strategy"
+      "trigger": "Open Question #3 remains unanswered at Phase 2 kickoff; stakeholder feedback during Phase 2 sprint review reveals expectation of custom escalation policies or incident automation not in original scope",
+      "mitigation": "Confirm PagerDuty integration scope explicitly in Phase 1 (week 0–1): threshold-based alert triggering (UC6, UC7) only, no custom escalation policies or on-call automation; document scope boundary in acceptance criteria for T13, T14, T15, T18, T21; obtain written stakeholder sign-off on PagerDuty scope before Phase 2 sprint planning",
+      "contingency": "If stakeholders request custom escalation policies or incident automation mid-Phase 2, evaluate effort (40–60% increase) and present timeline/budget trade-off to leadership; prioritize threshold-based alerts (MVP) and defer advanced workflows to Phase 4 or post-launch backlog"
     },
     {
       "id": "R4",
-      "category": "Scope",
-      "description": "If Product Owner is not formally assigned or available for backlog prioritization and scope trade-offs during Phase 2–3 sprints, then sprint cycles will stall on scope decisions and timeline will slip.",
+      "category": "Resource",
+      "description": "If Product Manager is unavailable or not actively engaged during Phase 2–3 sprint cycles, then backlog prioritization, sprint planning, and stakeholder feedback loops will be delayed. Hybrid SDLC requires active PO engagement for adaptive sprint cycles; undefined or part-time PO role causes decision delays, sprint planning friction, and scope creep.",
       "probability": "MEDIUM",
       "impact": "HIGH",
       "score": "HIGH",
-      "trigger": "Product Owner not named in project plan or unavailable for sprint planning ceremonies (> 1 day/week)",
-      "mitigation": "Assign dedicated Product Owner (80% allocation minimum) before Sprint 1 kickoff; establish sprint planning cadence (weekly backlog refinement, bi-weekly sprint planning)",
-      "contingency": "If PO is unavailable, escalate to project sponsor for interim decision-making authority; defer scope trade-offs to steering committee"
+      "trigger": "Open Question #4 remains unanswered at Phase 2 kickoff; Product Manager unavailable for sprint planning, daily standups, or sprint reviews during Phase 2–3; competing priorities documented for PM role",
+      "mitigation": "Confirm Product Manager is dedicated (100% allocation) to this project for Phases 2–3 (weeks 3–12); establish sprint cadence (2-week sprints) with fixed sprint planning, daily standup, and sprint review times; assign PM as single decision-maker for scope changes and backlog prioritization; document PM availability and escalation path for urgent decisions",
+      "contingency": "If PM becomes unavailable mid-project, designate backup decision-maker (e.g., Customer Success Team lead or Sales leader) with authority to approve scope changes and prioritize backlog; establish asynchronous decision-making process (Slack, email) for non-urgent decisions to minimize sprint planning delays"
     },
     {
       "id": "R5",
-      "category": "Resource",
-      "description": "If Backend Developer or Product Manager is pulled off critical path due to competing priorities or shared allocation, then critical path tasks (T1, T3, T5, T8, T11, T14, T17, T20, T23) will slip and project deadline (2025-04-10) will be missed.",
+      "category": "Technical",
+      "description": "If the existing customer analytics dashboard codebase has unknown technical debt, low test coverage, or architectural constraints not visible in the brief, then Phase 1 discovery could reveal integration complexity or refactoring needs that compress Phase 2 timeline. Unknown codebase state could add 1–2 weeks of unplanned work.",
       "probability": "MEDIUM",
-      "impact": "HIGH",
-      "score": "HIGH",
-      "trigger": "Backend Developer or PM allocated to competing project or reduced below 80% allocation during Phase 2–3",
-      "mitigation": "Secure written commitment from resource manager that Backend Developer and PM are 80% dedicated to this project through 2025-04-10; document in project charter",
-      "contingency": "If resource is pulled, escalate to steering committee for re-prioritization; identify backup Backend Developer from bench or contractor pool"
+      "impact": "MEDIUM",
+      "score": "MEDIUM",
+      "trigger": "Phase 1 codebase review (T1, T2, T3) reveals test coverage < 50%, significant technical debt, or architectural constraints that affect real-time reporting or alerting integration; refactoring effort estimated > 5 days",
+      "mitigation": "Conduct comprehensive codebase health assessment in Phase 1 (T1, T2): measure test coverage, identify technical debt, document architectural constraints affecting real-time data refresh, alerting, and email scheduling; prioritize refactoring work before Phase 2 feature development; allocate 2–3 days in Phase 1 for critical refactoring if needed",
+      "contingency": "If Phase 1 reveals significant technical debt (> 1 week refactoring), re-negotiate Phase 2 scope with stakeholders: defer non-critical features (e.g., custom report filters) to Phase 4 or post-launch; compress Phase 2 timeline by reducing feature scope or extending deadline by 1–2 weeks"
     },
     {
       "id": "R6",
-      "category": "Technical",
-      "description": "If SSO Provider integration (A5) requires custom configuration or has undocumented API, then authentication feature (UC1) will be delayed and all downstream use cases (UC2–UC8) will be blocked.",
-      "probability": "LOW",
-      "impact": "HIGH",
-      "score": "MEDIUM",
-      "trigger": "SSO Provider API documentation unavailable or custom configuration required beyond standard OIDC/SAML setup",
-      "mitigation": "Confirm SSO Provider is existing integration with documented API in week 1; validate OIDC/SAML configuration is already in place and requires no custom build",
-      "contingency": "If SSO requires custom build, defer to Phase 1 extension or use temporary local authentication for Phase 2 development"
-    },
-    {
-      "id": "R7",
-      "category": "Technical",
-      "description": "If custom report generation (UC3) cannot be completed in < 5 minutes due to query complexity or data volume, then success metric is unachievable and CSM adoption will be low.",
-      "probability": "MEDIUM",
-      "impact": "MEDIUM",
-      "score": "MEDIUM",
-      "trigger": "Performance testing in Sprint 0 shows report generation latency > 5 minutes for typical CSM query",
-      "mitigation": "Establish performance baseline in week 1; implement query optimization (indexing, caching) and set < 5 minute SLA in Sprint 1 definition of done",
-      "contingency": "If < 5 minute target is unachievable, negotiate extended SLA (< 10 minutes) with CSM stakeholders or implement async report generation with email delivery"
-    },
-    {
-      "id": "R8",
-      "category": "Scope",
-      "description": "If stakeholder expectations for real-time data refresh diverge from 15-minute cadence assumption, then scope will expand and timeline will slip.",
-      "probability": "MEDIUM",
-      "impact": "MEDIUM",
-      "score": "MEDIUM",
-      "trigger": "Stakeholder feedback in Sprint 1 or 2 requests sub-5-minute refresh or continuous streaming",
-      "mitigation": "Validate 15-minute refresh cadence with CSM and Sales leadership in week 1 discovery; document in requirements and get written sign-off",
-      "contingency": "If stakeholders require faster refresh, descope other features or extend timeline; escalate to steering committee for trade-off decision"
-    },
-    {
-      "id": "R9",
-      "category": "Technical",
-      "description": "If Frontend Developer (60% allocation) is insufficient to deliver UI for all use cases (UC1–UC8) in parallel with backend development, then UI delivery will slip and integration testing will be delayed.",
-      "probability": "MEDIUM",
-      "impact": "MEDIUM",
-      "score": "MEDIUM",
-      "trigger": "Frontend Developer reports > 80% utilization or UI tasks accumulate > 2 sprints of backlog",
-      "mitigation": "Prioritize UI tasks by use case criticality (UC2, UC3, UC5, UC6 first); use component library and design system to accelerate UI development",
-      "contingency": "If Frontend Developer is overallocated, hire contract UI developer or defer non-critical UI polish (UC4 export formatting) to Phase 3"
-    },
-    {
-      "id": "R10",
-      "category": "Compliance",
-      "description": "If data retention policy (2 years) is not enforced in code or database, then compliance audit will fail and system may violate data governance requirements.",
-      "probability": "LOW",
-      "impact": "HIGH",
-      "score": "MEDIUM",
-      "trigger": "Data retention enforcement not implemented in Sprint 1 or compliance review identifies missing controls",
-      "mitigation": "Implement automated data retention policy (delete records > 2 years old) in Sprint 1; document in architecture decision record and validate in compliance review",
-      "contingency": "If retention policy is not enforced, implement manual data cleanup process or extend retention period pending compliance approval"
-    },
-    {
-      "id": "R11",
       "category": "Schedule",
-      "description": "If critical path tasks (T1, T3, T5, T8, T11, T14, T17, T20, T23) slip by > 3 days each, then project deadline (2025-04-10) will be missed.",
+      "description": "If any critical path task (T1, T2, T3, T6, T11, T16, T21, T26) slips by more than 1 day, then the entire project timeline compresses, reducing buffer for Phase 3 UAT and Phase 4 deployment. 12-week deadline with 4-person team and zero slack on critical path leaves no margin for integration issues, external dependency delays, or rework.",
       "probability": "MEDIUM",
       "impact": "HIGH",
       "score": "HIGH",
-      "trigger": "Any critical path task completes > 3 days late or dependency on external system (Email Service, PagerDuty, SSO) is not resolved by planned date",
-      "mitigation": "Establish weekly critical path review in sprint ceremonies; identify blockers early and escalate to steering committee; maintain 5-day schedule buffer",
-      "contingency": "If critical path slips > 3 days, descope Phase 2 features (UC5, UC6) to Phase 3 and deliver Phase 1 + UC2, UC3, UC4 by deadline"
+      "trigger": "Any critical path task (T1, T2, T3, T6, T11, T16, T21, T26) slips by > 1 day; external dependency (SSO provider, email service, PagerDuty) delivery delayed; Phase 2 sprint review reveals integration rework needed",
+      "mitigation": "Establish daily standup discipline for critical path tasks; assign Backend Developer and Product Manager as dedicated (not shared) resources for Phases 1–4; implement risk-driven sprint planning: prioritize de-risking SSO, email, and PagerDuty integrations in Phase 2 weeks 1–2; maintain 2–3 day buffer in Phase 3 for UAT rework",
+      "contingency": "If critical path task slips > 1 day, immediately escalate to Product Manager and leadership; evaluate scope reduction (defer Phase 4 features to post-launch) or timeline extension (push deadline to 2025-04-24); activate contingency resources (contractor backend developer) if slip exceeds 2 days"
+    },
+    {
+      "id": "R7",
+      "category": "Compliance",
+      "description": "If data retention policy (2 years) is not implemented in the database schema and data lifecycle management, then the system may violate internal compliance requirements or create unplanned operational overhead. Data retention enforcement is not explicitly mapped to a use case or task; implementation details are undefined.",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "score": "MEDIUM",
+      "trigger": "Phase 1 requirements review reveals data retention policy is not implemented in current dashboard; Phase 2 backend development does not include data lifecycle management (archival, deletion) tasks; Phase 3 UAT discovers compliance gap",
+      "mitigation": "Define data retention implementation approach in Phase 1 (T2, T3): database schema design for data archival/deletion, scheduled job for data lifecycle management, audit logging for compliance; assign Backend Developer to implement data retention in Phase 2 (add 2–3 days to T11 or T16); validate data retention enforcement in Phase 3 UAT",
+      "contingency": "If data retention is not implemented by Phase 3 UAT, defer to post-launch backlog and implement in Phase 4 or as operational task; document compliance risk and obtain stakeholder acceptance of deferred implementation"
     }
   ],
   "risk_use_case_mapping": {
     "R1": [
-      "UC5"
-    ],
-    "R2": [
-      "UC6",
-      "UC7"
-    ],
-    "R3": [
-      "UC2"
-    ],
-    "R4": [
-      "UC3",
-      "UC5",
-      "UC6"
-    ],
-    "R5": [
+      "UC1",
       "UC2",
       "UC3",
       "UC5",
       "UC6"
     ],
-    "R6": [
-      "UC1"
+    "R2": [
+      "UC5"
     ],
-    "R7": [
-      "UC3"
+    "R3": [
+      "UC6",
+      "UC7"
     ],
-    "R8": [
-      "UC2"
-    ],
-    "R9": [
+    "R4": [
       "UC1",
       "UC2",
       "UC3",
       "UC4",
       "UC5",
       "UC6",
-      "UC7",
-      "UC8"
+      "UC7"
     ],
-    "R10": [
-      "UC2",
-      "UC3",
-      "UC5"
-    ],
-    "R11": [
+    "R5": [
       "UC2",
       "UC3",
       "UC5",
-      "UC6"
+      "UC6",
+      "UC7"
+    ],
+    "R6": [
+      "UC1",
+      "UC2",
+      "UC3",
+      "UC4",
+      "UC5",
+      "UC6",
+      "UC7"
+    ],
+    "R7": [
+      "UC3",
+      "UC5"
     ]
   },
   "critical_path_risk_flags": [
-    "T1",
+    "T2",
     "T3",
-    "T5",
-    "T8",
+    "T6",
     "T11",
-    "T14",
-    "T17",
-    "T20",
-    "T23"
+    "T16",
+    "T21"
   ]
 }

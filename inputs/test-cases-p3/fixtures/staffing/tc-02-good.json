@@ -9,17 +9,17 @@
         4,
         5
       ],
-      "total_hours": 58.0,
-      "allocation_percent": 11.6,
+      "total_hours": 66.0,
+      "allocation_percent": 13.2,
       "skills_required": [
-        "Backlog prioritization",
+        "Agile/Hybrid SDLC",
         "Stakeholder management",
-        "Hybrid SDLC (Scrum + Kanban)",
+        "Backlog prioritization",
         "Sprint planning",
-        "UAT coordination"
+        "Risk escalation"
       ],
       "critical_path": true,
-      "notes": "PM is critical path owner for T6 (stakeholder validation), T24 (UAT prep), T29 (documentation), T30 (go-live), T32 (sign-off). Must be 80% dedicated during Phase 2-3 sprints per R5 mitigation. Allocation 11.6% is within 10-15% PM oversight rule (500 total hours × 10-15% = 50-75h; 58h is within range)."
+      "notes": "Dedicated PM required for Phases 2-3 sprint cycles (R4 mitigation). Owns T2, T3, T4, T16, T23, T26, T27, T30. Must be 100% available for sprint planning, daily standups, and stakeholder feedback. Critical path tasks: T2, T3, T16, T26. No shared allocation."
     },
     {
       "role": "Backend Developer",
@@ -30,197 +30,194 @@
         4,
         5
       ],
-      "total_hours": 280.0,
-      "allocation_percent": 56.0,
+      "total_hours": 247.0,
+      "allocation_percent": 49.4,
       "skills_required": [
         "Python/Django",
-        "PostgreSQL query optimization",
+        "PostgreSQL",
         "REST API design",
-        "Email Service integration (SMTP/SendGrid/AWS SES)",
-        "PagerDuty webhook integration",
-        "SSO/OIDC configuration",
-        "Data retention policy implementation",
-        "Error handling & retry logic"
+        "SSO integration (OAuth 2.0/SAML)",
+        "Email service integration",
+        "PagerDuty API",
+        "Data lifecycle management",
+        "Security review"
       ],
       "critical_path": true,
-      "notes": "Backend Developer owns critical path tasks T1, T3, T5, T8, T11, T14, T17, T20, T23 (9 tasks, 57 days zero slack). Must be 80% dedicated Phase 2-3 per R5 mitigation. Allocation 56% reflects actual hours; however, critical path concentration requires full-time focus during Phases 2-3 (weeks 2-7). Flag: If allocation appears low, it is because total project hours (500h) include QA and PM overhead; Backend Developer's actual sprint capacity is higher. Recommend scheduling Backend Developer at 80% minimum during critical path execution."
+      "notes": "Dedicated Backend Developer required for critical path tasks: T1, T6, T11, T21 (zero slack). Owns T1, T5, T6, T7, T9, T10, T11, T13, T15, T20, T24, T25, T28. Must be full-time Phases 1-4. Handles SSO integration (R1 de-risk), email scheduling (R2 de-risk), PagerDuty integration (R3 scope), codebase audit (R5 mitigation), and data retention (R7 mitigation). No shared allocation."
     },
     {
       "role": "Frontend Developer",
       "phase_involvement": [
-        1,
         2,
         3,
         4
       ],
-      "total_hours": 110.0,
-      "allocation_percent": 22.0,
+      "total_hours": 58.0,
+      "allocation_percent": 11.6,
       "skills_required": [
         "React 18",
         "TypeScript",
         "REST API consumption",
+        "UI/UX implementation",
         "Form validation",
-        "Data binding & state management",
-        "PDF/CSV export UI",
-        "Error state handling",
-        "Accessibility (WCAG 2.1)"
+        "PDF/CSV export UI"
       ],
-      "critical_path": true,
-      "notes": "Frontend Developer owns critical path task T8 (real-time KPI widget UI) and contributes to T4, T9, T12, T14. Allocation 22% is conservative; actual sprint utilization will be 60-70% during Phase 2 per project plan. Risk R9 flags potential overallocation if UI tasks accumulate > 2 sprints backlog. Mitigation: Prioritize UC2, UC3, UC5, UC6 UI first; use component library. Contingency: If overallocated, hire contract UI developer or defer UC4 export polish to Phase 3."
+      "critical_path": false,
+      "notes": "Owns T8, T12, T14. Has 2-4 days slack on UI tasks (T8, T12, T14). Can absorb minor delays without impacting critical path. Allocation 11.6% allows capacity for other projects or support tasks."
     },
     {
       "role": "QA Engineer",
       "phase_involvement": [
-        1,
         3,
-        4
+        4,
+        5
       ],
-      "total_hours": 124.0,
-      "allocation_percent": 24.8,
+      "total_hours": 108.0,
+      "allocation_percent": 21.6,
       "skills_required": [
-        "Test automation (Selenium/Cypress)",
-        "Performance testing (load, latency)",
+        "Test automation",
+        "Email delivery testing",
+        "Alert threshold testing",
         "Regression testing",
-        "UAT coordination",
-        "SQL for data validation",
-        "API testing (Postman/REST Client)",
-        "Defect triage & severity assessment"
+        "Security testing",
+        "Load testing",
+        "UAT facilitation"
       ],
       "critical_path": true,
-      "notes": "QA Engineer owns critical path tasks T17 (end-to-end integration test), T20 (regression test), and contributes to T2, T22, T25, T27. Total QA hours (124h) = 24.8% of total project hours (500h). Development effort (Backend 280h + Frontend 110h = 390h). QA minimum per PMBOK 8.2 = 390h × 25% = 97.5h. Actual QA allocation 124h > 97.5h minimum: PASSES QA staffing rule. No QA under-allocation risk."
+      "notes": "Owns T17, T18, T19, T21, T22, T29. Critical path task: T21 (zero slack). QA effort = 108h / 247h dev = 43.7% of backend dev hours, exceeds 25% minimum (PMBOK 8.2). Allocation 21.6% is sustainable. Must conduct comprehensive testing: email reliability (R2 mitigation), alert edge cases (R3 validation), regression suite (R5 validation), end-to-end integration (R6 mitigation), data retention compliance (R7 validation)."
     }
   ],
   "open_questions": [
     {
       "priority": 1,
-      "question": "Is the Email Service (A3) an existing internal or third-party SMTP service with documented API and SLA, or does it require custom build? (Assumption A1 validation)",
+      "question": "Which SSO provider is in use (Okta, Azure AD, Google Workspace, other), and is sandbox/test environment documentation and API access confirmed for the development team?",
       "urgency": "Before build",
-      "impact_if_unanswered": "If email service does not exist or requires custom build, Phase 2 scope expands by 1-2 weeks (40-80 hours); if SLA is undefined, 90% on-time delivery metric becomes unachievable. Risk R1 (HIGH) depends on this answer."
+      "impact_if_unanswered": "Authentication integration (T6, UC1) cannot proceed; blocks Phase 2 development start; 2-4 week timeline slip if provider docs incomplete or sandbox unavailable; potential re-architecture if provider does not support required grant flows (R1)."
     },
     {
       "priority": 2,
-      "question": "What is the scope of PagerDuty integration: webhook-based alert delivery only, or does it include custom escalation policy, on-call scheduling, or incident lifecycle management? (Assumption A2 validation)",
+      "question": "Is an email service (SMTP, SendGrid, AWS SES, other) already provisioned and accessible, and what is its delivery SLA (target ≥99%)?",
       "urgency": "Before build",
-      "impact_if_unanswered": "If PagerDuty integration scope is broader than webhook ingestion, Phase 2 scope expands by 1-2 weeks (30-60 hours); alert response time metric (< 1 hour) may require PagerDuty SLA validation. Risk R2 (HIGH) depends on this answer."
+      "impact_if_unanswered": "Email scheduling (T11, UC5) cannot proceed on schedule; if not provisioned, procurement delay 1-2 weeks; if SLA <99%, success metric '90% on-time delivery' becomes unachievable without service swap or metric re-negotiation (R2)."
     },
     {
       "priority": 3,
-      "question": "Can the current PostgreSQL database support 15-minute refresh cadence with polling or scheduled queries, or does the team need to architect a data warehouse or streaming pipeline? (Assumption A3 validation)",
+      "question": "For PagerDuty integration, are custom escalation policies, on-call schedule management, or incident lifecycle automation required, or is the scope limited to threshold-based alert triggering and notification?",
       "urgency": "Before build",
-      "impact_if_unanswered": "If database performance is poor or data volume is high, team must pivot to data warehouse (Snowflake, BigQuery) or streaming architecture, adding 3-4 weeks to Phase 2 and increasing budget by $10K-$20K. Risk R3 (HIGH) depends on this answer."
+      "impact_if_unanswered": "Scope ambiguity on PagerDuty (T13, T14, T15, UC6, UC7) could add 40-60% backend effort if custom workflows required; discovered mid-Phase 2 causes rework and 1-2 week timeline slip (R3)."
     },
     {
       "priority": 4,
-      "question": "Is a dedicated Product Owner (80% allocation minimum) formally assigned and available for sprint planning, backlog refinement, and scope trade-offs during Phase 2-3 sprints?",
+      "question": "Is the Product Manager confirmed as 100% dedicated to this project for Phases 2-3 (weeks 3-12), with no competing priorities or shared allocation?",
       "urgency": "Before build",
-      "impact_if_unanswered": "Hybrid SDLC requires clear PO ownership for sprint planning and backlog refinement; without this, sprint cycles will stall on scope decisions. Risk R4 (HIGH) and R5 (HIGH) depend on this answer."
+      "impact_if_unanswered": "Hybrid SDLC requires active PO engagement; undefined PM availability causes sprint planning delays, decision delays, and scope creep (R4). PM must own backlog prioritization and stakeholder feedback loops."
     },
     {
       "priority": 5,
-      "question": "Is the Backend Developer (280 hours, critical path owner) formally committed to 80% allocation through 2025-04-10, with written sign-off from resource manager?",
+      "question": "What is the current state of the existing customer analytics dashboard codebase (test coverage %, technical debt inventory, architectural constraints affecting real-time refresh, alerting, email scheduling)?",
       "urgency": "Before build",
-      "impact_if_unanswered": "If Backend Developer is pulled off critical path due to competing priorities, critical path tasks will slip and project deadline will be missed. Risk R5 (HIGH) depends on this answer."
+      "impact_if_unanswered": "Unknown codebase state could reveal integration complexity or refactoring needs not visible in brief; discovered during Phase 1 (T1) could compress Phase 2 timeline by 1-2 weeks (R5)."
     }
   ],
   "pm_confidence_score": {
-    "score": 68.0,
+    "score": 62.0,
     "deductions": [
       {
         "amount": 5.0,
-        "reason": "Assumption A1 (Email Service exists with documented API/SLA) — unvalidated, HIGH risk if wrong"
+        "reason": "Assumption A1 (SSO provider operational and accessible) — HIGH risk if wrong; blocks critical path T6"
       },
       {
         "amount": 5.0,
-        "reason": "Assumption A2 (PagerDuty scope is webhook-only) — unvalidated, MEDIUM risk if wrong"
+        "reason": "Assumption A2 (PagerDuty scope limited to threshold alerts) — MEDIUM risk if wrong; could add 40-60% backend effort"
       },
       {
         "amount": 5.0,
-        "reason": "Assumption A3 (PostgreSQL supports 15-minute refresh) — unvalidated, MEDIUM risk if wrong"
-      },
-      {
-        "amount": 10.0,
-        "reason": "Risk R1 (Email Service integration) — HIGH score, blocks UC5 success metric"
-      },
-      {
-        "amount": 10.0,
-        "reason": "Risk R2 (PagerDuty integration scope) — HIGH score, blocks UC6/UC7 success metric"
-      },
-      {
-        "amount": 10.0,
-        "reason": "Risk R3 (PostgreSQL performance) — HIGH score, blocks UC2 success metric and may require architecture pivot"
-      },
-      {
-        "amount": 10.0,
-        "reason": "Risk R4 (Product Owner availability) — HIGH score, blocks sprint planning and scope decisions"
-      },
-      {
-        "amount": 10.0,
-        "reason": "Risk R5 (Backend Developer critical path allocation) — HIGH score, blocks critical path execution"
-      },
-      {
-        "amount": 10.0,
-        "reason": "Risk R11 (Critical path schedule slip) — HIGH score, deadline at risk if any critical task slips > 3 days"
+        "reason": "Assumption A3 (Email service provisioned with ≥99% SLA) — MEDIUM risk if wrong; blocks UC5 and success metric"
       },
       {
         "amount": 5.0,
-        "reason": "SDLC approach is Hybrid (Scrum + Kanban) — requires active PO and sprint discipline; higher coordination overhead"
+        "reason": "SDLC approach is Hybrid — requires active PO engagement and adaptive sprint cycles; adds complexity vs. pure Waterfall"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R1 (SSO integration) — critical path blocker if provider unavailable"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R2 (Email service) — blocks UC5 and success metric if not provisioned"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R3 (PagerDuty scope ambiguity) — could add 40-60% backend effort mid-Phase 2"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R4 (PM availability) — Hybrid SDLC requires dedicated PO; undefined PM role causes sprint friction"
+      },
+      {
+        "amount": 5.0,
+        "reason": "HIGH risk R6 (Critical path schedule) — 12-week deadline with 4-person team and zero slack on critical path; no margin for integration issues or rework"
       }
     ],
-    "interpretation": "PM confidence score is 68.0 because the project has well-defined requirements (HIGH input quality), clear success metrics, and a realistic 12-week timeline with 15% buffer. However, five HIGH-scored risks (R1, R2, R3, R4, R5, R11) create significant execution uncertainty: Email Service and PagerDuty integration scope are unvalidated, PostgreSQL performance is unproven for 15-minute refresh, Product Owner availability is not confirmed, and Backend Developer critical path allocation is not secured. Three unvalidated assumptions (A1, A2, A3) further reduce confidence. Hybrid SDLC requires active stakeholder engagement and sprint discipline, which depends on PO availability (R4). Mitigation: Resolve open questions 1-5 in Week 1 discovery before Sprint 1 kickoff; secure written resource commitments for Backend Developer and PM; validate Email Service, PagerDuty, and PostgreSQL in sandbox environment."
+    "interpretation": "PM confidence score is 62.0 because the project has well-defined requirements (HIGH input quality, Hybrid SDLC with predictive phase structure), a named 4-person team with direct stack experience, and clear success metrics. However, nine HIGH or MEDIUM risks create significant uncertainty: three critical external dependencies (SSO provider, email service, PagerDuty scope) are unconfirmed and could block Phase 2 development or add 40-60% backend effort if scope expands; PM availability is undefined despite Hybrid SDLC requiring active PO engagement; critical path has zero slack with 12-week deadline, leaving no margin for integration delays or rework; and codebase health is unknown. Confidence is further reduced by three assumptions (A1, A2, A3) with HIGH/MEDIUM risk if wrong. Mitigation: confirm all five open questions before Phase 2 kickoff, establish daily standup discipline for critical path tasks, and maintain 2-3 day buffer in Phase 3 for UAT rework."
   },
   "project_viability": {
     "viability_status": "AT_RISK",
     "gap_type": "SCHEDULE",
-    "gap_amount": 0.0,
-    "gap_percent": 0.0,
-    "analysis": "Project deadline is 2025-04-10 (12 weeks from 2025-01-10). Critical path duration is 57 days (8.1 weeks) with 15% buffer applied = 9.3 weeks total. Deadline allows 12 weeks; critical path + buffer = 9.3 weeks. Slack = 12 - 9.3 = 2.7 weeks (19 days). Project is within deadline but AT_RISK because: (1) Five HIGH-scored risks (R1, R2, R3, R4, R5, R11) can each cause 1-2 week slips; (2) Critical path has zero slack on 9 tasks (T1, T3, T5, T8, T11, T14, T17, T20, T23); (3) Any critical path task slip > 3 days triggers R11 mitigation (descope Phase 2 features). If any two HIGH risks materialize (e.g., Email Service requires custom build + PostgreSQL performance pivot), critical path will exceed deadline. Contingency per R11: Descope UC5 (scheduled delivery) and UC6 (alerting) to Phase 3; deliver UC2 (real-time KPI), UC3 (custom report), UC4 (export) by 2025-04-10.",
+    "gap_amount": 1.12,
+    "gap_description": "Critical path duration (56 days = 11.2 weeks) is 93% of deadline (12 weeks). With 15% buffer applied in project plan, total duration is 12.88 weeks, exceeding deadline by 0.88 weeks (6.2 days). Project is AT_RISK if any critical path task slips >1 day or external dependencies (SSO, email, PagerDuty) are delayed.",
     "scoping_options": [
       {
         "option": 1,
-        "title": "Descope Phase 2 integrations (UC5, UC6) to Phase 3",
-        "description": "Deliver Phase 1 (discovery) + UC2 (real-time KPI), UC3 (custom report), UC4 (export) by 2025-04-10. Defer UC5 (scheduled delivery) and UC6 (alerting) to Phase 3 post-launch. Reduces Phase 2 scope by ~50 hours (T12, T13, T14, T15). Removes Email Service (R1) and PagerDuty (R2) integration risk from critical path. Allows 4-week Phase 2 instead of 4.5 weeks.",
-        "effort_reduction_hours": 50.0,
-        "timeline_reduction_weeks": 0.5,
-        "risk_mitigation": "Eliminates R1 and R2 from critical path; reduces critical path duration to 7.6 weeks + 15% buffer = 8.7 weeks. Provides 3.3-week schedule buffer. Trade-off: CSMs lose scheduled delivery and alerting at launch; adoption may be lower initially."
+        "title": "Defer Phase 4 UAT and Load Testing to Post-Launch",
+        "description": "Move T23 (UAT with CSMs), T25 (load testing) to post-launch backlog. Retain T24 (bug fixes), T26 (documentation), T27 (deployment checklist). Reduces Phase 4 from 2.5 weeks to 1.5 weeks. Total project duration: 11.88 weeks (within deadline). Risk: UAT feedback discovered post-launch may require hotfixes; load testing deferred increases production risk.",
+        "effort_reduction_hours": 28.0,
+        "timeline_reduction_weeks": 1.0,
+        "risk_level": "MEDIUM"
       },
       {
         "option": 2,
-        "title": "Add contract Backend Developer (50% allocation) for Phase 2-3",
-        "description": "Hire contract Backend Developer at 50% allocation (140 hours) to share critical path load with primary Backend Developer. Reduces primary Backend Developer allocation from 56% to 42% and provides capacity buffer for risk mitigation. Estimated cost: $35K-$50K (140 hours × $250-$350/hour contractor rate). Allows parallel execution of T7, T10, T13, T15 (Email Service, PagerDuty, report generation, alert engine).",
-        "effort_reduction_hours": 0.0,
-        "timeline_reduction_weeks": 0.5,
-        "risk_mitigation": "Reduces critical path duration by 0.5 weeks through parallelization. Mitigates R5 (Backend Developer overallocation) and provides contingency capacity if primary developer is pulled off project. Trade-off: Increases budget by $35K-$50K; requires onboarding time (3-5 days)."
+        "title": "Reduce PagerDuty Integration Scope to MVP (Threshold Alerts Only)",
+        "description": "Defer custom escalation policies, on-call automation, and advanced workflows to Phase 4 or post-launch. Reduces T13, T14, T15, T18 effort by 30% (12 hours). Reduces Phase 2 from 4.5 weeks to 4.2 weeks. Total project duration: 12.2 weeks (within deadline with 0.2-week buffer). Risk: Stakeholders may expect advanced PagerDuty workflows; scope creep if expectations not managed.",
+        "effort_reduction_hours": 12.0,
+        "timeline_reduction_weeks": 0.3,
+        "risk_level": "LOW"
       },
       {
         "option": 3,
-        "title": "Extend deadline to 2025-05-10 (16 weeks)",
-        "description": "Request 4-week deadline extension to 2025-05-10. Provides 16-week total timeline vs. 12 weeks. Critical path (9.3 weeks) + buffer = 10.7 weeks; slack = 5.3 weeks (37 days). Eliminates schedule risk entirely. Allows sequential execution of Phase 2 features without parallelization pressure.",
+        "title": "Add Contractor Backend Developer (0.5 FTE) for Phases 2-3",
+        "description": "Hire contractor to support critical path backend tasks (T6, T11, T15, T20, T24, T25). Reduces Backend Developer allocation from 49.4% to 35%, freeing capacity for parallel task execution. Enables Phase 2 to compress from 4.5 weeks to 3.8 weeks. Total project duration: 11.3 weeks (within deadline with 0.7-week buffer). Cost: ~$15K-20K for 12-week contractor. Risk: Contractor onboarding (1 week), knowledge transfer overhead.",
         "effort_reduction_hours": 0.0,
-        "timeline_reduction_weeks": 0.0,
-        "risk_mitigation": "Eliminates R11 (critical path schedule slip) and provides 5.3-week schedule buffer for risk mitigation. Allows Email Service and PagerDuty integration to be validated and implemented without time pressure. Trade-off: Delays CSM adoption by 4 weeks; may impact business case if CSMs are losing 10 hours/week to manual reporting."
+        "timeline_reduction_weeks": 0.7,
+        "risk_level": "MEDIUM",
+        "cost_impact": "15000-20000"
       }
     ]
   },
   "actor_role_mapping": {
     "A1": [
       "Frontend Developer",
+      "Backend Developer",
       "QA Engineer",
       "Product Manager"
     ],
     "A2": [
       "Frontend Developer",
+      "Backend Developer",
       "QA Engineer",
       "Product Manager"
     ],
     "A3": [
-      "Backend Developer"
+      "Backend Developer",
+      "QA Engineer"
     ],
     "A4": [
       "Backend Developer",
       "QA Engineer"
     ],
     "A5": [
-      "Backend Developer"
+      "Backend Developer",
+      "Product Manager"
     ]
   }
 }

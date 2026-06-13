@@ -55,7 +55,7 @@
         "A1"
       ],
       "complexity": "simple",
-      "description": "Enforce rate limits per client to prevent abuse"
+      "description": "Enforce request rate limits per client or API endpoint"
     },
     {
       "id": "UC4",
@@ -68,7 +68,7 @@
     },
     {
       "id": "UC5",
-      "name": "Load Balance Request",
+      "name": "Load Balance Requests",
       "actors": [
         "A3"
       ],
@@ -92,7 +92,7 @@
         "A2"
       ],
       "complexity": "medium",
-      "description": "Development team views gateway metrics and logs for troubleshooting"
+      "description": "Development team views gateway metrics and status"
     }
   ],
   "relationships": [

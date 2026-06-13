@@ -3,185 +3,126 @@
     {
       "id": "R1",
       "category": "Technical",
-      "description": "If technology stack for API gateway is not selected or team lacks direct experience with chosen stack, then Phase 2 implementation will require spike activities and learning curve, extending timeline by 2-3 weeks.",
+      "description": "If team lacks direct experience with the chosen API gateway framework (Kong, AWS API Gateway, Envoy, Spring Cloud Gateway), then development velocity will be 30–50% slower, timeline will slip by 4–6 weeks, and gateway architecture may require rework.",
       "probability": "HIGH",
       "impact": "HIGH",
-      "score": "HIGH",
-      "trigger": "Open question priority 1 states: 'Does the 4-engineer team have direct experience with the chosen stack?' No stack or experience level mentioned in brief.",
-      "mitigation": "Conduct technology stack selection workshop in week 1; confirm team experience with chosen framework (Go, Node.js, Python, etc.); allocate 3-5 days spike for proof-of-concept if stack is unfamiliar.",
-      "contingency": "If team lacks experience, hire external consultant for 2-week embedded mentoring during Phase 2, or extend timeline by 2-3 weeks for self-directed learning."
+      "score": "CRITICAL",
+      "trigger": "Brief states 'technology_stack: null' and 'team_composition: 4 engineers (no roles, seniority, or stack experience specified)'; open question #1 confirms uncertainty about gateway framework experience.",
+      "mitigation": "Conduct technology stack selection workshop in week 1; assign one engineer to spike on chosen framework for 3 days; document gateway architecture patterns and team capability gaps before Phase 2 kickoff.",
+      "contingency": "If velocity drops below 60% of estimate by end of Phase 1, escalate to sponsor; consider hiring external gateway specialist or extending timeline by 4 weeks."
     },
     {
       "id": "R2",
-      "category": "Scope",
-      "description": "If microservice inventory is dynamic (services scale up/down or join/leave mesh) rather than static, then gateway design must include service discovery integration (Consul, Eureka), adding 2-3 weeks and increasing complexity from TYPE_A to TYPE_D.",
+      "category": "Integration",
+      "description": "If authentication service (SSO, OAuth2, API keys, mTLS) is not production-ready, documented, or team lacks integration experience, then gateway cannot enforce consistent authentication; project scope expands or launch is blocked by 2–4 weeks.",
       "probability": "HIGH",
       "impact": "HIGH",
-      "score": "HIGH",
-      "trigger": "Open question priority 2 states: 'Is the service inventory static or dynamic?' Assumption A2 assumes static list, but brief does not confirm this.",
-      "mitigation": "Confirm service inventory scope in week 1 kickoff; if dynamic, allocate Phase 2 spike (3-5 days) to evaluate service discovery frameworks; document decision in design spec.",
-      "contingency": "If dynamic discovery required mid-project, descope advanced load balancing (UC5) or extend Phase 2 by 2 weeks for service registry integration and testing."
+      "score": "CRITICAL",
+      "trigger": "Brief states 'Authentication service integration scope and SLA are defined and available' as assumption A1 with 'risk_if_wrong: HIGH'; open question #2 explicitly flags this as unresolved before build.",
+      "mitigation": "Confirm auth service production readiness and API documentation in week 1; schedule 2-day integration spike with auth service team; document auth flow and error handling before Phase 2.",
+      "contingency": "If auth service is not ready by end of Phase 1, implement temporary API key authentication in gateway; defer SSO/OAuth2 integration to Phase 2 post-launch."
     },
     {
       "id": "R3",
-      "category": "Technical",
-      "description": "If authentication/authorization implementation requires custom credential system instead of industry-standard OAuth 2.0 or JWT, then design, implementation, and security audit timeline extends 4-6 weeks, exceeding 4-month deadline.",
-      "probability": "MEDIUM",
+      "category": "Scope",
+      "description": "If microservice inventory, endpoint contracts, and API documentation are incomplete or undiscovered services emerge mid-project, then gateway routing rules will be incomplete at launch; post-launch service onboarding requires continuous re-scoping and 1–2 week delays per service cluster.",
+      "probability": "HIGH",
       "impact": "HIGH",
-      "score": "HIGH",
-      "trigger": "Open question priority 3 states: 'What is the authentication/authorization implementation standard?' Assumption A1 assumes OAuth 2.0/JWT, but brief does not confirm; custom auth would be a hard constraint violation.",
-      "mitigation": "Confirm authentication standard (OAuth 2.0, JWT, mTLS) with stakeholders in week 1; if OAuth 2.0/JWT, verify Authentication Service (A5) is already deployed and accessible; document in design spec.",
-      "contingency": "If custom auth required, escalate to stakeholder for scope negotiation; either descope advanced features (canary routing, weighted load balancing) or extend timeline to 5-6 months."
+      "score": "CRITICAL",
+      "trigger": "Assumption A2 states 'risk_if_wrong: MEDIUM' but brief explicitly lists 'Multiple services with inconsistent APIs' as trigger; open question #3 confirms microservice inventory is not finalized; brief does not state all services are documented.",
+      "mitigation": "Conduct service discovery audit in week 1; document all microservices, endpoint contracts, and current API versions in a shared registry; establish service onboarding checklist before Phase 2.",
+      "contingency": "If undocumented services are discovered during Phase 2, add them to backlog as post-launch work; do not block gateway launch; implement service discovery mechanism in gateway to auto-detect new services."
     },
     {
       "id": "R4",
       "category": "Resource",
-      "description": "If Product Owner is not assigned or unavailable for sprint planning and backlog refinement, then Hybrid SDLC phase gates cannot be executed; Phase 2 kickoff is blocked.",
-      "probability": "MEDIUM",
+      "description": "If team size of 4 engineers is shared across other projects or roles are not clearly assigned (backend developer, integration specialist, QA, product manager), then critical path tasks will slip due to context switching and lack of dedicated ownership.",
+      "probability": "HIGH",
       "impact": "HIGH",
-      "score": "HIGH",
-      "trigger": "Open question priority 4 states: 'Who is the Product Owner responsible for backlog prioritization?' No PO named in brief or project plan.",
-      "mitigation": "Assign Product Owner before Phase 1 kickoff; confirm availability for 4-6 hours/week sprint planning, backlog refinement, and stakeholder communication; document in RACI matrix.",
-      "contingency": "If PO unavailable, escalate to project sponsor for interim decision-making authority; establish weekly steering committee to unblock scope decisions."
+      "score": "CRITICAL",
+      "trigger": "Brief states 'team_size: 4' and 'team_composition: 4 engineers (no roles, seniority, or stack experience specified)'; project plan states 'Backend Developer and Integration Specialist must be dedicated (not shared)' but brief does not confirm dedication.",
+      "mitigation": "Secure written commitment from sponsor that all 4 engineers are 100% dedicated to this project for 17.4 weeks; assign explicit roles (backend lead, integration specialist, QA lead, product manager) in week 1; establish no-context-switching policy.",
+      "contingency": "If any engineer is pulled to other projects, escalate immediately to sponsor; hire contractor to backfill; do not proceed with Phase 2 until full team dedication is confirmed."
     },
     {
       "id": "R5",
-      "category": "Technical",
-      "description": "If expected request volume (RPS), concurrent user count, and SLA targets are not defined, then infrastructure sizing, load balancing algorithm choice, and caching strategy cannot be validated; Phase 3 testing may reveal performance gaps requiring re-architecture.",
+      "category": "Scope",
+      "description": "If Product Owner is not assigned or available for timely backlog prioritization and trade-off decisions between rate limiting, versioning, and load balancing features, then feature prioritization will stall and team will build all features equally, risking timeline slip if scope must be cut.",
       "probability": "MEDIUM",
       "impact": "HIGH",
       "score": "HIGH",
-      "trigger": "Open question priority 5 states: 'What is the expected request volume (RPS), concurrent user count, and SLA for gateway availability and response latency?' No performance targets in brief or constraints.",
-      "mitigation": "Conduct performance requirements workshop in week 1; define RPS, concurrent user count, latency SLA, and availability target; document in NFR specification; allocate Phase 2 spike (3-5 days) for load testing framework setup.",
-      "contingency": "If performance targets discovered late in Phase 3, conduct load testing; if targets unmet, descope features (advanced logging, detailed metrics) or extend Phase 3 by 1-2 weeks for optimization."
+      "trigger": "Open question #4 explicitly states 'Who is the Product Owner responsible for backlog prioritization and trade-off decisions?' indicating PO role is not assigned; brief does not name a PO or decision-maker.",
+      "mitigation": "Assign Product Owner and confirm 50% allocation minimum in week 1; establish weekly backlog refinement cadence; document feature priority matrix (MVP vs. Phase 2) before Phase 2 kickoff.",
+      "contingency": "If PO is unavailable, escalate to sponsor for interim decision-maker; implement feature freeze at end of Phase 1 to prevent mid-project scope creep."
     },
     {
       "id": "R6",
       "category": "Compliance",
-      "description": "If compliance or audit requirements (SOC2, HIPAA, PCI-DSS) mandate request log retention, encryption, or access controls beyond 30-day default, then data retention architecture and cost model change; Phase 3 may require re-work for audit trail implementation.",
+      "description": "If regulatory or compliance requirements (SOC2, HIPAA, PCI-DSS) exist but are not discovered until Phase 2, then logging architecture must be re-designed to include encryption, PII redaction, and longer retention; 1–2 week delay and potential re-budgeting.",
       "probability": "MEDIUM",
       "impact": "HIGH",
       "score": "HIGH",
-      "trigger": "Open question priority 6 states: 'Are there compliance or audit requirements?' Brief does not mention compliance drivers; assumption A4 assumes 30-day retention without compliance mandate.",
-      "mitigation": "Confirm compliance requirements (SOC2, HIPAA, PCI-DSS, audit trail) with stakeholders and legal in week 1; if required, allocate Phase 2 spike (3-5 days) for data warehouse integration design; document in NFR specification.",
-      "contingency": "If compliance requirements discovered in Phase 2, evaluate data warehouse integration (BigQuery, Snowflake) or extend Phase 3 by 1-2 weeks for audit trail implementation and testing."
+      "trigger": "Assumption A3 states 'risk_if_wrong: MEDIUM' and brief explicitly lists compliance as open question #5; brief states 'compliance: null' but does not confirm absence of regulatory requirements.",
+      "mitigation": "Conduct compliance requirements discovery in week 1; confirm with legal/security whether SOC2, HIPAA, PCI-DSS, or GDPR apply; document logging architecture requirements before Phase 2.",
+      "contingency": "If compliance requirements are discovered in Phase 2, implement logging pipeline with encryption and PII redaction; extend timeline by 1–2 weeks; re-budget infrastructure costs."
     },
     {
       "id": "R7",
       "category": "Integration",
-      "description": "If Authentication Service (A5) is not already deployed or accessible, then gateway cannot validate credentials; UC2 (Authenticate Request) cannot be tested or deployed until A5 is available.",
+      "description": "If external dependencies (authentication service, logging service, microservices) have undocumented APIs, rate limits, or SLAs, then gateway integration will require additional discovery and testing; 1–2 week delay per dependency.",
       "probability": "MEDIUM",
       "impact": "HIGH",
       "score": "HIGH",
-      "trigger": "Assumption A1 assumes 'Authentication Service (A5 in use case model) already deployed'; brief does not confirm A5 exists or is accessible.",
-      "mitigation": "Confirm Authentication Service deployment status and API contract in week 1; if not deployed, coordinate with A5 team for Phase 1 deployment; document API specification and test credentials.",
-      "contingency": "If A5 unavailable, mock Authentication Service in Phase 2 for development; coordinate with A5 team for integration testing in Phase 3; extend Phase 3 by 3-5 days for integration validation."
+      "trigger": "Brief lists 'external service integration points (microservices, auth service, logging service) are not fully detailed'; use case model identifies 3 external actors (A3, A4, A5) with no SLA or documentation confirmation.",
+      "mitigation": "Schedule integration discovery sessions with each external service owner in week 1; document API contracts, rate limits, SLAs, and error handling; create integration test plan before Phase 2.",
+      "contingency": "If external service documentation is incomplete, implement adapter layer in gateway to handle undocumented behavior; add integration testing buffer (1 week) to Phase 3."
     },
     {
       "id": "R8",
-      "category": "Schedule",
-      "description": "If load balancing strategy (round-robin, least-connections, weighted routing, canary) is not confirmed, then Phase 2 design will require re-work if stakeholder expectations differ from assumption A3 (round-robin); adds 1-2 weeks.",
+      "category": "Technical",
+      "description": "If load balancing strategy (stateless round-robin vs. stateful session affinity) is not confirmed before build, then gateway architecture may require rework if services require session affinity or sticky sessions; 1 week additional development.",
       "probability": "MEDIUM",
       "impact": "MEDIUM",
       "score": "MEDIUM",
-      "trigger": "Assumption A3 assumes 'round-robin or least-connections'; brief lists 'load balancing' as requirement but does not specify algorithm or traffic shaping needs.",
-      "mitigation": "Confirm load balancing strategy and traffic shaping requirements in week 1 design workshop; document in architecture specification; validate against service instance topology.",
-      "contingency": "If weighted routing or canary deployment required mid-Phase 2, descope advanced monitoring (UC7 detailed metrics) or extend Phase 2 by 1 week for algorithm implementation and testing."
+      "trigger": "Assumption A4 states 'risk_if_wrong: LOW' but brief does not confirm load balancing requirements; use case UC5 (Load Balance Requests) is in scope but strategy is undefined.",
+      "mitigation": "Confirm load balancing requirements with microservice owners in week 1; document whether stateless round-robin or stateful session affinity is required; design gateway load balancing layer accordingly.",
+      "contingency": "If stateful routing is required mid-project, implement session affinity in gateway; add 1 week to Phase 2 for distributed state management design and testing."
     },
     {
       "id": "R9",
-      "category": "Resource",
-      "description": "If any critical path role (Backend Developer, QA Engineer) becomes unavailable or is shared with competing projects, then zero-slack tasks (T1, T2, T5, T8, T11, T14, T17, T20, T23) will slip, delaying project completion beyond 4-month deadline.",
+      "category": "Schedule",
+      "description": "If Phase 1 discovery (technology stack, auth service readiness, microservice inventory, compliance requirements) is not completed by end of week 2, then Phase 2 architecture and build will be delayed; timeline slip of 1–2 weeks.",
       "probability": "MEDIUM",
       "impact": "HIGH",
       "score": "HIGH",
-      "trigger": "Project plan states: 'Backend Developer and QA Engineer must be dedicated (not shared) across all phases.' Brief does not confirm team is fully allocated or protected from competing priorities.",
-      "mitigation": "Secure written commitment from resource manager that Backend Developer and QA Engineer are 100% allocated to this project for 16 weeks; document in project charter; establish weekly resource status check.",
-      "contingency": "If resource contention occurs, escalate to project sponsor for priority negotiation; identify backup Backend Developer and QA Engineer; if unavailable, extend timeline by 2-3 weeks per resource loss."
+      "trigger": "Brief lists 5 open questions marked 'Before build' with 'urgency: Before build'; brief does not confirm discovery is complete; project plan assumes Phase 1 is 2 weeks but discovery scope is not finalized.",
+      "mitigation": "Allocate 2 full weeks to Phase 1 discovery; assign one engineer to lead discovery; create discovery checklist covering all 5 open questions; schedule gate review at end of week 2 before Phase 2 kickoff.",
+      "contingency": "If discovery is incomplete by end of week 2, extend Phase 1 by 1 week; do not start Phase 2 architecture until all open questions are resolved."
     },
     {
       "id": "R10",
-      "category": "Scope",
-      "description": "If stakeholder scope approval is not formally documented in writing, then scope creep risk increases; Phase 2 backlog refinement may reveal conflicting expectations on UC5 (Load Balance Request) or UC7 (Monitor Gateway Health) complexity.",
-      "probability": "MEDIUM",
-      "impact": "HIGH",
-      "score": "HIGH",
-      "trigger": "Brief does not mention formal written scope sign-off from stakeholders; success definition is stated but not confirmed as approved by all stakeholders.",
-      "mitigation": "Conduct scope sign-off meeting in week 1; obtain written approval (email or signature) from all stakeholders on use case list, success criteria, and out-of-scope items (e.g., no canary routing, no advanced metrics); document in project charter.",
-      "contingency": "If scope disputes arise in Phase 2, convene change control board; evaluate impact on timeline and budget; document decision and communicate to all stakeholders."
-    },
-    {
-      "id": "R11",
       "category": "Technical",
-      "description": "If request logging implementation does not account for high-volume API traffic, then logging service may become a bottleneck; UC4 (Log API Call) performance may degrade gateway throughput.",
+      "description": "If API versioning strategy (header-based, path-based, or content negotiation) is not defined before build, then gateway routing logic will require rework; 1 week additional development and testing.",
       "probability": "MEDIUM",
       "impact": "MEDIUM",
       "score": "MEDIUM",
-      "trigger": "Brief specifies 'request logging for all API calls' but does not define expected volume or logging latency SLA; open question priority 5 asks for RPS but does not address logging overhead.",
-      "mitigation": "Define logging latency SLA (e.g., <10ms per log write) in week 1 NFR specification; allocate Phase 2 spike (3-5 days) for logging framework evaluation (async queues, batching); conduct load testing in Phase 3.",
-      "contingency": "If logging becomes bottleneck in Phase 3 testing, implement async logging with message queue (Kafka, RabbitMQ) or extend Phase 3 by 3-5 days for optimization."
-    },
-    {
-      "id": "R12",
-      "category": "Technical",
-      "description": "If API versioning strategy (header-based, path-based, or content negotiation) is not confirmed, then UC6 (Support API Versioning) implementation will require re-work if stakeholder expectations differ from design assumption.",
-      "probability": "MEDIUM",
-      "impact": "MEDIUM",
-      "score": "MEDIUM",
-      "trigger": "Brief lists 'API versioning' as use case but does not specify versioning strategy; no design assumption documented for UC6.",
-      "mitigation": "Confirm API versioning strategy in week 1 design workshop; document in architecture specification; validate against existing microservice versioning practices.",
-      "contingency": "If versioning strategy changes mid-Phase 2, update routing logic and test cases; if significant re-work required, extend Phase 2 by 3-5 days."
-    },
-    {
-      "id": "R13",
-      "category": "Integration",
-      "description": "If microservices do not expose consistent API contracts or documentation, then gateway routing logic will require custom adapters or transformation logic; UC1 (Route API Request) implementation extends by 1-2 weeks.",
-      "probability": "MEDIUM",
-      "impact": "MEDIUM",
-      "score": "MEDIUM",
-      "trigger": "Brief states 'Multiple services with inconsistent APIs' as trigger; brief does not confirm API contracts are documented or standardized.",
-      "mitigation": "Conduct API contract discovery workshop in week 1; document all microservice endpoints, request/response schemas, and error codes; identify inconsistencies and standardization opportunities; allocate Phase 2 spike (3-5 days) for adapter design if needed.",
-      "contingency": "If microservices lack documentation, allocate Phase 2 time for reverse-engineering API contracts; if significant adaptation required, extend Phase 2 by 1-2 weeks."
-    },
-    {
-      "id": "R14",
-      "category": "Resource",
-      "description": "If team size (4 engineers) is insufficient for parallel development of UC1-UC7 across 4 phases, then critical path tasks will be serialized; timeline may slip beyond 16 weeks.",
-      "probability": "MEDIUM",
-      "impact": "MEDIUM",
-      "score": "MEDIUM",
-      "trigger": "Brief states 'team size 4' with no role breakdown or seniority; project plan shows 9 zero-slack tasks requiring dedicated Backend Developer and QA Engineer; Frontend Developer has 3-5 days slack.",
-      "mitigation": "Confirm team composition (Backend, QA, Frontend, DevOps/Infra roles) in week 1; validate skill matrix against use case complexity; if gaps exist, allocate mentoring or hire contractor for 4-6 weeks.",
-      "contingency": "If team capacity insufficient, descope UC7 (Monitor Gateway Health) advanced metrics or extend Phase 2 by 1-2 weeks for parallel development."
-    },
-    {
-      "id": "R15",
-      "category": "Technical",
-      "description": "If rate limiting algorithm (token bucket, sliding window, fixed window) is not specified, then UC3 (Apply Rate Limiting) implementation will require design decision; may not align with microservice rate limiting policies.",
-      "probability": "LOW",
-      "impact": "MEDIUM",
-      "score": "LOW",
-      "trigger": "Brief lists 'rate limiting' as requirement but does not specify algorithm or per-client vs. per-endpoint granularity.",
-      "mitigation": "Confirm rate limiting requirements in week 1 design workshop; document algorithm choice, granularity, and enforcement policy; validate against existing microservice rate limiting.",
-      "contingency": "If rate limiting policy changes mid-Phase 2, update algorithm and test cases; if significant re-work required, extend Phase 2 by 2-3 days."
+      "trigger": "Use case UC6 (Support API Versioning) is in scope but brief does not specify versioning strategy; brief does not confirm how microservices currently handle versioning.",
+      "mitigation": "Define API versioning strategy in Phase 1 discovery; document routing rules for each version; create versioning test plan before Phase 2 build.",
+      "contingency": "If versioning strategy changes mid-project, implement versioning adapter in gateway; add 1 week to Phase 2 for re-testing."
     }
   ],
   "risk_use_case_mapping": {
     "R1": [
       "UC1",
       "UC2",
-      "UC3",
-      "UC4",
-      "UC5",
-      "UC6",
-      "UC7"
-    ],
-    "R2": [
-      "UC1",
       "UC5"
     ],
-    "R3": [
+    "R2": [
       "UC2"
+    ],
+    "R3": [
+      "UC1",
+      "UC6"
     ],
     "R4": [
       "UC1",
@@ -194,15 +135,19 @@
     ],
     "R5": [
       "UC1",
+      "UC2",
+      "UC3",
       "UC5",
-      "UC7"
+      "UC6"
     ],
     "R6": [
-      "UC4",
-      "UC7"
+      "UC4"
     ],
     "R7": [
-      "UC2"
+      "UC1",
+      "UC2",
+      "UC4",
+      "UC5"
     ],
     "R8": [
       "UC5"
@@ -213,38 +158,10 @@
       "UC3",
       "UC4",
       "UC5",
-      "UC6",
-      "UC7"
-    ],
-    "R10": [
-      "UC1",
-      "UC2",
-      "UC3",
-      "UC4",
-      "UC5",
-      "UC6",
-      "UC7"
-    ],
-    "R11": [
-      "UC4"
-    ],
-    "R12": [
       "UC6"
     ],
-    "R13": [
-      "UC1"
-    ],
-    "R14": [
-      "UC1",
-      "UC2",
-      "UC3",
-      "UC4",
-      "UC5",
-      "UC6",
-      "UC7"
-    ],
-    "R15": [
-      "UC3"
+    "R10": [
+      "UC6"
     ]
   },
   "critical_path_risk_flags": [
@@ -253,8 +170,6 @@
     "T5",
     "T8",
     "T11",
-    "T14",
-    "T17",
-    "T20"
+    "T14"
   ]
 }
