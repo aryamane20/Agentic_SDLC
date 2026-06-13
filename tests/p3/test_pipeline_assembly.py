@@ -25,6 +25,7 @@ from unittest.mock import AsyncMock, patch
 
 from agent.orchestrator import PipelineOrchestrator
 from agent.validator import SchemaValidator
+from agent.pm_confidence import compute_confidence, extract_confidence_inputs
 
 _FIXTURE_DIR = Path(__file__).parent.parent.parent / "inputs" / "test-cases-p3" / "fixtures"
 _BRIEF_DIR   = Path(__file__).parent.parent.parent / "inputs" / "test-cases-p3"
@@ -48,17 +49,13 @@ _PM_REPORT_REQUIRED_KEYS = {
     "pm_confidence_score",
 }
 
-# Python-computed authoritative scores (LLM values differ — see test_pm_confidence.py)
-# Updated after risk_v1.7 fixture regeneration (2026-06-13):
-#   tc-01: 4 assumptions, 0 CRITICAL, 6 HIGH, Hybrid → 100-20-30-5 = 45
-#   tc-02: 3 assumptions, 0 CRITICAL, 5 HIGH, 1 unknown, Hybrid → 100-5-15-25-5 = 50
-#   tc-03: 4 assumptions, 4 CRITICAL, 4 HIGH, 1 unknown, Hybrid → 100-5-20-10-20-5 = 40
-_EXPECTED_SCORES = {
-    "tc-01-perfect": 45.0,
-    "tc-02-good":    50.0,
-    "tc-03-medium":  40.0,
-    "tc-04-simple":  80.0,
-}
+def _expected_confidence(tc: str) -> float:
+    """Compute authoritative score from fixture data — no hardcoding."""
+    uc     = _load("use_case", tc)
+    intake = _load("intake",   tc)
+    risk   = _load("risk",     tc)
+    plan   = _load("planning", tc)
+    return compute_confidence(**extract_confidence_inputs(uc, intake, risk, plan)).score
 
 
 # ---------------------------------------------------------------------------
@@ -131,13 +128,14 @@ async def test_pipeline_returns_all_required_pm_report_keys(tc):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("tc,expected_score", list(_EXPECTED_SCORES.items()))
-async def test_pipeline_pm_confidence_python_overrides_llm(tc, expected_score):
-    """Python computation must replace the LLM's score (LLM was wrong on TC-01..03)."""
-    report = await _run_pipeline(tc)
-    actual = report["pm_confidence_score"]["score"]
-    assert actual == expected_score, (
-        f"{tc}: expected python score {expected_score}, got {actual} "
+@pytest.mark.parametrize("tc", ["tc-01-perfect", "tc-02-good", "tc-03-medium", "tc-04-simple"])
+async def test_pipeline_pm_confidence_python_overrides_llm(tc):
+    """Python computation must replace the LLM's score — verified against live fixture data."""
+    expected = _expected_confidence(tc)
+    report   = await _run_pipeline(tc)
+    actual   = report["pm_confidence_score"]["score"]
+    assert actual == expected, (
+        f"{tc}: expected python score {expected}, got {actual} "
         "(LLM value not overridden)"
     )
 

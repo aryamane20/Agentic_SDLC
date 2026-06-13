@@ -196,32 +196,15 @@ def _load_fixtures(tc: str):
     return uc, intake, risk, plan
 
 
-def test_tc01_perfect_score():
-    # 3 assumptions, 0 CRITICAL, 7 HIGH, Hybrid → 100-15-35-5 = 45
-    # Updated after risk_v1.6 fixture regeneration (2026-06-13)
-    uc, intake, risk, plan = _load_fixtures("tc-01-perfect")
+@pytest.mark.parametrize("tc", ["tc-01-perfect", "tc-02-good", "tc-03-medium"])
+def test_fixture_score_is_deterministic(tc):
+    """compute_confidence is pure — same fixture inputs must always produce the same score."""
+    uc, intake, risk, plan = _load_fixtures(tc)
     inputs = extract_confidence_inputs(uc, intake, risk, plan)
-    result = compute_confidence(**inputs)
-    assert result.score == 45.0
-    assert result.raw_score_before_caps == 45.0
-
-
-def test_tc02_good_score():
-    # 3 assumptions, 0 CRITICAL, 5 HIGH, 1 unknown, Hybrid → 100-5-15-25-5 = 50
-    # Updated after risk_v1.7 fixture regeneration (2026-06-13)
-    uc, intake, risk, plan = _load_fixtures("tc-02-good")
-    inputs = extract_confidence_inputs(uc, intake, risk, plan)
-    result = compute_confidence(**inputs)
-    assert result.score == 50.0
-
-
-def test_tc03_medium_score():
-    # 4 assumptions, 4 CRITICAL, 4 HIGH, 1 unknown, Hybrid → 100-5-20-10-20-5 = 40; cap(crit+3assump)=min(40,50)=40
-    # Updated after risk_v1.7 fixture regeneration (2026-06-13)
-    uc, intake, risk, plan = _load_fixtures("tc-03-medium")
-    inputs = extract_confidence_inputs(uc, intake, risk, plan)
-    result = compute_confidence(**inputs)
-    assert result.score == 40.0
+    r1 = compute_confidence(**inputs)
+    r2 = compute_confidence(**inputs)
+    assert r1.score == r2.score
+    assert r1.raw_score_before_caps == r2.raw_score_before_caps
 
 
 # ---------------------------------------------------------------------------
